@@ -7,7 +7,7 @@ app.set('views', './views')
 app.use(express.static('static'))
 app.use(express.urlencoded({extended: true})) // req.body nin çalışması için gerekli
 
-app.get("/", (req, res) => { res.send("Home") })
+app.get("/", (req, res) => { res.send("Try /register") })
 app.get('/register', function(req, res) {
   res.render("register")
 })
