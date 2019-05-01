@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  form(action="/register" method="post")
+    table(style="list-style: none")
+      tr
+        td
+          label Username
+        td
+          input(type="text" name="username")
+      tr
+        td
+          label Password
+        td
+          input(type="password" name="password")
+      tr 
+        td(colspan=2)
+          input(type="submit" style="width:100%; font-weight:bold" value="Register")
