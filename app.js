@@ -8,7 +8,6 @@ var port = 3000;
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-var stock_api_url = "https://www.alphavantage.co/query";
 
 
 // Use middleware to set the default Content-Type to json
@@ -26,11 +25,11 @@ app.get('/',(req,res) => {
 		function: req.query.function,
 		symbol: req.query.symbol,
 		interval: req.query.interval,
-		apikey: 'FZD9JFSVI7D6HY5E'
+		apikey: process.env.STOCK_API_KEY
 	};
 
 	// Get dara from the Aplha Vontage API and return the results.
-	request({url:stock_api_url, qs:parameters}, function(error,response, body) {
+	request({url:process.env.STOCK_API_URL, qs:parameters}, function(error,response, body) {
 		if(!error && response.statusCode == 200) {
 			res.status(200).send(body)
 		}
