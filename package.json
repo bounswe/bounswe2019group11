@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/hasan-yaman/bounswe2019group11#readme",
   "dependencies": {
+    "dotenv": "^7.0.0",
     "request": "^2.88.0"
   }
 }

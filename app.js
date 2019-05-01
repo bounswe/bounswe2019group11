@@ -1,5 +1,6 @@
 var express = require('express');
 var request = require('request');
+require('dotenv').config({path:'../bounswe2019group11/.env'});
 var app = express();
 var port = 3000;
 
@@ -7,7 +8,6 @@ var port = 3000;
 // Parse incoming request data
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
-
 
 
 // Use middleware to set the default Content-Type to json
