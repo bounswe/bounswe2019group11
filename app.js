@@ -1,13 +1,12 @@
 var express = require('express');
 var request = require('request');
-var bodyParser = require('body-parser');
 var app = express();
 var port = 3000;
 
 
 // Parse incoming request data
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
 
 var stock_api_url = "https://www.alphavantage.co/query";
 
