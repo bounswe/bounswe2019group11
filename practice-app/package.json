@@ -4,13 +4,17 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "mongodb": "^3.2.3",
+    "mongoose": "^5.5.5",
     "pug": "^2.0.3"
   }
 }
