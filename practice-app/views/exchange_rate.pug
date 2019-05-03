@@ -1,0 +1,18 @@
+extends layout
+
+block content
+    form(action='/api/exchangerate', method='get')
+        table(style="list-style: none")
+            tr
+                td
+                    label From
+                td
+                    input(type="text" name="from")
+            tr
+                td
+                    label To
+                td
+                    input(type="text" name="to")
+            tr
+                td(colspan=2)
+                    input(type="submit" style="width:100%; font-weight:bold" value="Get Rate")
