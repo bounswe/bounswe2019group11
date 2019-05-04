@@ -1,6 +1,9 @@
-A small express app skeleton
+To start the server
 
-Remember to run `npm install`
+- Run `npm install` to install required packages.
+- Then, run `npm run start` to start the server
+- To test, run `npm run test`
+
 
 # API
 
