@@ -1,23 +1,22 @@
 var express = require('express');
+var router = express.Router();
 var request = require('request');
-require('dotenv').config({path:'../bounswe2019group11/.env'});
+require('dotenv').config({path:'.env'});
 var app = express();
-var port = 3000;
-
 
 // Parse incoming request data
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+router.use(express.json());
+router.use(express.urlencoded({extended: false}));
 
 
 // Use middleware to set the default Content-Type to json
-app.use(function (req, res, next) {
+router.use(function (req, res, next) {
     res.header('Content-Type', 'application/json');
     next();
-});
+}); 
 
 
-app.get('/',(req,res) => {
+router.get('/',(req,res) => {
 
 	// Extract the parameters.
 	// For detail of parameters: https://www.alphavantage.co/documentation/
@@ -31,10 +30,9 @@ app.get('/',(req,res) => {
 	// Get dara from the Aplha Vontage API and return the results.
 	request({url:process.env.STOCK_API_URL, qs:parameters}, function(error,response, body) {
 		if(!error && response.statusCode == 200) {
-			res.status(200).send(body)
+			res.status(200).send(body);
 		}
-	}); 
+	});  
 });
 
-app.listen(port, () => console.log('Example app listening on port ${port}!'));
-
+module.exports = router;
