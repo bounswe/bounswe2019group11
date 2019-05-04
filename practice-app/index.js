@@ -17,7 +17,7 @@ app.use(express.urlencoded({extended: true}));
 
 app.use('/api/exchangerate', require('./routes/exchange_rate_api'));
 app.use('/exchangerate', require('./routes/exchange_rate'));
-
+app.use('/stock', require('./routes/stock'));
 
 const url = 'mongodb+srv://dbUser:Rku5ANPmO0t2srkw@mongotest-dnhun.mongodb.net/test?retryWrites=true';
 mongoose.connect(url, {useNewUrlParser: true});
