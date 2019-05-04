@@ -1,13 +1,12 @@
+require('dotenv').config({path: __dirname + '/.env'});
+
 const express = require('express');
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
 const app = express();
 const port = process.env.PORT || 3000;
-// Load the variables in .env file to the process.env
-dotenv.config();
-
 const db = require('./helpers/db');
-db.connect()
+db
+    .connect()
     .on('error', console.error)
     .on('disconnected', db.connect)
     .once('open', () => {
@@ -20,7 +19,7 @@ app.use(bodyParser.json({
 }));
 
 app.set('view engine', 'pug');
-app.set('views', './views');
+app.set('views', __dirname + '/views');
 
 app.use(express.static('static'));
 app.use(express.urlencoded({extended: true}));
@@ -35,3 +34,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => console.log(`Started on port ${port}`));
+
+module.exports = app; // for testing
