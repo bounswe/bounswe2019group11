@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 // Load the variables in .env file to the process.env
 dotenv.config();
 
@@ -12,7 +12,7 @@ db
   .on('error', console.error)
   .on('disconnected', db.connect)
   .once('open', () => {
-      console.log("Database connected")
+      console.log("Database connected");
 });
 
 app.use(bodyParser.text());
@@ -36,4 +36,3 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => console.log(`Started on port ${port}`));
-

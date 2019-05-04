@@ -7,10 +7,10 @@ exports.connect = () => {
   const pass = process.env.DB_PASS;
   const name = process.env.DB_NAME;
 
-  const url = `mongodb://${user}:${pass}@${host}:${port}/${name}`
+  const url = `mongodb://${user}:${pass}@${host}:${port}/${name}`;
 
-  console.log(url)
+  console.log(url);
 
-  mongoose.connect(`${url}`);
+  mongoose.connect(`${url}`, {useNewUrlParser: true, useCreateIndex: true});
   return mongoose.connection;
 };
