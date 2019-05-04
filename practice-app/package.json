@@ -9,8 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^8.0.0",
     "express": "^4.16.4",
     "mongodb": "^3.2.3",
+    "mongoose": "^5.5.5",
     "pug": "^2.0.3",
     "dotenv": "^7.0.0",
     "request": "^2.88.0"

@@ -1,0 +1,84 @@
+extends layout
+
+block content
+    form(action='/api/exchangerate', method='get')
+        table(style="list-style: none")
+            tr
+                td
+                    label From
+                td
+                    select(name='from')
+                        option(value='TRY') Turkey Lira
+                        option(value='EUR') Euro
+                        option(value='USD') United States Dollar
+                        option(value='BGN') Bulgaria Lev
+                        option(value='NZD') New Zealand Dollar
+                        option(value='ILS') Israel Shekel
+                        option(value='RUB') Russia Ruble
+                        option(value='CAD') Canada Dollar
+                        option(value='PHP') Philippines Peso
+                        option(value='CHF') Switzerland Franc
+                        option(value='AUD') Australia Dollar
+                        option(value='JPY') Japan Yen
+                        option(value='HKD') Hong Kong Dollar
+                        option(value='MYR') Malaysia Ringgit
+                        option(value='HRK') Croatia Kuna
+                        option(value='CZK') Czech Republic Koruna
+                        option(value='IDR') Indonesia Rupiah
+                        option(value='DKK') Denmark Krone
+                        option(value='NOK') Norway Krone
+                        option(value='HUF') Hungary Forint
+                        option(value='GBP') United Kingdom Pound
+                        option(value='MXN') Mexico Peso
+                        option(value='THB') Thailand Baht
+                        option(value='ISK') Iceland Krona
+                        option(value='ZAR') South Africa Rand
+                        option(value='BRL') Brazil Real
+                        option(value='SGD') Singapore Dollar
+                        option(value='PLN') Poland Zloty
+                        option(value='INR') India Rupee
+                        option(value='KRW') South Korea Won
+                        option(value='RON') Romania Leu
+                        option(value='CNY') China Yuan Renminbi
+                        option(value='SEK') Sweden Krona
+            tr
+                td
+                    label To
+                td
+                    select(name='to')
+                        option(value='TRY') Turkey Lira
+                        option(value='EUR') Euro
+                        option(value='USD') United States Dollar
+                        option(value='BGN') Bulgaria Lev
+                        option(value='NZD') New Zealand Dollar
+                        option(value='ILS') Israel Shekel
+                        option(value='RUB') Russia Ruble
+                        option(value='CAD') Canada Dollar
+                        option(value='PHP') Philippines Peso
+                        option(value='CHF') Switzerland Franc
+                        option(value='AUD') Australia Dollar
+                        option(value='JPY') Japan Yen
+                        option(value='HKD') Hong Kong Dollar
+                        option(value='MYR') Malaysia Ringgit
+                        option(value='HRK') Croatia Kuna
+                        option(value='CZK') Czech Republic Koruna
+                        option(value='IDR') Indonesia Rupiah
+                        option(value='DKK') Denmark Krone
+                        option(value='NOK') Norway Krone
+                        option(value='HUF') Hungary Forint
+                        option(value='GBP') United Kingdom Pound
+                        option(value='MXN') Mexico Peso
+                        option(value='THB') Thailand Baht
+                        option(value='ISK') Iceland Krona
+                        option(value='ZAR') South Africa Rand
+                        option(value='BRL') Brazil Real
+                        option(value='SGD') Singapore Dollar
+                        option(value='PLN') Poland Zloty
+                        option(value='INR') India Rupee
+                        option(value='KRW') South Korea Won
+                        option(value='RON') Romania Leu
+                        option(value='CNY') China Yuan Renminbi
+                        option(value='SEK') Sweden Krona
+            tr
+                td(colspan=2)
+                    input(type="submit" style="width:100%; font-weight:bold" value="Get Rate")
