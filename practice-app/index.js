@@ -12,8 +12,7 @@ db
   .on('error', console.error)
   .on('disconnected', db.connect)
   .once('open', () => {
-    app.listen(process.env.PORT || 3000, '0.0.0.0');
-  console.log(`Listening on port: ${process.env.PORT}`);
+      console.log("Database connected")
 });
 
 app.use(bodyParser.text());
