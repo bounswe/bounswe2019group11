@@ -1,0 +1,25 @@
+extends layout
+
+block content
+    main(role='main')
+        .jumbotron
+            .container
+                h1.display-3 Welcome to the Traders' Platform!
+                p
+                    | You can use the links at the navigation bar or take a look at our feature list to learn more about the capabilities of our platform.
+        .container
+            .p
+                h2.text-center Feature List
+            .row
+                .col-sm-6
+                    .card.bg-dark.text-white
+                        .card-body
+                            h5.card-title Feature 1
+                            p.card-text Content 1
+                            a.btn.btn-primary(href='#') Button Text 1
+                .col-sm-6
+                    .card.bg-dark.text-white
+                        .card-body
+                            h5.card-title Feature 2
+                            p.card-text Content 2
+                            a.btn.btn-primary(href='#') Button Text 2
