@@ -16,3 +16,4 @@ app.post('/register', function(req, res) {
   // create database entry
 })
 app.listen(port, () => console.log('Listening here'))
+app.use('/stock', require('./routes/stock'))
