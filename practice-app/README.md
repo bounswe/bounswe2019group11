@@ -81,11 +81,11 @@ GET example.com/api/exchangerate?to=JPY
 
 ## 2. Stock Indexes API
 
-### 1.1. URL
+### 2.1. URL
 
 /stock
 
-### 1.2. Parameters
+### 2.2. Parameters
 
 - **function**: The time series of choice. The following values are supported: `TIME_SERIES_INTRADAY`, `TIME_SERIES_DAILY`, `TIME_SERIES_DAILY_ADJUSTED`, `TIME_SERIES_WEEKLY`, `TIME_SERIES_WEEKLY_ADJUSTED`, `TIME_SERIES_MONTHLY`, `TIME_SERIES_MONTHLY_ADJUSTED`, `TRY`
 - **symbol**: The name of the stock index. Examples: `MSFT`
@@ -93,7 +93,7 @@ GET example.com/api/exchangerate?to=JPY
 
 > `function` and `symbol` parameters is required. `interval` parameter is requeired only when `function=TIME_SERIES_INTRADAY`
 
-### 1.3. Return Format
+### 2.3. Return Format
 
 ```
 {
@@ -115,11 +115,11 @@ GET example.com/api/exchangerate?to=JPY
         },
 }
 ```
-### 1.4. Request Type
+### 2.4. Request Type
 
 Only `GET` allowed.
 
-### 1.5. Examples
+### 2.5. Examples
 
 **Request**
 ```
