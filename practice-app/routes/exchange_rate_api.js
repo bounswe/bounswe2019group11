@@ -43,8 +43,8 @@ router.get('/avg', (req, res) => {
     let to = req.query.to;
     let start_date = req.query.start_date || moveDate('', -7);
     let end_date = req.query.end_date || moveDate('', 0);
-
-    if (to == null || to == '') {
+    let format = req.query.format;
+    if (to == null || to === '') {
         res.status(400).send({
             'error': '\'to\' parameter cannot be empty!'
         });
@@ -58,7 +58,7 @@ router.get('/avg', (req, res) => {
         });
         return;
     }
-    calculateAverage(res, start_date, end_date, from, to);
+    calculateAverage(res, start_date, end_date, from, to, format);
 });
 
 router.get('/percentage', (req, res) => {
@@ -106,7 +106,7 @@ function sendRequestToEndpoint(res, from, to) {
     });
 }
 
-function calculateAverage(res, start_date, end_date, from, to) {
+function calculateAverage(res, start_date, end_date, from, to, format) {
     const reqOptions = {'url': process.env.EXCHANGE_RATE_API_HISTORY_URL, 'qs': {'start_at': start_date, 'end_at':end_date, 'base': from, 'symbols': to}};
     request(reqOptions, (err, response, body) => {
         if (err) {
@@ -127,7 +127,11 @@ function calculateAverage(res, start_date, end_date, from, to) {
                 }
             }
             avg = avg / count;
-            res.send({'from': from, 'to': to, 'start_date':start_date, 'end_date': end_date, 'average': avg});
+            if(format == 'json') {
+                res.send({'from': from, 'to': to, 'start_date':start_date, 'end_date': end_date, 'average': avg});
+            }else{
+                res.render('avg_exchange_rate', {average: avg , start_date: start_date, end_date: end_date, from: from, to: to});
+            }
         }
     });
 }
