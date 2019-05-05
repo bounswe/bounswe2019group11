@@ -1,5 +1,5 @@
 {
-  "name": "myapp",
+  "name": "express_test",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -17,5 +17,10 @@
     "mongoose": "^5.5.5",
     "pug": "^2.0.3",
     "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^6.1.4"
   }
 }
