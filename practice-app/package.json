@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "set NODE_ENV=prod && node index.js",
+    "test": "set NODE_ENV=test && mocha --timeout 10000 --exit"
   },
   "author": "",
   "license": "ISC",
@@ -17,5 +17,10 @@
     "mongoose": "^5.5.5",
     "pug": "^2.0.3",
     "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^6.1.4"
   }
 }

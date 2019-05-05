@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
     let from = req.query.from || 'TRY';
     let to = req.query.to;
 
-    if (to == null) {
+    if (to == null || to === '') {
         res.status(400).send({
             'error': '\'to\' parameter cannot be empty!'
         });
