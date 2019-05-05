@@ -4,17 +4,23 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "SET NODE_ENV=prod && node index.js",
+    "test": "SET NODE_ENV=test && mocha --timeout 10000 --exit"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^8.0.0",
+    "body-parser": "^1.19.0",
+    "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "mongodb": "^3.2.3",
     "mongoose": "^5.5.5",
     "pug": "^2.0.3",
-    "dotenv": "^7.0.0",
     "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^6.1.4"
   }
 }

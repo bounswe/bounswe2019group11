@@ -1,6 +1,9 @@
-A small express app skeleton
+To start the server
 
-Remember to run `npm install`
+- Run `npm install` to install required packages.
+- Then, run `npm run start` to start the server
+- To test, run `npm run test`
+
 
 # API
 
@@ -12,8 +15,8 @@ Remember to run `npm install`
 
 ### 1.2. Parameters
 
-**from**: Symbol of the base currency. Examples: `EUR`, `USD`, `TRY`
-**to**: Symbol of the currency to be converted. Examples: `EUR`, `USD`, `TRY`
+- **from**: Symbol of the base currency. Examples: `EUR`, `USD`, `TRY`
+- **to**: Symbol of the currency to be converted. Examples: `EUR`, `USD`, `TRY`
 
 > from parameter is optional. When it is not given, it will be assumed as `TRY`.
 
