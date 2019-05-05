@@ -44,14 +44,14 @@ router.get('/avg', (req, res) => {
     let start_date = req.query.start_date || moveDate('', -7);
     let end_date = req.query.end_date || moveDate('', 0);
 
-    if (to == null) {
+    if (to == null || to === '') {
         res.status(400).send({
             'error': '\'to\' parameter cannot be empty!'
         });
         return;
     }
-    var startDate = new Date(start_date); 
-    var endDate = new Date(end_date); 
+    const startDate = new Date(start_date); 
+    const endDate = new Date(end_date); 
     if (startDate.getTime() - endDate.getTime() > 0) {
         res.status(400).send({
             'error': 'start_date cannot be greater than end_date'
@@ -71,7 +71,7 @@ function sendRequestToEndpoint(res, from, to) {
         } else if (response.statusCode !== 200) {
             // If the endpoint returns an error code (like invalid from/to symbols)
             // send it directly to the user
-            res.status(400).send(body);
+            res.status(400).send(JSON.parse(body));
         } else {
             // Parse the result. Update the DB and send the result to the user
             const result = JSON.parse(body);
