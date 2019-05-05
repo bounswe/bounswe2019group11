@@ -50,6 +50,14 @@ router.get('/avg', (req, res) => {
         });
         return;
     }
+    var startDate = new Date(start_date); 
+    var endDate = new Date(end_date); 
+    if (startDate.getTime() - endDate.getTime() > 0) {
+        res.status(400).send({
+            'error': 'start_date cannot be greater than end_date'
+        });
+        return;
+    }
     calculateAverage(res, start_date, end_date, from, to);
 });
 
