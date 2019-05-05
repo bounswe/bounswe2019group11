@@ -110,7 +110,7 @@ function calculateAverage(res, start_date, end_date, from, to) {
                 }
             }
             avg = avg / count;
-            res.send({'from': from, 'to': to, 'average': avg});
+            res.send({'from': from, 'to': to, 'start_date':start_date, 'end_date': end_date, 'average': avg});
         }
     });
 }
