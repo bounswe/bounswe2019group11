@@ -13,11 +13,16 @@ router.post('/', (req, res) => {
 
     user.password = Buffer.from(user.password).toString('base64');
     
-    const q = Users.findOne({'username': user.username, 'password': user.password})
-    q.then(()=> {
-        res.redirect('/logged_in')
+    Users.findOne({'username': user.username, 'password': user.password}).then((result)=> {
+        if (result) {
+            res.redirect('/logged_in');
+        } else {
+            res.status(400).send({
+                'error':  'Wrong credentials!'
+            });
+        }
     }).catch(err => {
-        console.error(err)
+        console.error(err);
         res.status(400).send(err);
     })
     
