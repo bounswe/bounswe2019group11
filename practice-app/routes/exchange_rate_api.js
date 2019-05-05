@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
     let from = req.query.from || 'TRY';
     let to = req.query.to;
 
-    if (to == null) {
+    if (to == null || to === '') {
         res.status(400).send({
             'error': '\'to\' parameter cannot be empty!'
         });
@@ -47,7 +47,7 @@ function sendRequestToEndpoint(res, from, to) {
         } else if (response.statusCode !== 200) {
             // If the endpoint returns an error code (like invalid from/to symbols)
             // send it directly to the user
-            res.status(400).send(body);
+            res.status(400).send(JSON.parse(body));
         } else {
             // Parse the result. Update the DB and send the result to the user
             const result = JSON.parse(body);

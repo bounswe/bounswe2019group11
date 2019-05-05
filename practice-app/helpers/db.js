@@ -1,16 +1,20 @@
 const mongoose = require('mongoose');
 
 exports.connect = () => {
-  const host = process.env.DB_HOST;
-  const port = process.env.DB_PORT;
-  const user = process.env.DB_USER;
-  const pass = process.env.DB_PASS;
-  const name = process.env.DB_NAME;
+    let host, user, pass;
+    if (process.env.NODE_ENV === 'test') {
+        host = process.env.TEST_DB_HOST;
+        user = process.env.TEST_DB_USER;
+        pass = process.env.TEST_DB_PASS;
+    } else {
+        host = process.env.DB_HOST;
+        user = process.env.DB_USER;
+        pass = process.env.DB_PASS;
+    }
 
-  const url = `mongodb://${user}:${pass}@${host}:${port}/${name}`
+    const url = `mongodb+srv://${user}:${pass}@${host}/test?retryWrites=true`;
+    console.log(url);
 
-  console.log(url)
-
-  mongoose.connect(`${url}`);
-  return mongoose.connection;
+    mongoose.connect(`${url}`, {useNewUrlParser: true, useCreateIndex: true});
+    return mongoose.connection;
 };
