@@ -154,12 +154,7 @@ function calculatePercentage(res, change_date, prev_day, from, to) {
             var secondValue = 0;
             secondValue = result['rates'][moveDate(prev_day,0)][to];
             perc = (firstValue-secondValue)/secondValue *100;
-            /*for (var i = 0; i < dateDiff(start_date, end_date); i++) {
-                if(result['rates'][moveDate(start_date, i)]){
-                    avg = avg + result['rates'][moveDate(start_date, i)][to];
-                    count ++;
-                }
-            }*/
+
             res.send({'from': from, 'to': to, 'change_date':change_date, '% change': perc});
         }
     });
