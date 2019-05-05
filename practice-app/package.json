@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "SET NODE_ENV=prod && node index.js",
-    "test": "SET NODE_ENV=test && mocha --timeout 10000 --exit"
+    "start": "set NODE_ENV=prod && node index.js",
+    "test": "set NODE_ENV=test && mocha --timeout 10000 --exit"
   },
   "author": "",
   "license": "ISC",

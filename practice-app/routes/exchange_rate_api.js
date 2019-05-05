@@ -43,7 +43,7 @@ router.get('/avg', (req, res) => {
     let to = req.query.to;
     let start_date = req.query.start_date || moveDate('', -7);
     let end_date = req.query.end_date || moveDate('', 0);
-    let format = req.query.format || 'JSON';
+    let format = req.query.format;
     if (to == null || to === '') {
         res.status(400).send({
             'error': '\'to\' parameter cannot be empty!'
@@ -110,10 +110,10 @@ function calculateAverage(res, start_date, end_date, from, to, format) {
                 }
             }
             avg = avg / count;
-            if(format == 'JSON') {
+            if(format == 'json') {
                 res.send({'from': from, 'to': to, 'start_date':start_date, 'end_date': end_date, 'average': avg});
             }else{
-                res.render('exchange_rate', {average: avg , start_date: start_date, end_date: end_date, from: from, to: to, success:'success'});
+                res.render('avg_exchange_rate', {average: avg , start_date: start_date, end_date: end_date, from: from, to: to});
             }
         }
     });
