@@ -38,6 +38,22 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/avg', (req, res) => {
+    let from = req.query.from || 'TRY';
+    let to = req.query.to;
+    let start_date = req.query.start_date || moveDate('', -7);
+    let end_date = req.query.end_date || moveDate('', 0);
+
+    if (to == null) {
+        res.status(400).send({
+            'error': '\'to\' parameter cannot be empty!'
+        });
+        return;
+    }
+    calculateAverage(res, start_date, end_date, from, to);
+});
+
+
 function sendRequestToEndpoint(res, from, to) {
     const reqOptions = {'url': process.env.EXCHANGE_RATE_API_URL, 'qs': {'base': from, 'symbols': to}};
     request(reqOptions, (err, response, body) => {
@@ -63,6 +79,49 @@ function sendRequestToEndpoint(res, from, to) {
             });
         }
     });
+}
+
+function calculateAverage(res, start_date, end_date, from, to) {
+    const reqOptions = {'url': process.env.EXCHANGE_RATE_API_HISTORY_URL, 'qs': {'start_at': start_date, 'end_at':end_date, 'base': from, 'symbols': to}};
+    request(reqOptions, (err, response, body) => {
+        if (err) {
+            // If something went wrong during the request, send it to the user
+            res.status(400).send({'error': '' + err});
+        } else if (response.statusCode !== 200) {
+            // If the endpoint returns an error code (like invalid from/to symbols)
+            // send it directly to the user
+            res.status(400).send(body);
+        } else {
+            const result = JSON.parse(body);
+            var avg = 0;
+            var count = 0;
+            for (var i = 0; i < dateDiff(start_date, end_date); i++) {
+                if(result['rates'][moveDate(start_date, i)]){
+                    avg = avg + result['rates'][moveDate(start_date, i)][to];
+                    count ++;
+                }
+            }
+            avg = avg / count;
+            res.send({'from': from, 'to': to, 'average': avg});
+        }
+    });
+}
+
+function moveDate(start_date, daysToMove) {
+    if(start_date){
+        var date_ = new Date(start_date);
+    }else{
+        var date_ = new Date();
+    }
+    date_.setDate(date_.getDate() + daysToMove);
+    return date_.toISOString().slice(0,10);
+}
+
+function dateDiff(start_date, end_date) {
+    var oneDay = 24 * 60 * 60 * 1000; 
+    var startDate = new Date(start_date); 
+    var endDate = new Date(end_date); 
+    return Math.round(Math.abs((startDate.getTime() - endDate.getTime()) / (oneDay)));
 }
 
 module.exports = router;
