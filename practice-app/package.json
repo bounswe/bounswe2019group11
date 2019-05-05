@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "set NODE_ENV=prod && node index.js",
+    "test": "set NODE_ENV=test && mocha --timeout 10000 --exit"
   },
   "author": "",
   "license": "ISC",
