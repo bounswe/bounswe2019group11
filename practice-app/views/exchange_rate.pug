@@ -167,4 +167,10 @@ block content
                     .form-group
                         .label(for='end_date') End Date
                         input(type='date', name='end_date')
+                        input(name='format', value='html', hidden)
                     button.btn.btn-primary(type='submit') Get Average
+
+        if success
+            br
+            center
+                body= 'From ' + from + ' to ' + to + '\nAverage is ' + average + ' between dates ' + start_date + ' and ' + end_date
