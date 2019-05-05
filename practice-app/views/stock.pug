@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  form(action="/stock" method="post")
+    table(style="list-style: none")
+      tr
+        td
+          label Function
+        td
+          input(type="text" name="function")
+      tr
+        td
+          label Symbol
+        td
+          input(type="text" name="symbol")    
+      tr
+        td
+          label Interval
+        td
+          input(type="text" name="interval")  
+      tr 
+        td(colspan=2)
+          input(type="submit" style="width:100%; font-weight:bold" value="Register")
