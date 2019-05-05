@@ -44,7 +44,7 @@ router.get('/avg', (req, res) => {
     let start_date = req.query.start_date || moveDate('', -7);
     let end_date = req.query.end_date || moveDate('', 0);
 
-    if (to == null || to === '') {
+    if (to == null || to == '') {
         res.status(400).send({
             'error': '\'to\' parameter cannot be empty!'
         });
