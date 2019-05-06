@@ -55,17 +55,3 @@ const stockSchema = new mongoose.Schema({
 });
 
 module.exports = stockSchema;
-
-//const Stocks = mongoose.model('Stocks', stockSchema);
-
-//const Users = mongoose.model('User', UserSchema);
-
-/*
-module.exports = {
-    create: stockinfo => Stocks.create(stockinfo),
-    findOne: stockinfo => Stocks.findOne(stockinfo),
-    findOneAndUpdate: (query, options) => Stocks.findOneAndUpdate(query, options),
-    find: stockinfo => Stocks.find(stockinfo),
-    Stocks,
-};
-*/
