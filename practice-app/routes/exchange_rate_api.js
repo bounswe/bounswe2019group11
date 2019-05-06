@@ -86,6 +86,8 @@ router.get('/avg', (req, res) => {
     calculateAverage(res, start_date, end_date, from, to, format);
 });
 
+
+
 router.get('/percentage', (req, res) => {
     let from = req.query.from || 'TRY';
     let to = req.query.to;
