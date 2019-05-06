@@ -2,6 +2,7 @@ To start the server
 
 - Run `npm install` to install required packages.
 - Then, run `npm run start` to start the server
+- Alternatively, run `npm run start:server` to start the server, with this command when you change the source code, nodemon will automatically restart the server.
 - To test, run `npm run test`
 
 
