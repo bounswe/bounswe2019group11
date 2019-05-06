@@ -91,10 +91,11 @@ GET example.com/api/exchangerate?to=JPY
 - **to**: Symbol of the currency to be converted. Examples: `EUR`, `USD`, `TRY`
 - **start_date**: The date to start the average calculation from. In YYYY-MM-DD format.
 - **end_date**: The date to end the average calculation. In YYYY-MM-DD format.
+- **format**: This is return format. It can be 'json' or 'html'. If you set this to 'json', it will return a JSON object. Otherwise, it will return a HTML page which shows the values.
 
-> from parameter is optional. When it is not given, it will be assumed as `TRY`.
-> start_date parameter is optional. When it is not given, it will be assumed as 7 days before current date.
-> end_date parameter is optional. When it is not given, it will be assumed as current date.
+> - from parameter is optional. When it is not given, it will be assumed as `TRY`.
+> - start_date parameter is optional. When it is not given, it will be assumed as 7 days before current date.
+> - end_date parameter is optional. When it is not given, it will be assumed as current date.
 
 
 ### 2.3. Return Format
@@ -129,7 +130,7 @@ Only `GET` allowed.
 
 **Request**
 ```
-GET example.com/api/exchangerate/avg?from=EUR&to=TRY&start_date=2019-05-01&end_date=2019-05-05
+GET example.com/api/exchangerate/avg?from=EUR&to=TRY&start_date=2019-05-01&end_date=2019-05-05&format=json
 ```
 
 **Response**
@@ -145,7 +146,7 @@ GET example.com/api/exchangerate/avg?from=EUR&to=TRY&start_date=2019-05-01&end_d
 
 **Request**
 ```
-GET example.com/api/exchangerate/avg?from=EUR&to=AUD&start_date=&end_date=
+GET example.com/api/exchangerate/avg?from=EUR&to=AUD&start_date=&end_date=&format=json
 ```
 
 **Response**
@@ -160,6 +161,15 @@ GET example.com/api/exchangerate/avg?from=EUR&to=AUD&start_date=&end_date=
   "average":1.5912250000000001
 }
 ```
+
+**Request**
+```
+GET example.com/api/exchangerate/avg?from=TRY&to=EUR&start_date=2019-04-09&end_date=2019-05-19&format=html
+```
+
+**Response**
+![Screenshot from 2019-05-05 22-55-01](https://user-images.githubusercontent.com/23139429/57199580-66f44d00-6f89-11e9-9a7c-32696670acd0.png)
+
 
 ## 3. Stock Indexes API
 

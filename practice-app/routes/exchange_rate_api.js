@@ -172,15 +172,21 @@ function calculatePercentage(res, change_date, prev_day, from, to) {
             // send it directly to the user
             res.status(400).send(body);
         } else {
-            const result = JSON.parse(body);
-            var perc = 0;
-            var firstValue = 0;
-            firstValue = result['rates'][moveDate(change_date,0)][to];
-            var secondValue = 0;
-            secondValue = result['rates'][moveDate(prev_day,0)][to];
-            perc = (firstValue-secondValue)/secondValue *100;
+            try {
+                const result = JSON.parse(body);
+                var perc = 0;
+                var firstValue = 0;
+                firstValue = result['rates'][moveDate(change_date,0)][to];
+                var secondValue = 0;
+                secondValue = result['rates'][moveDate(prev_day,0)][to];
+                perc = (firstValue-secondValue)/secondValue *100;
 
-            res.send({'from': from, 'to': to, 'change_date':change_date, '% change': perc});
+                res.send({'from': from, 'to': to, 'change_date':change_date, '% change': perc});
+            } catch (e) {
+                res.status(400).send({
+                    'error': 'Data is not available on the endpoint yet! Try with different parameters'
+                });
+            }
         }
     });
 }
