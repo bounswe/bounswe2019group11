@@ -6,6 +6,31 @@ const Currency = require('../models/currency').Currency;
 
 const router = express.Router();
 
+router.get('/allrates', (req,res) => {
+    let from = req.query.from || 'TRY';
+    getAllRates(res,from);
+});
+
+function getAllRates(res, from) {
+    const reqOptions = {'url': process.env.EXCHANGE_RATE_API_URL, 'qs': {'base': from}};
+    request(reqOptions, (err, response, body) => {
+        if (err) {
+            // If something went wrong during the request, send it to the user
+            res.status(400).send({'error': '' + err});
+        } else if (response.statusCode !== 200) {
+            // If the endpoint returns an error code (like invalid from/to symbols)
+            // send it directly to the user
+            res.status(400).send(JSON.parse(body));
+        } else {
+            // Parse the result. Update the DB and send the result to the user
+            const result = JSON.parse(body);
+            const myrates = result.rates;
+    //        console.log(myrates);
+            res.render('all_rates.pug',{rates:myrates});
+        }
+    });
+}
+
 router.get('/', (req, res) => {
     // From parameter is optional. Default is 'TRY'
     let from = req.query.from || 'TRY';
@@ -162,7 +187,6 @@ function calculatePercentage(res, change_date, prev_day, from, to) {
                     'error': 'Data is not available on the endpoint yet! Try with different parameters'
                 });
             }
-
         }
     });
 }

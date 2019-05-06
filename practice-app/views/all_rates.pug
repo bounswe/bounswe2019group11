@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    .container
+        .py-5.text-center
+            img.d-block.mx-auto.mb-4(src='https://fixer.io/fixer_images/fixer_money.png', alt='', width='100', height='100')
+            h5= 'header'
+            body
+                rates
+                each val1,val2 in rates
+                    l=val1 +" " + val2   
+                    p

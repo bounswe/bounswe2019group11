@@ -6,7 +6,7 @@ block content
             img.d-block.mx-auto.mb-4(src='https://fixer.io/fixer_images/fixer_money.png', alt='', width='100', height='100')
             h2 Exchange Rate
             p.lead
-                | Using the below form, you can get the current exchange rate between selected currencies from the European Central Bank. You can also get average exchange rate values for a selected time interval or see the percentage change of an exchange rate for a given day from the previous day. 
+                | Using the below form, you can get the current exchange rate between selected currencies from the European Central Bank or for all currincies. You can also get average exchange rate values for a selected time interval or see the percentage change of an exchange rate for a given day from the previous day. 
                 a.badge.badge-primary(href='https://exchangeratesapi.io/') Exchange Rates API
                 |  is used the retrieve the fresh rates. Rates are always cached to keep 
                 the requests to the API as few as possible.
@@ -86,6 +86,45 @@ block content
                             option(value='CNY') China Yuan Renminbi
                             option(value='SEK') Sweden Krona
                     button.btn.btn-primary(type='submit') Get Rate
+            .col
+                form(action='/api/exchangerate/allrates', method='get')
+                    .form-group
+                        .label(for='from') From
+                        select(name='from')
+                            option(value='TRY') Turkish Lira
+                            option(value='EUR') Euro
+                            option(value='USD') United States Dollar
+                            option(value='GBP') United Kingdom Pound                            
+                            option(value='BGN') Bulgarian Lev
+                            option(value='NZD') New Zealand Dollar
+                            option(value='ILS') Israel Shekel
+                            option(value='RUB') Russian Ruble
+                            option(value='CAD') Canadian Dollar
+                            option(value='PHP') Philippines Peso
+                            option(value='CHF') Switzerland Franc
+                            option(value='AUD') Australia Dollar
+                            option(value='JPY') Japan Yen
+                            option(value='HKD') Hong Kong Dollar
+                            option(value='MYR') Malaysia Ringgit
+                            option(value='HRK') Croatian Kuna
+                            option(value='CZK') Czech Republic Koruna
+                            option(value='IDR') Indonesia Rupiah
+                            option(value='DKK') Denmark Krone
+                            option(value='NOK') Norway Krone
+                            option(value='HUF') Hungarian Forint
+                            option(value='MXN') Mexico Peso
+                            option(value='THB') Thailand Baht
+                            option(value='ISK') Iceland Krona
+                            option(value='ZAR') South Africa Rand
+                            option(value='BRL') Brazil Real
+                            option(value='SGD') Singapore Dollar
+                            option(value='PLN') Poland Zloty
+                            option(value='INR') India Rupee
+                            option(value='KRW') South Korea Won
+                            option(value='RON') Romania Leu
+                            option(value='CNY') China Yuan Renminbi
+                            option(value='SEK') Sweden Krona            
+                    button.btn.btn-primary(type='submit') Get Rates
 
             .col
                 form(action='/api/exchangerate/avg', method='get')
