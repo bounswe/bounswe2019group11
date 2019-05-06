@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "set NODE_ENV=prod && node index.js",
-    "test": "set NODE_ENV=test && mocha --timeout 10000 --exit"
+    "test": "set NODE_ENV=test && mocha --timeout 10000 --exit",
+    "start:server": "set NODE_ENV=prod && nodemon index.js"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +17,7 @@
     "express": "^4.16.4",
     "mongodb": "^3.2.3",
     "mongoose": "^5.5.5",
+    "nodemon": "^1.19.0",
     "parser": "^0.1.4",
     "pug": "^2.0.3",
     "request": "^2.88.0"
