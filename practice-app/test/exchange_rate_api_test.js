@@ -187,3 +187,33 @@ describe('Average Exchange rate api test', () => {
     });
 
 });
+
+
+describe('Percentage Exchange rate api test', () => {
+    const api_url = '/api/exchangerate/percentage';
+
+    it('should get /api/exchangerate/percentage with from, to, change_date,prev_day and format parameters', (done) => {
+        const from = 'USD';
+        const to = 'TRY';
+        const change_date = '2019-05-09';
+        const prev_day = '2019-05-08'
+        const format = 'json'
+
+        chai.request(server)
+            .get(api_url + `?from=${from}&to=${to}&change_date=${change_date}&format=${format}`)
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('object');
+                res.body.should.have.property('from');
+                res.body.from.should.be.equal(from);
+                res.body.should.have.property('to');
+                res.body.to.should.be.equal(to);
+                res.body.should.have.property('change_date');
+                res.body.change_date.should.be.equal(change_date);
+                done();
+            });
+    });
+
+});
+
+
