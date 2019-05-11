@@ -172,13 +172,76 @@ GET example.com/api/exchangerate/avg?from=TRY&to=EUR&start_date=2019-04-09&end_d
 ![Screenshot from 2019-05-05 22-55-01](https://user-images.githubusercontent.com/23139429/57199580-66f44d00-6f89-11e9-9a7c-32696670acd0.png)
 
 
-## 3. Stock Indexes API
+## 3. Percentage change Exchange Rate API
 
 ### 3.1. URL
 
-/stock
+/api/exchangerate/percentage
 
 ### 3.2. Parameters
+
+- **from**: Symbol of the base currency. Examples: `EUR`, `USD`, `TRY`
+- **to**: Symbol of the currency to be converted. Examples: `EUR`, `USD`, `TRY`
+- **change_date**: The date to see the exchange rate's percentage change from the previous day. In YYYY-MM-DD format.
+- **prev_day**: The previous day of the chosen day to use. In YYYY-MM-DD format.
+- **format**: This is return format. It can be 'json' or 'html'. If you set this to 'json', it will return a JSON object. Otherwise, it will return a HTML page which shows the values.
+
+> - from parameter is optional. When it is not given, it will be assumed as `TRY`.
+> - change_date parameter is optional. When it is not given, it will be assumed as the current day.
+
+
+### 3.3. Return Format
+
+```
+{
+  "from": FROM-PARAMETER,
+  "to": TO-PARAMETER,
+  "change_date": CHANGE_DATE-PARAMETER,
+}
+```
+
+**Example**
+
+```
+{
+  "from":"USD",
+  "to":"TRY",
+  "change_date":"2019-05-08",
+  "% change":0.6048985065072967
+}
+```
+
+### 3.4. Request Type
+
+Only `GET` allowed.
+
+### 3.5. Examples
+
+**Request**
+```
+GET example.com/api/exchangerate/percentage?from=USD&to=TRY&change_date=2019-05-08&format=json
+```
+
+**Response**
+```
+{
+  "from":"USD",
+  "to":"TRY",
+  "change_date":"2019-05-08",
+  "% change":0.6048985065072967
+}
+```
+
+
+
+
+## 4. Stock Indexes API
+
+### 4.1. URL
+
+/stock
+
+### 4.2. Parameters
 
 - **function**: The time series of choice. The following values are supported: `TIME_SERIES_INTRADAY`, `TIME_SERIES_DAILY`, `TIME_SERIES_DAILY_ADJUSTED`, `TIME_SERIES_WEEKLY`, `TIME_SERIES_WEEKLY_ADJUSTED`, `TIME_SERIES_MONTHLY`, `TIME_SERIES_MONTHLY_ADJUSTED`, `TRY`
 - **symbol**: The name of the stock index. Examples: `MSFT`
@@ -186,7 +249,7 @@ GET example.com/api/exchangerate/avg?from=TRY&to=EUR&start_date=2019-04-09&end_d
 
 > `function` and `symbol` parameters is required. `interval` parameter is requeired only when `function=TIME_SERIES_INTRADAY`
 
-### 3.3. Return Format
+### 4.3. Return Format
 
 ```
 {
@@ -208,11 +271,11 @@ GET example.com/api/exchangerate/avg?from=TRY&to=EUR&start_date=2019-04-09&end_d
         },
 }
 ```
-### 3.4. Request Type
+### 4.4. Request Type
 
 Only `GET` allowed.
 
-### 3.5. Examples
+### 4.5. Examples
 
 **Request**
 ```
