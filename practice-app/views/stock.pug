@@ -1,6 +1,6 @@
 extends layout
 
-//
+//-
   Pug file for a basic front-end
   Requires 3 inputs
 
@@ -8,7 +8,7 @@ extends layout
 
 block content
   //Creates a get request to the /stock/pug
-  form(action="/stock/pug" method="get")
+  form(action="/stock" method="get")
     table(style="list-style: none")
       tr
         td
@@ -33,4 +33,4 @@ block content
           input(type="text" name="interval")  
       tr 
         td(colspan=2)
-          input(type="submit" style="width:100%; font-weight:bold" value="Register")
+          input(type="submit" style="width:100%; font-weight:bold" value="Submit")

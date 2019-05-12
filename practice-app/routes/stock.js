@@ -10,21 +10,21 @@ const Stocks = require('../models/stockSchema');
 const StocksData = mongoose.model('StocksData', Stocks);
 
 // Parse incoming request data
-router.use(express.json());
-router.use(express.urlencoded({extended: false}));
+//router.use(express.json());
+//router.use(express.urlencoded({extended: false})); 
 
 
 // Use middleware to set the default Content-Type to json
-router.use(function (req, res, next) {
+/*router.use(function (req, res, next) {
     res.header('Content-Type', 'application/json');
     next();
-}); 
+});  */ 
 
-router.get('/', (req, res) => {
-  res.render("stock")
+router.get('/pug', (req, res) => {
+  res.render("stock");
 })
 
-router.get('/pug',(req,res) => {
+router.get('/',(req,res) => {
 
 	// Extract the parameters.
 	// For detail of parameters: https://www.alphavantage.co/documentation/
