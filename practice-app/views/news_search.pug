@@ -1,0 +1,17 @@
+extends layout
+
+block content
+    .main.container
+        .row
+            .col-md-12.col-md-offset-3
+                h1.display-8.m-b-3 Search News
+
+                // register form
+                form(method='GET' action='/news/api')
+                    .form-group
+                        .label(for='q') Search:
+                        input(type='text', placeholder='Search a keyword, e.g. bitcoin' name='q')
+                    .form-group
+                        .label(for='from') A date for the oldest news allowed
+                        input(type='date', name='from')
+                    button.btn.btn-primary(type='submit') Search

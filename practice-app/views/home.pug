@@ -1,0 +1,40 @@
+extends layout
+
+block content
+    main(role='main')
+        .jumbotron
+            .container
+                h1.display-3 Welcome to the Traders' Platform!
+                p
+                    | You can use the links at the navigation bar or take a look at our feature list to learn more about the capabilities of our platform.
+        .container
+            .p
+                h2.text-center Feature List
+            .row
+                .col-sm-6
+                    .card.bg-dark.text-white
+                        .card-body
+                            h5.card-title Exchange Rate
+                            p.card-text With this feature, you can get the exchange rate, average exchange rate and percent change between two currencies.
+                            a.btn.btn-primary(href='/exchangerate') Go to exchange rate page
+                .col-sm-6
+                    .card.bg-dark.text-white
+                        .card-body
+                            h5.card-title Register
+                            p.card-text With this feature, you can register to our platform.
+                            a.btn.btn-primary(href='/register') Go to register page
+            br
+
+            .row
+                .col-sm-6
+                    .card.bg-dark.text-white
+                        .card-body
+                            h5.card-title Login
+                            p.card-text With this feature, you can login to our platform
+                            a.btn.btn-primary(href='/login') Go to login page
+                .col-sm-6
+                    .card.bg-dark.text-white
+                        .card-body
+                            h5.card-title Search News and Articles
+                            p.card-text With this feature, you can keyword search among news and articles
+                            a.btn.btn-primary(href='/news') Go to news search
