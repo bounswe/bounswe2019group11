@@ -232,16 +232,87 @@ GET example.com/api/exchangerate/percentage?from=USD&to=TRY&change_date=2019-05-
 }
 ```
 
-
-
-
-## 4. Stock Indexes API
+## 4. Exchange Rate API
 
 ### 4.1. URL
 
-/stock
+/api/allrates
 
 ### 4.2. Parameters
+
+- **from**: Symbol of the base currency. Examples: `EUR`, `USD`, `TRY`
+
+> when 'from' parameter is not given, it is set to 'TRY' as default
+
+### 4.3. Return Format
+
+```
+{
+  "from": FROM-PARAMETER,
+   result: {
+    result: RATES
+  }
+}
+```
+
+**Example**
+
+```
+{
+  "from": "USD",
+   result: {
+        "BGN":0.2841204585,"NZD":0.2473233871,"ILS":0.5811409562,"RUB":10.6555050336, ... , "SEK":1.570492613,"EUR":0.145270712 
+  }
+}
+```
+
+### 4.4. Request Type
+
+Only `GET` allowed.
+
+### 4.5. Examples
+
+**Request**
+```
+GET example.com/api/exchangerate?from=USD
+```
+
+**Response**
+```
+{
+  "from": "USD",
+  rates: {
+    "BGN":1.7415850401,"NZD":1.5160284951,"ILS":3.5622439893, ... , "SEK":9.6267141585,"EUR":0.8904719501
+  }
+}
+```
+
+**Request**
+```
+GET example.com/api/exchangerate?
+```
+
+**Response**
+
+```
+{
+  "from": "TRY",
+  rates: {
+    "BGN":0.2841204585,"NZD":0.2473233871,"ILS":0.5811409562, ... ,"SEK":1.570492613,"EUR":0.145270712
+  }
+}
+```
+
+![view](https://user-images.githubusercontent.com/32493039/57584633-50e51000-74e6-11e9-976f-45badcf817ff.png)
+
+
+## 5. Stock Indexes API
+
+### 5.1. URL
+
+/stock
+
+### 5.2. Parameters
 
 - **function**: The time series of choice. The following values are supported: `TIME_SERIES_INTRADAY`, `TIME_SERIES_DAILY`, `TIME_SERIES_DAILY_ADJUSTED`, `TIME_SERIES_WEEKLY`, `TIME_SERIES_WEEKLY_ADJUSTED`, `TIME_SERIES_MONTHLY`, `TIME_SERIES_MONTHLY_ADJUSTED`
 - **symbol**: The name of the stock index. Examples: `MSFT`
@@ -249,7 +320,7 @@ GET example.com/api/exchangerate/percentage?from=USD&to=TRY&change_date=2019-05-
 
 > `function` and `symbol` parameters are required. The `interval` parameter is required only when `function=TIME_SERIES_INTRADAY`
 
-### 4.3. Return Format
+### 5.3. Return Format
 
 ```
 {
@@ -271,11 +342,11 @@ GET example.com/api/exchangerate/percentage?from=USD&to=TRY&change_date=2019-05-
         },
 }
 ```
-### 4.4. Request Type
+### 5.4. Request Type
 
 Only `GET` allowed.
 
-### 4.5. Examples
+### 5.5. Examples
 
 **Request**
 ```
