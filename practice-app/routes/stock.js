@@ -38,7 +38,7 @@ router.get('/',(req,res) => {
 	// Get data from the Alpha Vantage API and return the results.
 	request({url:process.env.STOCK_API_URL, qs:parameters}, function(error,response, body) {
 		if(!error && response.statusCode == 200) {
-			res.status(200).send(body);
+			res.status(200).send(JSON.parse(body));
 		}
 		try {
 
