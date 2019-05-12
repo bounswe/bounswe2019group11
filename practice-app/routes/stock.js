@@ -48,34 +48,39 @@ router.get('/',(req,res) => {
             // "date-and-time" package is used to store and format data objects
             // "Time Series" starts with the data of the time when the system is "last refreshed"
             // Extract the '3. Last Refreshed' data from the 'Meta Data' tag of the JSON file and store it in the data object variable "firstinterval"
-            var firstInterval = date.parse(obj['Meta Data']['3. Last Refreshed'], 'YYYY-MM-DD HH:mm:ss');
-            // Take the first number from the "interval" input and store it in the integer variable "dataInterval"
-            // (for ex: if the interval is "30min", dataInterval is "30")
-            var dataInterval = parameters.interval.replace(/(^\d+)(.+$)/i,'$1');
+            if(obj["Meta Data"]) {
+                var firstInterval = date.parse(obj['Meta Data']['3. Last Refreshed'], 'YYYY-MM-DD HH:mm:ss');
+                // Take the first number from the "interval" input and store it in the integer variable "dataInterval"
+                // (for ex: if the interval is "30min", dataInterval is "30")
+                var dataInterval = parameters.interval.replace(/(^\d+)(.+$)/i,'$1');
 
-            // Start looking at the elements of "Time Series" starting from the latest data and going back 
-            // In each iteration, date object variable "i" is decreased by "dataInterval"
-            // "i" is formatted to provide compatibility with the JSON file using the "date.format(i, 'YYYY-MM-DD HH:mm:ss')" method
-            for( var i = firstInterval ; obj["Time Series (" +parameters.interval +")" ][date.format(i, 'YYYY-MM-DD HH:mm:ss')] ; i = date.addMinutes(i, -dataInterval ) ) {
-                //New Data collection is created in the database by using the .create() function
-                //Since the database is modeled by using the "stockSchema", it fits the format of the schema
-                StocksData.create(
-                    {
-                        information : obj['Meta Data']['1. Information'],
-                        symbol : obj['Meta Data']['2. Symbol'],
-                        lastRefreshed :  obj['Meta Data']['3. Last Refreshed'],
-                        interval: obj['Meta Data']['4. Interval'],
-                        outputSize: obj['Meta Data']['5. Output Size'],
-                        timeZone: obj['Meta Data']['6. Time Zone'],
-                        dateData: date.format(i, 'YYYY-MM-DD HH:mm:ss'),
-                        open: obj["Time Series (" +parameters.interval +")" ][date.format(i, 'YYYY-MM-DD HH:mm:ss')]['1. open'],
-                        high: obj["Time Series (" +parameters.interval +")" ][date.format(i, 'YYYY-MM-DD HH:mm:ss')]['2. high'],
-                        low: obj["Time Series (" +parameters.interval +")" ][date.format(i, 'YYYY-MM-DD HH:mm:ss')]['3. low'],
-                        close: obj["Time Series (" +parameters.interval +")" ][date.format(i, 'YYYY-MM-DD HH:mm:ss')]['4. close'],
-                        volume: obj["Time Series (" +parameters.interval +")" ][date.format(i, 'YYYY-MM-DD HH:mm:ss')]['5. volume']
-                    }
-                );
-            }
+                // Start looking at the elements of "Time Series" starting from the latest data and going back 
+                // In each iteration, date object variable "i" is decreased by "dataInterval"
+                // "i" is formatted to provide compatibility with the JSON file using the "date.format(i, 'YYYY-MM-DD HH:mm:ss')" method
+                for( var i = firstInterval ; obj["Time Series (" +parameters.interval +")" ][date.format(i, 'YYYY-MM-DD HH:mm:ss')] ; i = date.addMinutes(i, -dataInterval ) ) {
+                    //New Data collection is created in the database by using the .create() function
+                    //Since the database is modeled by using the "stockSchema", it fits the format of the schema
+
+                    StocksData.create(
+                        {
+                            information : obj['Meta Data']['1. Information'],
+                            symbol : obj['Meta Data']['2. Symbol'],
+                            lastRefreshed :  obj['Meta Data']['3. Last Refreshed'],
+                            interval: obj['Meta Data']['4. Interval'],
+                            outputSize: obj['Meta Data']['5. Output Size'],
+                            timeZone: obj['Meta Data']['6. Time Zone'],
+                            dateData: date.format(i, 'YYYY-MM-DD HH:mm:ss'),
+                            open: obj["Time Series (" +parameters.interval +")" ][date.format(i, 'YYYY-MM-DD HH:mm:ss')]['1. open'],
+                            high: obj["Time Series (" +parameters.interval +")" ][date.format(i, 'YYYY-MM-DD HH:mm:ss')]['2. high'],
+                            low: obj["Time Series (" +parameters.interval +")" ][date.format(i, 'YYYY-MM-DD HH:mm:ss')]['3. low'],
+                            close: obj["Time Series (" +parameters.interval +")" ][date.format(i, 'YYYY-MM-DD HH:mm:ss')]['4. close'],
+                            volume: obj["Time Series (" +parameters.interval +")" ][date.format(i, 'YYYY-MM-DD HH:mm:ss')]['5. volume']
+                        }
+                    ).catch((err) => {
+                        console.log("Database Error");
+                    });
+                }
+            } 
         } catch (e) {
             console.log(e);
         }
