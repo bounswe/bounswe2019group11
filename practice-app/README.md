@@ -243,11 +243,11 @@ GET example.com/api/exchangerate/percentage?from=USD&to=TRY&change_date=2019-05-
 
 ### 4.2. Parameters
 
-- **function**: The time series of choice. The following values are supported: `TIME_SERIES_INTRADAY`, `TIME_SERIES_DAILY`, `TIME_SERIES_DAILY_ADJUSTED`, `TIME_SERIES_WEEKLY`, `TIME_SERIES_WEEKLY_ADJUSTED`, `TIME_SERIES_MONTHLY`, `TIME_SERIES_MONTHLY_ADJUSTED`, `TRY`
+- **function**: The time series of choice. The following values are supported: `TIME_SERIES_INTRADAY`, `TIME_SERIES_DAILY`, `TIME_SERIES_DAILY_ADJUSTED`, `TIME_SERIES_WEEKLY`, `TIME_SERIES_WEEKLY_ADJUSTED`, `TIME_SERIES_MONTHLY`, `TIME_SERIES_MONTHLY_ADJUSTED`
 - **symbol**: The name of the stock index. Examples: `MSFT`
 - **interval**: Time interval between two consecutive data points in the time series.The following values are supported: `1min`,`5min`,`15min`,`30min`,`60min` 
 
-> `function` and `symbol` parameters is required. `interval` parameter is requeired only when `function=TIME_SERIES_INTRADAY`
+> `function` and `symbol` parameters are required. The `interval` parameter is required only when `function=TIME_SERIES_INTRADAY`
 
 ### 4.3. Return Format
 
@@ -255,7 +255,7 @@ GET example.com/api/exchangerate/percentage?from=USD&to=TRY&change_date=2019-05-
 {
     "Meta Data": {
         "1. Information": GENERAL INFORMATION ABOUT RESPONSE SUCH AS FIELDS ETC.,
-        "2. Symbol": SYMBOL PARAMATER,
+        "2. Symbol": SYMBOL PARAMETER,
         "3. Last Refreshed": LAST REFRESH TIME OF DATA,
         "4. Interval": INTERVAL PARAMETER IF GIVEN,
         "5. Output Size": Compact IS DEFAULT OUTPUT SIZE. Compact RETURNS ONLY THE LATEST 100 DATA POINTS IN THE INTRADAY TIME SERIES,
