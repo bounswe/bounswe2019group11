@@ -1,0 +1,76 @@
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const isEmail = require('validator').isEmail;
+const jwt = require('jsonwebtoken');
+
+const userSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: 'InvalidName',
+        trim: true,
+    },
+    surname: {
+        type: String,
+        required: 'InvalidSurname',
+        trim: true,
+    },
+    email: {
+        type: String,
+        required: 'InvalidEmail',
+        unique: true,
+        lowercase: true,
+        validate: {
+            validator: (v) => {
+                return isEmail(v);
+            },
+            message: () => 'InvalidEmail',
+        },
+    },
+    password: {
+        type: String,
+        select: false,
+        required: 'InvalidPassword',
+        minLength: 6,
+    },
+    idNumber: {
+        type: String,
+    },
+    iban: {
+        type: String,
+    },
+    role: {
+        type: String,
+        required: 'InvalidRole',
+    },
+});
+
+userSchema.pre('save', async function (next) {
+    if (this.isModified('password')) {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+    }
+    return next();
+});
+
+userSchema.methods.generateJwtToken = function () {
+    const token = jwt.sign({_id: this._id},
+        process.env.JWT_TOKEN_SECRET, {expiresIn: '2d'});
+    return token;
+};
+
+userSchema.methods.findByCredentials = async (email, password) => {
+    const user = await User.findOne({email});
+    if (!user) {
+        throw {error: 'InvalidCredentials'};
+    }
+    const isPasswordMatched = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatched) {
+        throw {error: 'InvalidCredentials'};
+    }
+    delete user.password;
+    return user;
+};
+
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;
