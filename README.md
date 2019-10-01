@@ -1,5 +1,5 @@
 # BOUNSWE 2019 GROUP 11
-This is the group 11's project repository for CMPE 352 course.
+This is the group 11's project repository for CMPE 352 & 451 course.
 We are designing a traders platform for people who can be considered as a trader. Traders platform lets people follow and trade indices, stocks, ETFs, commodities, currencies, funds, bonds, and cryptocurrencies. Check our [wiki page](https://github.com/bounswe/bounswe2019group11/wiki) for more information.
 
 Here is our demo app => [tradix.xyz](http://tradix.xyz)
