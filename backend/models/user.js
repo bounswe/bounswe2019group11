@@ -30,7 +30,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         select: false,
         required: 'InvalidPassword',
-        minLength: 6,
+        validate: {
+            validator: (v) => {
+                return v.length > 5;
+            },
+            message: () => 'InvalidPassword',
+        }
     },
     idNumber: {
         type: String,

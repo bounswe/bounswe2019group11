@@ -6,10 +6,10 @@ module.exports.ROLES = {
 
 module.exports.validateIdNumber = (idNumber) => {
     // TODO implement this
-    return true;
+    return idNumber;
 };
 
 module.exports.validateIban = (iban) => {
   // TODO implement this
-  return true;
+  return iban;
 };
