@@ -25,15 +25,6 @@ module.exports = async (req, res, next) => {
     if (payload.exp < moment.unix()) {
         return res.status(401).send({ error: 'ExpiredToken' });
     }
-    try {
-        const user = await User.findOne(payload.sub);
-        if (!user) {
-            return res.status(401).send({ error: 'UserNotFound' });
-        }
-        delete user.password;
-        req.user = user;
-        return next();
-    } catch (e) {
-        return res.status(500).send({ error: `DatabaseError: ${e}`});
-    }
+    req.token.data = payload;
+    return next();
 };
