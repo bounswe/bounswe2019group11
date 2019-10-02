@@ -3,10 +3,10 @@
   "info": {
     "description": "API documentation for the backend service",
     "version": "1.0.0",
-    "title": "Traders' Platform Backend",
-    "host": "localhost",
-    "basePath": "/"
+    "title": "Traders' Platform Backend"
   },
+  "host": "localhost",
+  "basePath": "/",
   "tags": [
     {
       "name": "auth",
@@ -74,7 +74,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Successfully signed up."
+            "description": "Successfully signed up. Returns user object and JWT."
+          },
+          "400": {
+            "description": "Validation error occurred for one of the parameters. Check the cause field for diagnostics."
+          },
+          "500": {
+            "description": "Database error occured. Check the cause field for the diagnostics."
           }
         }
       }
