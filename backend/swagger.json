@@ -1,0 +1,83 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API documentation for the backend service",
+    "version": "1.0.0",
+    "title": "Traders' Platform Backend",
+    "host": "localhost",
+    "basePath": "/"
+  },
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authentication endpoints"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "paths": {
+    "/auth/sign-up": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Sign up for the Traders' Platform",
+        "consumes": [
+          "application/json"
+          ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "The user to sign up.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "surname",
+                "email",
+                "password"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the user."
+                },
+                "surname": {
+                  "type": "string",
+                  "description": "Surname of the user."
+                },
+                "email": {
+                  "type": "string",
+                  "description": "Email of the user."
+                },
+                "password": {
+                  "type": "string",
+                  "description": "Password of the user."
+                },
+                "idNumber": {
+                  "type": "string",
+                  "description": "ID number of the user."
+                },
+                "iban": {
+                  "type": "string",
+                  "description": "IBAN number of the user."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully signed up."
+          }
+        }
+      }
+    }
+  }
+}

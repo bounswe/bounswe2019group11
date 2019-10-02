@@ -5,6 +5,7 @@ const database = require('./helpers/database');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
+const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 app.use(cors());
@@ -14,6 +15,8 @@ app.use(bodyParser.urlencoded({
     extended: true,
 }));
 
+const swaggerDocument = require('./swagger.json');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));

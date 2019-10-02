@@ -3,7 +3,7 @@ const authService = require('../services/auth');
 
 const router = express.Router();
 
-router.post('/signUp', async (req, res) => {
+router.post('/sign-up', async (req, res) => {
     try {
         const { name, surname, email, password, idNumber, iban } = req.body;
         res.send(await authService.signUp(name, surname, email, password, idNumber, iban));
