@@ -10,8 +10,8 @@ module.exports = {
     USER_NOT_FOUND: (cause) => {
         return Error('UserNotFound', 'User not found for the request.', cause);
     },
-    DATABASE_ERROR: (cause) => {
-        return Error('DatabaseError', 'Database error occurred while processing the request.', cause);
+    INTERNAL_ERROR: (cause) => {
+        return Error('InternalError', 'Internal error occurred while processing the request.', cause);
     },
     VALIDATION_ERROR: (cause) => {
         return Error('ValidationError', 'Validation error.', cause);
@@ -30,5 +30,17 @@ module.exports = {
     },
     UNKNOWN_VALIDATION_ERROR: (cause) => {
         return Error('UnknownValidationError', 'Unknown validation error occurred.', cause);
-    }
+    },
+    EMAIL_IN_USE: (cause) => {
+      return Error('EmailInUse', 'Email is associated with an existing user.', cause);
+    },
+    INVALID_CREDENTIALS: (cause) => {
+      return Error('InvalidCredentials', 'Email or the password is invalid.', cause);
+    },
+    INVALID_VERIFICATION_TOKEN: (cause) => {
+      return Error('InvalidVerificationToken', 'Verification token cannot be found or expired.', cause);
+    },
+    USER_ALREADY_VERIFIED: (cause) => {
+      return Error('UserAlreadyVerified', 'User already verified', cause);
+    },
 };

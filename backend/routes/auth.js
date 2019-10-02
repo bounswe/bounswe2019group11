@@ -7,7 +7,13 @@ const router = express.Router();
 router.post('/sign-up', async (req, res) => {
     try {
         const {name, surname, email, password, idNumber, iban} = req.body;
-        res.status(200).send(await authService.signUp(name, surname, email, password, idNumber, iban));
+        const isUserExists = await authService.isUserExists(email);
+        if (isUserExists) {
+            res.status(400).send(errors.EMAIL_IN_USE());
+            return;
+        }
+        await authService.signUp(name, surname, email, password, idNumber, iban);
+        res.sendStatus(200);
     } catch (err) {
         if (err.name === 'ValidationError') {
             const causes = [];
@@ -31,8 +37,32 @@ router.post('/sign-up', async (req, res) => {
             }
             res.status(400).send(errors.VALIDATION_ERROR(causes));
         } else {
-            res.status(500).send(errors.DATABASE_ERROR(err));
+            res.status(500).send(errors.INTERNAL_ERROR(err));
         }
+    }
+});
+
+router.get('/sign-up/verification', async (req, res) => {
+    try {
+        const verificationToken = await authService.findVerificationToken(req.query.verificationToken);
+        if (!verificationToken) {
+            res.status(400).send(errors.INVALID_VERIFICATION_TOKEN());
+            return;
+        }
+        const user = await authService.getUser(verificationToken._userId);
+        if (!user) {
+            res.status(400).send(errors.USER_NOT_FOUND());
+            return;
+        }
+        if (user.isVerified) {
+            res.status(400).send(errors.USER_ALREADY_VERIFIED());
+        } else {
+            user.isVerified = true;
+            await user.save();
+            res.sendStatus(200);
+        }
+    } catch (err) {
+        res.status(500).send(errors.INTERNAL_ERROR(err));
     }
 });
 

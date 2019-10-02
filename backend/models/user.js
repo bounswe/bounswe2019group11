@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const isEmail = require('validator').isEmail;
 const jwt = require('jsonwebtoken');
+const authHelper = require('../helpers/auth');
+const VerificationToken = require('./verificationToken');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -45,8 +48,12 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        required: 'InvalidRole',
+        default: authHelper.ROLES.BASIC,
     },
+    isVerified: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 userSchema.pre('save', async function (next) {
@@ -57,6 +64,14 @@ userSchema.pre('save', async function (next) {
     return next();
 });
 
+userSchema.methods.generateVerificationToken = async function() {
+  const token = crypto.randomBytes(32).toString('hex');
+  return await VerificationToken.create({
+      _userId: this._id,
+      token,
+  });
+};
+
 userSchema.methods.generateJwtToken = function () {
     const token = jwt.sign({_id: this._id},
         process.env.JWT_TOKEN_SECRET, {expiresIn: '2d'});
@@ -64,7 +79,7 @@ userSchema.methods.generateJwtToken = function () {
 };
 
 userSchema.methods.findByCredentials = async (email, password) => {
-    const user = await User.findOne({email});
+    const user = await User.findOne({ email });
     if (!user) {
         throw {error: 'InvalidCredentials'};
     }

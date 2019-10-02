@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Traders' Platform Backend"
   },
-  "host": "localhost",
+  "host": "localhost:3000",
   "basePath": "/",
   "tags": [
     {
@@ -46,27 +46,33 @@
               "properties": {
                 "name": {
                   "type": "string",
-                  "description": "Name of the user."
+                  "description": "Name of the user.",
+                  "example": "John"
                 },
                 "surname": {
                   "type": "string",
-                  "description": "Surname of the user."
+                  "description": "Surname of the user.",
+                  "example": "Doe"
                 },
                 "email": {
                   "type": "string",
-                  "description": "Email of the user."
+                  "description": "Email of the user.",
+                  "example": "johndoe@gmail.com"
                 },
                 "password": {
                   "type": "string",
-                  "description": "Password of the user."
+                  "description": "Password of the user.",
+                  "example": "strongPa$.$word"
                 },
                 "idNumber": {
                   "type": "string",
-                  "description": "ID number of the user."
+                  "description": "ID number of the user.",
+                  "example": "12345678910"
                 },
                 "iban": {
                   "type": "string",
-                  "description": "IBAN number of the user."
+                  "description": "IBAN number of the user.",
+                  "example": "TR33 0006 1005 1978 6457 8413 26"
                 }
               }
             }
@@ -74,13 +80,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Successfully signed up. Returns user object and JWT."
+            "description": "OK. Successfully signed up. A verification email is sent."
           },
           "400": {
             "description": "Validation error occurred for one of the parameters. Check the cause field for diagnostics."
           },
           "500": {
-            "description": "Database error occured. Check the cause field for the diagnostics."
+            "description": "Database error occurred. Check the cause field for the diagnostics."
           }
         }
       }
