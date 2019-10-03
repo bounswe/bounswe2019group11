@@ -8,20 +8,74 @@ To start the server
 
 # API
 
-## 1. Exchange Rate API
-
+## 1. Register user API
 ### 1.1. URL
+`/register`
+
+### 1.2. Request Format
+```
+body:
+{
+  "name": "NAME_OF_USER",
+  "email": "EMAIL_OF_USER (unique)",
+  "username": "USERNAME_OF_USER (unique)",
+  "password": "PASSWORD_OF_USER"
+}
+```
+
+### 1.3. Return Format
+```
+{
+  "name": "NAME_OF_USER",
+  "email": "EMAIL_OF_USER",
+  "username": "USERNAME_OF_USER",
+  "createdAt": _creationTime_
+}
+```
+
+### 1.4. Request Type
+Only `POST` allowed.
+
+### 1.5. Examples
+
+**Request**
+
+`[POST] example.com/register`
+
+_body:_
+```
+{
+  "name": "Name Surname",
+  "email": "name@mail.com",
+  "username": "crazy_boi",
+  "password": "passw0rd"
+}
+```
+
+**Response**
+```
+{
+  "name": "Name Surname",
+  "email": "name@mail.com",
+  "username": "crazy_boi",
+  "createdAt": 2019-05-12T18:20:16.633Z
+}
+```
+
+## 2. Exchange Rate API
+
+### 2.1. URL
 
 /api/exchangerate
 
-### 1.2. Parameters
+### 2.2. Parameters
 
 - **from**: Symbol of the base currency. Examples: `EUR`, `USD`, `TRY`
 - **to**: Symbol of the currency to be converted. Examples: `EUR`, `USD`, `TRY`
 
 > from parameter is optional. When it is not given, it will be assumed as `TRY`.
 
-### 1.3. Return Format
+### 2.3. Return Format
 
 ```
 {
@@ -43,11 +97,11 @@ To start the server
 }
 ```
 
-### 1.4. Request Type
+### 2.4. Request Type
 
 Only `GET` allowed.
 
-### 1.5. Examples
+### 2.5. Examples
 
 **Request**
 ```
@@ -80,13 +134,13 @@ GET example.com/api/exchangerate?to=JPY
 }
 ```
 
-## 2. Average Exchange Rate API
+## 3. Average Exchange Rate API
 
-### 2.1. URL
+### 3.1. URL
 
 /api/exchangerate/avg
 
-### 2.2. Parameters
+### 3.2. Parameters
 
 - **from**: Symbol of the base currency. Examples: `EUR`, `USD`, `TRY`
 - **to**: Symbol of the currency to be converted. Examples: `EUR`, `USD`, `TRY`
@@ -99,7 +153,7 @@ GET example.com/api/exchangerate?to=JPY
 > - end_date parameter is optional. When it is not given, it will be assumed as current date.
 
 
-### 2.3. Return Format
+### 3.3. Return Format
 
 ```
 {
@@ -123,11 +177,11 @@ GET example.com/api/exchangerate?to=JPY
 }
 ```
 
-### 2.4. Request Type
+### 3.4. Request Type
 
 Only `GET` allowed.
 
-### 2.5. Examples
+### 3.5. Examples
 
 **Request**
 ```
@@ -172,13 +226,13 @@ GET example.com/api/exchangerate/avg?from=TRY&to=EUR&start_date=2019-04-09&end_d
 ![Screenshot from 2019-05-05 22-55-01](https://user-images.githubusercontent.com/23139429/57199580-66f44d00-6f89-11e9-9a7c-32696670acd0.png)
 
 
-## 3. Percentage change Exchange Rate API
+## 4. Percentage change Exchange Rate API
 
-### 3.1. URL
+### 4.1. URL
 
 /api/exchangerate/percentage
 
-### 3.2. Parameters
+### 4.2. Parameters
 
 - **from**: Symbol of the base currency. Examples: `EUR`, `USD`, `TRY`
 - **to**: Symbol of the currency to be converted. Examples: `EUR`, `USD`, `TRY`
@@ -190,7 +244,7 @@ GET example.com/api/exchangerate/avg?from=TRY&to=EUR&start_date=2019-04-09&end_d
 > - change_date parameter is optional. When it is not given, it will be assumed as the current day.
 
 
-### 3.3. Return Format
+### 4.3. Return Format
 
 ```
 {
@@ -211,11 +265,11 @@ GET example.com/api/exchangerate/avg?from=TRY&to=EUR&start_date=2019-04-09&end_d
 }
 ```
 
-### 3.4. Request Type
+### 4.4. Request Type
 
 Only `GET` allowed.
 
-### 3.5. Examples
+### 4.5. Examples
 
 **Request**
 ```
@@ -232,19 +286,19 @@ GET example.com/api/exchangerate/percentage?from=USD&to=TRY&change_date=2019-05-
 }
 ```
 
-## 4. Exchange Rate API
+## 5. Exchange Rate API
 
-### 4.1. URL
+### 5.1. URL
 
 /api/allrates
 
-### 4.2. Parameters
+### 5.2. Parameters
 
 - **from**: Symbol of the base currency. Examples: `EUR`, `USD`, `TRY`
 
 > when 'from' parameter is not given, it is set to 'TRY' as default
 
-### 4.3. Return Format
+### 5.3. Return Format
 
 ```
 {
@@ -266,11 +320,11 @@ GET example.com/api/exchangerate/percentage?from=USD&to=TRY&change_date=2019-05-
 }
 ```
 
-### 4.4. Request Type
+### 5.4. Request Type
 
 Only `GET` allowed.
 
-### 4.5. Examples
+### 5.5. Examples
 
 **Request**
 ```
@@ -306,13 +360,13 @@ GET example.com/api/exchangerate?
 ![view](https://user-images.githubusercontent.com/32493039/57584633-50e51000-74e6-11e9-976f-45badcf817ff.png)
 
 
-## 5. Stock Indexes API
+## 6. Stock Indexes API
 
-### 5.1. URL
+### 6.1. URL
 
 /stock
 
-### 5.2. Parameters
+### 6.2. Parameters
 
 - **function**: The time series of choice. The following values are supported: `TIME_SERIES_INTRADAY`, `TIME_SERIES_DAILY`, `TIME_SERIES_DAILY_ADJUSTED`, `TIME_SERIES_WEEKLY`, `TIME_SERIES_WEEKLY_ADJUSTED`, `TIME_SERIES_MONTHLY`, `TIME_SERIES_MONTHLY_ADJUSTED`
 - **symbol**: The name of the stock index. Examples: `MSFT`
@@ -320,7 +374,7 @@ GET example.com/api/exchangerate?
 
 > `function` and `symbol` parameters are required. The `interval` parameter is required only when `function=TIME_SERIES_INTRADAY`
 
-### 5.3. Return Format
+### 6.3. Return Format
 
 ```
 {
@@ -342,11 +396,11 @@ GET example.com/api/exchangerate?
         },
 }
 ```
-### 5.4. Request Type
+### 6.4. Request Type
 
 Only `GET` allowed.
 
-### 5.5. Examples
+### 6.5. Examples
 
 **Request**
 ```

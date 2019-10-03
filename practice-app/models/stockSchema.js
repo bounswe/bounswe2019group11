@@ -1,57 +1,68 @@
 const mongoose = require('mongoose');
 
+// This is the Schema used to model the MongoDB using Mongoose
+// Format of the JSON output of the Alpha Vantage API is used to form this template.
+
 const stockSchema = new mongoose.Schema({
-	information: {
+    // general information from "meta data"
+    information: {
         type: String,
         required: true
-        //unique: true
     },
-	symbol: {
+    // symbol information from "meta data"
+    symbol: {
         type: String,
         required: true
-        //unique: true
     },
-	lastRefreshed: {
+    // latest refreshment information from "meta data"
+    lastRefreshed: {
         type: String,
         required: true
-        //unique: true
     },
-	interval: {
+    // interval information from "meta data"
+    interval: {
         type: String,
         required: true
-        //unique: true
     },
-	outputSize: {
+    // output size information from "meta data"
+    outputSize: {
         type: String,
         required: true
-        //unique: true
     },
-	timeZone: {
+    // time zone information from "meta data"
+    timeZone: {
         type: String,
         required: true
-        //unique: true
     },
+    // corresponding interval information from "time series"
     dateData: {
         type: String,
-        //required: true,
         unique: true
-},
-        open: {
-			type: String
-		},
-		high: {
-			type: String
-		},
-		low: {
-			type: String
-		},
-		close: {
-			type: String
-		},
-		volume: {
-			type: String
-		}
-    //}
+    },
+    // opening value from the corresponding interval in "time series"
+    open: {
+        type: String
+    },
+    // highest value from the corresponding interval in "time series"
+    high: {
+        type: String
+    },
+    // corresponding interval information from the corresponding interval in "time series"
+    low: {
+        type: String
+    },
+    // closing value from the corresponding interval in "time series"
+    close: {
+        type: String
+    },
+    // volume information from the corresponding interval in "time series"
+    volume: {
+        type: String
+    }
+   
 });
 
 module.exports = stockSchema;
+
+
+

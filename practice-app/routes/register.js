@@ -12,9 +12,10 @@ router.post('/', (req, res) => {
 
     user.password = Buffer.from(user.password).toString('base64');
 
-    Users.create(user).then(() => {
-        delete user.password;
-        res.send(user);
+    Users.create(user).then(userObject => {
+        delete userObject.password;
+        delete userObject._v;
+        res.send(userObject);
     }).catch(err => {
         console.error(err);
         res.status(400).send(err);
