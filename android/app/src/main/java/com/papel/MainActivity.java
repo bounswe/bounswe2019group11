@@ -2,14 +2,13 @@ package com.papel;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -59,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         View header = navigationView.getHeaderView(0);
 
-        ImageView imageView = header.findViewById(R.id.profileImage);
+        MaterialCardView imageView = header.findViewById(R.id.profileImage);
         TextView username = header.findViewById(R.id.username);
         TextView usermail = header.findViewById(R.id.usermail);
 
