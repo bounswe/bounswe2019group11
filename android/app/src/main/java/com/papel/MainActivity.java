@@ -55,16 +55,19 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         final Intent intent = new Intent(this, ProfileActivity.class);
+        // otherProfile is true when the user clicks the profile other user.
+        // otherProfile is false when the user clickc the him profile.
 
         View header = navigationView.getHeaderView(0);
 
-        MaterialCardView imageView = header.findViewById(R.id.profileImage);
+        MaterialCardView imageCard = header.findViewById(R.id.profileImageCard);
         TextView username = header.findViewById(R.id.username);
         TextView usermail = header.findViewById(R.id.usermail);
 
-        imageView.setOnClickListener(new View.OnClickListener() {
+        imageCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                intent.putExtra("otherProfile",false);
                 startActivity(intent);
             }
         });
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         username.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                intent.putExtra("otherProfile",true);
                 startActivity(intent);
             }
         });
@@ -79,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         usermail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                intent.putExtra("otherProfile",true);
                 startActivity(intent);
             }
         });

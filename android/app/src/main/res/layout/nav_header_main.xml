@@ -14,7 +14,7 @@
     android:gravity="bottom">
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/profileImage"
+        android:id="@+id/profileImageCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:cardCornerRadius="60dp"
@@ -27,14 +27,6 @@
             app:srcCompat="@mipmap/ic_launcher_round" />
 
     </com.google.android.material.card.MaterialCardView>
-
-    <!-- <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@mipmap/ic_launcher_round"
-        android:contentDescription="@string/nav_header_desc"
-         /> -->
 
     <TextView
         android:layout_width="match_parent"
