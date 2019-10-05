@@ -1,0 +1,19 @@
+#register-form {
+  border: 2px solid #888;
+  border-radius: 12px;
+  border-color: #563d7c;
+  padding: 20px;
+}
+
+#form-inputs {
+  margin-bottom: 10px;
+}
+#form-inputs input {
+  width: 80%;
+}
+#form-inputs .btn {
+  margin-top: 10px;
+}
+#map-container{
+  padding-right: 10px;
+}
