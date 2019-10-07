@@ -42,9 +42,9 @@ router.post('/sign-up', async (req, res) => {
     }
 });
 
-router.get('/sign-up/verification', async (req, res) => {
+router.get('/sign-up/verification/:token', async (req, res) => {
     try {
-        const verificationToken = await authService.findVerificationToken(req.query.verificationToken);
+        const verificationToken = await authService.findVerificationToken(req.params.token);
         if (!verificationToken) {
             res.status(400).send(errors.INVALID_VERIFICATION_TOKEN());
             return;

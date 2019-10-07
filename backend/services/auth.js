@@ -17,7 +17,7 @@ function generateSignUpMail(name, surname, email, verificationToken) {
         to: email,
         subject: 'Papel Email Verification',
         text: `Hi ${name} ${surname}\nPlease click on the link below to verify your account.\n
-        http://localhost:3000/auth/sign-up/verification?verificationToken=${verificationToken}`,
+        http://localhost:3000/auth/sign-up/verification/${verificationToken}`,
     };
 }
 
