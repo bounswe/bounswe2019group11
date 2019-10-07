@@ -3,7 +3,7 @@
   "info": {
     "description": "API documentation for the backend service",
     "version": "1.0.0",
-    "title": "Traders' Platform Backend"
+    "title": "Papel Backend"
   },
   "host": "localhost:3000",
   "basePath": "/",
@@ -23,7 +23,7 @@
         "tags": [
           "auth"
         ],
-        "summary": "Sign up for the Traders' Platform",
+        "summary": "Sign up endpoint for the Papel.",
         "consumes": [
           "application/json"
           ],

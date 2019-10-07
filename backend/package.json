@@ -1,7 +1,7 @@
 {
-  "name": "traders-platform-backend",
+  "name": "papel-backend",
   "version": "1.0.0",
-  "description": "API backend for the Traders' Platform",
+  "description": "API backend for the Papel",
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",

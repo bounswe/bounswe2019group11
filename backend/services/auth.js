@@ -13,9 +13,9 @@ const transporter = nodemailer.createTransport({
 
 function generateSignUpMail(name, surname, email, verificationToken) {
     return {
-        from: '"Traders\' Platform" < c3198352@urhen.com >',
+        from: '"Papel" < c3198352@urhen.com >',
         to: email,
-        subject: 'Traders\' Platform Email Verification',
+        subject: 'Papel Email Verification',
         text: `Hi ${name} ${surname}\nPlease click on the link below to verify your account.\n
         http://localhost:3000/auth/sign-up/verification?verificationToken=${verificationToken}`,
     };
