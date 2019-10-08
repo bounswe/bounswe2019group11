@@ -4,6 +4,7 @@ import logo from './logo.svg';
 import './style/App.css';
 import Login from './Login';
 import Register from './Register';
+import Profile from './Profile';
 import asyncComponent from './asyncComponent';
 
 class App extends React.Component {
@@ -19,6 +20,10 @@ class App extends React.Component {
       case 'Register':
         ReactDOM.render(<Register />, container);
         break;
+
+      case 'Profile':
+        ReactDOM.render(<Profile />, container);
+        break;
     }
   }
   render() {
@@ -27,6 +32,7 @@ class App extends React.Component {
         <ul id="menu">
           <li onClick={this.menuItemOnClick}><strong>Login</strong></li>
           <li onClick={this.menuItemOnClick}><strong>Register</strong></li>
+          <li onClick={this.menuItemOnClick}><strong>Profile</strong></li>
         </ul>
         <div id="container"><Register /></div>
       </div>
