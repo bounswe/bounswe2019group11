@@ -1,0 +1,127 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API documentation for the backend service",
+    "version": "1.0.0",
+    "title": "Papel Backend"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authentication endpoints"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "paths": {
+    "/auth/sign-up": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Sign up endpoint for the Papel.",
+        "consumes": [
+          "application/json"
+          ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "The user to sign up.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "surname",
+                "email",
+                "password"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the user.",
+                  "example": "John"
+                },
+                "surname": {
+                  "type": "string",
+                  "description": "Surname of the user.",
+                  "example": "Doe"
+                },
+                "email": {
+                  "type": "string",
+                  "description": "Email of the user.",
+                  "example": "johndoe@gmail.com"
+                },
+                "password": {
+                  "type": "string",
+                  "description": "Password of the user.",
+                  "example": "strongPa$.$word"
+                },
+                "idNumber": {
+                  "type": "string",
+                  "description": "ID number of the user.",
+                  "example": "12345678910"
+                },
+                "iban": {
+                  "type": "string",
+                  "description": "IBAN number of the user.",
+                  "example": "TR33 0006 1005 1978 6457 8413 26"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Successfully signed up. A verification email is sent."
+          },
+          "400": {
+            "description": "Validation error occurred for one of the parameters. Check the name and message fields for diagnostics."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/auth/sign-up/verification/{token}": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Email verification endpoint.",
+        "produces": [
+          "application/text",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "Verification token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. User successfully validated."
+          },
+          "400": {
+            "description": "Validation error occurred for one of the parameters. Check the name and message fields for diagnostics."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    }
+  }
+}
