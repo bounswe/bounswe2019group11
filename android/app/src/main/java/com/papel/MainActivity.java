@@ -1,19 +1,28 @@
 package com.papel;
 
+import android.content.Intent;
 import android.os.Bundle;
+
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+
 import android.view.View;
+
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
+import com.papel.ui.profile.ProfileActivity;
+
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,7 +53,42 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        final Intent intent = new Intent(this, ProfileActivity.class);
+        // otherProfile is true when the user clicks the profile other user.
+        // otherProfile is false when the user clickc the him profile.
+
+        View header = navigationView.getHeaderView(0);
+
+        MaterialCardView imageCard = header.findViewById(R.id.profileImageCard);
+        TextView username = header.findViewById(R.id.username);
+        TextView usermail = header.findViewById(R.id.usermail);
+
+        imageCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intent.putExtra("otherProfile",false);
+                startActivity(intent);
+            }
+        });
+
+        username.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intent.putExtra("otherProfile",true);
+                startActivity(intent);
+            }
+        });
+
+        usermail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intent.putExtra("otherProfile",true);
+                startActivity(intent);
+            }
+        });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

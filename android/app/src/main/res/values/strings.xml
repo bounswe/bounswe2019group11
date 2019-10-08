@@ -13,4 +13,10 @@
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
+    <string name="profile_image_description">Profile image.</string>
+    <string name="test_username">Hasan Yaman</string>
+    <string name="test_usermail">hasan@gmail.com</string>
+    <string name="test_userdescription">Evet kefenin cebi yoktur ama bütün elbiselerin cebi vardır.Mal da yalan mülk de yalan, var biraz da sen oyalan.</string>
+    <string name="follow_button_text">Follow</string>
+    <string name="following_button_text">Following</string>
 </resources>
