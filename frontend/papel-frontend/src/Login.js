@@ -1,5 +1,5 @@
-import React from 'react';
 import './style/bootstrap/css/bootstrap.min.css';
+import React from 'react';
 import './style/Login.css';
 
 class Login extends React.Component {
