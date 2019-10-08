@@ -31,7 +31,6 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        select: false,
         required: 'InvalidPassword',
         validate: {
             validator: (v) => {
@@ -70,25 +69,6 @@ userSchema.methods.generateVerificationToken = async function() {
       _userId: this._id,
       token,
   });
-};
-
-userSchema.methods.generateJwtToken = function () {
-    const token = jwt.sign({_id: this._id},
-        process.env.JWT_TOKEN_SECRET, {expiresIn: '2d'});
-    return token;
-};
-
-userSchema.methods.findByCredentials = async (email, password) => {
-    const user = await User.findOne({ email });
-    if (!user) {
-        throw {error: 'InvalidCredentials'};
-    }
-    const isPasswordMatched = await bcrypt.compare(password, user.password);
-    if (!isPasswordMatched) {
-        throw {error: 'InvalidCredentials'};
-    }
-    delete user.password;
-    return user;
 };
 
 const User = mongoose.model('User', userSchema);

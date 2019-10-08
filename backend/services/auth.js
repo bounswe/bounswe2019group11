@@ -2,6 +2,10 @@ const User = require('../models/user');
 const VerificationToken = require('../models/verificationToken');
 const authHelper = require('../helpers/auth');
 const nodemailer = require('nodemailer');
+const errors = require('../helpers/errors');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 
 const transporter = nodemailer.createTransport({
     service: process.env.SMTP_SERVICE,
@@ -45,13 +49,35 @@ module.exports.signUp = async (name, surname, email, password, idNumber, iban) =
 };
 
 module.exports.findVerificationToken = async (verificationToken) => {
-  return await VerificationToken.findOne({
-      token: verificationToken,
-  });
+    return await VerificationToken.findOne({
+        token: verificationToken,
+    });
 };
 
 module.exports.getUser = async (id) => {
-  return await User.findOne({
-      _id: id,
-  });
+    return await User.findOne({
+        _id: id,
+    });
+};
+
+function generateJwtToken(_id) {
+    return jwt.sign({_id},
+        process.env.JWT_TOKEN_SECRET, {expiresIn: '2d'});
+}
+
+module.exports.login = async (email, password) => {
+    const user = await User.findOne({email});
+    if (!user) {
+        throw errors.INVALID_CREDENTIALS();
+    }
+    const isPasswordMatched = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatched) {
+        throw errors.INVALID_CREDENTIALS();
+    }
+    delete user.password;
+    const token = generateJwtToken(user._id);
+    return {
+        token,
+        user,
+    };
 };

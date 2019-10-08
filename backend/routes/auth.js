@@ -66,4 +66,19 @@ router.get('/sign-up/verification/:token', async (req, res) => {
     }
 });
 
+router.post('/login', async (req, res) => {
+    try {
+        const {email, password} = req.body;
+        const response = await authService.login(email, password);
+        res.status(200).send(response);
+    } catch (err) {
+        console.log(err);
+        if (err.name === 'InvalidCredentials') {
+            res.status(401).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
 module.exports = router;
