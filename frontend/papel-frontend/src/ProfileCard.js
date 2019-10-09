@@ -16,13 +16,13 @@ class ProfileCard extends React.Component {
         </div>
         <div id= "profile-info" className="col-sm-6" >
           <div className="row">
-            SEMİH AKGÜL
+            NAME SURNAME
           </div>
           <div className="row">
-            📌Ataşehir/İSTANBUL
+            📌 LOCATION / LOCATION
           </div>
           <div className="row">
-            semih6014@gmail.com
+            emailaddress@mail.com
           </div>
         </div>
       </div>
