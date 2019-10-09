@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const isEmail = require('validator').isEmail;
-const jwt = require('jsonwebtoken');
 const authHelper = require('../helpers/auth');
 const VerificationToken = require('./verificationToken');
 const crypto = require('crypto');
