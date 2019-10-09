@@ -9,7 +9,6 @@ class Register extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.submit = this.submit.bind(this);
     this.toggleTraderOptions = this.toggleTraderOptions.bind(this);
-    this.handleChange2 = this.handleChange2.bind(this);
   }
   componentDidMount() {
     const self = this;
@@ -36,9 +35,6 @@ class Register extends React.Component {
 
   handleChange(event) {
     this.setState({[event.target.name]: event.target.value});
-  }
-  handleChange2(event) {
-    console.log('deneme');
   }
 
   submit() {
