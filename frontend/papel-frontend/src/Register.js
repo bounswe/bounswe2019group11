@@ -9,6 +9,7 @@ class Register extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.submit = this.submit.bind(this);
     this.toggleTraderOptions = this.toggleTraderOptions.bind(this);
+    this.handleChange2 = this.handleChange2.bind(this);
   }
   componentDidMount() {
     const self = this;
@@ -36,10 +37,34 @@ class Register extends React.Component {
   handleChange(event) {
     this.setState({[event.target.name]: event.target.value});
   }
+  handleChange2(event) {
+    console.log('deneme');
+  }
 
   submit() {
     console.log("Current Data:");
     console.log(this.state);
+    var errors = "";
+    const emailValid = this.state.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+    if (!emailValid){
+      errors+=("Check e-mail.\n");
+    }
+    const nameValid = this.state.name.match(/^[a-zA-ZıİğĞçÇşŞüÜöÖ ]+$/i);
+    if (!nameValid){
+      errors+=("Check Name.\n\t•Name should contain only English and Turkish characters and the space character.\n");
+    }
+    const surnameValid = this.state.surname.match(/^[a-zA-ZıİğĞçÇşŞüÜöÖ]+$/i);
+    if (!surnameValid){
+      errors+=("Check Surname.\n\t•Surname should contain only English and Turkish characters and the space character.\n");
+    }
+    const passwordValid = this.state.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})$/i);
+    if (!passwordValid){
+      errors+=("Check Password.\n\t•It should contain at least one upper and one lowercase letter, one  numeric and one special character.\n\t•It should be at least 8 characters long.");
+    }
+    if (errors != "") {
+
+      alert(errors)
+    }
     fetch('https://jsonplaceholder.typicode.com/todos/1')
       .then(response => response.json())
       .then(json => console.log(json))
@@ -91,7 +116,7 @@ class Register extends React.Component {
                 <div class="row">IBAN:</div>
                 <div class="row"><input type="text" name="iban" onChange={this.handleChange} /></div>
               </div>
-              <div class="row"><button className="btn" style={{width: '100%'}} type="button" name="button" onClick={this.submit}>Sign Up</button></div>
+              <div class="row"><button className="btn" name="button" style={{width: '100%'}} type="button" name="button" onClick={this.submit} >Sign Up</button></div>
           </div>
           <div id="map-container" className="col-sm-8"> <div id="map" style={{height: 360}}></div></div>
         </div>
