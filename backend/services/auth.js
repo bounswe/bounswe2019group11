@@ -66,7 +66,7 @@ function generateJwtToken(_id) {
 }
 
 module.exports.login = async (email, password) => {
-    const user = await User.findOne({email});
+    const user = await User.findOne({email}).select('+password').exec();
     if (!user) {
         throw errors.INVALID_CREDENTIALS();
     }
