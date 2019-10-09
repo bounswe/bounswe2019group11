@@ -122,6 +122,57 @@
           }
         }
       }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "credentials",
+            "description": "The user credentials to login.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "password"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "description": "Email of the user.",
+                  "example": "johndoe@gmail.com"
+                },
+                "password": {
+                  "type": "string",
+                  "description": "Password of the user.",
+                  "example": "strongPa$.$word"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200":{
+            "description": "OK. User successfully logged in. User object and JWT token is returned."
+          },
+          "401": {
+            "description": "Invalid credentials. Either the user with the given email does not exists or the password does not matches the password for the given email."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
     }
   }
 }
