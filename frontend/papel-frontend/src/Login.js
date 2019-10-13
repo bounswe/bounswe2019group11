@@ -24,17 +24,17 @@ class Login extends React.Component {
   render () {
     return (
       <div id="login-form">
-          <div class="card container col-sm-4">
-            <div class="row">
-              <div class="col-sm-5">E-Mail: </div>
-              <div class="col-sm-7"><input type="text" name="email" /></div>
+          <div className="card container col-sm-4">
+            <div className="row">
+              <div className="col-sm-5">E-Mail: </div>
+              <div className="col-sm-7"><input type="text" name="email" /></div>
             </div>
-            <div class="row">
-              <div class="col-sm-5">Password:</div>
-              <div class="col-sm-7"><input type="password" name="password" /></div>
+            <div className="row">
+              <div className="col-sm-5">Password:</div>
+              <div className="col-sm-7"><input type="password" name="password" /></div>
             </div>
-            <div class="row">
-              <div class="col-sm-4 offset-sm-4"><button class="btn">Login</button></div>
+            <div className="row">
+              <div className="col-sm-4 offset-sm-4"><button className="btn" onClick = {this.submit}>Login</button></div>
             </div>
         </div>
       </div>
