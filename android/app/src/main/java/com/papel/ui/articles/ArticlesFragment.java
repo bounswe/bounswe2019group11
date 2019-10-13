@@ -6,19 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.papel.ListViewAdapter;
 import com.papel.R;
 import com.papel.data.Article;
@@ -34,6 +27,8 @@ public class ArticlesFragment extends Fragment {
         final ListView articleListView = root.findViewById(R.id.article_list);
         final FloatingActionButton addArticleButton = root.findViewById(R.id.addArticleButton);
         ArrayList<Article> articles = new ArrayList<Article>();
+        Article s = new Article("title", "content", "aut", Calendar.getInstance().getTime());
+        articles.add(s);
         ListViewAdapter adapter = new ListViewAdapter(getActivity().getApplicationContext(), articles);
         articleListView.setAdapter(adapter);
 
@@ -51,7 +46,8 @@ public class ArticlesFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapter, View v, int position,
                                     long arg3)
             {
-                Toast.makeText(getActivity().getApplicationContext(), "You clicked an item", Toast.LENGTH_SHORT).show();
+                final Intent intent = new Intent(getActivity().getApplicationContext(), ReadArticleActivity.class);
+                startActivity(intent);
             }
         });
         return root;
