@@ -3,9 +3,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.papel.data.Article;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 
@@ -47,6 +50,10 @@ public class ListViewAdapter extends android.widget.BaseAdapter {
         TextView contentText = (TextView) vi.findViewById(R.id.item_content);
         TextView authorText = (TextView) vi.findViewById(R.id.item_author);
         TextView dateText = (TextView) vi.findViewById(R.id.item_date);
+        ImageView authorImageView = (ImageView) vi.findViewById(R.id.item_user_pic);
+
+        String strDate = "Date";
+        dateText.setText(strDate);
         titleText.setText(item.getTitle());
         contentText.setText(item.getContent());
         authorText.setText(item.getAuthor());
