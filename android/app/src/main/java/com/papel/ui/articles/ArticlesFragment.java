@@ -27,8 +27,6 @@ public class ArticlesFragment extends Fragment {
         final ListView articleListView = root.findViewById(R.id.article_list);
         final FloatingActionButton addArticleButton = root.findViewById(R.id.addArticleButton);
         ArrayList<Article> articles = new ArrayList<Article>();
-        Article s = new Article("title", "content", "aut", Calendar.getInstance().getTime());
-        articles.add(s);
         ListViewAdapter adapter = new ListViewAdapter(getActivity().getApplicationContext(), articles);
         articleListView.setAdapter(adapter);
 

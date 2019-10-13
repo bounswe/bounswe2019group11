@@ -27,13 +27,13 @@ public class ReadArticleActivity extends AppCompatActivity {
 
 
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            public void onRatingChanged(RatingBar ratingBar, float rating,
+                                        boolean fromUser) {
 
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                ratingBar.setRating(rating);
-                float newRating = rating;
-                ratingTextView.setText(newRating+"/5.0");
+                ratingTextView.setText(String.valueOf(rating)+" / 5");
+
+
             }
-
         });
     }
 }
