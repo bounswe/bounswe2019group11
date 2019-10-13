@@ -70,9 +70,7 @@
                     android:layout_marginTop="@dimen/text_margin"
                     android:layout_marginBottom="@dimen/text_margin"
                     android:isIndicator="true"
-                    android:max="5"
                     android:numStars="5"
-                    android:rating="1"
                     android:stepSize="1.0"
                     android:textAlignment="viewEnd" />
             </LinearLayout>
