@@ -23,8 +23,11 @@
     <string name="follow_button_text">Follow</string>
     <string name="following_button_text">Following</string>
     <string name="test_title">Title</string>
-    <string name="test_content">Content: This is a very  good article.</string>
+    <string name="test_content">Content</string>
     <string name="test_date">10 October 2019 19:01</string>
+    <string name="post">Post</string>
+    <string name="content_empty_error">Please enter content</string>
+    <string name="title_empty_error">Please enter title</string>
     <string name="title_activity_login">Sign in</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>

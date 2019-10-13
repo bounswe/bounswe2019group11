@@ -1,5 +1,6 @@
 package com.papel.ui.articles;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,31 +24,28 @@ import com.papel.R;
 import com.papel.data.Article;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class ArticlesFragment extends Fragment {
 
-    private ArticlesViewModel articlesViewModel;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        articlesViewModel =
-                ViewModelProviders.of(this).get(ArticlesViewModel.class);
         View root = inflater.inflate(R.layout.fragment_articles, container, false);
-        final ListView articleList = root.findViewById(R.id.article_list);
+        final ListView articleListView = root.findViewById(R.id.article_list);
         final FloatingActionButton addArticleButton = root.findViewById(R.id.addArticleButton);
         ArrayList<Article> articles = new ArrayList<Article>();
         ListViewAdapter adapter = new ListViewAdapter(getActivity().getApplicationContext(), articles);
-        articleList.setAdapter(adapter);
+        articleListView.setAdapter(adapter);
 
         addArticleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Add article", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                final Intent intent = new Intent(getActivity().getApplicationContext(), AddArticleActivity.class);
+                startActivity(intent);
             }
         });
 
-        articleList.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        articleListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
             public void onItemClick(AdapterView<?> adapter, View v, int position,
