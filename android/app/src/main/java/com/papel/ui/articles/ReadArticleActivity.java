@@ -32,6 +32,7 @@ public class ReadArticleActivity extends AppCompatActivity {
 
                 ratingTextView.setText(String.valueOf(rating)+" / 5");
 
+
             }
         });
     }
