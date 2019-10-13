@@ -5,7 +5,10 @@ import android.app.Activity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.IntentService;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -57,8 +60,9 @@ public class LoginActivity extends AppCompatActivity {
         changeScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Click on "change to sign up" button.
+
                 if(isLogin){
+                    // Click on "change to sign up" button.
                     nameInput.setVisibility(View.VISIBLE);
                     surnameInput.setVisibility(View.VISIBLE);
                     ibanInput.setVisibility(View.VISIBLE);
@@ -67,8 +71,9 @@ public class LoginActivity extends AppCompatActivity {
                     sendReq.setText(getString(R.string.signUp_button));
                     isLogin = false;
                 }
-                // Click on "change to sign in" button.
+
                 else{
+                    // Click on "change to sign in" button.
                     nameInput.setVisibility(View.INVISIBLE);
                     surnameInput.setVisibility(View.INVISIBLE);
                     ibanInput.setVisibility(View.INVISIBLE);
@@ -83,11 +88,39 @@ public class LoginActivity extends AppCompatActivity {
         sendReq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(intent);
+                if(isLogin) {
+                    startActivity(intent);
+                }
+                else{
+                    signUpDialog();
+                    nameInput.setVisibility(View.INVISIBLE);
+                    surnameInput.setVisibility(View.INVISIBLE);
+                    ibanInput.setVisibility(View.INVISIBLE);
+                    idInput.setVisibility(View.INVISIBLE);
+                    changeScreen.setText(getString(R.string.changeSignup));
+                    sendReq.setText(getString(R.string.login_button));
+                    isLogin = true;
+                }
             }
+
         });
 
 
+    }
+
+    private void signUpDialog() {
+        AlertDialog.Builder dialog=new AlertDialog.Builder(this);
+        dialog.setMessage("Please check your e-mail for verification.");
+        dialog.setTitle("Sign up successful.");
+        dialog.setNeutralButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int which) {
+                        Toast.makeText(getApplicationContext(),"Hope you do it...",Toast.LENGTH_LONG).show();
+                    }
+                });
+        AlertDialog alertDialog=dialog.create();
+        alertDialog.show();
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
