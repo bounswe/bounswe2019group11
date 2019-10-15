@@ -46,4 +46,10 @@ module.exports = {
     USER_NOT_VERIFIED: (cause) => {
         return PapelError('UserNotVerified', 'User not verified.', cause);
     },
+    INVALID_LATITUDE: (cause) => {
+      return PapelError('InvalidLatitude', 'Invalid or missing latitude for the location.', cause);
+    },
+    INVALID_LONGITUDE: (cause) => {
+      return PapelError('InvalidLongitude', 'Invalid or missing longitude for the location.', cause);
+    },
 };
