@@ -43,4 +43,7 @@ module.exports = {
     USER_ALREADY_VERIFIED: (cause) => {
       return PapelError('UserAlreadyVerified', 'User already verified', cause);
     },
+    USER_NOT_VERIFIED: (cause) => {
+        return PapelError('UserNotVerified', 'User not verified.', cause);
+    },
 };

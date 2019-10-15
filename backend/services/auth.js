@@ -74,6 +74,9 @@ module.exports.login = async (email, password) => {
     if (!isPasswordMatched) {
         throw errors.INVALID_CREDENTIALS();
     }
+    if (!user.isVerified) {
+        throw errors.USER_NOT_VERIFIED();
+    }
     delete user.password;
     const token = generateJwtToken(user._id);
     return {
