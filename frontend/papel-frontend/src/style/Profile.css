@@ -1,0 +1,19 @@
+
+#profile-card {
+  margin-top: 5%;
+  margin-left: 2%;
+  width: 450px;
+}
+
+#profile-image{
+  border-radius:400/2;
+}
+#photo{
+  margin-top: 5%;
+  margin-bottom: 5%;
+}
+
+#profile-info{
+  margin-top: 5%;
+  margin-bottom: 5%;
+}

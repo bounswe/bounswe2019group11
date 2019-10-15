@@ -2,8 +2,6 @@
 }
 #login-form>div {
   margin-top: 10%;
-  border: 2px solid #888;
-  border-radius: 12px;
 }
 #login-form>div>div>div {
   padding: 8px;
