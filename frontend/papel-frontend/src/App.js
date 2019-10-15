@@ -7,7 +7,8 @@ import Login from './Login';
 import Register from './Register';
 import Profile from './Profile';
 import Popup from './Popup';
-import asyncComponent from './asyncComponent';
+import TradingEquipment from './TradingEquipment';
+import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 
 class App extends React.Component {
   constructor(props) {
@@ -21,39 +22,23 @@ class App extends React.Component {
     });
   }
 */
-  menuItemOnClick(event) {
-    const container = document.getElementById('container');
-
-    switch (event.target.innerHTML) {
-      case 'Home':
-        ReactDOM.render(<Home />, container);
-        break;
-      case 'Login':
-          ReactDOM.render(<Login />, container);
-          break;
-      case 'Register':
-        ReactDOM.render(<Register />, container);
-        break;
-
-      case 'Profile':
-        ReactDOM.render(<Profile />, container);
-        break;
-    }
-  }
   render() {
     return (
-
-    <div>
-
-
-    <ul id="menu">
-      <li onClick={this.menuItemOnClick}><strong>HOME</strong></li>
-      <li onClick={this.menuItemOnClick}><strong>Login</strong></li>
-      <li onClick={this.menuItemOnClick}><strong>Register</strong></li>
-      <li onClick={this.menuItemOnClick}><strong>Profile</strong></li>
-    </ul>
-    <div id="container"><Register /></div>
-  </div>
+      <Router>
+        <ul id="menu">
+          <li><Link to="/">HOME</Link></li>
+          <li><Link to="/login">Login</Link></li>
+          <li><Link to="/register">Register</Link></li>
+          <li><Link to="/profile">Profile</Link></li>
+        </ul>
+        <Switch>
+          <Route exact path="/"><Home /></Route>
+          <Route path="/login"><Login /></Route>
+          <Route path="/register"><Register /></Route>
+          <Route path="/profile"><Profile /></Route>
+          <Route path="/currency/:id"><TradingEquipment /></Route>
+        </Switch>
+      </Router>
     );
   }
 }

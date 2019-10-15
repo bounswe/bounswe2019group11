@@ -1,15 +1,18 @@
 body {
-  background-color: #EBEBEC;
-  color: #fff;
+  background-color: #f5f5f6;
+  color: #333;
 }
 .card {
-  background-color: #4C5C72;
+  background-color: #ffffff;
+  color: #000000;
+  -webkit-box-shadow: 1px 2px 10px 0px rgba(102,102,102,1);
+  -moz-box-shadow: 1px 2px 10px 0px rgba(102,102,102,1);
+  box-shadow: 1px 2px 10px 0px rgba(102,102,102,1);
 }
 #menu {
   margin: 0;
   margin-bottom: 20px;
-  background-color: #18293C;
-  color: #babdd6;
+  background-color: #66bb6a;
 }
 
 #menu li {
@@ -20,23 +23,27 @@ body {
   display: inline-block;
 }
 
+
 #menu li:hover {
   cursor: pointer;
-  color: #fff;
 }
 
+#menu li a {
+  font-weight: bold;
+  color: #333;
+}
+#menu li a:hover {
+  color: #fff;
+  text-decoration: none;
+}
 .btn:visited,
 .btn:active,
 .btn:focus,
 .btn {
-  background-color: #9EC7D9;
-  border-radius: 4px;
-  border-color: #9EC7D9;
+  background-color: #66bb6a;
   box-shadow: none;
 }
 .btn:hover {
   background-color: #F6B36C;
-  border-radius: 4px;
-  border-color: #F6B36C;
   box-shadow: none;
 }
