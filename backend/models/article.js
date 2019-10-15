@@ -20,7 +20,10 @@ const articleSchema = new mongoose.Schema({
     },
     rank: {
         type: Number
-    }
+    },
+    voterNumber: {
+        type: Number
+    },
 });
 
 const Article = mongoose.model('Article', articleSchema);
