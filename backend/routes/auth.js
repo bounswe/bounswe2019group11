@@ -73,7 +73,7 @@ router.post('/login', async (req, res) => {
         const response = await authService.login(email, password);
         res.status(200).send(response);
     } catch (err) {
-        if (err.name === 'InvalidCredentials') {
+        if (err.name === 'InvalidCredentials' || err.name === 'UserNotVerified') {
             res.status(401).send(err);
         } else {
             res.status(500).send(errors.INTERNAL_ERROR(err));
