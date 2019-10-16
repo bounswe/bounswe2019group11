@@ -36,7 +36,7 @@ module.exports.isUserExists = async (email) => {
 
 module.exports.signUp = async (name, surname, email, password, idNumber, iban, location) => {
     let role;
-    if (authHelper.validateIdNumber(idNumber) && authHelper.validateIban(iban)) {
+    if (authHelper.isTrader(idNumber, iban)) {
         role = authHelper.ROLES.TRADER;
     } else {
         role = authHelper.ROLES.BASIC;

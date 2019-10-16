@@ -50,6 +50,12 @@ module.exports = {
       return PapelError('InvalidLatitude', 'Invalid or missing latitude for the location.', cause);
     },
     INVALID_LONGITUDE: (cause) => {
-      return PapelError('InvalidLongitude', 'Invalid or missing longitude for the location.', cause);
+        return PapelError('InvalidLongitude', 'Invalid or missing longitude for the location.', cause);
+    },
+    INVALID_ID_NUMBER: (cause) => {
+        return PapelError('InvalidIdNumber', 'Invalid Id number.', cause);
+    },
+    INVALID_IBAN: (cause) => {
+      return PapelError('InvalidIban', 'Invalid IBAN.', cause);
     },
 };
