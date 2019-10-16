@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -24,7 +27,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_portfolio_detail);
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         String portfolioName = intent.getStringExtra("PortfolioName");
         setTitle(portfolioName);
 
@@ -48,6 +51,18 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         tradingEquipmentListViewAdapter = new TradingEquipmentListViewAdapter(getApplicationContext(), tradingEquipments);
         tradingEquipmentListView.setAdapter(tradingEquipmentListViewAdapter);
 
+        final Intent detailIntent = new Intent(this, TradingEquipmentDetailActivity.class);
+
+
+        tradingEquipmentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String tradingEquipmentName = tradingEquipmentListViewAdapter.getItem(i).getName();
+                Log.d("Trading Equipement", "Trading equipment clicked: " + tradingEquipmentName);
+                detailIntent.putExtra("TradingEquipmentName",tradingEquipmentName);
+                startActivity(detailIntent);
+            }
+        });
     }
 
     @Override
