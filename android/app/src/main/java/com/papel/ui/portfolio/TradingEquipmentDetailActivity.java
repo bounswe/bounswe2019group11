@@ -9,8 +9,11 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -63,10 +66,14 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             exp.printStackTrace();
         }
 
-        Spinner dropdown = findViewById(R.id.spinner);
+        final Spinner dropdown = findViewById(R.id.spinner);
         String[] items = new String[]{"1", "2", "3"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
         dropdown.setAdapter(adapter);
+
+        final TextView value = findViewById(R.id.value);
+
+        final ProgressBar progressBar = findViewById(R.id.progressBar);
 
         final CandleStickChart chart = findViewById(R.id.chart);
         chartSetup(chart);
@@ -171,11 +178,15 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
-
-
                     }
-                    Log.d("Reverse", "High: " + points.get(0).getHigh());
+
                     showChart(chart);
+
+                    progressBar.setVisibility(View.INVISIBLE);
+                    value.setVisibility(View.VISIBLE);
+                    dropdown.setVisibility(View.VISIBLE);
+                    chart.setVisibility(View.VISIBLE);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
