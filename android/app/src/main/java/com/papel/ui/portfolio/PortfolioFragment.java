@@ -3,6 +3,7 @@ package com.papel.ui.portfolio;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,10 +30,12 @@ public class PortfolioFragment extends Fragment {
 
     private ArrayList<Portfolio> portfolios = new ArrayList<>();
     private PortfolioListViewAdapter portfolioListViewAdapter;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              final ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_portfolio, container, false);
+
         ListView portfolioListView = root.findViewById(R.id.portfolio_list);
         FloatingActionButton addPortfolio = root.findViewById(R.id.add_portfolio);
 
@@ -45,10 +48,15 @@ public class PortfolioFragment extends Fragment {
         portfolioListViewAdapter = new PortfolioListViewAdapter(container.getContext(), portfolios);
         portfolioListView.setAdapter(portfolioListViewAdapter);
 
+        final Intent intent = new Intent(getActivity(), PortfolioDetailActivity.class);
+
+
         portfolioListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d("Portfolio", i + " is clicked");
+                intent.putExtra("PortfolioName", portfolioListViewAdapter.getItem(i).getName());
+                startActivity(intent);
             }
         });
 
@@ -121,7 +129,6 @@ public class PortfolioFragment extends Fragment {
                 portfolioListViewAdapter.notifyDataSetChanged();
             }
         });
-
 
 
         AlertDialog dialog = dialogBuilder.create();

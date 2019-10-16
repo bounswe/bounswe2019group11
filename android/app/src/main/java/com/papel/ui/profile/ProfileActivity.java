@@ -2,11 +2,9 @@ package com.papel.ui.profile;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -28,9 +26,14 @@ public class ProfileActivity extends AppCompatActivity {
             followButton.setVisibility(View.VISIBLE);
         }
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        try {
+            // TODO Test HERE
+            ActionBar actionBar = getSupportActionBar();
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        } catch (NullPointerException exp) {
+            exp.printStackTrace();
+        }
 
 
         followButton.setOnClickListener(new View.OnClickListener() {
