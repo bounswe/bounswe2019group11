@@ -6,13 +6,13 @@ const router = express.Router();
 
 router.post('/sign-up', async (req, res) => {
     try {
-        const {name, surname, email, password, idNumber, iban} = req.body;
+        const {name, surname, email, password, idNumber, iban, location} = req.body;
         const isUserExists = await authService.isUserExists(email);
         if (isUserExists) {
             res.status(400).send(errors.EMAIL_IN_USE());
             return;
         }
-        await authService.signUp(name, surname, email, password, idNumber, iban);
+        await authService.signUp(name, surname, email, password, idNumber, iban, location);
         res.sendStatus(200);
     } catch (err) {
         if (err.name === 'ValidationError') {
@@ -30,6 +30,12 @@ router.post('/sign-up', async (req, res) => {
                         break;
                     case 'InvalidPassword':
                         causes.push(errors.INVALID_PASSWORD());
+                        break;
+                    case 'InvalidLatitude':
+                        causes.push(errors.INVALID_LATITUDE());
+                        break;
+                    case 'InvalidLongitude':
+                        causes.push(errors.INVALID_LONGITUDE());
                         break;
                     default:
                         causes.push(errors.UNKNOWN_VALIDATION_ERROR(err.errors[field]));

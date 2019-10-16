@@ -47,12 +47,23 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
+        enum: [authHelper.ROLES.BASIC, authHelper.ROLES.TRADER, authHelper.ROLES.ADMIN],
         default: authHelper.ROLES.BASIC,
     },
     isVerified: {
         type: Boolean,
         default: false,
-    }
+    },
+    location: {
+        latitude: {
+            type: Number,
+            required: 'InvalidLatitude',
+        },
+        longitude: {
+            type: Number,
+            required: 'InvalidLongitude',
+        },
+    },
 });
 
 userSchema.pre('save', async function (next) {
