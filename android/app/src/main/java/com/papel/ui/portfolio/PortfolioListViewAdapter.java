@@ -28,7 +28,7 @@ public class PortfolioListViewAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
+    public Portfolio getItem(int i) {
         return portfolios.get(i);
     }
 
