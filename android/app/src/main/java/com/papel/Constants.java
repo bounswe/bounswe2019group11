@@ -5,4 +5,6 @@ public class Constants {
     public static final String LOCALHOST = "http://192.168.2.188:3000/";
     public static final String STOCK = "stock/";
 
+    public static final int DAILY_CHART = 0;
+    public static final int MONTHLY_CHART = 1;
 }

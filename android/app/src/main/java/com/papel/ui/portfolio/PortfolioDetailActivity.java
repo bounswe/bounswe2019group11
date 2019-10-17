@@ -75,9 +75,9 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         tradingEquipmentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String tradingEquipmentName = tradingEquipmentListViewAdapter.getItem(i).getName();
-                Log.d("Trading Equipement", "Trading equipment clicked: " + tradingEquipmentName);
-                detailIntent.putExtra("TradingEquipmentName",tradingEquipmentName);
+                TradingEquipment clicked = tradingEquipmentListViewAdapter.getItem(i);
+                Log.d("Trading Equipement", "Trading equipment clicked: " + clicked.getName());
+                detailIntent.putExtra("TradingEquipment",clicked);
                 startActivity(detailIntent);
             }
         });
