@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
@@ -109,7 +110,7 @@ public class PortfolioFragment extends Fragment {
     }
 
 
-    private void showInputDialog(Context context) {
+    private void showInputDialog(final Context context) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
         dialogBuilder.setTitle("Add portfolio");
         dialogBuilder.setMessage("Type name of the porfolio");
@@ -123,10 +124,15 @@ public class PortfolioFragment extends Fragment {
                 Log.d("Dialog", "Add button is pressed.Name: " + nameInput.getText().toString());
 
                 String portfolioName = nameInput.getText().toString();
-                Portfolio p = new Portfolio(portfolioName);
-                portfolios.add(p);
+                if (portfolioName.length() > 0) {
+                    Portfolio p = new Portfolio(portfolioName);
+                    portfolios.add(p);
 
-                portfolioListViewAdapter.notifyDataSetChanged();
+                    portfolioListViewAdapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(context, "Portfolio name cannot be empty.", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
 
