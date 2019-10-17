@@ -6,6 +6,31 @@ const Currency = require('../models/currency').Currency;
 
 const router = express.Router();
 
+router.get('/allrates', (req,res) => {
+    let from = req.query.from || 'TRY';
+    getAllRates(res,from);
+});
+
+function getAllRates(res, from) {
+    const reqOptions = {'url': process.env.EXCHANGE_RATE_API_URL, 'qs': {'base': from}};
+    request(reqOptions, (err, response, body) => {
+        if (err) {
+            // If something went wrong during the request, send it to the user
+            res.status(400).send({'error': '' + err});
+        } else if (response.statusCode !== 200) {
+            // If the endpoint returns an error code (like invalid from/to symbols)
+            // send it directly to the user
+            res.status(400).send(JSON.parse(body));
+        } else {
+            // Parse the result. Update the DB and send the result to the user
+            const result = JSON.parse(body);
+            const myrates = result.rates;
+    //        console.log(myrates);
+            res.render('all_rates.pug',{rates:myrates});
+        }
+    });
+}
+
 router.get('/', (req, res) => {
     // From parameter is optional. Default is 'TRY'
     let from = req.query.from || 'TRY';
@@ -43,8 +68,8 @@ router.get('/avg', (req, res) => {
     let to = req.query.to;
     let start_date = req.query.start_date || moveDate('', -7);
     let end_date = req.query.end_date || moveDate('', 0);
-
-    if (to == null || to == '') {
+    let format = req.query.format;
+    if (to == null || to === '') {
         res.status(400).send({
             'error': '\'to\' parameter cannot be empty!'
         });
@@ -58,7 +83,26 @@ router.get('/avg', (req, res) => {
         });
         return;
     }
-    calculateAverage(res, start_date, end_date, from, to);
+    calculateAverage(res, start_date, end_date, from, to, format);
+});
+
+
+
+router.get('/percentage', (req, res) => {
+    let from = req.query.from || 'TRY';
+    let to = req.query.to;
+    let change_date = req.query.change_date || moveDate('', 0);
+    let prev_day =  moveDate(change_date, -1);
+
+    if (to == null || to == '') {
+        res.status(400).send({
+            'error': '\'to\' parameter cannot be empty!'
+        });
+        return;
+    }
+    
+    calculatePercentage(res, change_date, prev_day, from, to);
+    
 });
 
 
@@ -89,7 +133,7 @@ function sendRequestToEndpoint(res, from, to) {
     });
 }
 
-function calculateAverage(res, start_date, end_date, from, to) {
+function calculateAverage(res, start_date, end_date, from, to, format) {
     const reqOptions = {'url': process.env.EXCHANGE_RATE_API_HISTORY_URL, 'qs': {'start_at': start_date, 'end_at':end_date, 'base': from, 'symbols': to}};
     request(reqOptions, (err, response, body) => {
         if (err) {
@@ -110,7 +154,41 @@ function calculateAverage(res, start_date, end_date, from, to) {
                 }
             }
             avg = avg / count;
-            res.send({'from': from, 'to': to, 'start_date':start_date, 'end_date': end_date, 'average': avg});
+            if(format == 'json') {
+                res.send({'from': from, 'to': to, 'start_date':start_date, 'end_date': end_date, 'average': avg});
+            }else{
+                res.render('avg_exchange_rate', {average: avg , start_date: start_date, end_date: end_date, from: from, to: to});
+            }
+        }
+    });
+}
+
+function calculatePercentage(res, change_date, prev_day, from, to) {
+    const reqOptions = {'url': process.env.EXCHANGE_RATE_API_HISTORY_URL, 'qs': {'start_at': prev_day, 'end_at': change_date, 'base': from, 'symbols': to}};
+    request(reqOptions, (err, response, body) => {
+        if (err) {
+            // If something went wrong during the request, send it to the user
+            res.status(400).send({'error': '' + err});
+        } else if (response.statusCode !== 200) {
+            // If the endpoint returns an error code (like invalid from/to symbols)
+            // send it directly to the user
+            res.status(400).send(body);
+        } else {
+            try {
+                const result = JSON.parse(body);
+                var perc = 0;
+                var firstValue = 0;
+                firstValue = result['rates'][moveDate(change_date,0)][to];
+                var secondValue = 0;
+                secondValue = result['rates'][moveDate(prev_day,0)][to];
+                perc = (firstValue-secondValue)/secondValue *100;
+
+                res.send({'from': from, 'to': to, 'change_date':change_date, '% change': perc});
+            } catch (e) {
+                res.status(400).send({
+                    'error': 'Data is not available on the endpoint yet! Try with different parameters'
+                });
+            }
         }
     });
 }

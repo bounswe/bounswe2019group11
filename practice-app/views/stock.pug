@@ -1,0 +1,36 @@
+extends layout
+
+//-
+  Pug file for a basic front-end
+  Requires 3 inputs
+
+
+
+block content
+  //Creates a get request to the /stock/pug
+  form(action="/stock" method="get")
+    table(style="list-style: none")
+      tr
+        td
+          //The time series of your choice.
+          //"TIME_SERIES_INTRADAY" for intraday time series
+          label Function
+        td
+          input(type="text" name="function")
+      tr
+        td
+          //The name of the equity of your choice.
+          //"MSFT" for Microsoft, "GOOGL" for Google
+          label Symbol
+        td
+          input(type="text" name="symbol")    
+      tr
+        td
+          //Time interval between two consecutive data points in the time series. 
+          //These are supported: "1min", "5min", "15min", "30min", "60min"
+          label Interval
+        td
+          input(type="text" name="interval")  
+      tr 
+        td(colspan=2)
+          input(type="submit" style="width:100%; font-weight:bold" value="Submit")

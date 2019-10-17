@@ -28,6 +28,9 @@ app.use('/stock', require('./routes/stock'));
 app.use('/exchangerate', require('./routes/exchange_rate'));
 app.use('/api/exchangerate', require('./routes/exchange_rate_api'));
 app.use('/register', require('./routes/register'))
+app.use('/login', require('./routes/login'))
+app.use('/logged_in', require('./routes/logged_in'))
+app.use('/news',require('./routes/newsapi'))
 
 app.get("/", (req, res) => {
     res.render('home');
@@ -36,3 +39,4 @@ app.get("/", (req, res) => {
 app.listen(port, () => console.log(`Started on port ${port}`));
 
 module.exports = app; // for testing
+

@@ -14,7 +14,7 @@ describe('Exchange rate view test', () => {
             .end((err, res) => {
                 res.should.have.status(200);
                 res.should.have.property('text');
-                res.text.should.have.string('<option value="TRY">Turkey Lira</option>');
+                res.text.should.have.string('<option value="EUR">Euro</option>');
                 done();
             });
     });
