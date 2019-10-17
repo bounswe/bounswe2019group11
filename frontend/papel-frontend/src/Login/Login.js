@@ -1,6 +1,6 @@
 import React from 'react';
-import './style/bootstrap/css/bootstrap.min.css';
-import './style/Login.css';
+import './Login.css';
+import $ from 'jquery';
 
 class Login extends React.Component {
   constructor() {
@@ -14,12 +14,22 @@ class Login extends React.Component {
     this.setState({[event.target.name]: event.target.value});
   }
 
-  submit() {
+  async submit() {
     console.log("Current Data:");
     console.log(this.state);
-    fetch('https://jsonplaceholder.typicode.com/todos/1')
-      .then(response => response.json())
-      .then(json => console.log("Store token in cookies"))
+    /*
+    const response = await fetch('localhost:3000/auth/login', {
+      method: 'POST',
+      mode: 'cors',
+      body: JSON.stringify()
+    });
+    const status = await response.status;
+    if (status == 200) console.log(response.json())
+    else console.log(status);*/
+    $.post("https://papel-dev.herokuapp.com/auth/login", this.state, function(resp, data) {
+      console.log(resp);
+      if (resp == 200) console.log(data);
+    });
   }
   render () {
     return (
@@ -27,11 +37,11 @@ class Login extends React.Component {
           <div className="card container col-sm-4">
             <div className="row">
               <div className="col-sm-5">E-Mail: </div>
-              <div className="col-sm-7"><input type="text" name="email" /></div>
+              <div className="col-sm-7"><input type="text" name="email" onChange={this.handleChange}/></div>
             </div>
             <div className="row">
               <div className="col-sm-5">Password:</div>
-              <div className="col-sm-7"><input type="password" name="password" /></div>
+              <div className="col-sm-7"><input type="password" name="password" onChange={this.handleChange} /></div>
             </div>
             <div className="row">
               <div className="col-sm-4 offset-sm-4"><button className="btn" onClick = {this.submit}>Login</button></div>

@@ -73,6 +73,21 @@
                   "type": "string",
                   "description": "IBAN number of the user.",
                   "example": "TR33 0006 1005 1978 6457 8413 26"
+                },
+                "location": {
+                  "type": "object",
+                  "properties": {
+                    "latitude": {
+                      "type": "number",
+                      "description": "Latitude of the location.",
+                      "example": 41.085987
+                    },
+                    "longitude": {
+                      "type": "number",
+                      "description": "Longitude of the location.",
+                      "example": 29.044008
+                    }
+                  }
                 }
               }
             }

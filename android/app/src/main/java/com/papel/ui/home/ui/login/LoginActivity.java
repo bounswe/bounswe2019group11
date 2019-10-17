@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
 
 
-                if(isLogin){
+                if (isLogin) {
                     // Click on "change to sign up" button.
 
                     nameInput.setVisibility(View.VISIBLE);
@@ -93,10 +93,7 @@ public class LoginActivity extends AppCompatActivity {
                     changeScreen.setText(getString(R.string.changeLogin));
                     sendReq.setText(getString(R.string.signUp_button));
                     isLogin = false;
-                }
-
-
-                else{
+                } else {
                     // Click on "change to sign in" button.
 
                     nameInput.setVisibility(View.INVISIBLE);
@@ -118,49 +115,48 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(isLogin) {
+                if (isLogin) {
                     startActivity(intent);
-                }
-                else{
-                     final JSONObject jsonBody = new JSONObject();
-                try {
-                    // TODO Get parameters from EditText's
-                    jsonBody.put("name", "name1");
-                    jsonBody.put("surname", "surname1");
-                    jsonBody.put("email", "hasan09912120d0@gmail.com");
-                    jsonBody.put("password", "strongPa$.$word");
-                    jsonBody.put("idNumber", "12345678910");
-                    jsonBody.put("iban", "TR33 0006 1005 1978 6457 8413 26");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.i("Response", response);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
-                        // TODO convert responseBody to JSON Object and display appropriate error messages
-                        Log.d("Error", responseBody);
-                    }
-                }) {
-                    @Override
-                    public byte[] getBody() throws AuthFailureError {
-                        return jsonBody.toString().getBytes();
+                } else {
+                    final JSONObject jsonBody = new JSONObject();
+                    try {
+                        // TODO Get parameters from EditText's
+                        jsonBody.put("name", "name1");
+                        jsonBody.put("surname", "surname1");
+                        jsonBody.put("email", "hasan09912120d0@gmail.com");
+                        jsonBody.put("password", "strongPa$.$word");
+                        jsonBody.put("idNumber", "12345678910");
+                        jsonBody.put("iban", "TR33 0006 1005 1978 6457 8413 26");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
 
-                    @Override
-                    public String getBodyContentType() {
-                        return "application/json";
-                    }
-                };
+                    StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.i("Response", response);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                            // TODO convert responseBody to JSON Object and display appropriate error messages
+                            Log.d("Error", responseBody);
+                        }
+                    }) {
+                        @Override
+                        public byte[] getBody() throws AuthFailureError {
+                            return jsonBody.toString().getBytes();
+                        }
 
-                queue.add(request);
-                  
+                        @Override
+                        public String getBodyContentType() {
+                            return "application/json";
+                        }
+                    };
+
+                    queue.add(request);
+
                     signUpDialog();
                     nameInput.setVisibility(View.INVISIBLE);
                     surnameInput.setVisibility(View.INVISIBLE);
@@ -178,17 +174,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signUpDialog() {
-        AlertDialog.Builder dialog=new AlertDialog.Builder(this);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setMessage("Please check your e-mail for verification.");
         dialog.setTitle("Sign up successful.");
         dialog.setNeutralButton("Ok",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,
                                         int which) {
-                        Toast.makeText(getApplicationContext(),"Hope you do it...",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Hope you do it...", Toast.LENGTH_LONG).show();
                     }
                 });
-        AlertDialog alertDialog=dialog.create();
+        AlertDialog alertDialog = dialog.create();
         alertDialog.show();
     }
 
