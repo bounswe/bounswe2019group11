@@ -25,6 +25,7 @@ public class ReadArticleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_article);
 
+        int article_id = getIntent().getIntExtra("article_id", -1);
         final TextView title = (TextView) findViewById(R.id.read_article_title_textview);
         final TextView content = (TextView) findViewById(R.id.read_article_content_textview);
         final TextView author = (TextView) findViewById(R.id.read_article_author_textview);
@@ -32,12 +33,12 @@ public class ReadArticleActivity extends AppCompatActivity {
         final TextView ratingTextView = (TextView) findViewById(R.id.article_rating_textview);
         final ImageView profile_pic = (ImageView) findViewById(R.id.read_article_pic_image);
         final ImageView share = (ImageView) findViewById(R.id.article_share_imageview);
+        final RatingBar ratingBar = (RatingBar) findViewById(R.id.article_rating_bar);
         final ListView commentListView = (ListView) findViewById(R.id.article_comments_listview);
         final ArrayList<Object> comments = new ArrayList<Object>();
         ListViewAdapter adapter = new ListViewAdapter(getApplicationContext(), comments);
         commentListView.setAdapter(adapter);
 
-        RatingBar ratingBar = (RatingBar) findViewById(R.id.article_rating_bar);
 
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             public void onRatingChanged(RatingBar ratingBar, float rating,
