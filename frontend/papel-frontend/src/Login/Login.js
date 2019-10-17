@@ -1,6 +1,5 @@
 import React from 'react';
-import './style/bootstrap/css/bootstrap.min.css';
-import './style/Login.css';
+import './Login.css';
 import $ from 'jquery';
 
 class Login extends React.Component {
@@ -27,7 +26,7 @@ class Login extends React.Component {
     const status = await response.status;
     if (status == 200) console.log(response.json())
     else console.log(status);*/
-    $.post("http://localhost:3000/auth/login", this.state, function(resp, data) {
+    $.post("https://papel-dev.herokuapp.com/auth/login", this.state, function(resp, data) {
       console.log(resp);
       if (resp == 200) console.log(data);
     });

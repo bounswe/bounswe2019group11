@@ -41,18 +41,37 @@ const userSchema = new mongoose.Schema({
     },
     idNumber: {
         type: String,
+        validate: {
+            validator: authHelper.validateIdNumber,
+            message: () => 'InvalidIdNumber',
+        }
     },
     iban: {
         type: String,
+        validate: {
+            validator: authHelper.validateIban,
+            message: () => 'InvalidIban',
+        }
     },
     role: {
         type: String,
+        enum: [authHelper.ROLES.BASIC, authHelper.ROLES.TRADER, authHelper.ROLES.ADMIN],
         default: authHelper.ROLES.BASIC,
     },
     isVerified: {
         type: Boolean,
         default: false,
-    }
+    },
+    location: {
+        latitude: {
+            type: Number,
+            required: 'InvalidLatitude',
+        },
+        longitude: {
+            type: Number,
+            required: 'InvalidLongitude',
+        },
+    },
 });
 
 userSchema.pre('save', async function (next) {

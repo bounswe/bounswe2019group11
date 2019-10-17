@@ -1,5 +1,4 @@
 import React from 'react';
-import './style/bootstrap/css/bootstrap.min.css';
 import {useParams} from 'react-router-dom';
 
 function TradingEquipment() {
