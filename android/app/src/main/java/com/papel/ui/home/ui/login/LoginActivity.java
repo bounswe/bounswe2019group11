@@ -93,6 +93,7 @@ public class LoginActivity extends AppCompatActivity {
                     changeScreen.setText(getString(R.string.changeLogin));
                     sendReq.setText(getString(R.string.signUp_button));
                     isLogin = false;
+
                 } else {
                     // Click on "change to sign in" button.
 
@@ -156,7 +157,6 @@ public class LoginActivity extends AppCompatActivity {
                     };
 
                     queue.add(request);
-
                     signUpDialog();
                     nameInput.setVisibility(View.INVISIBLE);
                     surnameInput.setVisibility(View.INVISIBLE);
