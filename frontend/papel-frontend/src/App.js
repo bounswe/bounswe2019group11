@@ -1,13 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import logo from './logo.svg';
-import './style/App.css';
-import Home from './Home';
-import Login from './Login';
-import Register from './Register';
-import Profile from './Profile';
-import Popup from './Popup';
-import TradingEquipment from './TradingEquipment';
+import './bootstrap/css/bootstrap.min.css';
+import './App.css';
+import Home from './Home/Home';
+import Login from './Login/Login';
+import Register from './Register/Register';
+import Profile from './Profile/Profile';
+import TradingEquipment from './Trading/TradingEquipment';
+import Article from './Article/Article';
+import Validation from './Register/Validation';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 
 class App extends React.Component {
@@ -31,13 +33,17 @@ class App extends React.Component {
           <li><Link to="/register">Register</Link></li>
           <li><Link to="/profile">Profile</Link></li>
         </ul>
-        <Switch>
-          <Route exact path="/"><Home /></Route>
-          <Route path="/login"><Login /></Route>
-          <Route path="/register"><Register /></Route>
-          <Route path="/profile"><Profile /></Route>
-          <Route path="/currency/:id"><TradingEquipment /></Route>
-        </Switch>
+        <div className="container">
+          <Switch>
+            <Route exact path="/"><Home /></Route>
+            <Route path="/login"><Login /></Route>
+            <Route path="/register"><Register /></Route>
+            <Route path="/profile"><Profile /></Route>
+            <Route path="/currency/:id"><TradingEquipment /></Route>
+            <Route path="/article/:id"><Article /></Route>
+            <Route path="/validation"><Validation /></Route>
+          </Switch>
+        </div>
       </Router>
     );
   }

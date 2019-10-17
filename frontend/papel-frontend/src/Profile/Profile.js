@@ -1,5 +1,5 @@
 import React from 'react';
-import './style/Profile.css';
+import './Profile.css';
 import ProfileCard from './ProfileCard'
 import logo from "./logo.jpg"
 

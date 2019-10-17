@@ -1,0 +1,16 @@
+* {
+  box-sizing: border-box;
+}
+
+#content {
+  width: 480px;
+  margin: 0 auto;
+}
+
+.editor {
+  border: 1px solid grey;
+  padding: 6px;
+}
+.DraftEditor-root {
+  width: 100%;
+}

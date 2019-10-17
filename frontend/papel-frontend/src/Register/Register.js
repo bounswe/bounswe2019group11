@@ -1,5 +1,5 @@
 import React from 'react';
-import './style/Register.css';
+import './Register.css';
 import $ from 'jquery';
 
 class Register extends React.Component {
@@ -21,6 +21,7 @@ class Register extends React.Component {
     var geocoder = new window.google.maps.Geocoder;
 
     window.google.maps.event.addListener(map, 'click', function (event) {
+      if(self.state.marker !== null) self.state.marker.setMap(null);
       self.state.marker = new window.google.maps.Marker({
         position: event.latLng,
         map: map
@@ -30,7 +31,7 @@ class Register extends React.Component {
       geocoder.geocode({'location': event.latLng}, (results, status) => {
         if (status === 'OK') {
           if (results[0]) {
-            self.setState({user: {location: results[0].formatted_address}});
+            self.setState({location: results[0].formatted_address});
           }
           else
             console.log('No results');
@@ -79,7 +80,7 @@ class Register extends React.Component {
         idNumber: this.state.id,
         iban: this.state.iban
       };
-      $.post("http://localhost:3000/auth/sign-up", user, (resp, data) => {
+      $.post("https://papel-dev.herokuapp.com/auth/sign-up", user, (resp, data) => {
         console.log(resp);
         if (resp == 200) console.log(data);
       });
