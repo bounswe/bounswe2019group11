@@ -1,6 +1,20 @@
 const mongoose = require ('mongoose')
-const TradingEquipment = require('./tradingEquipment')
-const StockEquipment = TradingEquipment.discriminator('StockEquipment',new mongoose.Schema({
+const stockSchema = new mongoose.Schema({
+    name:{
+        type: String,
+        required:true
+    },
+    price:{
+        type: Number,
+        required: true
+    },
+
+    monthlyPrice:{
+        type: {}
+    },
+    dailyPrice: {
+        type: {}
+    },
     stockSymbol:{
         type:String
     },
@@ -8,6 +22,9 @@ const StockEquipment = TradingEquipment.discriminator('StockEquipment',new mongo
         type:String
     }
 
-}))
+});
 
-module.exports = mongoose.model('StockEquipment');
+
+const Stock = mongoose.model('Stock', stockSchema);
+
+module.exports = Stock;

@@ -1,6 +1,5 @@
 const mongoose  = require('mongoose');
 
-var options = {discriminatorKey: 'kind'};
 const tradingEquipmentSchema = new mongoose.Schema({
     name:{
         type: String,
@@ -18,7 +17,7 @@ const tradingEquipmentSchema = new mongoose.Schema({
         type: Object
     }
 
-},options);
+});
 
 const TradingEquipment = mongoose.model('TradingEquipment', tradingEquipmentSchema);
 
