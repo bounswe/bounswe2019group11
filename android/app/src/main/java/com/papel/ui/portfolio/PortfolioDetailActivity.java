@@ -40,6 +40,8 @@ public class PortfolioDetailActivity extends AppCompatActivity {
     private ArrayList<TradingEquipment> tradingEquipmentOptions = new ArrayList<>();
     private ArrayList<TradingEquipment> tempTradingEquipment = new ArrayList<>();
 
+    private FloatingActionButton addTradingEquipment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +61,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         }
 
         ListView tradingEquipmentListView = findViewById(R.id.trading_equipment_list);
-        FloatingActionButton addTradingEquipment = findViewById(R.id.add_trading_equipment);
+        addTradingEquipment = findViewById(R.id.add_trading_equipment);
 
         TradingEquipment tradingEquipment1 = new TradingEquipment("5da7d2596a8ed138c5e20b11","iShares J.P. Morgan USD Emerging Markets Bond ETF",113.02,"EMB");
         TradingEquipment tradingEquipment2 = new TradingEquipment("5da7d25a6a8ed138c5e20b13","Emclaire Financial Corp - Common Stock",30.77,"EMCF");
@@ -85,6 +87,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         addTradingEquipment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                addTradingEquipment.setClickable(false);
                 fetchTradingEquipments();
             }
         });
@@ -140,18 +143,6 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                     for(int j = 0; j<tempTradingEquipment.size(); j++) {
                         TradingEquipment c = tempTradingEquipment.get(j);
                         Log.d("Dialog", "after remove temp " + c.getSymbol());
-                        /*if (selected.getId().equals(c.getId())) {
-                            Log.d("Dialog","Same id");
-                        }
-                        if (selected.getName().equals(c.getName())) {
-                            Log.d("Dialog","Same name");
-                        }
-                        if (selected.getPrice() == c.getPrice()) {
-                            Log.d("Dialog","Same price");
-                        }
-                        if (selected.getSymbol().equals(c.getSymbol())) {
-                            Log.d("Dialog","Same symbol");
-                        } */
                     }
                 }
             }
@@ -204,6 +195,8 @@ public class PortfolioDetailActivity extends AppCompatActivity {
 
                     progressBar.setVisibility(View.INVISIBLE);
                     showListDialog();
+                    addTradingEquipment.setClickable(true);
+
                 } catch (JSONException exp) {
                     exp.printStackTrace();
                 }
