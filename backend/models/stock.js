@@ -1,5 +1,5 @@
+const mongoose = require ('mongoose')
 const TradingEquipment = require('./tradingEquipment')
-
 const StockEquipment = TradingEquipment.discriminator('StockEquipment',new mongoose.Schema({
     stockSymbol:{
         type:String
@@ -10,4 +10,4 @@ const StockEquipment = TradingEquipment.discriminator('StockEquipment',new mongo
 
 }))
 
-module.exports = mongoose.model('StockEquipment',StockEquipment)
+module.exports = mongoose.model('StockEquipment');

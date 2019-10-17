@@ -6,19 +6,16 @@ const tradingEquipmentSchema = new mongoose.Schema({
         type: String,
         required:true
     },
-    sellPrice:{
+    price:{
         type: Number,
         required: true
     },
-    buyPrice:{
-        type: Number,
-        required: true
-    },
+
     monthlyPrice:{
-        type: Array,
+        type: Object
     },
     dailyPrice: {
-        type: Array
+        type: Object
     }
 
 },options);
