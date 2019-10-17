@@ -34,7 +34,7 @@ module.exports.isUserExists = async (email) => {
     return count !== 0;
 };
 
-module.exports.signUp = async (name, surname, email, password, idNumber, iban) => {
+module.exports.signUp = async (name, surname, email, password, idNumber, iban, location) => {
     let role;
     if (authHelper.validateIdNumber(idNumber) && authHelper.validateIban(iban)) {
         role = authHelper.ROLES.TRADER;
@@ -42,7 +42,7 @@ module.exports.signUp = async (name, surname, email, password, idNumber, iban) =
         role = authHelper.ROLES.BASIC;
     }
     const user = await User.create({
-        name, surname, email, password, idNumber, iban, role,
+        name, surname, email, password, idNumber, iban, role, location
     });
     const verificationToken = await user.generateVerificationToken();
     await sendVerificationEmail(user, verificationToken.token);
@@ -73,6 +73,9 @@ module.exports.login = async (email, password) => {
     const isPasswordMatched = await bcrypt.compare(password, user.password);
     if (!isPasswordMatched) {
         throw errors.INVALID_CREDENTIALS();
+    }
+    if (!user.isVerified) {
+        throw errors.USER_NOT_VERIFIED();
     }
     delete user.password;
     const token = generateJwtToken(user._id);
