@@ -48,7 +48,7 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
 
         TextView name = view.findViewById(R.id.trading_equipment_name);
 
-        name.setText(item.getName());
+        name.setText(item.getSymbol());
 
         return view;
     }
