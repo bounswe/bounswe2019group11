@@ -26,7 +26,7 @@ public class ArticlesFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_articles, container, false);
         final ListView articleListView = root.findViewById(R.id.article_list);
         final FloatingActionButton addArticleButton = root.findViewById(R.id.addArticleButton);
-        ArrayList<Article> articles = new ArrayList<Article>();
+        ArrayList<Object> articles = new ArrayList<Object>();
         ListViewAdapter adapter = new ListViewAdapter(getActivity().getApplicationContext(), articles);
         articleListView.setAdapter(adapter);
 
