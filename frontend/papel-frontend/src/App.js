@@ -1,13 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import logo from './logo.svg';
-import './style/App.css';
-import Home from './Home';
-import Login from './Login';
-import Register from './Register';
-import Profile from './Profile';
-import Popup from './Popup';
-import asyncComponent from './asyncComponent';
+import './bootstrap/css/bootstrap.min.css';
+import './App.css';
+import Home from './Home/Home';
+import Login from './Login/Login';
+import Register from './Register/Register';
+import Profile from './Profile/Profile';
+import TradingEquipment from './Trading/TradingEquipment';
+import Article from './Article/Article';
+import Validation from './Register/Validation';
+import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 
 class App extends React.Component {
   constructor(props) {
@@ -21,39 +24,27 @@ class App extends React.Component {
     });
   }
 */
-  menuItemOnClick(event) {
-    const container = document.getElementById('container');
-
-    switch (event.target.innerHTML) {
-      case 'Home':
-        ReactDOM.render(<Home />, container);
-        break;
-      case 'Login':
-          ReactDOM.render(<Login />, container);
-          break;
-      case 'Register':
-        ReactDOM.render(<Register />, container);
-        break;
-
-      case 'Profile':
-        ReactDOM.render(<Profile />, container);
-        break;
-    }
-  }
   render() {
     return (
-
-    <div>
-
-
-    <ul id="menu">
-      <li onClick={this.menuItemOnClick}><strong>HOME</strong></li>
-      <li onClick={this.menuItemOnClick}><strong>Login</strong></li>
-      <li onClick={this.menuItemOnClick}><strong>Register</strong></li>
-      <li onClick={this.menuItemOnClick}><strong>Profile</strong></li>
-    </ul>
-    <div id="container"><Register /></div>
-  </div>
+      <Router>
+        <ul id="menu">
+          <li><Link to="/">HOME</Link></li>
+          <li><Link to="/login">Login</Link></li>
+          <li><Link to="/register">Register</Link></li>
+          <li><Link to="/profile">Profile</Link></li>
+        </ul>
+        <div className="container">
+          <Switch>
+            <Route exact path="/"><Home /></Route>
+            <Route path="/login"><Login /></Route>
+            <Route path="/register"><Register /></Route>
+            <Route path="/profile"><Profile /></Route>
+            <Route path="/currency/:id"><TradingEquipment /></Route>
+            <Route path="/article/:id"><Article /></Route>
+            <Route path="/validation"><Validation /></Route>
+          </Switch>
+        </div>
+      </Router>
     );
   }
 }
