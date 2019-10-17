@@ -41,9 +41,17 @@ const userSchema = new mongoose.Schema({
     },
     idNumber: {
         type: String,
+        validate: {
+            validator: authHelper.validateIdNumber,
+            message: () => 'InvalidIdNumber',
+        }
     },
     iban: {
         type: String,
+        validate: {
+            validator: authHelper.validateIban,
+            message: () => 'InvalidIban',
+        }
     },
     role: {
         type: String,

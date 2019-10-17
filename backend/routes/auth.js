@@ -37,6 +37,12 @@ router.post('/sign-up', async (req, res) => {
                     case 'InvalidLongitude':
                         causes.push(errors.INVALID_LONGITUDE());
                         break;
+                    case 'InvalidIdNumber':
+                        causes.push(errors.INVALID_ID_NUMBER());
+                        break;
+                    case 'InvalidIban':
+                        causes.push(errors.INVALID_IBAN());
+                        break;
                     default:
                         causes.push(errors.UNKNOWN_VALIDATION_ERROR(err.errors[field]));
                 }
