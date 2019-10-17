@@ -21,6 +21,10 @@ public class ChartTimeValueFormatter extends ValueFormatter {
 
     @Override
     public String getAxisLabel(float value, AxisBase axis) {
+        int index = (int) value;
+        if(index >= dates.size()) {
+            return "";
+        }
         Calendar current = dates.get((int) value);
         if (this.chartType == Constants.DAILY_CHART) {
             int h = current.get(Calendar.HOUR_OF_DAY);

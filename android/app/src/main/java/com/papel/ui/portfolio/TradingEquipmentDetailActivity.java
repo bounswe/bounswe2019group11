@@ -40,8 +40,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Locale;
 
 public class TradingEquipmentDetailActivity extends AppCompatActivity {
@@ -130,14 +132,23 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                     JSONObject daily = responseJSON.getJSONObject("dailyPrice");
                     JSONObject monthly = responseJSON.getJSONObject("monthlyPrice");
 
-                    Iterator<String> dailyKeys = daily.keys();
-                    Iterator<String> monthlyKeys = monthly.keys();
+                    Iterator<String> dailyKeysIterator = daily.keys();
+                    Iterator<String> monthlyKeysIterator = monthly.keys();
+
+                    ArrayList<String> dailyKeys = new ArrayList<>();
+                    while (dailyKeysIterator.hasNext()) {
+                        dailyKeys.add(dailyKeysIterator.next());
+                    }
+                    ArrayList<String> monthlyKeys = new ArrayList<>();
+                    while (monthlyKeysIterator.hasNext()) {
+                        monthlyKeys.add(monthlyKeysIterator.next());
+                    }
 
                     int dailyIndex = 0;
                     int monthlyIndex = 0;
 
-                    while (dailyKeys.hasNext()) {
-                        String key = dailyKeys.next();
+                    for(int i = dailyKeys.size() - 1; i>=0;i--) {
+                        String key = dailyKeys.get(i);
                         Log.d("Response", "Daily key: " + key);
                         JSONObject object = daily.getJSONObject(key);
 
@@ -159,8 +170,8 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                         }
                     }
 
-                    while (monthlyKeys.hasNext()) {
-                        String key = monthlyKeys.next();
+                    for (int i = monthlyKeys.size() - 1; i>=0;i--) {
+                        String key = monthlyKeys.get(i);
                         Log.d("Response", "Monthly key: " + key);
                         JSONObject object = monthly.getJSONObject(key);
 
@@ -223,6 +234,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             set = new CandleDataSet(monthlyPoints, "DataSet 1");
             xAxis.setValueFormatter(new ChartTimeValueFormatter(monthlyDates, chartType));
         }
+
         set.setDecreasingColor(getResources().getColor(R.color.chart_red));
         set.setDecreasingPaintStyle(Paint.Style.FILL);
         set.setIncreasingColor(getResources().getColor(R.color.chart_green));
