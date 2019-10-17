@@ -5,16 +5,12 @@ const errors = require('../helpers/errors');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-    try {
-        const {email, password} = req.body;
-        const response = await authService.login(email, password);
-        res.status(200).send(response);
-    } catch (err) {
-        if (err.name === 'InvalidCredentials' || err.name === 'UserNotVerified') {
-            res.status(401).send(err);
-        } else {
-            res.status(500).send(errors.INTERNAL_ERROR(err));
-        }
+    try{
+        const response = await articleService.getAll();
+        res.status(200).json(response);
+
+    }catch (e) {
+        res.status(503)
     }
 });
 
@@ -26,6 +22,17 @@ router.get('/:id',async (req,res)=>{
     }catch (e) {
         res.status(503)
     }
+});
+
+router.post('/',async (req,res) => {
+    try{
+        const newArticle = {...req.body};
+        const response = await articleService.create(newArticle);
+        res.status(200).json(response);
+    }catch (e) {
+        res.status(503).json(e)
+    }
+
 });
 
 module.exports = router;
