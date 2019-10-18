@@ -58,4 +58,7 @@ module.exports = {
     INVALID_IBAN: (cause) => {
         return PapelError('InvalidIban', 'Invalid IBAN.', cause);
     },
+    STOCK_NOT_FOUND: (cause) => {
+        return PapelError('StockNotFound', 'Stock not found.', cause);
+    },
 };

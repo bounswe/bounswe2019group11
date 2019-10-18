@@ -10,9 +10,7 @@ const portfolioSchema = new mongoose.Schema({
         required: true,
         ref: 'User'
     },
-    stocks:{
-        type: [Stock]
-    }
+    stocks: [{type: mongoose.Schema.Types.ObjectId,ref:'Stock'}]
 
 });
 
