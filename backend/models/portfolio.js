@@ -11,7 +11,6 @@ const portfolioSchema = new mongoose.Schema({
         ref: 'User'
     },
     stocks: [{type: mongoose.Schema.Types.ObjectId,ref:'Stock',autopopulate: true}]
-
 });
 portfolioSchema.plugin(require('mongoose-autopopulate'));
 
