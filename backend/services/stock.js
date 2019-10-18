@@ -6,6 +6,7 @@ const apiKeys = process.env.ALPHAVANTAGE_API_KEY;
 const apiKeyArr = apiKeys.split(',');
 const getRandomInt = (max) => {
     return Math.floor(Math.random() * Math.floor(max));
+<<<<<<< HEAD
 };
 
 
@@ -14,6 +15,16 @@ const getDailyPrice = async (symbol) => {
     const apiKey = apiKeyArr[rand];
     console.log(apiKey + " daily");
     const dailyParams = {function: "TIME_SERIES_INTRADAY", symbol: symbol, interval: "5min", apikey: apiKey};
+=======
+}
+
+
+const getDailyPrice = async (symbol) => {
+    const rand = getRandomInt(apiKeyArr.length)
+    const apiKey = apiKeyArr[rand];
+    console.log(apiKey + " daily" )
+    const dailyParams ={function: "TIME_SERIES_INTRADAY",symbol:symbol,interval:"5min",apikey:apiKey};
+>>>>>>> Portfolio model added
     const options = {
         uri: apiUrl,
         qs: dailyParams
@@ -27,6 +38,7 @@ const getDailyPrice = async (symbol) => {
     }
 
 };
+
 
 
 const getMonthlyPrice = async (symbol) => {
