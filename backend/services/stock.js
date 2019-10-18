@@ -2,9 +2,17 @@ const request = require('request-promise');
 const Stock = require ('../models/stock');
 const errors = require('../helpers/errors');
 const apiUrl = process.env.ALPHAVANTAGE_URL;
-const apiKey = process.env.ALPHAVANTAGE_API_KEY;
+const apiKeys = process.env.ALPHAVANTAGE_API_KEY;
+const apiKeyArr = apiKeys.split(',');
+const getRandomInt = (max) => {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
 
 const getDailyPrice = async (symbol) => {
+    const rand = getRandomInt(apiKeyArr.length)
+    const apiKey = apiKeyArr[rand];
+    console.log(apiKey + " daily" )
     const dailyParams ={function: "TIME_SERIES_INTRADAY",symbol:symbol,interval:"5min",apikey:apiKey};
     const options = {
         uri:apiUrl,
@@ -20,7 +28,11 @@ const getDailyPrice = async (symbol) => {
 
 }
 
+
 const getMonthlyPrice = async (symbol) => {
+    const rand = getRandomInt(apiKeyArr.length)
+    const apiKey = apiKeyArr[rand];
+    console.log(apiKey + " monthly")
     const dailyParams ={function: "TIME_SERIES_DAILY",symbol:symbol,apikey:apiKey};
     const options = {
         uri:apiUrl,
