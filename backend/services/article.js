@@ -11,7 +11,7 @@ module.exports.getByID = async (articleID) => {
 };
 
 module.exports.getByUserID = async (userID) => {
-    return await Article.findOne({
+    return await Article.find({
         authorID: userID,
     });
 };
