@@ -22,7 +22,11 @@
     },
     {
       "name": "portfolio",
-      "description": "Portfolio create-fetch-update endpoints"
+      "description": "Portfolio create-fetch-update endpoints",
+    },
+    {
+      "name": "event",
+      "description": "Event fetch endpoints"
     }
   ],
   "schemes": [
@@ -192,6 +196,7 @@
           }
         }
       }
+<<<<<<< HEAD
     },
     "/stock": {
       "get": {
@@ -322,10 +327,74 @@
                   "type": "string",
                   "description": "User ID of the portfolio",
                   "example": "5da076d955d9b93a7308f3d7"
+=======
+    },"/event": {
+      "get": {
+        "tags": [
+          "event" ],
+          "summary": "Event get all endpoint.",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+  
+          "responses": {
+            "200":{
+              "description": "OK. All Events returned succesfully.",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties":  {
+                    "title":{
+                      "type": "string",
+                      "description": "Title of the event",
+                      "example": "title"
+                    },
+                    "body":{
+                      "type": "string",
+                      "description": "Event body",
+                      "example": "272.7 example"
+                    },
+                    "comment":{
+                      "type": "array",
+                      "description": "Comments of the event",
+                      "example": ["comment2","comment2"]
+                    },
+                    "date":{
+                      "type": "string",
+                      "description": "Start day of the event",
+                      "example": "11/12/2013"
+                    },
+                    "authorId":{
+                      "type": "string",
+                      "description": "Name of the author",
+                      "example": "Cumhur Kılıç"
+                    },
+                    "rank":{
+                      "type": "number",
+                      "description": "Rank of the event",
+                      "example": 4
+                    },
+                    "voterNumber":{
+                      "type": "number",
+                      "description": "Number of voter for event",
+                      "example": 156
+                    },
+                    "country":{
+                      "type": "string",
+                      "description": "Country of the event",
+                      "example": "Turkey"
+                    }
+                  }
+>>>>>>> Add files via upload
                 }
               }
             }
           }
+<<<<<<< HEAD
         ],
         "responses": {
           "200": {
@@ -743,6 +812,84 @@
         }
       }
 
+=======
+        }
+      },
+      "/event/{_id}": {
+        "get": {
+          "tags": [
+            "event"
+          ],
+          "summary": "Returns requested event with historical data",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "_id",
+              "in": "path",
+              "description": "Unique event ID",
+              "required": true,
+              "type": "string"
+            }
+          ],
+  
+          "responses": {
+            "200":{
+              "description": "OK. Event returned succesfully.",
+              "schema": {
+                "type": "object",
+                "properties":  {
+                  "title":{
+                    "type": "string",
+                    "description": "Title of the event",
+                    "example": "title"
+                  },
+                  "body":{
+                    "type": "string",
+                    "description": "Event body",
+                    "example": "272.7 example"
+                  },
+                  "comment":{
+                    "type": "array",
+                    "description": "Comments of the event",
+                    "example": ["comment2","comment2"]
+                  },
+                  "date":{
+                    "type": "string",
+                    "description": "Start day of the event",
+                    "example": "11/12/2013"
+                  },
+                  "authorId":{
+                    "type": "string",
+                    "description": "Name of the author",
+                    "example": "Cumhur Kılıç"
+                  },
+                  "rank":{
+                    "type": "number",
+                    "description": "Rank of the event",
+                    "example": 4
+                  },
+                  "voterNumber":{
+                    "type": "number",
+                    "description": "Number of voter for event",
+                    "example": 156
+                  },
+                  "country":{
+                    "type": "string",
+                    "description": "Country of the event",
+                    "example": "Turkey"
+                  }
+                }
+  
+              }
+            }
+          }
+        }
+      }
+>>>>>>> Add files via upload
     }
   }
-}
