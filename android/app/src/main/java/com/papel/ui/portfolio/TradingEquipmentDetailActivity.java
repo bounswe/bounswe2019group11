@@ -32,6 +32,7 @@ import com.github.mikephil.charting.data.CandleEntry;
 import com.papel.Constants;
 import com.papel.R;
 import com.papel.data.TradingEquipment;
+import com.papel.ui.utils.DialogHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -207,7 +208,8 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("Error", "Status code: " + error.networkResponse.statusCode);
+                DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this,"Error","We couldn't get detail of the trading equipment.Please try again.");
+                progressBar.setVisibility(View.INVISIBLE);
             }
         });
 

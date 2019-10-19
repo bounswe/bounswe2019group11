@@ -34,6 +34,7 @@ import com.papel.Constants;
 import com.papel.R;
 import com.papel.data.Portfolio;
 import com.papel.data.TradingEquipment;
+import com.papel.ui.utils.DialogHelper;
 import com.papel.ui.utils.ResponseParser;
 
 import org.json.JSONArray;
@@ -99,7 +100,7 @@ public class PortfolioFragment extends Fragment {
         return root;
     }
 
-    private void fetchUserPortfolios(Context context) {
+    private void fetchUserPortfolios(final Context context) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url = Constants.LOCALHOST + Constants.PORTFOLIO_USER + Constants.TEST_USER_ID;
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
@@ -125,7 +126,9 @@ public class PortfolioFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                // TODO Show error
+                DialogHelper.showBasicDialog(context,"Error","We couldn't get your portfolios.Please try again.");
+                progressBar.setVisibility(View.INVISIBLE);
+                addPortfolio.setVisibility(View.VISIBLE);
             }
         });
 
@@ -193,7 +196,7 @@ public class PortfolioFragment extends Fragment {
 
     }
 
-    private void createPortfolio(Context context,String portfolioName) {
+    private void createPortfolio(final Context context, String portfolioName) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         final JSONObject jsonBody = new JSONObject();
         try {
@@ -223,7 +226,9 @@ public class PortfolioFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                // TODO Show error
+                DialogHelper.showBasicDialog(context,"Error","We couldn't create a portfolio.Please try again.");
+                progressBar.setVisibility(View.INVISIBLE);
+                addPortfolio.setClickable(true);
             }
         }){
             @Override

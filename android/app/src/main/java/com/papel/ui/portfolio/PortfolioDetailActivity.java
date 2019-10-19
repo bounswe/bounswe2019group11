@@ -31,6 +31,7 @@ import com.papel.R;
 import com.papel.data.Portfolio;
 import com.papel.data.TradingEquipment;
 import com.papel.ui.utils.CustomHurlStack;
+import com.papel.ui.utils.DialogHelper;
 import com.papel.ui.utils.ResponseParser;
 
 import org.json.JSONArray;
@@ -239,7 +240,11 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                // TODO handle error
+                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't add trading equipment to your porfolio.Please try again.");
+                requestNumber -= 1;
+                if (requestNumber == 0) {
+                    showUI();
+                }
             }
         }){
             @Override
@@ -290,12 +295,16 @@ public class PortfolioDetailActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("Delete","Error");
-                // TODO handle error
                 NetworkResponse networkResponse = error.networkResponse;
                 if (networkResponse != null) {
                     Log.d("Network response","statusCode: " + networkResponse.statusCode);
                     String errorData = new String(networkResponse.data);
                     Log.d("Network response","data: " + errorData);
+                }
+                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't delete trading equipment from your porfolio.Please try again.");
+                requestNumber -= 1;
+                if (requestNumber == 0) {
+                    showUI();
                 }
             }
         }){
@@ -353,7 +362,8 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't get detail of your porfolio.Please try again.");
+                showUI();
             }
         });
         requestQueue.add(request);
@@ -393,7 +403,9 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't get trading equipments.Please try again.");
+                progressBar.setVisibility(View.INVISIBLE);
+                addTradingEquipmentButton.setClickable(true);
             }
         });
 
