@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -27,6 +28,7 @@ import com.android.volley.toolbox.Volley;
 import com.papel.Constants;
 import com.papel.MainActivity;
 import com.papel.R;
+import com.papel.data.User;
 import com.papel.ui.utils.DialogHelper;
 
 import org.json.JSONArray;
@@ -48,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button changeScreen;
     private Button sendReq;
     private ProgressBar progressBar;
+    private User user;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,8 +80,6 @@ public class LoginActivity extends AppCompatActivity {
                }
             }
         });
-
-        final Intent intent = new Intent(this, MainActivity.class);
 
         changeScreen.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -244,6 +245,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         DialogHelper.showBasicDialog(LoginActivity.this, "Error",message);
                     } catch (JSONException e) {
+                        // TODO handle error
                         e.printStackTrace();
                     }
                 }
@@ -278,7 +280,30 @@ public class LoginActivity extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                
+                try {
+                    JSONObject responseObject = new JSONObject(response);
+                    String token = responseObject.getString("token");
+                    JSONObject userObject = responseObject.getJSONObject("user");
+                    JSONObject location = userObject.getJSONObject("location");
+                    double latitude = location.getDouble("latitude");
+                    double longitude = location.getDouble("longitude");
+                    String role = userObject.getString("role");
+                    String id = userObject.getString("_id");
+                    String name = userObject.getString("name");
+                    String surname = userObject.getString("surname");
+                    String email = userObject.getString("email");
+                    String idNumber = userObject.getString("idNumber");
+                    String iban = userObject.getString("iban");
+
+                    user = new User(token,latitude,longitude,role,id,name,surname,email,idNumber,iban);
+
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("User",user);
+                    startActivity(intent);
+                } catch (JSONException e) {
+                    // TODO handle error
+                    e.printStackTrace();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
