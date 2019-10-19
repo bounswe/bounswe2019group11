@@ -84,3 +84,18 @@ module.exports.login = async (email, password) => {
         user,
     };
 };
+
+module.exports.resendVerificationMail = async (email) => {
+    const user = await User.findOne({email}).exec();
+    if (!user) {
+        throw errors.USER_NOT_FOUND();
+    }
+    if (user.isVerified) {
+        throw errors.USER_ALREADY_VERIFIED();
+    }
+    let verificationToken = VerificationToken.findOne({ _userId: user._id });
+    if (!verificationToken) {
+        verificationToken = await user.generateVerificationToken();
+    }
+    await sendVerificationEmail(user, verificationToken.token);
+};
