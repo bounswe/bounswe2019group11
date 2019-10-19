@@ -19,6 +19,10 @@
     {
       "name": "profile",
       "description": "Profile related endpoints"
+    },
+    {
+      "name": "portfolio",
+      "description": "Portfolio create-fetch-update endpoints"
     }
   ],
   "schemes": [

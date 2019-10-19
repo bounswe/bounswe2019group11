@@ -2,21 +2,17 @@ const Portfolio = require('../models/portfolio');
 const errors = require('../helpers/errors');
 module.exports.getAll = async () => {
     return Portfolio.find()
-        .populate('stocks')
-        .exec();
 }
 
 module.exports.getById = async (portfolioID) => {
     return await  Portfolio.findOne({
         _id: portfolioID
     })
-    .populate('stocks')
-    .exec();
 
 }
 
 module.exports.getByUserId = async (userID) =>{
-    return await find({
+    return await Portfolio.find({
         userId: userID
     })
 }
@@ -42,9 +38,8 @@ module.exports.removeStock = async (theStock,portfolioID) => {
     const stockToBeDeleted= {...theStock};
     const portfolioToBeModified = await Portfolio.findOne({
         _id: portfolioID
-    })
-        .populate('stocks')
-        .exec();
+    });
+
     const index = portfolioToBeModified.stocks.findIndex(s => s._id == stockToBeDeleted._id);
     if(index == -1){
         throw errors.STOCK_NOT_FOUND();
