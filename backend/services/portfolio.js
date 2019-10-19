@@ -33,7 +33,9 @@ module.exports.addStock = async (theStock,portfolioID) => {
         _id: portfolioID
     });
     portfolioToAdd.stocks.push(stockToBeAdded);
-    return  await  portfolioToAdd.save() ;
+    await  portfolioToAdd.save();
+    return await this.getById(portfolioID);
+
 };
 
 module.exports.removeStock = async (theStock,portfolioID) => {
@@ -43,7 +45,7 @@ module.exports.removeStock = async (theStock,portfolioID) => {
     })
         .populate('stocks')
         .exec();
-    const index = portfolioToBeModified.stocks.findIndex(s => s._id == theStock._id);
+    const index = portfolioToBeModified.stocks.findIndex(s => s._id == stockToBeDeleted._id);
     if(index == -1){
         throw errors.STOCK_NOT_FOUND();
     }else{
