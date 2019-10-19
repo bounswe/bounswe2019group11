@@ -13,9 +13,9 @@ const eventSchema = new mongoose.Schema({
         type: Array,
         ref: 'Comment'
     },
-    date: {
-        type: Date,
-        required: true
+    StartDate: {
+        type: String,
+        required: true    
     },
     authorId: {
         type: String,
