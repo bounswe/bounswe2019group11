@@ -23,6 +23,7 @@ app.use('/auth', require('./routes/auth'));
 app.use('/stock',require('./routes/stock'));
 app.use('/profile', require('./routes/profile'));
 app.use('/portfolio',require('./routes/portfolio'));
+app.use('/event',require('./routes/event'));
 
 const port = process.env.PORT;
 app.listen(port, async () => {
