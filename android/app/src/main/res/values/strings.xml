@@ -6,10 +6,10 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-    <string name="login_button">Login</string>
-    <string name="changeLogin">Change to login</string>
-    <string name="changeSignup">Change to sign up</string>
-    <string name="signUp_button">Sign Up</string>
+    <string name="login_button">LOGIN</string>
+    <string name="changeLogin">CHANGE TO LOGIN</string>
+    <string name="changeSignup">CHANGE TO SIGN UP</string>
+    <string name="signUp_button">SIGN UP</string>
     <string name="menu_home">Home</string>
     <string name="menu_articles">Articles</string>
     <string name="menu_portfolio">Portfolios</string>

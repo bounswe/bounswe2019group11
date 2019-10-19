@@ -67,20 +67,21 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="248dp"
+        android:layout_marginTop="280dp"
         android:layout_marginEnd="16dp"
+        android:hint="Type your ID number"
         android:inputType="number"
-        android:visibility="invisible"
-        android:hint="Type your ID number" />
+        android:visibility="invisible" />
+
     <EditText
         android:id="@+id/ibanInput"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="292dp"
+        android:layout_marginTop="324dp"
         android:layout_marginEnd="16dp"
-        android:visibility="invisible"
-        android:hint="Type your IBAN number" />
+        android:hint="Type your IBAN number"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/sendReqButton"
@@ -89,7 +90,25 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="400dp"
         android:layout_marginEnd="16dp"
-        android:text="Sign In"
+        android:text="@string/login_button"
         android:layout_centerHorizontal="true"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="invisible"/>
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign as trader"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="248dp"
+        android:visibility="invisible"/>
 
 </RelativeLayout>
