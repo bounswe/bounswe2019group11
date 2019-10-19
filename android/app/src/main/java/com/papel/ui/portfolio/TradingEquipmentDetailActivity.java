@@ -168,6 +168,8 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                             dailyDates.add(calendar);
                         } catch (ParseException e) {
                             e.printStackTrace();
+                            DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this,"Error","We couldn't get detail of the trading equipment.Please try again.");
+                            progressBar.setVisibility(View.INVISIBLE);
                         }
                     }
 
@@ -191,6 +193,8 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                             monthlyDates.add(calendar);
                         } catch (ParseException e) {
                             e.printStackTrace();
+                            DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this,"Error","We couldn't get detail of the trading equipment.Please try again.");
+                            progressBar.setVisibility(View.INVISIBLE);
                         }
                     }
 
@@ -203,6 +207,8 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this,"Error","We couldn't get detail of the trading equipment.Please try again.");
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
             }
         }, new Response.ErrorListener() {
