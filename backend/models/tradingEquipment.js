@@ -5,15 +5,20 @@ const tradingEquipmentSchema = new mongoose.Schema({
         type: String,
         required:true
     },
-    sellPrice:{
+    price:{
         type: Number,
         required: true
     },
-    buyPrice:{
-        type: Number,
-        required: true
+
+    monthlyPrice:{
+        type: Object
+    },
+    dailyPrice: {
+        type: Object
     }
-})
+
+});
 
 const TradingEquipment = mongoose.model('TradingEquipment', tradingEquipmentSchema);
+
 module.exports = TradingEquipment;
