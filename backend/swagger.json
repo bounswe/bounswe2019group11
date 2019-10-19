@@ -268,6 +268,15 @@
         "produces": [
           "application/json"
         ],
+        "parameters": [
+          {
+            "name": "portfolioId",
+            "in": "path",
+            "description": "Portfolio ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
 
         "responses": {
           "200":{
@@ -331,7 +340,7 @@
         }
       }
     },
-    "/portfolio/{_id}": {
+    "/portfolio/{portfolioId}": {
       "get": {
         "tags": [
           "portfolio"
@@ -380,7 +389,15 @@
               "type": "object",
               "$ref": "#/definitions/Stock"
             }
+          },
+          {
+            "name": "portfolioId",
+            "in": "path",
+            "description": "Portfolio ID",
+            "required": true,
+            "type": "string"
           }
+
         ],
         "responses": {
           "200": {
@@ -415,6 +432,13 @@
               "required": ["_id"],
               "$ref": "#/definitions/Stock"
             }
+          },
+          {
+            "name": "portfolioId",
+            "in": "path",
+            "description": "Portfolio ID",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
@@ -522,6 +546,43 @@
           },
           "500": {
             "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/portfolio/user/{userId}": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Returns all portfolios of the specific user.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The portfolios sent successfully",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Portfolio"
+              }
+            }
+          },
+          "503": {
+            "description": "Internal error occurred."
           }
         }
       }
