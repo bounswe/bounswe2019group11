@@ -10,9 +10,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".ui.articles.ReadArticleActivity"></activity>
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".ui.portfolio.TradingEquipmentDetailActivity"></activity>
+        <activity android:name=".ui.portfolio.PortfolioDetailActivity" />
+        <activity android:name=".ui.articles.ReadArticleActivity" />
         <activity android:name=".ui.articles.AddArticleActivity" />
         <activity android:name=".ui.profile.ProfileActivity" />
         <activity android:name=".ui.articles.ArticlesFragment" />
