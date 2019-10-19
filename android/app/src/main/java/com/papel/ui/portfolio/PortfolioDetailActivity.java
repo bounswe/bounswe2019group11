@@ -25,6 +25,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.papel.Constants;
 import com.papel.R;
+import com.papel.data.Portfolio;
 import com.papel.data.TradingEquipment;
 
 import org.json.JSONArray;
@@ -48,8 +49,8 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_portfolio_detail);
 
         final Intent intent = getIntent();
-        String portfolioName = intent.getStringExtra("PortfolioName");
-        setTitle(portfolioName);
+        Portfolio portfolio = intent.getParcelableExtra("Portfolio");
+        setTitle(portfolio.getName());
 
         try {
             // TODO Test HERE
@@ -63,10 +64,8 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         ListView tradingEquipmentListView = findViewById(R.id.trading_equipment_list);
         addTradingEquipment = findViewById(R.id.add_trading_equipment);
 
-        TradingEquipment tradingEquipment1 = new TradingEquipment("5da7d2596a8ed138c5e20b11","iShares J.P. Morgan USD Emerging Markets Bond ETF",113.02,"EMB");
-        TradingEquipment tradingEquipment2 = new TradingEquipment("5da7d25a6a8ed138c5e20b13","Emclaire Financial Corp - Common Stock",30.77,"EMCF");
-        tradingEquipments.add(tradingEquipment1);
-        tradingEquipments.add(tradingEquipment2);
+        tradingEquipments = portfolio.getTradingEquipments();
+
 
         tradingEquipmentListViewAdapter = new TradingEquipmentListViewAdapter(getApplicationContext(), tradingEquipments);
         tradingEquipmentListView.setAdapter(tradingEquipmentListViewAdapter);

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,9 +22,22 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.papel.Constants;
 import com.papel.R;
 import com.papel.data.Portfolio;
+import com.papel.data.TradingEquipment;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -31,6 +45,8 @@ public class PortfolioFragment extends Fragment {
 
     private ArrayList<Portfolio> portfolios = new ArrayList<>();
     private PortfolioListViewAdapter portfolioListViewAdapter;
+    private FloatingActionButton addPortfolio;
+    private ProgressBar progressBar;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              final ViewGroup container, Bundle savedInstanceState) {
@@ -38,13 +54,11 @@ public class PortfolioFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_portfolio, container, false);
 
         ListView portfolioListView = root.findViewById(R.id.portfolio_list);
-        FloatingActionButton addPortfolio = root.findViewById(R.id.add_portfolio);
 
+        addPortfolio = root.findViewById(R.id.add_portfolio);
+        progressBar = root.findViewById(R.id.progressBar);
 
-        Portfolio portfolio1 = new Portfolio("First Portfolio");
-        Portfolio portfolio2 = new Portfolio("Second Portfolio");
-        portfolios.add(portfolio1);
-        portfolios.add(portfolio2);
+        fetchUserPortfolios(container.getContext());
 
         portfolioListViewAdapter = new PortfolioListViewAdapter(container.getContext(), portfolios);
         portfolioListView.setAdapter(portfolioListViewAdapter);
@@ -56,7 +70,8 @@ public class PortfolioFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d("Portfolio", i + " is clicked");
-                intent.putExtra("PortfolioName", portfolioListViewAdapter.getItem(i).getName());
+                Portfolio clicked = portfolioListViewAdapter.getItem(i);
+                intent.putExtra("Portfolio",clicked);
                 startActivity(intent);
             }
         });
@@ -81,6 +96,51 @@ public class PortfolioFragment extends Fragment {
         });
 
         return root;
+    }
+
+    private void fetchUserPortfolios(Context context) {
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = Constants.LOCALHOST + Constants.PORTFOLIO_USER + Constants.TEST_USER_ID;
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray responseArray = new JSONArray(response);
+                    for(int i = 0;i<responseArray.length(); i++) {
+                        JSONObject object = responseArray.getJSONObject(i);
+                        String portfolioId = object.getString("_id");
+                        String portfolioName = object.getString("name");
+                        JSONArray stocks = object.getJSONArray("stocks");
+                        Log.d("Portfolios","Portfolio id: " + portfolioId);
+                        ArrayList<TradingEquipment> tradingEquipments = new ArrayList<>();
+                        for (int j = 0;j<stocks.length();j++) {
+                            JSONObject stockObject = stocks.getJSONObject(j);
+                            String stockId = stockObject.getString("_id");
+                            String stockName = stockObject.getString("stockName");
+                            String stockSymbol = stockObject.getString("stockSymbol");
+                            double stockPrice = stockObject.getDouble("price");
+                            Log.d("Portfolios","Stock name: " + stockName);
+                            tradingEquipments.add(new TradingEquipment(stockId,stockName,stockPrice,stockSymbol));
+                        }
+                        portfolios.add(new Portfolio(portfolioId,portfolioName,tradingEquipments));
+                    }
+
+                    portfolioListViewAdapter.notifyDataSetChanged();
+                    progressBar.setVisibility(View.INVISIBLE);
+                    addPortfolio.setVisibility(View.VISIBLE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // TODO Show error
+            }
+        });
+
+        requestQueue.add(request);
+
     }
 
     private void showUpdateDialog(Context context, final int index) {
@@ -125,10 +185,11 @@ public class PortfolioFragment extends Fragment {
 
                 String portfolioName = nameInput.getText().toString();
                 if (portfolioName.length() > 0) {
-                    Portfolio p = new Portfolio(portfolioName);
-                    portfolios.add(p);
 
-                    portfolioListViewAdapter.notifyDataSetChanged();
+                    progressBar.setVisibility(View.VISIBLE);
+                    addPortfolio.setClickable(false);
+                    createPortfolio(context,portfolioName);
+
                 } else {
                     Toast.makeText(context, "Portfolio name cannot be empty.", Toast.LENGTH_LONG).show();
                 }
@@ -140,5 +201,64 @@ public class PortfolioFragment extends Fragment {
         AlertDialog dialog = dialogBuilder.create();
         dialog.show();
 
+    }
+
+    private void createPortfolio(Context context,String portfolioName) {
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        final JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("name", portfolioName);
+            jsonBody.put("userId", Constants.TEST_USER_ID); // TODO Change
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String url = Constants.LOCALHOST + Constants.PORTFOLIO;
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                // It returns new portfolio
+                try {
+                    JSONObject responseJSON = new JSONObject(response);
+                    String portfolioId = responseJSON.getString("_id");
+                    String portfolioName = responseJSON.getString("name");
+                    JSONArray stocks = responseJSON.getJSONArray("stocks");
+                    Log.d("Add Portfolios","Portfolio id: " + portfolioId);
+                    ArrayList<TradingEquipment> tradingEquipments = new ArrayList<>();
+                    for (int j = 0;j<stocks.length();j++) {
+                        JSONObject stockObject = stocks.getJSONObject(j);
+                        String stockId = stockObject.getString("_id");
+                        String stockName = stockObject.getString("stockName");
+                        String stockSymbol = stockObject.getString("stockSymbol");
+                        double stockPrice = stockObject.getDouble("price");
+                        Log.d("Add Portfolios","Stock name: " + stockName);
+                        tradingEquipments.add(new TradingEquipment(stockId,stockName,stockPrice,stockSymbol));
+                    }
+                    portfolios.add(new Portfolio(portfolioId,portfolioName,tradingEquipments));
+
+                    portfolioListViewAdapter.notifyDataSetChanged();
+                    progressBar.setVisibility(View.INVISIBLE);
+                    addPortfolio.setClickable(true);
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // TODO Show error
+            }
+        }){
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return jsonBody.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+
+        requestQueue.add(request);
     }
 }
