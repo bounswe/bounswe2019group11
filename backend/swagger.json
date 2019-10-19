@@ -282,7 +282,7 @@
         }
       }
     },
-    "/portfolio/{_id}": {
+    "/portfolio/{portfolioId}": {
       "get": {
         "tags": [
           "portfolio"
@@ -293,6 +293,15 @@
         ],
         "produces": [
           "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "portfolioId",
+            "in": "path",
+            "description": "Portfolio ID",
+            "required": true,
+            "type": "string"
+          }
         ],
 
         "responses": {
@@ -331,7 +340,15 @@
               "type": "object",
               "$ref": "#/definitions/Stock"
             }
+          },
+          {
+            "name": "portfolioId",
+            "in": "path",
+            "description": "Portfolio ID",
+            "required": true,
+            "type": "string"
           }
+
         ],
         "responses": {
           "200": {
@@ -366,6 +383,13 @@
               "required": ["_id"],
               "$ref": "#/definitions/Stock"
             }
+          },
+          {
+            "name": "portfolioId",
+            "in": "path",
+            "description": "Portfolio ID",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
@@ -373,6 +397,43 @@
             "description": "OK. The portfolio deleted successfully, Actually it should be No Content but for updating the portfolio immediately the endpoint sends the updated portfolio ",
             "schema": {
               "$ref": "#/definitions/Portfolio"
+            }
+          },
+          "503": {
+            "description": "Internal error occurred."
+          }
+        }
+      }
+    },
+    "/portfolio/user/{userId}": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Returns all portfolios of the specific user.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The portfolios sent successfully",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Portfolio"
+              }
             }
           },
           "503": {
