@@ -58,8 +58,12 @@ public class MainActivity extends AppCompatActivity {
         View header = navigationView.getHeaderView(0);
 
         MaterialCardView imageCard = header.findViewById(R.id.profileImageCard);
-        TextView username = header.findViewById(R.id.username);
-        TextView usermail = header.findViewById(R.id.title);
+        TextView userName = header.findViewById(R.id.username);
+        TextView userEmail = header.findViewById(R.id.title);
+
+        String userFullName = user.getName() + " " + user.getSurname();
+        userName.setText(userFullName);
+        userEmail.setText(user.getEmail());
 
         imageCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        username.setOnClickListener(new View.OnClickListener() {
+        userName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 intent.putExtra("otherProfile",true);
@@ -77,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        usermail.setOnClickListener(new View.OnClickListener() {
+        userEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 intent.putExtra("otherProfile",true);

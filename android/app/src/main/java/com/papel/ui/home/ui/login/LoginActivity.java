@@ -102,6 +102,7 @@ public class LoginActivity extends AppCompatActivity {
         sendReq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("Send Request","Clicked");
                 sendReq.setClickable(false);
                 progressBar.setVisibility(View.VISIBLE);
 
@@ -111,6 +112,8 @@ public class LoginActivity extends AppCompatActivity {
                 if (isLogin) {
                     if (email.length() == 0 ||password.length() == 0) {
                         DialogHelper.showBasicDialog(LoginActivity.this,"Error","You must fill all fields.");
+                        progressBar.setVisibility(View.INVISIBLE);
+                        sendReq.setClickable(true);
                     } else {
                         sendLoginRequest(email, password);
                     }
@@ -124,16 +127,21 @@ public class LoginActivity extends AppCompatActivity {
                     if (isTrader) {
                         if (email.length() == 0 || password.length() == 0 ||name.length() == 0 || surname.length() == 0 || id.length() == 0 || iban.length() == 0) {
                             DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.");
+                            progressBar.setVisibility(View.INVISIBLE);
+                            sendReq.setClickable(true);
+                        } else {
+                            sendSignUpRequest(email, password, name, surname, id, iban);
                         }
                     } else {
                         if (email.length() == 0 || password.length() == 0 ||name.length() == 0 || surname.length() == 0) {
                             DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.");
+                            progressBar.setVisibility(View.INVISIBLE);
+                            sendReq.setClickable(true);
+                        } else {
+                            sendSignUpRequest(email, password, name, surname, "", "");
                         }
-                        id = "";
-                        iban = "";
                     }
 
-                    sendSignUpRequest(email, password, name, surname, id, iban);
                 }
             }
 
