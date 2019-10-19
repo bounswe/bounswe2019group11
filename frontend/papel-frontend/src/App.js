@@ -18,12 +18,7 @@ class App extends React.Component {
 /*    this.state = { showPopup: false }; */
   }
 
-  /*togglePopup() {
-    this.setState({
-    showPopup: !this.state.showPopup
-    });
-  }
-*/
+  
   render() {
     return (
       <Router>
