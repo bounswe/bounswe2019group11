@@ -1,11 +1,33 @@
 import React from 'react';
+import {useState} from 'react';
 import './Register.css';
 import $ from 'jquery';
+import Modal from 'react-bootstrap/Modal';
+import {Redirect} from 'react-router-dom';
+
+function RegisterSuccessfulModal(props) {
+  console.log(props);
+  return (
+    <>
+      <Modal
+        show={props.show}
+        onHide={props.onClose}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Register Successful</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>You have successfully registered. Now check your e-mail to validate your e-mail address.</p>
+        </Modal.Body>
+      </Modal>
+    </>
+  );
+}
 
 class Register extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {name: '', surname: '', email: '', password: '', location: '', id: null, iban: null, marker: null};
+    this.state = {name: '', surname: '', email: '', password: '', location: '', id: null, iban: null, marker: null, registerSuccessful: false};
 
     this.handleChange = this.handleChange.bind(this);
     this.submit = this.submit.bind(this);
@@ -48,8 +70,6 @@ class Register extends React.Component {
 
 
   submit() {
-    console.log("Current Data:");
-    console.log(this.state);
     var errors = "";
     const emailValid = !!this.state.email && this.state.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
     if (!emailValid){
@@ -81,8 +101,10 @@ class Register extends React.Component {
         iban: this.state.iban
       };
       $.post("https://papel-dev.herokuapp.com/auth/sign-up", user, (resp, data) => {
-        console.log(resp);
-        if (resp == 200) console.log(data);
+        console.log("Wow! It's a response: " + resp);
+        if (resp == 'OK') {
+          this.setState({registerSuccessful: true});
+        };
       });
     }
   }
@@ -101,8 +123,12 @@ class Register extends React.Component {
   }
 
   render() {
+    if (this.state.redirect === "login") {
+      return <Redirect to="/login"/>
+    }
     return (
       <div id="register-form" className="card container-fluid col-sm-10">
+        <RegisterSuccessfulModal show={this.state.registerSuccessful} onClose={() => this.setState({redirect: "login"})}/>
         <div className="row">
           <div id="form-inputs" className="col-sm-4">
                 <div className="row">Name:</div>
