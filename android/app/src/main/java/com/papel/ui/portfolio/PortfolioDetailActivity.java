@@ -316,11 +316,13 @@ public class PortfolioDetailActivity extends AppCompatActivity {
     private void hideUI() {
         tradingEquipmentListView.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
+        addTradingEquipmentButton.setClickable(false);
     }
 
     private void showUI() {
         tradingEquipmentListView.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.INVISIBLE);
+        addTradingEquipmentButton.setClickable(true);
     }
 
     private void fetchPortfolio() {
