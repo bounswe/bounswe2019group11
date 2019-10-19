@@ -1,13 +1,22 @@
 package com.papel.ui.home.ui.login;
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.os.Looper;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +34,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.papel.Constants;
 import com.papel.MainActivity;
 import com.papel.R;
@@ -52,10 +70,19 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private User user;
 
+    private FusedLocationProviderClient fusedLocationProviderClient;
+
+    private Double latitude = null;
+    private Double longitude = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        checkPermission();
+
 
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
@@ -72,12 +99,12 @@ public class LoginActivity extends AppCompatActivity {
         traderCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-               isTrader = b;
-               if (b) {
-                   showTraderSignUp();
-               } else {
-                   hideTraderSignUp();
-               }
+                isTrader = b;
+                if (b) {
+                    showTraderSignUp();
+                } else {
+                    hideTraderSignUp();
+                }
             }
         });
 
@@ -102,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
         sendReq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("Send Request","Clicked");
+                Log.d("Send Request", "Clicked");
                 sendReq.setClickable(false);
                 progressBar.setVisibility(View.VISIBLE);
 
@@ -110,8 +137,8 @@ public class LoginActivity extends AppCompatActivity {
                 String password = passwordInput.getText().toString();
 
                 if (isLogin) {
-                    if (email.length() == 0 ||password.length() == 0) {
-                        DialogHelper.showBasicDialog(LoginActivity.this,"Error","You must fill all fields.");
+                    if (email.length() == 0 || password.length() == 0) {
+                        DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.");
                         progressBar.setVisibility(View.INVISIBLE);
                         sendReq.setClickable(true);
                     } else {
@@ -125,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
                     String iban = ibanInput.getText().toString();
 
                     if (isTrader) {
-                        if (email.length() == 0 || password.length() == 0 ||name.length() == 0 || surname.length() == 0 || id.length() == 0 || iban.length() == 0) {
+                        if (email.length() == 0 || password.length() == 0 || name.length() == 0 || surname.length() == 0 || id.length() == 0 || iban.length() == 0) {
                             DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.");
                             progressBar.setVisibility(View.INVISIBLE);
                             sendReq.setClickable(true);
@@ -133,7 +160,7 @@ public class LoginActivity extends AppCompatActivity {
                             sendSignUpRequest(email, password, name, surname, id, iban);
                         }
                     } else {
-                        if (email.length() == 0 || password.length() == 0 ||name.length() == 0 || surname.length() == 0) {
+                        if (email.length() == 0 || password.length() == 0 || name.length() == 0 || surname.length() == 0) {
                             DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.");
                             progressBar.setVisibility(View.INVISIBLE);
                             sendReq.setClickable(true);
@@ -146,8 +173,82 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    public void checkPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    Constants.LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            // We have permissions.
+            getLastKnownLocation();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == Constants.LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("Location", "Permission granted");
+                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            } else {
+                Log.d("Location", ":(");
+                DialogHelper.showBasicDialog(LoginActivity.this, "Warning", "For the best experience, please turn on the GPS.");
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getLastKnownLocation();
+    }
+
+    private void getLastKnownLocation() {
+        final LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationCallback locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                    Log.d("Location Callback", location.getLatitude() + " " + location.getLongitude());
+                }
+            }
+        };
+
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
 
 
+        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+                    Log.d("Location", latitude + " " + longitude);
+                } else {
+                    Log.d("Location", "No location");
+                    DialogHelper.showBasicDialog(LoginActivity.this, "Warning", "For the best experience, please turn on the GPS.");
+
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Location", "Failure" + e.toString());
+            }
+        });
     }
 
     private void showLogin() {
@@ -215,8 +316,9 @@ public class LoginActivity extends AppCompatActivity {
             jsonBody.put("idNumber", "12345678910");
             jsonBody.put("iban", "TR33 0006 1005 1978 6457 8413 26");
             JSONObject location = new JSONObject();
-            location.put("latitude", "41.085987");
-            location.put("longitude", "29.044008");
+            Log.d("SignUp","Location" + latitude + " " + longitude);
+            location.put("latitude", latitude);
+            location.put("longitude", longitude);
             jsonBody.put("location", location);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -237,21 +339,21 @@ public class LoginActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.INVISIBLE);
                 sendReq.setClickable(true);
                 NetworkResponse networkResponse = error.networkResponse;
-                if(networkResponse != null) {
+                if (networkResponse != null) {
                     String data = new String(networkResponse.data);
-                    try{
+                    try {
                         JSONObject errorObject = new JSONObject(data);
                         String name = errorObject.getString("name");
                         String message = errorObject.getString("message");
                         if (name.equals(Constants.VALIDATION_ERROR)) {
                             JSONArray cause = errorObject.getJSONArray("cause");
                             message = "";
-                            for (int i=0;i<cause.length();i++) {
+                            for (int i = 0; i < cause.length(); i++) {
                                 JSONObject c = cause.getJSONObject(i);
                                 message = message + c.getString("message");
                             }
                         }
-                        DialogHelper.showBasicDialog(LoginActivity.this, "Error",message);
+                        DialogHelper.showBasicDialog(LoginActivity.this, "Error", message);
                     } catch (JSONException e) {
                         // TODO handle error
                         e.printStackTrace();
@@ -303,10 +405,10 @@ public class LoginActivity extends AppCompatActivity {
                     String idNumber = userObject.getString("idNumber");
                     String iban = userObject.getString("iban");
 
-                    user = new User(token,latitude,longitude,role,id,name,surname,email,idNumber,iban);
+                    user = new User(token, latitude, longitude, role, id, name, surname, email, idNumber, iban);
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("User",user);
+                    intent.putExtra("User", user);
                     startActivity(intent);
                 } catch (JSONException e) {
                     // TODO handle error
@@ -319,12 +421,12 @@ public class LoginActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.INVISIBLE);
                 sendReq.setClickable(true);
                 NetworkResponse networkResponse = error.networkResponse;
-                if(networkResponse != null) {
+                if (networkResponse != null) {
                     String data = new String(networkResponse.data);
-                    try{
+                    try {
                         JSONObject errorObject = new JSONObject(data);
                         String message = errorObject.getString("message");
-                        DialogHelper.showBasicDialog(LoginActivity.this, "Error",message);
+                        DialogHelper.showBasicDialog(LoginActivity.this, "Error", message);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -341,9 +443,7 @@ public class LoginActivity extends AppCompatActivity {
                 return "application/json";
             }
         };
-
         requestQueue.add(request);
-
     }
 
 
@@ -362,13 +462,4 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.app_name) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
-    }
-
-    private void showLoginFailed(@StringRes Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
-    }
 }

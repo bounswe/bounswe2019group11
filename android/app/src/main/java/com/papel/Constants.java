@@ -14,4 +14,6 @@ public class Constants {
     public static final int MONTHLY_CHART = 1;
 
     public static final String VALIDATION_ERROR = "ValidationError";
+
+    public static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 }
