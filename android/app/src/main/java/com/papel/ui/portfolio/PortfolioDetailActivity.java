@@ -38,8 +38,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PortfolioDetailActivity extends AppCompatActivity {
 
@@ -52,6 +50,14 @@ public class PortfolioDetailActivity extends AppCompatActivity {
 
     private FloatingActionButton addTradingEquipmentButton;
 
+    private ListView tradingEquipmentListView;
+    private ProgressBar progressBar;
+
+    private RequestQueue deleteRequestQueue;
+    private RequestQueue addRequestQueue;
+
+    private int requestNumber = 0;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,8 +65,19 @@ public class PortfolioDetailActivity extends AppCompatActivity {
 
         final Intent intent = getIntent();
         portfolio = intent.getParcelableExtra("Portfolio");
-        setTitle(portfolio.getName());
 
+        tradingEquipmentListView = findViewById(R.id.trading_equipment_list);
+        addTradingEquipmentButton = findViewById(R.id.add_trading_equipment);
+        progressBar = findViewById(R.id.progressBar);
+
+        CustomHurlStack customHurlStack = new CustomHurlStack();
+        deleteRequestQueue = Volley.newRequestQueue(PortfolioDetailActivity.this,customHurlStack);
+        addRequestQueue = Volley.newRequestQueue(PortfolioDetailActivity.this);
+
+        fetchPortfolio();
+
+        setTitle(portfolio.getName());
+        
         try {
             // TODO Test HERE
             ActionBar actionBar = getSupportActionBar();
@@ -70,8 +87,6 @@ public class PortfolioDetailActivity extends AppCompatActivity {
             exp.printStackTrace();
         }
 
-        ListView tradingEquipmentListView = findViewById(R.id.trading_equipment_list);
-        addTradingEquipmentButton = findViewById(R.id.add_trading_equipment);
 
         tradingEquipments = portfolio.getTradingEquipments();
 
@@ -188,7 +203,8 @@ public class PortfolioDetailActivity extends AppCompatActivity {
     }
 
     private void addTradingEquipment(final TradingEquipment tradingEquipment) {
-        RequestQueue requestQueue = Volley.newRequestQueue(PortfolioDetailActivity.this);
+        requestNumber += 1;
+        hideUI();
         String url = Constants.LOCALHOST + Constants.PORTFOLIO + portfolio.getId() + "/"+ Constants.STOCK;
         final JSONObject jsonBody = new JSONObject();
         try {
@@ -212,6 +228,10 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                         tradingEquipments.addAll(portfolio.getTradingEquipments());
                         tradingEquipmentListViewAdapter.notifyDataSetChanged();
                     }
+                    requestNumber -= 1;
+                    if (requestNumber == 0) {
+                       showUI();
+                    }
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -232,25 +252,17 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                 return "application/json";
             }
         };
-        requestQueue.add(request);
+        addRequestQueue.add(request);
     }
 
     private void deleteTradingEquipment(TradingEquipment tradingEquipment) {
-        CustomHurlStack customHurlStack = new CustomHurlStack();
-        RequestQueue requestQueue = Volley.newRequestQueue(PortfolioDetailActivity.this,customHurlStack);
+        requestNumber += 1;
+        hideUI();
+        Log.d("Delete","seq num " + deleteRequestQueue.getSequenceNumber());
         String url = Constants.LOCALHOST + Constants.PORTFOLIO + portfolio.getId() + "/"+ Constants.STOCK;
         final JSONObject jsonBody = new JSONObject();
         try {
             jsonBody.put("_id", tradingEquipment.getId());
-            Log.d("Delete",tradingEquipment.getId());
-            jsonBody.put("name",tradingEquipment.getName());
-            Log.d("Delete",tradingEquipment.getName());
-            jsonBody.put("price",tradingEquipment.getPrice());
-            Log.d("Delete",""+tradingEquipment.getPrice());
-            jsonBody.put("stockSymbol",tradingEquipment.getSymbol());
-            Log.d("Delete",tradingEquipment.getSymbol());
-            jsonBody.put("stockName",tradingEquipment.getStockName());
-            Log.d("Delete",tradingEquipment.getStockName());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -266,6 +278,10 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                         tradingEquipments.addAll(portfolio.getTradingEquipments());
                         tradingEquipmentListViewAdapter.notifyDataSetChanged();
                     }
+                    requestNumber -= 1;
+                    if (requestNumber == 0) {
+                        showUI();
+                    }
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -273,6 +289,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.d("Delete","Error");
                 // TODO handle error
                 NetworkResponse networkResponse = error.networkResponse;
                 if (networkResponse != null) {
@@ -293,11 +310,54 @@ public class PortfolioDetailActivity extends AppCompatActivity {
             }
 
         };
+        deleteRequestQueue.add(request);
+    }
+
+    private void hideUI() {
+        tradingEquipmentListView.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void showUI() {
+        tradingEquipmentListView.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void fetchPortfolio() {
+
+        hideUI();
+
+        RequestQueue requestQueue = Volley.newRequestQueue(PortfolioDetailActivity.this);
+        String url = Constants.LOCALHOST + Constants.PORTFOLIO + portfolio.getId();
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject responseObject = new JSONObject(response);
+                    Portfolio parsedPortfolio = ResponseParser.parsePortfolio(responseObject);
+                    if (parsedPortfolio != null) {
+                        portfolio = parsedPortfolio;
+                        tradingEquipments.clear();
+                        tradingEquipments.addAll(portfolio.getTradingEquipments());
+                        tradingEquipmentListViewAdapter.notifyDataSetChanged();
+                    }
+                   showUI();
+
+                } catch (JSONException exp) {
+                    exp.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
         requestQueue.add(request);
     }
 
     private void fetchTradingEquipments() {
-        final ProgressBar progressBar = PortfolioDetailActivity.this.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
 
         RequestQueue requestQueue = Volley.newRequestQueue(PortfolioDetailActivity.this);
