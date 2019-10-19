@@ -11,6 +11,10 @@
     {
       "name": "auth",
       "description": "Authentication endpoints"
+    },
+    {
+      "name": "stock",
+      "description": "Stock fetch endpoints"
     }
   ],
   "schemes": [

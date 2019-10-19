@@ -20,7 +20,7 @@ const getDailyPrice = async (symbol) => {
 
 }
 
-const getMontlyPrice = async (symbol) => {
+const getMonthlyPrice = async (symbol) => {
     const dailyParams ={function: "TIME_SERIES_DAILY",symbol:symbol,apikey:apiKey};
     const options = {
         uri:apiUrl,
@@ -46,7 +46,7 @@ module.exports.getById= async (id)=>{
         _id:id
     });
     // Parallel API calls
-    const promises = [  getDailyPrice(_stock.stockSymbol),  getMontlyPrice(_stock.stockSymbol) ]
+    const promises = [  getDailyPrice(_stock.stockSymbol),  getMonthlyPrice(_stock.stockSymbol) ]
     resolves = await Promise.all(promises);
     _stock['dailyPrice'] = resolves[0];
     _stock['monthlyPrice'] = resolves[1];

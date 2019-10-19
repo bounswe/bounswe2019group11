@@ -10,13 +10,14 @@ const stockSchema = new mongoose.Schema({
     },
 
     monthlyPrice:{
-        type: {}
+        type: Object
     },
     dailyPrice: {
-        type: {}
+        type: Object
     },
     stockSymbol:{
-        type:String
+        type:String,
+        required: true
     },
     stockName:{
         type:String
