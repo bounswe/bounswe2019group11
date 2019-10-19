@@ -20,6 +20,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
+app.use('/event',require('./routes/event'))
 
 const port = process.env.LISTEN_PORT;
 app.listen(port, async () => {
