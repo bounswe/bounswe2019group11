@@ -13,8 +13,8 @@ const eventSchema = new mongoose.Schema({
         type: Array,
         ref: 'Comment'
     },
-    date: {
-        type: Date,
+    StartDate: {
+        type: String,
         required: true    
     },
     authorId:{
