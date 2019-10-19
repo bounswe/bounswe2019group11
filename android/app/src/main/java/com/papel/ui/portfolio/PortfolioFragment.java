@@ -34,6 +34,7 @@ import com.papel.Constants;
 import com.papel.R;
 import com.papel.data.Portfolio;
 import com.papel.data.TradingEquipment;
+import com.papel.ui.utils.ResponseParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -108,21 +109,10 @@ public class PortfolioFragment extends Fragment {
                     JSONArray responseArray = new JSONArray(response);
                     for(int i = 0;i<responseArray.length(); i++) {
                         JSONObject object = responseArray.getJSONObject(i);
-                        String portfolioId = object.getString("_id");
-                        String portfolioName = object.getString("name");
-                        JSONArray stocks = object.getJSONArray("stocks");
-                        Log.d("Portfolios","Portfolio id: " + portfolioId);
-                        ArrayList<TradingEquipment> tradingEquipments = new ArrayList<>();
-                        for (int j = 0;j<stocks.length();j++) {
-                            JSONObject stockObject = stocks.getJSONObject(j);
-                            String stockId = stockObject.getString("_id");
-                            String stockName = stockObject.getString("stockName");
-                            String stockSymbol = stockObject.getString("stockSymbol");
-                            double stockPrice = stockObject.getDouble("price");
-                            Log.d("Portfolios","Stock name: " + stockName);
-                            tradingEquipments.add(new TradingEquipment(stockId,stockName,stockPrice,stockSymbol));
+                        Portfolio portfolio = ResponseParser.parsePortfolio(object);
+                        if (portfolio != null) {
+                            portfolios.add(portfolio);
                         }
-                        portfolios.add(new Portfolio(portfolioId,portfolioName,tradingEquipments));
                     }
 
                     portfolioListViewAdapter.notifyDataSetChanged();
@@ -219,22 +209,10 @@ public class PortfolioFragment extends Fragment {
                 // It returns new portfolio
                 try {
                     JSONObject responseJSON = new JSONObject(response);
-                    String portfolioId = responseJSON.getString("_id");
-                    String portfolioName = responseJSON.getString("name");
-                    JSONArray stocks = responseJSON.getJSONArray("stocks");
-                    Log.d("Add Portfolios","Portfolio id: " + portfolioId);
-                    ArrayList<TradingEquipment> tradingEquipments = new ArrayList<>();
-                    for (int j = 0;j<stocks.length();j++) {
-                        JSONObject stockObject = stocks.getJSONObject(j);
-                        String stockId = stockObject.getString("_id");
-                        String stockName = stockObject.getString("stockName");
-                        String stockSymbol = stockObject.getString("stockSymbol");
-                        double stockPrice = stockObject.getDouble("price");
-                        Log.d("Add Portfolios","Stock name: " + stockName);
-                        tradingEquipments.add(new TradingEquipment(stockId,stockName,stockPrice,stockSymbol));
+                    Portfolio portfolio = ResponseParser.parsePortfolio(responseJSON);
+                    if (portfolio != null) {
+                        portfolios.add(portfolio);
                     }
-                    portfolios.add(new Portfolio(portfolioId,portfolioName,tradingEquipments));
-
                     portfolioListViewAdapter.notifyDataSetChanged();
                     progressBar.setVisibility(View.INVISIBLE);
                     addPortfolio.setClickable(true);

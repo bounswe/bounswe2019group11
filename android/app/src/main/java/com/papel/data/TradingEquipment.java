@@ -10,16 +10,18 @@ public class TradingEquipment implements Parcelable {
     private String name;
     private double price;
     private String symbol;
+    private String stockName;
 
     public TradingEquipment() {
 
     }
 
-    public TradingEquipment(String id, String name, double price, String symbol) {
+    public TradingEquipment(String id, String name, double price, String symbol, String stockName) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.symbol = symbol;
+        this.stockName = stockName;
     }
 
 
@@ -43,6 +45,7 @@ public class TradingEquipment implements Parcelable {
         parcel.writeString(this.name);
         parcel.writeDouble(this.price);
         parcel.writeString(this.symbol);
+        parcel.writeString(this.stockName);
     }
 
     public static final Parcelable.Creator<TradingEquipment> CREATOR = new Parcelable.Creator<TradingEquipment>() {
@@ -60,6 +63,7 @@ public class TradingEquipment implements Parcelable {
         this.name = in.readString();
         this.price = in.readDouble();
         this.symbol = in.readString();
+        this.stockName = in.readString();
     }
 
     public String getName() {
@@ -92,5 +96,13 @@ public class TradingEquipment implements Parcelable {
 
     public void setSymbol(String symbol) {
         this.symbol = symbol;
+    }
+
+    public String getStockName() {
+        return stockName;
+    }
+
+    public void setStockName(String stockName) {
+        this.stockName = stockName;
     }
 }

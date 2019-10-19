@@ -3,6 +3,8 @@ package com.papel.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 
 public class Portfolio implements Parcelable {
@@ -19,6 +21,14 @@ public class Portfolio implements Parcelable {
         this.id = id;
         this.name = name;
         this.tradingEquipments = tradingEquipments;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj instanceof Portfolio) {
+            return this.id.equals(((Portfolio) obj).getId());
+        }
+        return false;
     }
 
     @Override
