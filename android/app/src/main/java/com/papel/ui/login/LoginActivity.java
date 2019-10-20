@@ -76,15 +76,8 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         if (!ConnectionHelper.checkInternetConnection(this)) {
-            DialogInterface.OnClickListener connectionErrorListener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-
-                }
-            };
-
+            DialogHelper.showBasicDialog(this,"Error","Please check your internet connection",null);
         } else {
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
             checkPermission();
@@ -179,8 +172,6 @@ public class LoginActivity extends AppCompatActivity {
 
             });
         }
-
-
     }
 
     public void checkPermission() {
@@ -198,6 +189,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d("Info","onRequestPermissionsResult");
         if (requestCode == Constants.LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 Log.d("Location", "Permission granted");
@@ -212,7 +204,11 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        getLastKnownLocation();
+        if (!ConnectionHelper.checkInternetConnection(this)) {
+            DialogHelper.showBasicDialog(this,"Error","Please check your internet connection",null);
+        } else {
+            getLastKnownLocation();
+        }
     }
 
     private void getLastKnownLocation() {
