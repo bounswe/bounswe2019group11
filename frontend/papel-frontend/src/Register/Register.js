@@ -1,12 +1,33 @@
 import React from 'react';
+import {useState} from 'react';
 import './Register.css';
 import $ from 'jquery';
+import Modal from 'react-bootstrap/Modal';
+import {Redirect} from 'react-router-dom';
+
+function RegisterSuccessfulModal(props) {
+  /* console.log(props); */
+  return (
+    <>
+      <Modal
+        show={props.show}
+        onHide={props.onClose}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Register Successful</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>You have successfully registered. Now check your e-mail to validate your e-mail address.</p>
+        </Modal.Body>
+      </Modal>
+    </>
+  );
+}
 
 class Register extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {name: '', surname: '', email: '', password: '', location: '', id: null, iban: null, marker: null};
-
+    this.state = {name: '', surname: '', email: '', password: '', latitude: '', longitude: '', id: null, iban: null, marker: null};
     this.handleChange = this.handleChange.bind(this);
     this.submit = this.submit.bind(this);
     this.toggleTraderOptions = this.toggleTraderOptions.bind(this);
@@ -27,7 +48,8 @@ class Register extends React.Component {
         map: map
       });
       map.panTo(event.latLng);
-
+      self.setState({latitude:event.latLng.lat()});
+      self.setState({longitude:event.latLng.lng()});
       geocoder.geocode({'location': event.latLng}, (results, status) => {
         if (status === 'OK') {
           if (results[0]) {
@@ -45,11 +67,7 @@ class Register extends React.Component {
     this.setState({[event.target.name]: event.target.value});
   }
 
-
-
   submit() {
-    console.log("Current Data:");
-    console.log(this.state);
     var errors = "";
     const emailValid = !!this.state.email && this.state.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
     if (!emailValid){
@@ -65,10 +83,13 @@ class Register extends React.Component {
     }
     const passwordValid = !!this.state.password && this.state.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$/i);
     if (!passwordValid){
-      errors+=("Check Password.\n\t•It should contain at least one upper and one lowercase letter, one  numeric and one special character.\n\t•It should be at least 8 characters long.");
+      errors+=("Check Password.\n\t•It should contain at least one upper and one lowercase letter, one  numeric and one special character.\n\t•It should be at least 8 characters long.\n");
+    }
+    const locationChosen = !!this.state.latitude;
+    if (!locationChosen){
+      errors+=("Choose a location point from the map.");
     }
     if (errors != "") {
-
       alert(errors)
     }
     else {
@@ -78,11 +99,15 @@ class Register extends React.Component {
         email: this.state.email,
         password: this.state.password,
         idNumber: this.state.id,
-        iban: this.state.iban
+        iban: this.state.iban,
+        location: {latitude: this.state.latitude, longitude: this.state.latitude}
       };
+      console.log(user);
       $.post("https://papel-dev.herokuapp.com/auth/sign-up", user, (resp, data) => {
-        console.log(resp);
-        if (resp == 200) console.log(data);
+        console.log("Wow! It's a response: " + resp);
+        if (resp == 'OK') {
+          this.setState({registerSuccessful: true});
+        };
       });
     }
   }
@@ -101,8 +126,12 @@ class Register extends React.Component {
   }
 
   render() {
+    if (this.state.redirect === "login") {
+      return <Redirect to="/login"/>
+    }
     return (
       <div id="register-form" className="card container-fluid col-sm-10">
+        <RegisterSuccessfulModal show={this.state.registerSuccessful} onClose={() => this.setState({redirect: "login"})}/>
         <div className="row">
           <div id="form-inputs" className="col-sm-4">
                 <div className="row">Name:</div>

@@ -20,8 +20,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
+app.use('/stock',require('./routes/stock'))
 
-const port = process.env.LISTEN_PORT;
+const port = process.env.PORT;
 app.listen(port, async () => {
     await database.establishConnection();
     console.log(`Backend app listening on port ${port}`);

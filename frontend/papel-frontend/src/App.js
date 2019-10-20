@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import logo from './logo.svg';
-import './bootstrap/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Home from './Home/Home';
 import Login from './Login/Login';
@@ -9,6 +9,7 @@ import Register from './Register/Register';
 import Profile from './Profile/Profile';
 import TradingEquipment from './Trading/TradingEquipment';
 import Article from './Article/Article';
+import Articles from './Article/Articles';
 import Validation from './Register/Validation';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 
@@ -18,12 +19,7 @@ class App extends React.Component {
 /*    this.state = { showPopup: false }; */
   }
 
-  /*togglePopup() {
-    this.setState({
-    showPopup: !this.state.showPopup
-    });
-  }
-*/
+  
   render() {
     return (
       <Router>
@@ -42,6 +38,7 @@ class App extends React.Component {
             <Route path="/currency/:id"><TradingEquipment /></Route>
             <Route path="/article/:id"><Article /></Route>
             <Route path="/validation"><Validation /></Route>
+            <Route path="/articles"><Articles /></Route>
           </Switch>
         </div>
       </Router>
