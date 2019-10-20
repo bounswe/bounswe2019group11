@@ -39,6 +39,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.tabs.TabLayout;
 import com.papel.Constants;
 import com.papel.MainActivity;
 import com.papel.R;
@@ -62,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
     private CheckBox traderCheckBox;
     private EditText ibanInput;
     private EditText idInput;
-    private Button changeScreen;
+    //private Button changeScreen;
     private Button sendReq;
     private ProgressBar progressBar;
     private User user;
@@ -77,10 +78,37 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         if (!ConnectionHelper.checkInternetConnection(this)) {
-            DialogHelper.showBasicDialog(this,"Error","Please check your internet connection",null);
+            DialogHelper.showBasicDialog(this, "Error", "Please check your internet connection", null);
         } else {
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
             checkPermission();
+
+            TabLayout tabLayout = findViewById(R.id.tabLayout);
+            tabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    Log.d("Tab Selected", "Tab " + tab.getPosition());
+                    if (tab.getPosition() == 0) {
+                        // Change to login screen
+                        showLogin();
+                        isLogin = true;
+                    } else if (tab.getPosition() == 1) {
+                        // Change to signup screen
+                        showSignUp();
+                        isLogin = false;
+                    }
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+                }
+            });
 
             emailInput = findViewById(R.id.emailInput);
             passwordInput = findViewById(R.id.passwordInput);
@@ -90,7 +118,6 @@ public class LoginActivity extends AppCompatActivity {
             idInput = findViewById(R.id.idInput);
             progressBar = findViewById(R.id.progressBar);
 
-            changeScreen = findViewById(R.id.changeScreen);
             sendReq = findViewById(R.id.sendReqButton);
 
             traderCheckBox = findViewById(R.id.checkBox);
@@ -102,23 +129,6 @@ public class LoginActivity extends AppCompatActivity {
                         showTraderSignUp();
                     } else {
                         hideTraderSignUp();
-                    }
-                }
-            });
-
-            changeScreen.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    if (isLogin) {
-                        // Click on "change to sign up" button.
-                        showSignUp();
-                        isLogin = false;
-
-                    } else {
-                        // Click on "change to sign in" button.
-                        showLogin();
-                        isLogin = true;
                     }
                 }
             });
@@ -136,7 +146,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     if (isLogin) {
                         if (email.length() == 0 || password.length() == 0) {
-                            DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.",null);
+                            DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.", null);
                             progressBar.setVisibility(View.INVISIBLE);
                             sendReq.setClickable(true);
                         } else {
@@ -151,7 +161,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         if (isTrader) {
                             if (email.length() == 0 || password.length() == 0 || name.length() == 0 || surname.length() == 0 || id.length() == 0 || iban.length() == 0) {
-                                DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.",null);
+                                DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.", null);
                                 progressBar.setVisibility(View.INVISIBLE);
                                 sendReq.setClickable(true);
                             } else {
@@ -159,7 +169,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         } else {
                             if (email.length() == 0 || password.length() == 0 || name.length() == 0 || surname.length() == 0) {
-                                DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.",null);
+                                DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.", null);
                                 progressBar.setVisibility(View.INVISIBLE);
                                 sendReq.setClickable(true);
                             } else {
@@ -189,14 +199,14 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d("Info","onRequestPermissionsResult");
+        Log.d("Info", "onRequestPermissionsResult");
         if (requestCode == Constants.LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 Log.d("Location", "Permission granted");
                 startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             } else {
                 Log.d("Location", ":(");
-                DialogHelper.showBasicDialog(LoginActivity.this, "Warning", "For the best experience, please turn on the GPS.",null);
+                DialogHelper.showBasicDialog(LoginActivity.this, "Warning", "For the best experience, please turn on the GPS.", null);
             }
         }
     }
@@ -205,7 +215,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (!ConnectionHelper.checkInternetConnection(this)) {
-            DialogHelper.showBasicDialog(this,"Error","Please check your internet connection",null);
+            DialogHelper.showBasicDialog(this, "Error", "Please check your internet connection", null);
         } else {
             getLastKnownLocation();
         }
@@ -243,7 +253,7 @@ public class LoginActivity extends AppCompatActivity {
                     Log.d("Location", latitude + " " + longitude);
                 } else {
                     Log.d("Location", "No location");
-                    DialogHelper.showBasicDialog(LoginActivity.this, "Warning", "For the best experience, please turn on the GPS.",null);
+                    DialogHelper.showBasicDialog(LoginActivity.this, "Warning", "For the best experience, please turn on the GPS.", null);
 
                 }
             }
@@ -266,7 +276,7 @@ public class LoginActivity extends AppCompatActivity {
         idInput.setVisibility(View.INVISIBLE);
         ibanInput.setVisibility(View.INVISIBLE);
 
-        changeScreen.setText(getText(R.string.changeSignup));
+        //changeScreen.setText(getText(R.string.changeSignup));
         sendReq.setText(getText(R.string.login_button));
     }
 
@@ -278,7 +288,7 @@ public class LoginActivity extends AppCompatActivity {
         nameInput.setVisibility(View.VISIBLE);
         surnameInput.setVisibility(View.VISIBLE);
         traderCheckBox.setVisibility(View.VISIBLE);
-        changeScreen.setText(getText(R.string.changeLogin));
+        //changeScreen.setText(getText(R.string.changeLogin));
         sendReq.setText(getText(R.string.signUp_button));
 
     }
@@ -320,7 +330,7 @@ public class LoginActivity extends AppCompatActivity {
             jsonBody.put("idNumber", "12345678910");
             jsonBody.put("iban", "TR33 0006 1005 1978 6457 8413 26");
             JSONObject location = new JSONObject();
-            Log.d("SignUp","Location" + latitude + " " + longitude);
+            Log.d("SignUp", "Location" + latitude + " " + longitude);
             location.put("latitude", latitude);
             location.put("longitude", longitude);
             jsonBody.put("location", location);
@@ -357,9 +367,9 @@ public class LoginActivity extends AppCompatActivity {
                                 message = message + c.getString("message");
                             }
                         }
-                        DialogHelper.showBasicDialog(LoginActivity.this, "Error", message,null);
+                        DialogHelper.showBasicDialog(LoginActivity.this, "Error", message, null);
                     } catch (JSONException e) {
-                        DialogHelper.showBasicDialog(LoginActivity.this,"Error","We couldn't make it.Please try again.",null);
+                        DialogHelper.showBasicDialog(LoginActivity.this, "Error", "We couldn't make it.Please try again.", null);
                         e.printStackTrace();
                     }
                 }
@@ -417,7 +427,7 @@ public class LoginActivity extends AppCompatActivity {
                     intent.putExtra("User", user);
                     startActivity(intent);
                 } catch (JSONException e) {
-                    DialogHelper.showBasicDialog(LoginActivity.this,"Error","We couldn't make it.Please try again.",null);
+                    DialogHelper.showBasicDialog(LoginActivity.this, "Error", "We couldn't make it.Please try again.", null);
                     e.printStackTrace();
                 }
             }
@@ -432,7 +442,7 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         JSONObject errorObject = new JSONObject(data);
                         String message = errorObject.getString("message");
-                        DialogHelper.showBasicDialog(LoginActivity.this, "Error", message,null);
+                        DialogHelper.showBasicDialog(LoginActivity.this, "Error", message, null);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

@@ -12,12 +12,12 @@
     tools:context=".ui.login.LoginActivity">
 
 
-    <Button
+    <!-- <Button
         android:id="@+id/changeScreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/changeSignup"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"/> -->
 
     <EditText
         android:id="@+id/emailInput"
@@ -112,5 +112,20 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="248dp"
         android:visibility="invisible"/>
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_button" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/signUp_button" />
+
+    </com.google.android.material.tabs.TabLayout>
 </RelativeLayout>
