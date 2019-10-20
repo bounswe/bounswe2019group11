@@ -9,8 +9,7 @@ class EconEvent extends React.Component{
     constructor(props){
         super(props);
         this.state = {econevent:{}, star:{}};
-        var temp = Math.floor(Math.random() * 5)+1 ;
-        
+        let temp = Math.floor(Math.random() * 5)+1 ; 
         var ar = ["star-outline","star-outline","star-outline","star-outline","star-outline"];
         for (let i = 0; i < temp; i++) {
             ar[i] = "star";
