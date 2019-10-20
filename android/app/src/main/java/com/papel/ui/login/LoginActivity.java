@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 }
             });
-            
+
             emailInput = findViewById(R.id.emailInput);
             passwordInput = findViewById(R.id.passwordInput);
             nameInput = findViewById(R.id.nameInput);

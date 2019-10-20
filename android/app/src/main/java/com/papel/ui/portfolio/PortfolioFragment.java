@@ -107,7 +107,7 @@ public class PortfolioFragment extends Fragment {
 
     private void fetchUserPortfolios(final Context context) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
-        String url = Constants.LOCALHOST + Constants.PORTFOLIO_USER + Constants.TEST_USER_ID;
+        String url = Constants.LOCALHOST + Constants.PORTFOLIO_USER + user.getId();
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
