@@ -10,13 +10,14 @@ import Profile from './Profile/Profile';
 import TradingEquipment from './Trading/TradingEquipment';
 import Article from './Article/Article';
 import Articles from './Article/Articles';
+import EconEvent from './EconEvent/EconEvent';
+import EconEvents from './EconEvent/EconEvents';
 import Validation from './Register/Validation';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-/*    this.state = { showPopup: false }; */
   }
 
   
@@ -28,6 +29,8 @@ class App extends React.Component {
           <li><Link to="/login">Login</Link></li>
           <li><Link to="/register">Register</Link></li>
           <li><Link to="/profile">Profile</Link></li>
+          <li><Link to="/articles">Articles</Link></li>
+          <li><Link to="/events">Events</Link></li>
         </ul>
         <div className="container">
           <Switch>
@@ -37,8 +40,10 @@ class App extends React.Component {
             <Route path="/profile"><Profile /></Route>
             <Route path="/currency/:id"><TradingEquipment /></Route>
             <Route path="/article/:id"><Article /></Route>
+            <Route path="/event/:id"><EconEvent /></Route>
             <Route path="/validation"><Validation /></Route>
             <Route path="/articles"><Articles /></Route>
+            <Route path="/events"><EconEvents /></Route>
           </Switch>
         </div>
       </Router>

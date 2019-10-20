@@ -17,6 +17,8 @@ class Login extends React.Component {
   async submit() {
     console.log("Current Data:");
     console.log(this.state);
+    var temp = Math.floor(Math.random() * 6) ;
+    alert(temp);
     /*
     const response = await fetch('localhost:3000/auth/login', {
       method: 'POST',
