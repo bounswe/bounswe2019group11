@@ -17,10 +17,9 @@ module.exports.getByCountry = async (country_) => {
     });
 };
 
-module.exports.create = async (title, body, comment, date, authorId, rank, voterNumber, country) => {
-
+module.exports.create = async (title, body, comment, date, rank, country) => {
     const event = await Event.create({
-        title, body, comment, date, authorId, rank, voterNumber, country
+        title, body, comment, date, rank, country
     });
     return event;
 };
