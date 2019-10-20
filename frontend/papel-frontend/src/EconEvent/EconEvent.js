@@ -8,15 +8,15 @@ import $ from 'jquery';
 class EconEvent extends React.Component{
     constructor(props){
         super(props);
-        this.state = {econevent:{}, star:0};
-        var temp = Math.floor(Math.random() * 6) ;
-        this.setState({star: temp});
-        var stars = "";
-        for (let i = 0; i < temp; i++) {
-            stars+=<ion-icon name="heart"></ion-icon>;
-        }
+        this.state = {econevent:{}, star:{}};
+        var temp = Math.floor(Math.random() * 5)+1 ;
         
-        this.state.star = stars;
+        var ar = ["star-outline","star-outline","star-outline","star-outline","star-outline"];
+        for (let i = 0; i < temp; i++) {
+            ar[i] = "star";
+        }
+        this.state.star = ar;
+       
     }
     componentDidMount(){
         fetch('https://jsonplaceholder.typicode.com/posts/1')
@@ -40,7 +40,12 @@ class EconEvent extends React.Component{
                 <div className="econevent"> {econevent.body} </div>
                 </div>
                 <div className="row">
-                {this.state.star}
+                <ion-icon name = {this.state.star[0]}></ion-icon>
+                <ion-icon name = {this.state.star[1]}></ion-icon>
+                <ion-icon name = {this.state.star[2]}></ion-icon>
+                <ion-icon name = {this.state.star[3]}></ion-icon>
+                <ion-icon name = {this.state.star[4]}></ion-icon>
+                
                 </div>
 
                 
