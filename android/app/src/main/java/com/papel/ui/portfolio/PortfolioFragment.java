@@ -126,7 +126,7 @@ public class PortfolioFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                DialogHelper.showBasicDialog(context,"Error","We couldn't get your portfolios.Please try again.");
+                DialogHelper.showBasicDialog(context,"Error","We couldn't get your portfolios.Please try again.",null);
                 progressBar.setVisibility(View.INVISIBLE);
                 addPortfolio.setVisibility(View.VISIBLE);
             }
@@ -226,7 +226,7 @@ public class PortfolioFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                DialogHelper.showBasicDialog(context,"Error","We couldn't create a portfolio.Please try again.");
+                DialogHelper.showBasicDialog(context,"Error","We couldn't create a portfolio.Please try again.",null);
                 progressBar.setVisibility(View.INVISIBLE);
                 addPortfolio.setClickable(true);
             }

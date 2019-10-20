@@ -240,7 +240,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't add trading equipment to your porfolio.Please try again.");
+                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't add trading equipment to your porfolio.Please try again.",null);
                 requestNumber -= 1;
                 if (requestNumber == 0) {
                     showUI();
@@ -301,7 +301,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                     String errorData = new String(networkResponse.data);
                     Log.d("Network response","data: " + errorData);
                 }
-                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't delete trading equipment from your porfolio.Please try again.");
+                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't delete trading equipment from your porfolio.Please try again.",null);
                 requestNumber -= 1;
                 if (requestNumber == 0) {
                     showUI();
@@ -362,7 +362,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't get detail of your porfolio.Please try again.");
+                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't get detail of your porfolio.Please try again.",null);
                 showUI();
             }
         });
@@ -403,7 +403,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't get trading equipments.Please try again.");
+                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't get trading equipments.Please try again.",null);
                 progressBar.setVisibility(View.INVISIBLE);
                 addTradingEquipmentButton.setClickable(true);
             }

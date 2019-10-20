@@ -43,6 +43,7 @@ import com.papel.Constants;
 import com.papel.MainActivity;
 import com.papel.R;
 import com.papel.data.User;
+import com.papel.ui.utils.ConnectionHelper;
 import com.papel.ui.utils.DialogHelper;
 
 import org.json.JSONArray;
@@ -76,99 +77,110 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        checkPermission();
+        if (!ConnectionHelper.checkInternetConnection(this)) {
+            DialogInterface.OnClickListener connectionErrorListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
 
-
-        emailInput = findViewById(R.id.emailInput);
-        passwordInput = findViewById(R.id.passwordInput);
-        nameInput = findViewById(R.id.nameInput);
-        surnameInput = findViewById(R.id.surnameInput);
-        ibanInput = findViewById(R.id.ibanInput);
-        idInput = findViewById(R.id.idInput);
-        progressBar = findViewById(R.id.progressBar);
-
-        changeScreen = findViewById(R.id.changeScreen);
-        sendReq = findViewById(R.id.sendReqButton);
-
-        traderCheckBox = findViewById(R.id.checkBox);
-        traderCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                isTrader = b;
-                if (b) {
-                    showTraderSignUp();
-                } else {
-                    hideTraderSignUp();
                 }
-            }
-        });
+            };
 
-        changeScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        } else {
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+            checkPermission();
 
-                if (isLogin) {
-                    // Click on "change to sign up" button.
-                    showSignUp();
-                    isLogin = false;
+            emailInput = findViewById(R.id.emailInput);
+            passwordInput = findViewById(R.id.passwordInput);
+            nameInput = findViewById(R.id.nameInput);
+            surnameInput = findViewById(R.id.surnameInput);
+            ibanInput = findViewById(R.id.ibanInput);
+            idInput = findViewById(R.id.idInput);
+            progressBar = findViewById(R.id.progressBar);
 
-                } else {
-                    // Click on "change to sign in" button.
-                    showLogin();
-                    isLogin = true;
-                }
-            }
-        });
+            changeScreen = findViewById(R.id.changeScreen);
+            sendReq = findViewById(R.id.sendReqButton);
 
-
-        sendReq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d("Send Request", "Clicked");
-                sendReq.setClickable(false);
-                progressBar.setVisibility(View.VISIBLE);
-
-                String email = emailInput.getText().toString();
-                String password = passwordInput.getText().toString();
-
-                if (isLogin) {
-                    if (email.length() == 0 || password.length() == 0) {
-                        DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.");
-                        progressBar.setVisibility(View.INVISIBLE);
-                        sendReq.setClickable(true);
+            traderCheckBox = findViewById(R.id.checkBox);
+            traderCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    isTrader = b;
+                    if (b) {
+                        showTraderSignUp();
                     } else {
-                        sendLoginRequest(email, password);
+                        hideTraderSignUp();
                     }
+                }
+            });
 
-                } else {
-                    String name = nameInput.getText().toString();
-                    String surname = surnameInput.getText().toString();
-                    String id = idInput.getText().toString();
-                    String iban = ibanInput.getText().toString();
+            changeScreen.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                    if (isTrader) {
-                        if (email.length() == 0 || password.length() == 0 || name.length() == 0 || surname.length() == 0 || id.length() == 0 || iban.length() == 0) {
-                            DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.");
+                    if (isLogin) {
+                        // Click on "change to sign up" button.
+                        showSignUp();
+                        isLogin = false;
+
+                    } else {
+                        // Click on "change to sign in" button.
+                        showLogin();
+                        isLogin = true;
+                    }
+                }
+            });
+
+
+            sendReq.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d("Send Request", "Clicked");
+                    sendReq.setClickable(false);
+                    progressBar.setVisibility(View.VISIBLE);
+
+                    String email = emailInput.getText().toString();
+                    String password = passwordInput.getText().toString();
+
+                    if (isLogin) {
+                        if (email.length() == 0 || password.length() == 0) {
+                            DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.",null);
                             progressBar.setVisibility(View.INVISIBLE);
                             sendReq.setClickable(true);
                         } else {
-                            sendSignUpRequest(email, password, name, surname, id, iban);
+                            sendLoginRequest(email, password);
                         }
+
                     } else {
-                        if (email.length() == 0 || password.length() == 0 || name.length() == 0 || surname.length() == 0) {
-                            DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.");
-                            progressBar.setVisibility(View.INVISIBLE);
-                            sendReq.setClickable(true);
+                        String name = nameInput.getText().toString();
+                        String surname = surnameInput.getText().toString();
+                        String id = idInput.getText().toString();
+                        String iban = ibanInput.getText().toString();
+
+                        if (isTrader) {
+                            if (email.length() == 0 || password.length() == 0 || name.length() == 0 || surname.length() == 0 || id.length() == 0 || iban.length() == 0) {
+                                DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.",null);
+                                progressBar.setVisibility(View.INVISIBLE);
+                                sendReq.setClickable(true);
+                            } else {
+                                sendSignUpRequest(email, password, name, surname, id, iban);
+                            }
                         } else {
-                            sendSignUpRequest(email, password, name, surname, "", "");
+                            if (email.length() == 0 || password.length() == 0 || name.length() == 0 || surname.length() == 0) {
+                                DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.",null);
+                                progressBar.setVisibility(View.INVISIBLE);
+                                sendReq.setClickable(true);
+                            } else {
+                                sendSignUpRequest(email, password, name, surname, "", "");
+                            }
                         }
+
                     }
-
                 }
-            }
 
-        });
+            });
+        }
+
+
     }
 
     public void checkPermission() {
@@ -192,7 +204,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             } else {
                 Log.d("Location", ":(");
-                DialogHelper.showBasicDialog(LoginActivity.this, "Warning", "For the best experience, please turn on the GPS.");
+                DialogHelper.showBasicDialog(LoginActivity.this, "Warning", "For the best experience, please turn on the GPS.",null);
             }
         }
     }
@@ -235,7 +247,7 @@ public class LoginActivity extends AppCompatActivity {
                     Log.d("Location", latitude + " " + longitude);
                 } else {
                     Log.d("Location", "No location");
-                    DialogHelper.showBasicDialog(LoginActivity.this, "Warning", "For the best experience, please turn on the GPS.");
+                    DialogHelper.showBasicDialog(LoginActivity.this, "Warning", "For the best experience, please turn on the GPS.",null);
 
                 }
             }
@@ -349,7 +361,7 @@ public class LoginActivity extends AppCompatActivity {
                                 message = message + c.getString("message");
                             }
                         }
-                        DialogHelper.showBasicDialog(LoginActivity.this, "Error", message);
+                        DialogHelper.showBasicDialog(LoginActivity.this, "Error", message,null);
                     } catch (JSONException e) {
                         // TODO handle error
                         e.printStackTrace();
@@ -422,7 +434,7 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         JSONObject errorObject = new JSONObject(data);
                         String message = errorObject.getString("message");
-                        DialogHelper.showBasicDialog(LoginActivity.this, "Error", message);
+                        DialogHelper.showBasicDialog(LoginActivity.this, "Error", message,null);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
