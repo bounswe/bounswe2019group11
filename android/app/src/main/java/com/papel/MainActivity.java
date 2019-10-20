@@ -7,15 +7,34 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavAction;
+import androidx.navigation.NavArgument;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.navigation.NavDirections;
+import androidx.navigation.NavType;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
+import com.papel.data.Portfolio;
 import com.papel.data.User;
+import com.papel.ui.articles.ArticlesFragment;
+import com.papel.ui.home.HomeFragment;
+import com.papel.ui.login.LoginActivity;
+import com.papel.ui.portfolio.PortfolioFragment;
+import com.papel.ui.portfolio.PortfolioFragmentArgs;
 import com.papel.ui.profile.ProfileActivity;
+import com.papel.ui.send.SendFragment;
+import com.papel.ui.share.ShareFragment;
+import com.papel.ui.tools.ToolsFragment;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -36,10 +55,13 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Intent comingIntent = getIntent();
-        User user = comingIntent.getParcelableExtra("User");
+        final User user = comingIntent.getParcelableExtra("User");
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        final Intent profileIntent = new Intent(this, ProfileActivity.class);
+        profileIntent.putExtra("User",user);
+
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        final NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -47,13 +69,14 @@ public class MainActivity extends AppCompatActivity {
                 R.id.nav_tools, R.id.nav_share, R.id.nav_send)
                 .setDrawerLayout(drawer)
                 .build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        final Intent intent = new Intent(this, ProfileActivity.class);
         // otherProfile is true when the user clicks the profile other user.
-        // otherProfile is false when the user clickc the him profile.
+        // otherProfile is false when the user clicks the him/her profile.
 
         View header = navigationView.getHeaderView(0);
 
@@ -68,24 +91,24 @@ public class MainActivity extends AppCompatActivity {
         imageCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent.putExtra("otherProfile",false);
-                startActivity(intent);
+                profileIntent.putExtra("otherProfile",false);
+                startActivity(profileIntent);
             }
         });
 
         userName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent.putExtra("otherProfile",true);
-                startActivity(intent);
+                profileIntent.putExtra("otherProfile",true);
+                startActivity(profileIntent);
             }
         });
 
         userEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent.putExtra("otherProfile",true);
-                startActivity(intent);
+                profileIntent.putExtra("otherProfile",true);
+                startActivity(profileIntent);
             }
         });
     }
@@ -104,4 +127,5 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
 }

@@ -34,6 +34,7 @@ import com.papel.Constants;
 import com.papel.R;
 import com.papel.data.Portfolio;
 import com.papel.data.TradingEquipment;
+import com.papel.data.User;
 import com.papel.ui.utils.DialogHelper;
 import com.papel.ui.utils.ResponseParser;
 
@@ -50,10 +51,14 @@ public class PortfolioFragment extends Fragment {
     private FloatingActionButton addPortfolio;
     private ProgressBar progressBar;
 
+    private User user;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              final ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_portfolio, container, false);
+
+        user = User.getInstance();
 
         ListView portfolioListView = root.findViewById(R.id.portfolio_list);
 
@@ -201,7 +206,7 @@ public class PortfolioFragment extends Fragment {
         final JSONObject jsonBody = new JSONObject();
         try {
             jsonBody.put("name", portfolioName);
-            jsonBody.put("userId", Constants.TEST_USER_ID); // TODO Change
+            jsonBody.put("userId", user.getId());
         } catch (JSONException e) {
             e.printStackTrace();
         }

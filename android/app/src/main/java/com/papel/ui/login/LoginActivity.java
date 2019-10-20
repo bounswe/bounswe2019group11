@@ -226,7 +226,7 @@ public class LoginActivity extends AppCompatActivity {
                 for (Location location : locationResult.getLocations()) {
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
-                    Log.d("Location Callback", location.getLatitude() + " " + location.getLongitude());
+                    //Log.d("Location Callback", location.getLatitude() + " " + location.getLongitude());
                 }
             }
         };
@@ -410,6 +410,8 @@ public class LoginActivity extends AppCompatActivity {
                     String iban = userObject.getString("iban");
 
                     user = new User(token, latitude, longitude, role, id, name, surname, email, idNumber, iban);
+
+                    User.setInstance(user);
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.putExtra("User", user);

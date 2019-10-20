@@ -14,6 +14,15 @@ public class User implements Parcelable {
     private String email;
     private String idNumber;
     private String iban;
+    private static User user;
+
+    public static User getInstance() {
+        return user;
+    }
+
+    public static void setInstance(User user1) {
+        user = user1;
+    }
 
     public User(String token, double latitude, double longitude, String role, String id, String name, String surname, String email, String idNumber, String iban) {
         this.token = token;

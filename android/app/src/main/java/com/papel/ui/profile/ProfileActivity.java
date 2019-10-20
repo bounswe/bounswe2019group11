@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.papel.R;
+import com.papel.data.User;
 
 public class ProfileActivity extends AppCompatActivity {
     private boolean following = false;
@@ -20,7 +22,9 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         Intent intent = getIntent();
+        User user = intent.getParcelableExtra("User");
         boolean otherProfile = intent.getBooleanExtra("otherProfile", false);
+
         final Button followButton = findViewById(R.id.followButton);
         if(otherProfile) {
             followButton.setVisibility(View.VISIBLE);
@@ -34,6 +38,13 @@ public class ProfileActivity extends AppCompatActivity {
         } catch (NullPointerException exp) {
             exp.printStackTrace();
         }
+
+        TextView userName = findViewById(R.id.username);
+        TextView userEmail = findViewById(R.id.usermail);
+
+        String fullName = user.getName() + " " + user.getSurname();
+        userName.setText(fullName);
+        userEmail.setText(user.getEmail());
 
 
         followButton.setOnClickListener(new View.OnClickListener() {
