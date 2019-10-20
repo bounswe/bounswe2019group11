@@ -4,42 +4,24 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavAction;
-import androidx.navigation.NavArgument;
+
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
-import androidx.navigation.NavDirections;
-import androidx.navigation.NavType;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
 import com.google.android.material.navigation.NavigationView;
-import com.papel.data.Portfolio;
 import com.papel.data.User;
-import com.papel.ui.articles.ArticlesFragment;
-import com.papel.ui.home.HomeFragment;
-import com.papel.ui.login.LoginActivity;
-import com.papel.ui.portfolio.PortfolioFragment;
-import com.papel.ui.portfolio.PortfolioFragmentArgs;
 import com.papel.ui.profile.ProfileActivity;
-import com.papel.ui.send.SendFragment;
-import com.papel.ui.share.ShareFragment;
-import com.papel.ui.tools.ToolsFragment;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.Menu;
 import android.widget.TextView;
 
@@ -58,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         final User user = comingIntent.getParcelableExtra("User");
 
         final Intent profileIntent = new Intent(this, ProfileActivity.class);
-        profileIntent.putExtra("User",user);
+        profileIntent.putExtra("User", user);
 
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         final NavigationView navigationView = findViewById(R.id.nav_view);
@@ -91,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         imageCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profileIntent.putExtra("otherProfile",false);
+                profileIntent.putExtra("otherProfile", false);
                 startActivity(profileIntent);
             }
         });
@@ -99,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         userName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profileIntent.putExtra("otherProfile",true);
+                profileIntent.putExtra("otherProfile", true);
                 startActivity(profileIntent);
             }
         });
@@ -107,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         userEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profileIntent.putExtra("otherProfile",true);
+                profileIntent.putExtra("otherProfile", true);
                 startActivity(profileIntent);
             }
         });
