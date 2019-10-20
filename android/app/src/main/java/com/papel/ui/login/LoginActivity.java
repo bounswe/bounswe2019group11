@@ -359,7 +359,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         DialogHelper.showBasicDialog(LoginActivity.this, "Error", message,null);
                     } catch (JSONException e) {
-                        // TODO handle error
+                        DialogHelper.showBasicDialog(LoginActivity.this,"Error","We couldn't make it.Please try again.",null);
                         e.printStackTrace();
                     }
                 }
@@ -415,7 +415,7 @@ public class LoginActivity extends AppCompatActivity {
                     intent.putExtra("User", user);
                     startActivity(intent);
                 } catch (JSONException e) {
-                    // TODO handle error
+                    DialogHelper.showBasicDialog(LoginActivity.this,"Error","We couldn't make it.Please try again.",null);
                     e.printStackTrace();
                 }
             }
