@@ -21,7 +21,12 @@
         android:id="@+id/nav_portfolio"
         android:name="com.papel.ui.portfolio.PortfolioFragment"
         android:label="@string/menu_portfolio"
-        tools:layout="@layout/fragment_portfolio" />
+        tools:layout="@layout/fragment_portfolio" >
+        <argument
+            android:name="User"
+            app:argType="string"
+            android:defaultValue="5"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_tools"
