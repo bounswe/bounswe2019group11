@@ -49,4 +49,5 @@ public class ResponseParser {
         return tradingEquipment;
     }
 
+
 }
