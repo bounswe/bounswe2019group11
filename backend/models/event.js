@@ -14,18 +14,13 @@ const eventSchema = new mongoose.Schema({
         ref: 'Comment'
     },
     StartDate: {
-        type: String,
+        type: Date,
         required: true    
     },
-    authorId:{
-        type:String,
-        required: true
-    },
     rank:{
-        type: Number
-    },
-    voterNumber:{
-        type: Number
+        type: Number,
+        enum: [1, 3],
+        default: 3
     },
     country:{
         type: String
