@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Papel Backend"
   },
-  "host": "localhost:3000",
+  "host": "papel-dev.herokuapp.com",
   "basePath": "/",
   "tags": [
     {

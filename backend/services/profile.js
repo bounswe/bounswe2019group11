@@ -23,18 +23,18 @@ module.exports.sendLostPasswordEmail = async (email) => {
 };
 
 module.exports.resetPassword = async (token, password) => {
-  const lostPasswordToken = await LostPasswordToken.findOne({ token });
-  if (!lostPasswordToken) {
-      throw errors.INVALID_LOST_PASSWORD_TOKEN();
-  }
-  const user = await User.findOne({ _id: lostPasswordToken._userId });
-  if (!user) {
-      throw errors.USER_NOT_FOUND();
-  }
-  if (!(password.length > 5)) {
-      throw errors.INVALID_PASSWORD();
-  }
-  user.password = password;
-  await user.save();
-  await LostPasswordToken.deleteOne({ token });
+    const lostPasswordToken = await LostPasswordToken.findOne({token});
+    if (!lostPasswordToken) {
+        throw errors.INVALID_LOST_PASSWORD_TOKEN();
+    }
+    const user = await User.findOne({_id: lostPasswordToken._userId});
+    if (!user) {
+        throw errors.USER_NOT_FOUND();
+    }
+    if (!(password.length > 5)) {
+        throw errors.INVALID_PASSWORD();
+    }
+    user.password = password;
+    await user.save();
+    await LostPasswordToken.deleteOne({token});
 };

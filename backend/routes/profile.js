@@ -20,7 +20,7 @@ router.post('/lost-password', async (req, res) => {
 
 router.post('/lost-password/reset', async (req, res) => {
     try {
-        const { token, password } = req.body;
+        const {token, password} = req.body;
         await profileService.resetPassword(token, password);
         res.sendStatus(200);
     } catch (err) {

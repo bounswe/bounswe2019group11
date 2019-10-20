@@ -1,31 +1,28 @@
-const mongoose = require ('mongoose')
+const mongoose = require('mongoose');
+
 const stockSchema = new mongoose.Schema({
-    name:{
+    name: {
         type: String,
-        required:true
+        required: true
     },
-    price:{
+    price: {
         type: Number,
         required: true
     },
 
-    monthlyPrice:{
+    monthlyPrice: {
         type: Object
     },
     dailyPrice: {
         type: Object
     },
-    stockSymbol:{
-        type:String,
+    stockSymbol: {
+        type: String,
         required: true
     },
-    stockName:{
-        type:String
+    stockName: {
+        type: String
     }
-
 });
 
-
-const Stock = mongoose.model('Stock', stockSchema);
-
-module.exports = Stock;
+module.exports = mongoose.model('Stock', stockSchema);

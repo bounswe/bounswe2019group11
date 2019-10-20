@@ -76,7 +76,7 @@ module.exports.resendVerificationMail = async (email) => {
     if (user.isVerified) {
         throw errors.USER_ALREADY_VERIFIED();
     }
-    let verificationToken = VerificationToken.findOne({ _userId: user._id });
+    let verificationToken = VerificationToken.findOne({_userId: user._id});
     if (!verificationToken) {
         verificationToken = await user.generateVerificationToken();
     }

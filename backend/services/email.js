@@ -9,10 +9,10 @@ const transporter = nodemailer.createTransport({
 });
 
 module.exports.sendMail = async (to, subject, text) => {
-  await transporter.sendMail({
-      from: '"Papel" < c3198352@urhen.com >',
-      to,
-      subject,
-      text,
-  });
+    await transporter.sendMail({
+        from: '"Papel" < c3198352@urhen.com >',
+        to,
+        subject,
+        text,
+    });
 };
