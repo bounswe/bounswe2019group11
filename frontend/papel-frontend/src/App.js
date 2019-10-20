@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import logo from './logo.svg';
+import Logo from './logo-green-small.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Home from './Home/Home';
@@ -25,8 +25,11 @@ class App extends React.Component {
     return (
       <Router>
         <ul id="menu">
-          <li><Link to="/">HOME</Link></li>
-          <li><Link to="/login">Login</Link></li>
+            
+          <Link to="/">
+            <img id="logo-green-small" classname="menu-logo" src={Logo} style = { { borderright: "2px solid rgba(0, 0, 0, 0.151)", width: 390/4, height: 135/4}} />
+          </Link>
+          <li><Link to="/login" style={{paddingLeft:0}}>Login</Link></li>
           <li><Link to="/register">Register</Link></li>
           <li><Link to="/profile">Profile</Link></li>
           <li><Link to="/articles">Articles</Link></li>

@@ -21,6 +21,11 @@ background-attachment: fixed;
   margin-bottom: 20px;
   background-color: #3DA544;
 }
+ion-icon {
+  font-size: 24px;
+  padding-right: 0px;
+}
+
 
 #menu li {
   padding-left: 20px;
@@ -30,14 +35,13 @@ background-attachment: fixed;
   display: inline-block;
 }
 
-
 #menu li:hover {
   cursor: pointer;
 }
 
 #menu li a {
   font-weight: bold;
-  color: #333;
+  color: #000;
 }
 #menu li a:hover {
   color: #fff;

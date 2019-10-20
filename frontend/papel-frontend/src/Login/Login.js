@@ -1,5 +1,6 @@
 import React from 'react';
 import './Login.css';
+import Logo from '../logo-white.png';
 import $ from 'jquery';
 
 class Login extends React.Component {
@@ -36,7 +37,13 @@ class Login extends React.Component {
   render () {
     return (
       <div id="login-form">
+          
           <div className="card container col-sm-4">
+            <div className="row">
+              <div className="container">
+                <img id="logo-white" src={Logo} style = { { margin: "auto", width: "100%", height:"80%"}} />
+            </div>
+            </div>
             <div className="row">
               <div className="col-sm-5">E-Mail: </div>
               <div className="col-sm-7"><input type="text" name="email" onChange={this.handleChange}/></div>
