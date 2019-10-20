@@ -11,15 +11,15 @@ module.exports.getByID = async (articleID) => {
 };
 
 module.exports.getByUserID = async (userID) => {
-    return await Article.findOne({
+    return await Article.find({
         authorID: userID,
     });
 };
 
 module.exports.create = async (article) => {
     const newArticle = {...article};
-    const createdArticle = await Stock.create(newArticle);
-    return createdStock;
+    const createdArticle = await Article.create(newArticle);
+    return createdArticle;
 }; 
 
 module.exports.delete = async (articleID) => {

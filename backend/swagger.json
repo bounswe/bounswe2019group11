@@ -21,12 +21,16 @@
       "description": "Profile related endpoints"
     },
     {
-      "name": "portfolio",
-      "description": "Portfolio create-fetch-update endpoints",
-    },
-    {
       "name": "event",
       "description": "Event fetch endpoints"
+    },
+    {
+      "name": "article",
+      "description": "Article fetch endpoints"
+    },
+    {
+      "name": "portfolio",
+      "description": "Portfolio create-fetch-update endpoints"
     }
   ],
   "schemes": [
@@ -42,7 +46,7 @@
         "summary": "Sign up endpoint for the Papel.",
         "consumes": [
           "application/json"
-          ],
+        ],
         "produces": [
           "application/json"
         ],
@@ -196,7 +200,6 @@
           }
         }
       }
-<<<<<<< HEAD
     },
     "/stock": {
       "get": {
@@ -261,6 +264,102 @@
         }
       }
     },
+    "/profile/lost-password": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Lost password endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "email",
+            "description": "Email of the password who lost his password.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "description": "Email of the password who lost his password.",
+                  "example": "john@doe.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. An email that contains instruction about how the user can reset his password is sent."
+          },
+          "400": {
+            "description": "User with the given email not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/profile/lost-password/reset": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Password reset endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Token and password",
+            "description": "Lost password verification token and new password of the user.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "token",
+                "password"
+              ],
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "description": "Lost password token.",
+                  "example": "6b4c4760efb1f1a4115f391fec2f89das5dcd7ce9448464747f6f936eea4caed"
+                },
+                "password": {
+                  "type": "string",
+                  "description": "New password of the user.",
+                  "example": "new#pas$word"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Credentials are updated with the new password."
+          },
+          "400": {
+            "description": "Given lost password token is expired, invalid or the password is too short."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
     "/portfolio": {
       "get": {
         "tags": [
@@ -272,15 +371,6 @@
         ],
         "produces": [
           "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "portfolioId",
-            "in": "path",
-            "description": "Portfolio ID",
-            "required": true,
-            "type": "string"
-          }
         ],
 
         "responses": {
@@ -327,74 +417,10 @@
                   "type": "string",
                   "description": "User ID of the portfolio",
                   "example": "5da076d955d9b93a7308f3d7"
-=======
-    },"/event": {
-      "get": {
-        "tags": [
-          "event" ],
-          "summary": "Event get all endpoint.",
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-  
-          "responses": {
-            "200":{
-              "description": "OK. All Events returned succesfully.",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties":  {
-                    "title":{
-                      "type": "string",
-                      "description": "Title of the event",
-                      "example": "title"
-                    },
-                    "body":{
-                      "type": "string",
-                      "description": "Event body",
-                      "example": "272.7 example"
-                    },
-                    "comment":{
-                      "type": "array",
-                      "description": "Comments of the event",
-                      "example": ["comment2","comment2"]
-                    },
-                    "date":{
-                      "type": "string",
-                      "description": "Start day of the event",
-                      "example": "11/12/2013"
-                    },
-                    "authorId":{
-                      "type": "string",
-                      "description": "Name of the author",
-                      "example": "Cumhur Kılıç"
-                    },
-                    "rank":{
-                      "type": "number",
-                      "description": "Rank of the event",
-                      "example": 4
-                    },
-                    "voterNumber":{
-                      "type": "number",
-                      "description": "Number of voter for event",
-                      "example": 156
-                    },
-                    "country":{
-                      "type": "string",
-                      "description": "Country of the event",
-                      "example": "Turkey"
-                    }
-                  }
->>>>>>> Add files via upload
                 }
               }
             }
           }
-<<<<<<< HEAD
         ],
         "responses": {
           "200": {
@@ -420,6 +446,15 @@
         ],
         "produces": [
           "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "portfolioId",
+            "in": "path",
+            "description": "Portfolio ID",
+            "required": true,
+            "type": "string"
+          }
         ],
 
         "responses": {
@@ -523,102 +558,6 @@
         }
       }
     },
-    "/profile/lost-password": {
-      "post": {
-        "tags": [
-          "profile"
-        ],
-        "summary": "Lost password endpoint.",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "body",
-            "name": "email",
-            "description": "Email of the password who lost his password.",
-            "schema": {
-              "type": "object",
-              "required": [
-                "email"
-              ],
-              "properties": {
-                "email": {
-                  "type": "string",
-                  "description": "Email of the password who lost his password.",
-                  "example": "john@doe.com"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK. An email that contains instruction about how the user can reset his password is sent."
-          },
-          "400": {
-            "description": "User with the given email not found."
-          },
-          "500": {
-            "description": "Internal error occurred. Check the cause field for the diagnostics."
-          }
-        }
-      }
-    },
-    "/profile/lost-password/reset": {
-      "post": {
-        "tags": [
-          "profile"
-        ],
-        "summary": "Password reset endpoint.",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "body",
-            "name": "Token and password",
-            "description": "Lost password verification token and new password of the user.",
-            "schema": {
-              "type": "object",
-              "required": [
-                "token",
-                "password"
-              ],
-              "properties": {
-                "token": {
-                  "type": "string",
-                  "description": "Lost password token.",
-                  "example": "6b4c4760efb1f1a4115f391fec2f89das5dcd7ce9448464747f6f936eea4caed"
-                },
-                "password": {
-                  "type": "string",
-                  "description": "New password of the user.",
-                  "example": "new#pas$word"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK. Credentials are updated with the new password."
-          },
-          "400": {
-            "description": "Given lost password token is expired, invalid or the password is too short."
-          },
-          "500": {
-            "description": "Internal error occurred. Check the cause field for the diagnostics."
-          }
-        }
-      }
-    },
     "/portfolio/user/{userId}": {
       "get": {
         "tags": [
@@ -652,6 +591,184 @@
           },
           "503": {
             "description": "Internal error occurred."
+          }
+        }
+      }
+    },
+    "/article": {
+      "get": {
+        "tags": [
+          "article"
+        ],
+        "summary": "Article get all endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+
+        "responses": {
+          "200":{
+            "description": "OK. All articles returned succesfully.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties":  {
+                  "title":{
+                    "type": "string",
+                    "description": "Title of the article",
+                    "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
+                  },
+                  "body":{
+                    "type": "string",
+                    "description": "Body part of the article",
+                    "example": "The central bank cut rates for the first time since the Great Recession in late July..."
+                  },
+                  "comment":{
+                    "type":"array",
+                    "description": "Comments made on the article",
+                    "example": ["Nice!","Thank you."]
+                  },
+                  "authorId":{
+                    "type":"string",
+                    "description": "User ID of the article's author.",
+                    "example": "5da07611e407903a5d01b265"
+                  },
+                  "rank":{
+                    "type": "Number",
+                    "description": "User ID of the article's author.",
+                    "example": "3.4"
+                  },
+                  "voterNumber":{
+                    "type": "Number",
+                    "description": "Number of users that ranked the article.",
+                    "example": "72"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/event": {
+      "get": {
+        "tags": [
+          "event" ],
+        "summary": "Event get all endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+
+        "responses": {
+          "200":{
+            "description": "OK. All Events returned succesfully.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties":  {
+                  "title":{
+                    "type": "string",
+                    "description": "Title of the event",
+                    "example": "title"
+                  },
+                  "body":{
+                    "type": "string",
+                    "description": "Event body",
+                    "example": "272.7 example"
+                  },
+                  "comment":{
+                    "type": "array",
+                    "description": "Comments of the event",
+                    "example": ["comment2","comment2"]
+                  },
+                  "date":{
+                    "type": "date",
+                    "description": "Start day of the event"
+                  },
+                  "rank":{
+                    "type": "number",
+                    "description": "Rank of the event",
+                    "example": 3
+                  },
+                  "country":{
+                    "type": "string",
+                    "description": "Country of the event",
+                    "example": "Turkey"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/event/{_id}": {
+      "get": {
+        "tags": [
+          "event"
+        ],
+        "summary": "Returns requested event with historical data",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "Unique event ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+
+        "responses": {
+          "200":{
+            "description": "OK. Event returned succesfully.",
+            "schema": {
+              "type": "object",
+              "properties":  {
+                "title":{
+                  "type": "string",
+                  "description": "Title of the event",
+                  "example": "title"
+                },
+                "body":{
+                  "type": "string",
+                  "description": "Event body",
+                  "example": "272.7 example"
+                },
+                "comment":{
+                  "type": "array",
+                  "description": "Comments of the event",
+                  "example": ["comment2","comment2"]
+                },
+                "date":{
+                  "type": "date",
+                  "description": "Start day of the event"
+                },
+                "rank":{
+                  "type": "number",
+                  "description": "Rank of the event",
+                  "example": 3
+                },
+                "country":{
+                  "type": "string",
+                  "description": "Country of the event",
+                  "example": "Turkey"
+                }
+              }
+            }
+
           }
         }
       }
@@ -812,84 +929,6 @@
         }
       }
 
-=======
-        }
-      },
-      "/event/{_id}": {
-        "get": {
-          "tags": [
-            "event"
-          ],
-          "summary": "Returns requested event with historical data",
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "parameters": [
-            {
-              "name": "_id",
-              "in": "path",
-              "description": "Unique event ID",
-              "required": true,
-              "type": "string"
-            }
-          ],
-  
-          "responses": {
-            "200":{
-              "description": "OK. Event returned succesfully.",
-              "schema": {
-                "type": "object",
-                "properties":  {
-                  "title":{
-                    "type": "string",
-                    "description": "Title of the event",
-                    "example": "title"
-                  },
-                  "body":{
-                    "type": "string",
-                    "description": "Event body",
-                    "example": "272.7 example"
-                  },
-                  "comment":{
-                    "type": "array",
-                    "description": "Comments of the event",
-                    "example": ["comment2","comment2"]
-                  },
-                  "date":{
-                    "type": "string",
-                    "description": "Start day of the event",
-                    "example": "11/12/2013"
-                  },
-                  "authorId":{
-                    "type": "string",
-                    "description": "Name of the author",
-                    "example": "Cumhur Kılıç"
-                  },
-                  "rank":{
-                    "type": "number",
-                    "description": "Rank of the event",
-                    "example": 4
-                  },
-                  "voterNumber":{
-                    "type": "number",
-                    "description": "Number of voter for event",
-                    "example": 156
-                  },
-                  "country":{
-                    "type": "string",
-                    "description": "Country of the event",
-                    "example": "Turkey"
-                  }
-                }
-  
-              }
-            }
-          }
-        }
-      }
->>>>>>> Add files via upload
     }
   }
+}

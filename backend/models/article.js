@@ -23,7 +23,7 @@ const articleSchema = new mongoose.Schema({
     },
     voterNumber: {
         type: Number
-    },
+    }
 });
 
 const Article = mongoose.model('Article', articleSchema);
