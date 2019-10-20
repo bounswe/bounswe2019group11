@@ -63,7 +63,6 @@ public class LoginActivity extends AppCompatActivity {
     private CheckBox traderCheckBox;
     private EditText ibanInput;
     private EditText idInput;
-    //private Button changeScreen;
     private Button sendReq;
     private ProgressBar progressBar;
     private User user;
@@ -109,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 }
             });
-
+            
             emailInput = findViewById(R.id.emailInput);
             passwordInput = findViewById(R.id.passwordInput);
             nameInput = findViewById(R.id.nameInput);
