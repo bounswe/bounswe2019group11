@@ -1,22 +1,35 @@
 package com.papel.data;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Article {
-    private int id;
+    private String id;
     private String title;
-    private String content;
-    private String author;
-    private String date;
+    private String body;
+    private String authorId;
+    private String authorName;
+    private int voterNumber;
     private double rank;
+    private ArrayList<String> comments = new ArrayList<>();
 
-    public Article(int id, String title, String content, String author, String date, double rank) {
+    public Article() {
+    }
+
+    public Article(String id, String title, String body, String authorId, double rank) {
         this.id = id;
         this.title = title;
-        this.content = content;
-        this.author = author;
-        this.date = date;
+        this.body = body;
+        this.authorId = authorId;
         this.rank = rank;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -27,28 +40,28 @@ public class Article {
         this.title = title;
     }
 
-    public String getContent() {
-        return content;
+    public String getBody() {
+        return body;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setBody(String body) {
+        this.body = body;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getAuthorId() {
+        return authorId;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
     }
 
-    public String getDate() {
-        return date;
+    public int getVoterNumber() {
+        return voterNumber;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setVoterNumber(int voterNumber) {
+        this.voterNumber = voterNumber;
     }
 
     public double getRank() {
@@ -59,11 +72,11 @@ public class Article {
         this.rank = rank;
     }
 
-    public int getId() {
-        return id;
+    public ArrayList<String> getComments() {
+        return comments;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setComments(ArrayList<String> comments) {
+        this.comments = comments;
     }
 }

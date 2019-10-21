@@ -2,6 +2,8 @@ package com.papel.ui.utils;
 
 import android.util.Log;
 
+import com.papel.data.Article;
+import com.papel.data.Comment;
 import com.papel.data.Portfolio;
 import com.papel.data.TradingEquipment;
 
@@ -9,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ResponseParser {
@@ -49,5 +52,25 @@ public class ResponseParser {
         return tradingEquipment;
     }
 
+    public static Article parseArticle(JSONObject response) {
+        Article article = null;
+        try {
+            String articleId = response.getString("_id");
+            String articleTitle = response.getString("title");
+            String articleBody = response.getString("body");
+            String authorId = response.getString("authorId");
+            double rank = response.getDouble("rank");
+            JSONArray comments = response.getJSONArray("comment");
+            ArrayList<String> articleComments = new ArrayList<>();
+            for(int i = 0; i < comments.length(); i++){
+                articleComments.add(comments.getString(i));
+            }
+            article = new Article(articleId, articleTitle, articleBody,authorId, rank);
+            article.setComments(articleComments);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return article;
+    }
 
 }

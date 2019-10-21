@@ -1,8 +1,9 @@
 package com.papel;
 
 public class Constants {
-    public static final String LOCALHOST = "http://192.168.43.108:3000/";
+    public static final String LOCALHOST = "http://192.168.4.68:3000/";
 
+    public static final String ARTICLE = "article/";
     public static final String STOCK = "stock/";
     public static final String PORTFOLIO = "portfolio/";
     public static final String PORTFOLIO_USER = "portfolio/user/";
