@@ -1,10 +1,11 @@
 import React from 'react';
 import './Profile.css';
 import ProfileCard from './ProfileCard';
+import Portfolio from './Portfolio';
 import logo from "./logo.jpg";
 import {instanceOf} from 'prop-types'
 import {withCookies, Cookies} from 'react-cookie';
-import {Card} from 'react-bootstrap';
+import {Row, Col, Card} from 'react-bootstrap';
 import $ from 'jquery';
 
 class Profile extends React.Component {
@@ -13,20 +14,48 @@ class Profile extends React.Component {
     super(props);
     const {cookies} = props;
     const loggedIn = !!cookies.get('userToken');
-    this.state = {loggedIn: loggedIn};
+    this.state = {loggedIn: loggedIn, portfolios: []};
   }
 
   componentDidMount() {
     const {cookies} = this.props;
-    $.get("http://localhost:3000/portfolio", (data) => {
-      console.log(data);
-    });
+    const self = this;
+    if (this.state.loggedIn) {
+      const request_url = "http://localhost:3000/portfolio/user/" + cookies.get('user')._id;
+      $.get(request_url , (data) => {
+        console.log(data);
+        self.setState({portfolios: data});
+      });
+    }
   }
 
   render () {
     if (this.state.loggedIn) {
       return (
-        <ProfileCard/>
+        <>
+          <Row>
+            <Col md={{span: 6}}>
+              <ProfileCard/>
+            </Col>
+            <Col md={{span: 6}}>
+              <h3>Portfolios: </h3>
+              <Row>
+                <Col md={{span: 8, offset: 2}}>
+                {
+                  this.state.portfolios.map (
+                    portfolio =>
+                    <Portfolio key={portfolio._id} portfolio={portfolio} />
+                  )
+                }
+                </Col>
+              </Row>
+
+            </Col>
+          </Row>
+          <Row>
+
+          </Row>
+        </>
       );
     }
     else {

@@ -15,14 +15,8 @@ class TradingEquipment extends React.Component {
 
   componentDidMount() {
     var stockId;
-    $.get("http://localhost:3000/stock", (data) => {
-      var curStock = data[this.state.id];
-      this.setState({stock: curStock});
-      stockId = curStock._id;
-
-      $.get(`http://localhost:3000/stock/${stockId}`, (data) => {
-        this.setState({dailyPrice: data.dailyPrice, monthlyPrice: data.monthlyPrice});
-      });
+    $.get(`http://localhost:3000/stock/${this.state.id}`, (data) => {
+      this.setState({stock: data, dailyPrice: data.dailyPrice, monthlyPrice: data.monthlyPrice});
     });
   }
 
@@ -69,10 +63,6 @@ class TradingEquipment extends React.Component {
           <div className="graphic col-sm-9 ">
             <CanvasJSChart options={options}/>
           </div>
-        </div>
-        <div className="row">
-          <div className="col-6 col-sm-2 offset-sm-8"><div className="btn">Bullish</div></div>
-          <div className="col-6 col-sm-2"><div className="btn">Bearish</div></div>
         </div>
       </Card>
     );

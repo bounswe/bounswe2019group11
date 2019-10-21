@@ -17,8 +17,9 @@ import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import { useCookies, CookiesProvider } from 'react-cookie';
 
 function NavBar(props) {
+  const [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken'])
   var profileBtn, logoutBtn, registerBtn, loginBtn;
-  const [loggedIn, login] = useState(false);
+  const [loggedIn, login] = useState(!!cookies.userToken);
   const logout = function () {
     props.removeCookie('userToken');
     props.removeCookie('user');
@@ -45,20 +46,22 @@ function NavBar(props) {
       <li><Link to="/events">Events</Link></li>
       {logoutBtn}
     </ul>
-    <div className="container">
-      <Switch>
-        <Route exact path="/"><Home /></Route>
-        <Route path="/login"><CookiesProvider><Login login={login} /></CookiesProvider></Route>
-        <Route path="/register"><Register /></Route>
-        <Route path="/profile"><CookiesProvider><Profile /></CookiesProvider></Route>
-        <Route path="/currency/:id" component={TradingEquipment}/>
-        <Route path="/article/:id"><Article /></Route>
-        <Route path="/event/:id"><EconEvent /></Route>
-        <Route path="/validation"><Validation /></Route>
-        <Route path="/articles"><Articles /></Route>
-        <Route path="/events"><EconEvents /></Route>
-      </Switch>
-    </div>
+    <CookiesProvider>
+      <div className="container">
+        <Switch>
+          <Route exact path="/"><Home /></Route>
+          <Route path="/login"><Login login={login} /></Route>
+          <Route path="/register"><Register /></Route>
+          <Route path="/profile"><Profile /></Route>
+          <Route path="/stock/:id" component={TradingEquipment}/>
+          <Route path="/article/:id"><Article /></Route>
+          <Route path="/event/:id"><EconEvent /></Route>
+          <Route path="/validation"><Validation /></Route>
+          <Route path="/articles"><Articles /></Route>
+          <Route path="/events"><EconEvents /></Route>
+        </Switch>
+      </div>
+    </CookiesProvider>
   </Router>);
 }
 function App() {
@@ -66,7 +69,7 @@ function App() {
 
 
   return (
-    <NavBar userToken={cookies.userToken} removeCookie={removeCookie} />
+    <NavBar />
   );
 }
 
