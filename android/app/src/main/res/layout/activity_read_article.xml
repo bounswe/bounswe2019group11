@@ -1,43 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".ui.articles.ReadArticleActivity">
-
-
-    <TextView
-        android:id="@+id/read_article_title_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="@dimen/text_margin"
-        android:layout_marginTop="@dimen/text_margin"
-        android:layout_marginEnd="@dimen/text_margin"
-        android:layout_marginBottom="@dimen/text_margin"
-        android:text="@string/test_title"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:nestedScrollingEnabled="true">
 
     <RelativeLayout
-        android:id="@+id/relative_layout_inside"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignWithParentIfMissing="false"
-        android:layout_alignBaseline="@id/read_article_title_textview"
-        android:layout_alignBottom="@id/read_article_title_textview"
-        android:layout_marginStart="@dimen/text_margin"
-        android:layout_marginEnd="@dimen/text_margin"
-        android:layout_marginBottom="@dimen/text_margin">
+        android:background="@color/white"
+        android:fadeScrollbars="true"
+        android:isScrollContainer="true"
+        android:nestedScrollingEnabled="true"
+        android:scrollbars="vertical"
+        tools:context=".ui.articles.ReadArticleActivity">
 
-        <LinearLayout
+
+        <TextView
+            android:id="@+id/read_article_title_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginTop="@dimen/text_margin"
+            android:layout_marginEnd="@dimen/text_margin"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:text="@string/test_title"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:layout_marginBottom="@dimen/text_margin" />
+
+        <LinearLayout
+            android:id="@+id/lay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginTop="60dp"
+            android:layout_marginEnd="@dimen/text_margin"
+            android:fadeScrollbars="true"
+            android:isScrollContainer="true"
+            android:orientation="vertical"
+            android:scrollbars="vertical"
+            android:verticalScrollbarPosition="defaultPosition">
 
             <TextView
                 android:id="@+id/read_article_content_textview"
@@ -132,6 +138,6 @@
 
         </LinearLayout>
 
-    </RelativeLayout>
 
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>

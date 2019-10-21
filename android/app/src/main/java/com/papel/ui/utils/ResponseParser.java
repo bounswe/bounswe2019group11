@@ -1,11 +1,20 @@
 package com.papel.ui.utils;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.papel.Constants;
 import com.papel.data.Article;
 import com.papel.data.Comment;
 import com.papel.data.Portfolio;
 import com.papel.data.TradingEquipment;
+import com.papel.data.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,25 +61,54 @@ public class ResponseParser {
         return tradingEquipment;
     }
 
-    public static Article parseArticle(JSONObject response) {
+    public static Article parseArticle(JSONObject response, Context context) {
         Article article = null;
         try {
             String articleId = response.getString("_id");
             String articleTitle = response.getString("title");
             String articleBody = response.getString("body");
             String authorId = response.getString("authorId");
+            String date = response.getString("date");
             double rank = response.getDouble("rank");
             JSONArray comments = response.getJSONArray("comment");
             ArrayList<String> articleComments = new ArrayList<>();
             for(int i = 0; i < comments.length(); i++){
                 articleComments.add(comments.getString(i));
             }
-            article = new Article(articleId, articleTitle, articleBody,authorId, rank);
+            article = new Article(articleId, articleTitle, articleBody,authorId, rank, date);
             article.setComments(articleComments);
+            String authorName = getAuthorNameFromAuthorId(context, authorId);
+            if(authorName == null ) {
+                authorName = "Jennifer Hunton";
+            }
+            article.setAuthorName(authorName);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return article;
     }
 
+    public static String getAuthorNameFromAuthorId(final Context context, String authorId) {
+        final String[] author = new String[1];
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = Constants.LOCALHOST + Constants.USER+authorId;
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject authorObj = new JSONObject(response);
+                    author[0] = authorObj.getString("name") + " " +  authorObj.getString("surname");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+
+        requestQueue.add(request);
+        return author[0];
+    }
 }
