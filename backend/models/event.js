@@ -19,7 +19,7 @@ const eventSchema = new mongoose.Schema({
     },
     rank: {
         type: Number,
-        enum: [1, 3],
+        enum: [1, 2, 3],
         default: 3
     },
     country: {
