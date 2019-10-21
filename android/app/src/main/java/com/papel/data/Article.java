@@ -3,16 +3,20 @@ package com.papel.data;
 import java.util.Date;
 
 public class Article {
+    private int id;
     private String title;
     private String content;
     private String author;
-    private Date date;
+    private String date;
+    private double rank;
 
-    public Article(String title, String content, String author, Date date) {
+    public Article(int id, String title, String content, String author, String date, double rank) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.author = author;
         this.date = date;
+        this.rank = rank;
     }
 
     public String getTitle() {
@@ -39,11 +43,27 @@ public class Article {
         this.author = author;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
+    }
+
+    public double getRank() {
+        return rank;
+    }
+
+    public void setRank(double rank) {
+        this.rank = rank;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

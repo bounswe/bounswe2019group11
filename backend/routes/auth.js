@@ -6,13 +6,13 @@ const router = express.Router();
 
 router.post('/sign-up', async (req, res) => {
     try {
-        const {name, surname, email, password, idNumber, iban} = req.body;
+        const {name, surname, email, password, idNumber, iban, location} = req.body;
         const isUserExists = await authService.isUserExists(email);
         if (isUserExists) {
             res.status(400).send(errors.EMAIL_IN_USE());
             return;
         }
-        await authService.signUp(name, surname, email, password, idNumber, iban);
+        await authService.signUp(name, surname, email, password, idNumber, iban, location);
         res.sendStatus(200);
     } catch (err) {
         if (err.name === 'ValidationError') {
@@ -30,6 +30,18 @@ router.post('/sign-up', async (req, res) => {
                         break;
                     case 'InvalidPassword':
                         causes.push(errors.INVALID_PASSWORD());
+                        break;
+                    case 'InvalidLatitude':
+                        causes.push(errors.INVALID_LATITUDE());
+                        break;
+                    case 'InvalidLongitude':
+                        causes.push(errors.INVALID_LONGITUDE());
+                        break;
+                    case 'InvalidIdNumber':
+                        causes.push(errors.INVALID_ID_NUMBER());
+                        break;
+                    case 'InvalidIban':
+                        causes.push(errors.INVALID_IBAN());
                         break;
                     default:
                         causes.push(errors.UNKNOWN_VALIDATION_ERROR(err.errors[field]));
@@ -72,8 +84,22 @@ router.post('/login', async (req, res) => {
         const response = await authService.login(email, password);
         res.status(200).send(response);
     } catch (err) {
-        if (err.name === 'InvalidCredentials') {
+        if (err.name === 'InvalidCredentials' || err.name === 'UserNotVerified') {
             res.status(401).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
+router.post('/sign-up/verification/resend', async (req, res) => {
+    try {
+        const email = req.body.email;
+        await authService.resendVerificationMail(email);
+        res.sendStatus(200);
+    } catch (err) {
+        if (err.name === 'UserNotFound' || err.name === 'UserAlreadyVerified') {
+            res.status(400).send(err);
         } else {
             res.status(500).send(errors.INTERNAL_ERROR(err));
         }

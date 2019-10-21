@@ -23,8 +23,8 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <ScrollView
-        android:id="@+id/scrollView"
+    <RelativeLayout
+        android:id="@+id/relative_layout_inside"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignWithParentIfMissing="false"
@@ -125,8 +125,13 @@
 
             </LinearLayout>
 
+            <ListView
+                android:id="@+id/article_comments_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
         </LinearLayout>
 
-    </ScrollView>
+    </RelativeLayout>
 
 </RelativeLayout>

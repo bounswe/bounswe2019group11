@@ -14,16 +14,16 @@ function getTokenFromHeader(req) {
 module.exports = async (req, res, next) => {
     const token = getTokenFromHeader(req);
     if (!token) {
-        return res.status(401).send({ error: 'MissingToken' });
+        return res.status(401).send({error: 'MissingToken'});
     }
     let payload = null;
-    try{
+    try {
         payload = jwt.decode(token, process.env.JWT_TOKEN_SECRET);
     } catch (e) {
-        return res.status(401).send({ error: 'InvalidToken' });
+        return res.status(401).send({error: 'InvalidToken'});
     }
     if (payload.exp < moment.unix()) {
-        return res.status(401).send({ error: 'ExpiredToken' });
+        return res.status(401).send({error: 'ExpiredToken'});
     }
     req.token.data = payload;
     return next();

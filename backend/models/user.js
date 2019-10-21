@@ -4,6 +4,7 @@ const isEmail = require('validator').isEmail;
 const authHelper = require('../helpers/auth');
 const VerificationToken = require('./verificationToken');
 const crypto = require('crypto');
+const LostPasswordToken = require('./lostPasswordToken');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -41,18 +42,37 @@ const userSchema = new mongoose.Schema({
     },
     idNumber: {
         type: String,
+        validate: {
+            validator: authHelper.validateIdNumber,
+            message: () => 'InvalidIdNumber',
+        }
     },
     iban: {
         type: String,
+        validate: {
+            validator: authHelper.validateIban,
+            message: () => 'InvalidIban',
+        }
     },
     role: {
         type: String,
+        enum: [authHelper.ROLES.BASIC, authHelper.ROLES.TRADER, authHelper.ROLES.ADMIN],
         default: authHelper.ROLES.BASIC,
     },
     isVerified: {
         type: Boolean,
         default: false,
-    }
+    },
+    location: {
+        latitude: {
+            type: Number,
+            required: 'InvalidLatitude',
+        },
+        longitude: {
+            type: Number,
+            required: 'InvalidLongitude',
+        },
+    },
 });
 
 userSchema.pre('save', async function (next) {
@@ -69,6 +89,14 @@ userSchema.methods.generateVerificationToken = async function() {
       _userId: this._id,
       token,
   });
+};
+
+userSchema.methods.generateLostPasswordToken = async function () {
+    const token = crypto.randomBytes(32).toString('hex');
+    return await LostPasswordToken.create({
+        _userId: this._id,
+        token,
+    });
 };
 
 const User = mongoose.model('User', userSchema);

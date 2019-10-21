@@ -1,6 +1,13 @@
 body {
   background-color: #f5f5f6;
   color: #333;
+/* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#fcfff9+0,daefda+64,35dd3a+100 */
+background: rgb(252,255,249); /* Old browsers */
+background: -moz-linear-gradient(top,  rgba(252,255,249,1) 0%, rgba(218,239,218,1) 64%, rgba(53,221,58,1) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  rgba(252,255,249,1) 0%,rgba(218,239,218,1) 64%,rgba(53,221,58,1) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  rgba(252,255,249,1) 0%,rgba(218,239,218,1) 64%,rgba(53,221,58,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfff9', endColorstr='#35dd3a',GradientType=0 ); /* IE6-9 */
+background-attachment: fixed;
 }
 .card {
   background-color: #ffffff;
@@ -12,8 +19,13 @@ body {
 #menu {
   margin: 0;
   margin-bottom: 20px;
-  background-color: #66bb6a;
+  background-color: #3DA544;
 }
+ion-icon {
+  font-size: 24px;
+  padding-right: 0px;
+}
+
 
 #menu li {
   padding-left: 20px;
@@ -23,14 +35,13 @@ body {
   display: inline-block;
 }
 
-
 #menu li:hover {
   cursor: pointer;
 }
 
 #menu li a {
   font-weight: bold;
-  color: #333;
+  color: #000;
 }
 #menu li a:hover {
   color: #fff;

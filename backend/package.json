@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy-dev": "git subtree push --prefix backend heroku master"
   },
   "author": "",
   "license": "ISC",
@@ -15,11 +16,14 @@
     "cors": "^2.8.5",
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
+    "iban": "0.0.12",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
     "mongoose": "^5.7.1",
     "morgan": "^1.9.1",
     "nodemailer": "^6.3.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
     "swagger-ui-express": "^4.1.1",
     "validator": "^11.1.0"
   },
