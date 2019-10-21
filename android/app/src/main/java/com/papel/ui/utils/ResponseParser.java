@@ -12,6 +12,7 @@ import com.android.volley.toolbox.Volley;
 import com.papel.Constants;
 import com.papel.data.Article;
 import com.papel.data.Comment;
+import com.papel.data.Event;
 import com.papel.data.Portfolio;
 import com.papel.data.TradingEquipment;
 import com.papel.data.User;
@@ -24,6 +25,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ResponseParser {
+
+    private static String author;
 
     public static Portfolio parsePortfolio(JSONObject response) {
         Portfolio portfolio = null;
@@ -61,6 +64,26 @@ public class ResponseParser {
         return tradingEquipment;
     }
 
+    public static Event parseEvent(JSONObject response) {
+        Event event = null;
+        try {
+            String eventTitle = response.getString("title");
+            String eventBody = response.getString("body");
+            String date = response.getString("date");
+            String country = response.getString("country");
+            double rank = response.getDouble("rank");
+            JSONArray comments = response.getJSONArray("comment");
+            ArrayList<String> eventComments = new ArrayList<>();
+            for(int i = 0; i < comments.length(); i++){
+                eventComments.add(comments.getString(i));
+            }
+            event = new Event(eventTitle, eventBody, eventComments, date, rank, country);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return event;
+    }
+
     public static Article parseArticle(JSONObject response, Context context) {
         Article article = null;
         try {
@@ -68,6 +91,7 @@ public class ResponseParser {
             String articleTitle = response.getString("title");
             String articleBody = response.getString("body");
             String authorId = response.getString("authorId");
+            getAuthorNameFromAuthorId(context, authorId);
             String date = response.getString("date");
             double rank = response.getDouble("rank");
             JSONArray comments = response.getJSONArray("comment");
@@ -77,27 +101,22 @@ public class ResponseParser {
             }
             article = new Article(articleId, articleTitle, articleBody,authorId, rank, date);
             article.setComments(articleComments);
-            String authorName = getAuthorNameFromAuthorId(context, authorId);
-            if(authorName == null ) {
-                authorName = "Jennifer Hunton";
-            }
-            article.setAuthorName(authorName);
+            article.setAuthorName(author);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return article;
     }
 
-    public static String getAuthorNameFromAuthorId(final Context context, String authorId) {
-        final String[] author = new String[1];
+    public static void getAuthorNameFromAuthorId(final Context context, String authorId) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
-        String url = Constants.LOCALHOST + Constants.USER+authorId;
+        String url = Constants.LOCALHOST + Constants.USER + authorId;
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     JSONObject authorObj = new JSONObject(response);
-                    author[0] = authorObj.getString("name") + " " +  authorObj.getString("surname");
+                    author = authorObj.getString("name") + " " +  authorObj.getString("surname");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -105,10 +124,10 @@ public class ResponseParser {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.d("Author not found", "onErrorResponse: ");
             }
         });
 
         requestQueue.add(request);
-        return author[0];
     }
 }
