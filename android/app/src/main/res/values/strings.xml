@@ -11,6 +11,7 @@
     <string name="changeSignup">CHANGE TO SIGN UP</string>
     <string name="signUp_button">SIGN UP</string>
     <string name="menu_home">Home</string>
+    <string name="menu_events">Events</string>
     <string name="menu_articles">Articles</string>
     <string name="menu_portfolio">Portfolios</string>
     <string name="menu_tools">Tools</string>

@@ -1,4 +1,4 @@
-package com.papel.ui.home;
+package com.papel.ui.events;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import com.papel.R;
 
-public class HomeFragment extends Fragment {
+public class EventsFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
 
@@ -20,7 +20,7 @@ public class HomeFragment extends Fragment {
             ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+        View root = inflater.inflate(R.layout.fragment_events, container, false);
         final TextView textView = root.findViewById(R.id.text_home);
         homeViewModel.getText().observe(this, new Observer<String>() {
             @Override
