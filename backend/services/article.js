@@ -5,14 +5,12 @@ module.exports.getAll = async ()=>{
 };
 
 module.exports.getByID = async (articleID) => {
-    return await Article.findOne({
-        _id: articleID,
-    });
+    return await Article.findById(articleID);
 };
 
 module.exports.getByUserID = async (userID) => {
     return await Article.find({
-        authorID: userID,
+        authorID: userID
     });
 };
 

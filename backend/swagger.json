@@ -264,6 +264,64 @@
         }
       }
     },
+    "/article": {
+      "get": {
+        "tags": [
+          "article"
+        ],
+        "summary": "Article get all endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+
+        "responses": {
+          "200":{
+            "description": "OK. All articles returned succesfully.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties":  {
+                  "title":{
+                    "type": "string",
+                    "description": "Title of the article",
+                    "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
+                  },
+                  "body":{
+                    "type": "string",
+                    "description": "Body part of the article",
+                    "example": "The central bank cut rates for the first time since the Great Recession in late July..."
+                  },
+                  "comment":{
+                    "type":"array",
+                    "description": "Comments made on the article",
+                    "example": ["Nice!","Thank you."]
+                  },
+                  "authorId":{
+                    "type":"string",
+                    "description": "User ID of the article's author.",
+                    "example": "5da07611e407903a5d01b265"
+                  },
+                  "rank":{
+                    "type": "Number",
+                    "description": "User ID of the article's author.",
+                    "example": "3.4"
+                  },
+                  "voterNumber":{
+                    "type": "Number",
+                    "description": "Number of users that ranked the article.",
+                    "example": "72"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/profile/lost-password": {
       "post": {
         "tags": [
