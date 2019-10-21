@@ -314,11 +314,9 @@
           "user"
         ],
         "summary": "An endpoint that returns all the users.",
-        "consumes": [],
         "produces": [
           "application/json"
         ],
-        "parameters": [],
         "responses": {
           "200": {
             "description": "OK. A list of users are returned."

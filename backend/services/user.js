@@ -2,6 +2,7 @@ const LostPasswordToken = require('../models/lostPasswordToken');
 const emailService = require('./email');
 const User = require('../models/user');
 const errors = require('../helpers/errors');
+const mongoose = require('mongoose');
 
 async function sendLostPasswordMail(email, lostPasswordToken) {
     // TODO link should be updated once frontend implements this page
@@ -15,11 +16,14 @@ module.exports.getAll = async () => {
 };
 
 module.exports.getById = async (_id) => {
-  const user = await User.findOne({_id});
-  if (!user) {
-      throw errors.USER_NOT_FOUND();
-  }
-  return user;
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+        throw errors.USER_NOT_FOUND();
+    }
+    const user = await User.findOne({_id});
+    if (!user) {
+        throw errors.USER_NOT_FOUND();
+    }
+    return user;
 };
 
 module.exports.sendLostPasswordEmail = async (email) => {
