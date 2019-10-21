@@ -49,7 +49,7 @@ function generateJwtToken(_id) {
 }
 
 module.exports.login = async (email, password) => {
-    const user = await User.findOne({email}).select('+password').exec();
+    let user = await User.findOne({email}).select('+password').exec();
     if (!user) {
         throw errors.INVALID_CREDENTIALS();
     }
@@ -60,8 +60,9 @@ module.exports.login = async (email, password) => {
     if (!user.isVerified) {
         throw errors.USER_NOT_VERIFIED();
     }
-    delete user.password;
     const token = generateJwtToken(user._id);
+    user = user.toObject();
+    delete user.password;
     return {
         token,
         user,

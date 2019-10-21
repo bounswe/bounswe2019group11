@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const stockService = require('../services/stock');
+const errors = require('../helpers/errors');
 
 router.get('/', async (req, res) => {
     try {
         const response = await stockService.getAll();
         res.status(200).json(response);
     } catch (e) {
-        res.status(503)
+        res.sendStatus(503);
     }
 });
 
@@ -16,8 +17,12 @@ router.get('/:id', async (req, res) => {
         const Id = req.params.id;
         const response = await stockService.getById(Id);
         res.status(200).json(response);
-    } catch (e) {
-        res.status(503)
+    } catch (err) {
+        if (err.name === 'StockNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
     }
 });
 

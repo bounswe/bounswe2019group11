@@ -1,6 +1,8 @@
 const request = require('request-promise');
 const Stock = require('../models/stock');
 const errors = require('../helpers/errors');
+const mongoose = require('mongoose');
+
 const apiUrl = process.env.ALPHAVANTAGE_URL;
 const apiKeys = process.env.ALPHAVANTAGE_API_KEY;
 const apiKeyArr = apiKeys.split(',');
@@ -53,16 +55,22 @@ module.exports.getAll = async () => {
     return await Stock.find();
 };
 
-module.exports.getById = async (id) => {
-    const _stock = await Stock.findOne({
-        _id: id
+module.exports.getById = async (_id) => {
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+        throw errors.STOCK_NOT_FOUND();
+    }
+    const stock = await Stock.findOne({
+        _id,
     });
+    if (!stock) {
+        throw errors.STOCK_NOT_FOUND();
+    }
     // Parallel API calls
-    const promises = [getDailyPrice(_stock.stockSymbol), getMonthlyPrice(_stock.stockSymbol)]
+    const promises = [getDailyPrice(stock.stockSymbol), getMonthlyPrice(stock.stockSymbol)];
     const resolves = await Promise.all(promises);
-    _stock['dailyPrice'] = resolves[0];
-    _stock['monthlyPrice'] = resolves[1];
-    return _stock;
+    stock['dailyPrice'] = resolves[0];
+    stock['monthlyPrice'] = resolves[1];
+    return stock;
 };
 
 module.exports.create = async (theStock) => {
