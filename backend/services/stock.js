@@ -29,7 +29,6 @@ const getDailyPrice = async (symbol) => {
 };
 
 
-
 const getMonthlyPrice = async (symbol) => {
     const rand = getRandomInt(apiKeyArr.length);
     const apiKey = apiKeyArr[rand];
