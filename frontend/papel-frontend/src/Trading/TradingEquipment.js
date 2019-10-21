@@ -1,34 +1,85 @@
 import React from 'react';
 import {useParams} from 'react-router-dom';
+import $ from 'jquery';
+import './TradingEquipment.css';
+import {Card} from 'react-bootstrap'
+import CanvasJSReact from '../canvasjs/canvasjs.react';
+var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-function TradingEquipment() {
-//  fetch().then.then.catch.ohno.whatishappening
-  let {id} = useParams();
-  return (
-    <div className="container">
-      <div className="row">
-        <div className="col-sm-4">
-          <h1>{id}</h1>
-        </div>
-        <div className="col-sm-2">Change</div>
-        <div className="col-sm-2">% Change</div>
-      </div>
-      <div className="row">
-        <div className="col-sm-4">Buy: price</div>
-        <div className="col-sm-4">Sell: price</div>
-        <div className="col-sm-4">Previous Close: price</div>
-      </div>
-      <div className="row">
-        <div className="graphic" style={{height: 300}}>
-          This is a cool chart
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-sm-2"><div className="btn">Bullish</div></div>
-        <div className="col-sm-2"><div className="btn">Bearish</div></div>
-      </div>
+class TradingEquipment extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {id: this.props.match.params.id, stock: {}, dailyPrice: {}, monthlyPrice: {}, isMonthly: true, requests: []};
 
-    </div>
-  );
+  }
+
+  componentDidMount() {
+    var stockId;
+    $.get("http://localhost:3000/stock", (data) => {
+      var curStock = data[this.state.id];
+      this.setState({stock: curStock});
+      stockId = curStock._id;
+
+      $.get(`http://localhost:3000/stock/${stockId}`, (data) => {
+        this.setState({dailyPrice: data.dailyPrice, monthlyPrice: data.monthlyPrice});
+      });
+    });
+  }
+
+  render() {
+    var data = [];
+    var stateData = this.state.isMonthly ? this.state.monthlyPrice : this.state.dailyPrice;
+    if (!!stateData) {
+      data = Object.keys(stateData)
+        .map((date) => {return {x: new Date(date.split(" ").join("T")), y: Object.values(stateData[date]).slice(0, 4).map((s) => parseFloat(s))}});
+      data = data.slice(0, 10);
+    }
+    var options = {
+      animationEnabled: true,
+    	theme: "light2", // "light1", "light2", "dark1", "dark2"
+    	exportEnabled: true,
+    	axisY: {
+    		includeZero: false,
+    		prefix: "$",
+    		title: "Price"
+    	},
+    	toolTip: {
+    		content: "Date: {x}<br /><strong>Price:</strong><br />Open: {y[0]}, Close: {y[3]}<br />High: {y[1]}, Low: {y[2]}"
+    	},
+    	data: [{
+    		type: "candlestick",
+    		yValueFormatString: "$##0.00",
+    		dataPoints: data
+    	}]
+    };
+    return (
+      <Card>
+        <div className="row">
+          <div className="col-sm-3">
+            <h1>{this.state.stock.stockSymbol}</h1>
+          </div>
+          <div className="col-sm-9">
+            <h3>{this.state.stock.stockName}</h3>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-sm-3">
+            <h3>Price: {this.state.stock.price}</h3>
+          </div>
+          <div className="graphic col-sm-9 ">
+            <CanvasJSChart options={options}/>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-6 col-sm-2 offset-sm-8"><div className="btn">Bullish</div></div>
+          <div className="col-6 col-sm-2"><div className="btn">Bearish</div></div>
+        </div>
+      </Card>
+    );
+  }
 }
+
+
+
+
 export default TradingEquipment;

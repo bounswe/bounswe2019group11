@@ -9,13 +9,13 @@ class EconEvent extends React.Component{
     constructor(props){
         super(props);
         this.state = {econevent:{}, star:{}};
-        let temp = Math.floor(Math.random() * 5)+1 ; 
+        let temp = Math.floor(Math.random() * 5)+1 ;
         var ar = ["star-outline","star-outline","star-outline","star-outline","star-outline"];
         for (let i = 0; i < temp; i++) {
             ar[i] = "star";
         }
         this.state.star = ar;
-       
+
     }
     componentDidMount(){
         fetch('https://jsonplaceholder.typicode.com/posts/1')
@@ -23,7 +23,7 @@ class EconEvent extends React.Component{
         .then(json => {
           console.log(json);
           this.setState({econevent: json});
-        });  
+        });
     }
 
     render(){
@@ -44,10 +44,10 @@ class EconEvent extends React.Component{
                 <ion-icon name = {this.state.star[2]}></ion-icon>
                 <ion-icon name = {this.state.star[3]}></ion-icon>
                 <ion-icon name = {this.state.star[4]}></ion-icon>
-                
+
                 </div>
 
-                
+
             </div>
             </div>
         </div>
@@ -55,29 +55,3 @@ class EconEvent extends React.Component{
     }
 }
 export default EconEvent;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

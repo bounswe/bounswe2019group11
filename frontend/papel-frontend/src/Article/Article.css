@@ -14,3 +14,7 @@
 .DraftEditor-root {
   width: 100%;
 }
+
+.container a {
+  text-decoration: none;
+}
