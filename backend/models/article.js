@@ -20,6 +20,13 @@ const articleSchema = new mongoose.Schema({
     },
     rank: {
         type: Number
+    },
+    voterNumber: {
+        type: Number
+    },
+    date: {
+        type: Date,
+        required: true
     }
 });
 

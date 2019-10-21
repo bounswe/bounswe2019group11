@@ -59,6 +59,9 @@ module.exports = {
         return PapelError('InvalidIban', 'Invalid IBAN.', cause);
     },
     INVALID_LOST_PASSWORD_TOKEN: (cause) => {
-      return PapelError('InvalidLostPasswordToken', 'Lost password token cannot be found or expired.', cause);
+        return PapelError('InvalidLostPasswordToken', 'Lost password token cannot be found or expired.', cause);
+    },
+    STOCK_NOT_FOUND: (cause) => {
+        return PapelError('StockNotFound', 'Stock not found.', cause);
     },
 };
