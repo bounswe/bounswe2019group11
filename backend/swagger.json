@@ -15,6 +15,10 @@
     {
       "name": "stock",
       "description": "Stock fetch endpoints"
+    },
+    {
+      "name": "profile",
+      "description": "Profile related endpoints"
     }
   ],
   "schemes": [
@@ -348,6 +352,102 @@
               }
 
             }
+          }
+        }
+      }
+    },
+    "/profile/lost-password": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Lost password endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "email",
+            "description": "Email of the password who lost his password.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "description": "Email of the password who lost his password.",
+                  "example": "john@doe.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. An email that contains instruction about how the user can reset his password is sent."
+          },
+          "400": {
+            "description": "User with the given email not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/profile/lost-password/reset": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Password reset endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Token and password",
+            "description": "Lost password verification token and new password of the user.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "token",
+                "password"
+              ],
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "description": "Lost password token.",
+                  "example": "6b4c4760efb1f1a4115f391fec2f89das5dcd7ce9448464747f6f936eea4caed"
+                },
+                "password": {
+                  "type": "string",
+                  "description": "New password of the user.",
+                  "example": "new#pas$word"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Credentials are updated with the new password."
+          },
+          "400": {
+            "description": "Given lost password token is expired, invalid or the password is too short."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
       }

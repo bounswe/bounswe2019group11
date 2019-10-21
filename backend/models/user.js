@@ -4,6 +4,7 @@ const isEmail = require('validator').isEmail;
 const authHelper = require('../helpers/auth');
 const VerificationToken = require('./verificationToken');
 const crypto = require('crypto');
+const LostPasswordToken = require('./lostPasswordToken');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -88,6 +89,14 @@ userSchema.methods.generateVerificationToken = async function() {
       _userId: this._id,
       token,
   });
+};
+
+userSchema.methods.generateLostPasswordToken = async function () {
+    const token = crypto.randomBytes(32).toString('hex');
+    return await LostPasswordToken.create({
+        _userId: this._id,
+        token,
+    });
 };
 
 const User = mongoose.model('User', userSchema);
