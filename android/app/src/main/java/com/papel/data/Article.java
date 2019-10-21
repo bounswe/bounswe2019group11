@@ -1,21 +1,5 @@
 package com.papel.data;
 
-import android.content.Context;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.papel.Constants;
-import com.papel.ui.utils.DialogHelper;
-import com.papel.ui.utils.ResponseParser;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,8 +35,6 @@ public class Article {
         } catch (Exception e) {
 
         }
-
-
     }
 
     public String getDate() {

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -57,8 +58,6 @@ public class ReadArticleActivity extends AppCompatActivity {
 
         String articleId = getIntent().getStringExtra("articleId");
 
-        getArticleFromEndpoint(getApplicationContext(), articleId);
-
         title = (TextView) findViewById(R.id.read_article_title_textview);
         content = (TextView) findViewById(R.id.read_article_content_textview);
         author = (TextView) findViewById(R.id.read_article_author_textview);
@@ -68,6 +67,8 @@ public class ReadArticleActivity extends AppCompatActivity {
         share = (ImageView) findViewById(R.id.article_share_imageview);
         ratingBar = (RatingBar) findViewById(R.id.article_rating_bar);
         commentListView = (ListView) findViewById(R.id.article_comments_listview);
+
+        getArticleFromEndpoint(getApplicationContext(), articleId);
 
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             public void onRatingChanged(RatingBar ratingBar, float rating,
@@ -109,4 +110,5 @@ public class ReadArticleActivity extends AppCompatActivity {
 
         requestQueue.add(request);
     }
+
 }

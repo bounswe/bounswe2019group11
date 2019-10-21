@@ -3,6 +3,7 @@ package com.papel.ui.articles;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,7 +88,6 @@ public class ArticlesFragment extends Fragment {
                     for(int i = 0;i<responseArray.length(); i++) {
                         JSONObject object = responseArray.getJSONObject(i);
                         Article article = ResponseParser.parseArticle(object, context);
-
                         if (article != null) {
                             articles.add(article);
                         }
@@ -107,4 +107,6 @@ public class ArticlesFragment extends Fragment {
         requestQueue.add(request);
 
     }
+
+
 }

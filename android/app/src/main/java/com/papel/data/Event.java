@@ -1,6 +1,9 @@
 package com.papel.data;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class Event {
     private String title;
@@ -17,6 +20,14 @@ public class Event {
         this.date = date;
         this.rank = rank;
         this.country = country;
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+            Date dateObj = formatter.parse(date.replaceAll("Z$", "+0000"));
+            SimpleDateFormat formatter2 = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm:ss a", Locale.US);
+            this.date = formatter2.format(dateObj);
+        } catch (Exception e) {
+
+        }
     }
 
     public String getTitle() {

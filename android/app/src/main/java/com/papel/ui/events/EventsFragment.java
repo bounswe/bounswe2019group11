@@ -39,8 +39,7 @@ public class EventsFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_events, container, false);
 
-        eventListView = root.findViewById(R.id.article_list);
-
+        eventListView = root.findViewById(R.id.event_list);
         events = new ArrayList<Object>();
         adapter = new ListViewAdapter(getActivity().getApplicationContext(), events);
         eventListView.setAdapter(adapter);

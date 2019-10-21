@@ -93,7 +93,10 @@ public class ResponseParser {
             String authorId = response.getString("authorId");
             getAuthorNameFromAuthorId(context, authorId);
             String date = response.getString("date");
-            double rank = response.getDouble("rank");
+            double rank = 0;
+            if(response.has("rank")) {
+                rank = response.getDouble("rank");
+            }
             JSONArray comments = response.getJSONArray("comment");
             ArrayList<String> articleComments = new ArrayList<>();
             for(int i = 0; i < comments.length(); i++){
@@ -125,9 +128,11 @@ public class ResponseParser {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("Author not found", "onErrorResponse: ");
+                author=" ";
             }
         });
 
         requestQueue.add(request);
     }
+
 }
