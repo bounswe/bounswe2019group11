@@ -1,24 +1,24 @@
 const mongoose = require('mongoose');
 
 const articleSchema = new mongoose.Schema({
-    title:{
-        type:String,
+    title: {
+        type: String,
         required: true
     },
     body: {
         type: String,
         required: true
     },
-    comment:{
+    comment: {
         type: Array,
         ref: 'Comment'
     },
-    authorId:{
+    authorId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
     },
-    rank:{
+    rank: {
         type: Number
     },
     voterNumber:{

@@ -9,7 +9,7 @@ module.exports.ROLES = {
 const idNumberRegex = new RegExp('^[0-9]{11}$');
 
 module.exports.isTrader = (idNumber, iban) => {
-  return idNumber || iban;
+    return idNumber || iban;
 };
 
 module.exports.validateIdNumber = (idNumber) => {
