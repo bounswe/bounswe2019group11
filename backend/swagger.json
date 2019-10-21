@@ -189,7 +189,7 @@
           }
         ],
         "responses": {
-          "200":{
+          "200": {
             "description": "OK. User successfully logged in. User object and JWT token is returned."
           },
           "401": {
@@ -213,9 +213,8 @@
         "produces": [
           "application/json"
         ],
-
         "responses": {
-          "200":{
+          "200": {
             "description": "OK. All Stocks returned succesfully.",
             "schema": {
               "type": "array",
@@ -252,7 +251,7 @@
           }
         ],
         "responses": {
-          "200":{
+          "200": {
             "description": "OK. All Stocks returned succesfully.",
             "schema": {
               "$ref": "#/definitions/StockDetail"
@@ -260,64 +259,6 @@
           },
           "503": {
             "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/article": {
-      "get": {
-        "tags": [
-          "article"
-        ],
-        "summary": "Article get all endpoint.",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-
-        "responses": {
-          "200":{
-            "description": "OK. All articles returned succesfully.",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties":  {
-                  "title":{
-                    "type": "string",
-                    "description": "Title of the article",
-                    "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
-                  },
-                  "body":{
-                    "type": "string",
-                    "description": "Body part of the article",
-                    "example": "The central bank cut rates for the first time since the Great Recession in late July..."
-                  },
-                  "comment":{
-                    "type":"array",
-                    "description": "Comments made on the article",
-                    "example": ["Nice!","Thank you."]
-                  },
-                  "authorId":{
-                    "type":"string",
-                    "description": "User ID of the article's author.",
-                    "example": "5da07611e407903a5d01b265"
-                  },
-                  "rank":{
-                    "type": "Number",
-                    "description": "User ID of the article's author.",
-                    "example": "3.4"
-                  },
-                  "voterNumber":{
-                    "type": "Number",
-                    "description": "Number of users that ranked the article.",
-                    "example": "72"
-                  }
-                }
-              }
-            }
           }
         }
       }
@@ -430,9 +371,8 @@
         "produces": [
           "application/json"
         ],
-
         "responses": {
-          "200":{
+          "200": {
             "description": "OK. All Stocks returned succesfully.",
             "schema": {
               "type": "array",
@@ -464,14 +404,17 @@
             "description": "The portfolio to create",
             "schema": {
               "type": "object",
-              "required": ["name", "userId"],
+              "required": [
+                "name",
+                "userId"
+              ],
               "properties": {
-                "name":{
+                "name": {
                   "type": "string",
                   "description": "Name of the Portfolio",
                   "example": "My Portfolio"
                 },
-                "userId":{
+                "userId": {
                   "type": "string",
                   "description": "User ID of the portfolio",
                   "example": "5da076d955d9b93a7308f3d7"
@@ -514,9 +457,8 @@
             "type": "string"
           }
         ],
-
         "responses": {
-          "200":{
+          "200": {
             "description": "OK. All Stocks returned successfully.",
             "schema": {
               "$ref": "#/definitions/Portfolio"
@@ -526,9 +468,7 @@
             "description": "Internal Server Error"
           }
         }
-
       }
-
     },
     "/portfolio/{_id}/stock": {
       "post": {
@@ -559,7 +499,6 @@
             "required": true,
             "type": "string"
           }
-
         ],
         "responses": {
           "200": {
@@ -591,7 +530,9 @@
             "description": "Delete the specific stock from specific portfolio Note: _id field should be provided it is required",
             "schema": {
               "type": "object",
-              "required": ["_id"],
+              "required": [
+                "_id"
+              ],
               "$ref": "#/definitions/Stock"
             }
           },
@@ -659,53 +600,45 @@
           "article"
         ],
         "summary": "Article get all endpoint.",
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
-
         "responses": {
-          "200":{
+          "200": {
             "description": "OK. All articles returned succesfully.",
             "schema": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties":  {
-                  "title":{
-                    "type": "string",
-                    "description": "Title of the article",
-                    "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
-                  },
-                  "body":{
-                    "type": "string",
-                    "description": "Body part of the article",
-                    "example": "The central bank cut rates for the first time since the Great Recession in late July..."
-                  },
-                  "comment":{
-                    "type":"array",
-                    "description": "Comments made on the article",
-                    "example": ["Nice!","Thank you."]
-                  },
-                  "authorId":{
-                    "type":"string",
-                    "description": "User ID of the article's author.",
-                    "example": "5da07611e407903a5d01b265"
-                  },
-                  "rank":{
-                    "type": "Number",
-                    "description": "User ID of the article's author.",
-                    "example": "3.4"
-                  },
-                  "voterNumber":{
-                    "type": "Number",
-                    "description": "Number of users that ranked the article.",
-                    "example": "72"
-                  }
-                }
+                "$ref": "Article"
               }
+            }
+          }
+        }
+      }
+    },
+    "/article/{id}": {
+      "get": {
+        "tags": [
+          "article"
+        ],
+        "summary": "An endpoint that returns the article with the given id.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The article with the given id is returned.",
+            "schema": {
+              "$ref": "Article"
             }
           }
         }
@@ -714,7 +647,8 @@
     "/event": {
       "get": {
         "tags": [
-          "event" ],
+          "event"
+        ],
         "summary": "Event get all endpoint.",
         "consumes": [
           "application/json"
@@ -722,40 +656,42 @@
         "produces": [
           "application/json"
         ],
-
         "responses": {
-          "200":{
+          "200": {
             "description": "OK. All Events returned succesfully.",
             "schema": {
               "type": "array",
               "items": {
                 "type": "object",
-                "properties":  {
-                  "title":{
+                "properties": {
+                  "title": {
                     "type": "string",
                     "description": "Title of the event",
                     "example": "title"
                   },
-                  "body":{
+                  "body": {
                     "type": "string",
                     "description": "Event body",
                     "example": "272.7 example"
                   },
-                  "comment":{
+                  "comment": {
                     "type": "array",
                     "description": "Comments of the event",
-                    "example": ["comment2","comment2"]
+                    "example": [
+                      "comment2",
+                      "comment2"
+                    ]
                   },
-                  "date":{
-                    "type": "date",
+                  "date": {
+                    "type": "string",
                     "description": "Start day of the event"
                   },
-                  "rank":{
+                  "rank": {
                     "type": "number",
                     "description": "Rank of the event",
                     "example": 3
                   },
-                  "country":{
+                  "country": {
                     "type": "string",
                     "description": "Country of the event",
                     "example": "Turkey"
@@ -788,45 +724,46 @@
             "type": "string"
           }
         ],
-
         "responses": {
-          "200":{
+          "200": {
             "description": "OK. Event returned succesfully.",
             "schema": {
               "type": "object",
-              "properties":  {
-                "title":{
+              "properties": {
+                "title": {
                   "type": "string",
                   "description": "Title of the event",
                   "example": "title"
                 },
-                "body":{
+                "body": {
                   "type": "string",
                   "description": "Event body",
                   "example": "272.7 example"
                 },
-                "comment":{
+                "comment": {
                   "type": "array",
                   "description": "Comments of the event",
-                  "example": ["comment2","comment2"]
+                  "example": [
+                    "comment2",
+                    "comment2"
+                  ]
                 },
-                "date":{
-                  "type": "date",
+                "date": {
+                  "type": "string",
                   "description": "Start day of the event"
                 },
-                "rank":{
+                "rank": {
                   "type": "number",
                   "description": "Rank of the event",
                   "example": 3
                 },
-                "country":{
+                "country": {
                   "type": "string",
                   "description": "Country of the event",
                   "example": "Turkey"
                 }
               }
             }
-
           }
         }
       }
@@ -895,23 +832,23 @@
     },
     "Portfolio": {
       "type": "object",
-      "properties":  {
+      "properties": {
         "_id": {
           "type": "string",
           "description": "Unique id of the portfolio (it is created by database so when create a portfolio this field should not provided by the client side )"
         },
-        "name":{
+        "name": {
           "type": "string",
           "description": "Name of the Portfolio",
           "example": "My Portfolio"
         },
-        "userId":{
+        "userId": {
           "type": "string",
           "description": "User ID of the portfolio",
           "example": "5da076d955d9b93a7308f3d7"
         },
-        "stocks":{
-          "type":"array",
+        "stocks": {
+          "type": "array",
           "items": {
             "$ref": "#/definitions/Stock"
           }
@@ -920,28 +857,28 @@
     },
     "Stock": {
       "type": "object",
-      "properties":  {
+      "properties": {
         "_id": {
           "type": "string",
           "description": "Unique id of the stock (it is created by database so when create a stock this field should not provided by the client side )"
         },
-        "name":{
+        "name": {
           "type": "string",
           "description": "Include both symbol and name of the stock (useful for searching)",
           "example": "ADBE - Adobe Inc. - Common Stock"
         },
-        "price":{
+        "price": {
           "type": "number",
           "description": "Current price of the stock",
           "example": 272.7
         },
-        "stockSymbol":{
-          "type":"string",
+        "stockSymbol": {
+          "type": "string",
           "description": "Official Symbol of the Stock",
           "example": "ADBE"
         },
-        "stockName":{
-          "type":"string",
+        "stockName": {
+          "type": "string",
           "description": "Name of the Stock without abbr",
           "example": "Adobe Inc. - Common Stock"
         }
@@ -949,23 +886,22 @@
     },
     "StockDetail": {
       "type": "object",
-      "properties":  {
+      "properties": {
         "_id": {
           "type": "string",
           "description": "Unique id of the stock"
         },
-        "name":{
+        "name": {
           "type": "string",
           "description": "Include both symbol and name of the stock (useful for searching)",
           "example": "ADBE - Adobe Inc. - Common Stock"
         },
-        "price":{
+        "price": {
           "type": "number",
           "description": "Current price of the stock",
           "example": 272.7
         },
-
-        "monthlyPrice":{
+        "monthlyPrice": {
           "type": "object",
           "description": "Historical data day by day ",
           "example": "\"2019-10-16\": {\n            \"1. open\": \"270.2300\",\n            \"2. high\": \"272.8100\",\n            \"3. low\": \"267.5200\",\n            \"4. close\": \"272.7000\",\n            \"5. volume\": \"3860465\"\n        },\n        \"2019-10-15\": {\n            \"1. open\": \"278.1700\",\n            \"2. high\": \"281.5100\",\n            \"3. low\": \"278.0200\",\n            \"4. close\": \"279.3900\",\n            \"5. volume\": \"1964000\"\n        },\n        \"2019-10-14\": {\n            \"1. open\": \"278.1100\",\n            \"2. high\": \"279.4200\",\n            \"3. low\": \"277.1500\",\n            \"4. close\": \"277.7800\",\n            \"5. volume\": \"1372600\"\n        }"
@@ -975,18 +911,55 @@
           "description": "Historical data in a day with 5 mins interval",
           "example": "\"2019-10-16 16:00:00\": {\n            \"1. open\": \"272.7000\",\n            \"2. high\": \"272.8300\",\n            \"3. low\": \"272.4600\",\n            \"4. close\": \"272.7900\",\n            \"5. volume\": \"161462\"\n        },\n        \"2019-10-16 15:55:00\": {\n            \"1. open\": \"272.6888\",\n            \"2. high\": \"273.0154\",\n            \"3. low\": \"272.6650\",\n            \"4. close\": \"272.6688\",\n            \"5. volume\": \"70732\"\n        },\n        \"2019-10-16 15:50:00\": {\n            \"1. open\": \"272.3350\",\n            \"2. high\": \"272.7500\",\n            \"3. low\": \"272.2300\",\n            \"4. close\": \"272.7000\",\n            \"5. volume\": \"65368\"\n        },\n        \"2019-10-16 15:45:00\": {\n            \"1. open\": \"272.6100\",\n            \"2. high\": \"272.6950\",\n            \"3. low\": \"272.3100\",\n            \"4. close\": \"272.3400\",\n            \"5. volume\": \"63315\"\n        }"
         },
-        "stockSymbol":{
-          "type":"string",
+        "stockSymbol": {
+          "type": "string",
           "description": "Official Symbol of the Stock",
           "example": "ADBE"
         },
-        "stockName":{
-          "type":"string",
+        "stockName": {
+          "type": "string",
           "description": "Name of the Stock without abbr",
           "example": "Adobe Inc. - Common Stock"
         }
       }
-
+    },
+    "Article": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the article",
+          "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
+        },
+        "body": {
+          "type": "string",
+          "description": "Body part of the article",
+          "example": "The central bank cut rates for the first time since the Great Recession in late July..."
+        },
+        "comment": {
+          "type": "array",
+          "description": "Comments made on the article",
+          "example": [
+            "Nice!",
+            "Thank you."
+          ]
+        },
+        "authorId": {
+          "type": "string",
+          "description": "User ID of the article's author.",
+          "example": "5da07611e407903a5d01b265"
+        },
+        "rank": {
+          "type": "number",
+          "description": "User ID of the article's author.",
+          "example": "3.4"
+        },
+        "voterNumber": {
+          "type": "number",
+          "description": "Number of users that ranked the article.",
+          "example": "72"
+        }
+      }
     }
   }
 }
