@@ -319,7 +319,13 @@
         ],
         "responses": {
           "200": {
-            "description": "OK. A list of users are returned."
+            "description": "OK. A list of users are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#definitions/User"
+              }
+            }
           },
           "500": {
             "description": "Internal error occurred. Check the cause field for the diagnostics."
@@ -333,7 +339,6 @@
           "user"
         ],
         "summary": "An endpoint that returns the user with the given id.",
-        "consumes": [],
         "produces": [
           "application/json"
         ],
@@ -348,7 +353,10 @@
         ],
         "responses": {
           "200": {
-            "description": "OK. User with the given id is returned."
+            "description": "OK. User with the given id is returned.",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
           },
           "400": {
             "description": "There is no such user with the given id."
