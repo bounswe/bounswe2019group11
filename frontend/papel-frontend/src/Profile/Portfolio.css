@@ -1,0 +1,21 @@
+.portfolio .portfolio-stocks {
+  list-style: none;
+}
+.portfolio.card {
+  margin-bottom: 10px;
+  padding: 0;
+}
+.portfolio .card-body {
+  padding: 0;
+}
+.portfolio .card-title {
+  padding: 4px;
+}
+.portfolio.card ul {padding-left: 15px; padding-right: 15px;}
+.portfolio.card ul li:hover {
+  background-color: #ddd;
+}
+.portfolio.card ul a {
+  color: black;
+  text-decoration: none;
+}
