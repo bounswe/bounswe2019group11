@@ -64,4 +64,22 @@ module.exports = {
     STOCK_NOT_FOUND: (cause) => {
         return PapelError('StockNotFound', 'Stock not found.', cause);
     },
+    ARTICLE_NOT_FOUND: (cause) => {
+      return PapelError('ArticleNotFound', 'Article with the given id is not found.', cause);
+    },
+    MISSING_TOKEN: (cause) => {
+      return PapelError('MissingToken', 'Authorization token not found.', cause);
+    },
+    INVALID_TOKEN: (cause) => {
+      return PapelError('InvalidToken', 'Authorization token is invalid.', cause);
+    },
+    EXPIRED_TOKEN: (cause) => {
+      return PapelError('ExpiredToken', 'Authorization token is expired.', cause);
+    },
+    INVALID_TITLE: (cause) => {
+      return PapelError('InvalidTitle', 'Title was missing.', cause);
+    },
+    INVALID_BODY: (cause) => {
+      return PapelError('InvalidBody', 'Body was missing.', cause);
+    },
 };

@@ -33,6 +33,13 @@
       "description": "User related endpoints"
     }
   ],
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
   "schemes": [
     "http",
     "https"
@@ -668,9 +675,69 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "Article"
+                "$ref": "#/definitions/Article"
               }
             }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint to add an article.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "article",
+            "description": "Article to be added.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "title",
+                "body"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Title of the article.",
+                  "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
+                },
+                "body": {
+                  "type": "string",
+                  "description": "Body of the article",
+                  "example": "The central bank cut rates for the first time since the Great Recession in late July..."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Article is successfully added.",
+            "schema": {
+              "$ref": "#definitions/Article"
+            }
+          },
+          "400": {
+            "description": "Validation error. Either the title or the body of the article was missing. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
       }
@@ -697,7 +764,7 @@
           "200": {
             "description": "OK. The article with the given id is returned.",
             "schema": {
-              "$ref": "Article"
+              "$ref": "#/definitions/Article"
             }
           }
         }
@@ -1007,11 +1074,6 @@
           "type": "string",
           "description": "User ID of the article's author.",
           "example": "5da07611e407903a5d01b265"
-        },
-        "rank": {
-          "type": "number",
-          "description": "User ID of the article's author.",
-          "example": "3.4"
         },
         "voterNumber": {
           "type": "number",

@@ -3,30 +3,30 @@ const mongoose = require('mongoose');
 const articleSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true
+        required: 'InvalidTitle',
     },
     body: {
         type: String,
-        required: true
+        required: 'InvalidBody',
     },
     comment: {
         type: Array,
-        ref: 'Comment'
+        default: [],
+        ref: 'Comment',
     },
     authorId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'User'
-    },
-    rank: {
-        type: Number
+        ref: 'User',
     },
     voterNumber: {
-        type: Number
+        type: Number,
+        default: 0,
     },
     date: {
         type: Date,
-        required: true
+        default: Date.now,
+        required: true,
     }
 });
 
