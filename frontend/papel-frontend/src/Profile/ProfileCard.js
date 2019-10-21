@@ -6,7 +6,6 @@ import {useCookies} from 'react-cookie';
 function ProfileCard() {
   const [cookies] = useCookies(['user']);
   var user = cookies.user;
-  console.log(user);
 
   return (
     <>

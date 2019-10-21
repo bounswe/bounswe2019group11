@@ -54,7 +54,7 @@ function NavBar(props) {
           <Route path="/register"><Register /></Route>
           <Route path="/profile"><Profile /></Route>
           <Route path="/stock/:id" component={TradingEquipment}/>
-          <Route path="/article/:id"><Article /></Route>
+          <Route path="/article/:id" component={Article} />
           <Route path="/event/:id"><EconEvent /></Route>
           <Route path="/validation"><Validation /></Route>
           <Route path="/articles"><Articles /></Route>
