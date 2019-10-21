@@ -23,6 +23,10 @@ const articleSchema = new mongoose.Schema({
     },
     voterNumber:{
         type: Number
+    },
+    date: {
+        type: Date,
+        required: true
     }
 });
 
