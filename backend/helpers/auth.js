@@ -13,9 +13,15 @@ module.exports.isTrader = (idNumber, iban) => {
 };
 
 module.exports.validateIdNumber = (idNumber) => {
+    if (!idNumber) {
+        return true;
+    }
     return idNumberRegex.test(idNumber);
 };
 
 module.exports.validateIban = (iban_) => {
+    if (!iban_) {
+        return true;
+    }
     return iban.isValid(iban_);
 };
