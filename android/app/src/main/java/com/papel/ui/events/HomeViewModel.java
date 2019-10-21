@@ -1,4 +1,4 @@
-package com.papel.ui.home;
+package com.papel.ui.events;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
