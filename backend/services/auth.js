@@ -1,32 +1,15 @@
 const User = require('../models/user');
 const VerificationToken = require('../models/verificationToken');
 const authHelper = require('../helpers/auth');
-const nodemailer = require('nodemailer');
 const errors = require('../helpers/errors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
-
-const transporter = nodemailer.createTransport({
-    service: process.env.SMTP_SERVICE,
-    auth: {
-        user: process.env.SMTP_USERNAME,
-        pass: process.env.SMTP_PASSWORD,
-    }
-});
-
-function generateSignUpMail(name, surname, email, verificationToken) {
-    return {
-        from: '"Papel" < c3198352@urhen.com >',
-        to: email,
-        subject: 'Papel Email Verification',
-        text: `Hi ${name} ${surname}\nPlease click on the link below to verify your account.\n
-        http://localhost:3000/auth/sign-up/verification/${verificationToken}`,
-    };
-}
+const emailService = require('./email');
 
 async function sendVerificationEmail(user, verificationToken) {
-    await transporter.sendMail(generateSignUpMail(user.name, user.surname, user.email, verificationToken));
+    const text = `Hi ${user.name} ${user.surname}\nPlease click on the link below to verify your account.\n
+        http://localhost:3000/auth/sign-up/verification/${verificationToken}`;
+    await emailService.sendMail(user.email, 'Papel Email Verification', text);
 }
 
 module.exports.isUserExists = async (email) => {
@@ -83,4 +66,19 @@ module.exports.login = async (email, password) => {
         token,
         user,
     };
+};
+
+module.exports.resendVerificationMail = async (email) => {
+    const user = await User.findOne({email}).exec();
+    if (!user) {
+        throw errors.USER_NOT_FOUND();
+    }
+    if (user.isVerified) {
+        throw errors.USER_ALREADY_VERIFIED();
+    }
+    let verificationToken = VerificationToken.findOne({_userId: user._id});
+    if (!verificationToken) {
+        verificationToken = await user.generateVerificationToken();
+    }
+    await sendVerificationEmail(user, verificationToken.token);
 };
