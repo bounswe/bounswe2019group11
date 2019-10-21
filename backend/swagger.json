@@ -17,10 +17,6 @@
       "description": "Stock fetch endpoints"
     },
     {
-      "name": "profile",
-      "description": "Profile related endpoints"
-    },
-    {
       "name": "event",
       "description": "Event fetch endpoints"
     },
@@ -31,6 +27,10 @@
     {
       "name": "portfolio",
       "description": "Portfolio create-fetch-update endpoints"
+    },
+    {
+      "name": "user",
+      "description": "User related endpoints"
     }
   ],
   "schemes": [
@@ -263,10 +263,10 @@
         }
       }
     },
-    "/profile/lost-password": {
+    "/user/lost-password": {
       "post": {
         "tags": [
-          "profile"
+          "user"
         ],
         "summary": "Lost password endpoint.",
         "consumes": [
@@ -308,10 +308,63 @@
         }
       }
     },
-    "/profile/lost-password/reset": {
+    "/user": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "An endpoint that returns all the users.",
+        "consumes": [],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK. A list of users are returned."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "An endpoint that returns the user with the given id.",
+        "consumes": [],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the requested user.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. User with the given id is returned."
+          },
+          "400": {
+            "description": "There is no such user with the given id."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/user/lost-password/reset": {
       "post": {
         "tags": [
-          "profile"
+          "user"
         ],
         "summary": "Password reset endpoint.",
         "consumes": [

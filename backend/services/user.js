@@ -10,6 +10,18 @@ async function sendLostPasswordMail(email, lostPasswordToken) {
     await emailService.sendMail(email, 'Papel - Lost Password', text);
 }
 
+module.exports.getAll = async () => {
+    return await User.find();
+};
+
+module.exports.getById = async (_id) => {
+  const user = await User.findOne({_id});
+  if (!user) {
+      throw errors.USER_NOT_FOUND();
+  }
+  return user;
+};
+
 module.exports.sendLostPasswordEmail = async (email) => {
     const user = await User.findOne({email});
     if (!user) {
