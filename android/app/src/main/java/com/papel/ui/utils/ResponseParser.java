@@ -93,7 +93,7 @@ public class ResponseParser {
             String authorId = response.getString("authorId");
             getAuthorNameFromAuthorId(context, authorId);
             String date = response.getString("date");
-            double rank = 0;
+            double rank = 5.0;
             if(response.has("rank")) {
                 rank = response.getDouble("rank");
             }

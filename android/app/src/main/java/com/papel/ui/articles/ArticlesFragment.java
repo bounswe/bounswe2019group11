@@ -24,7 +24,6 @@ import com.papel.Constants;
 import com.papel.ListViewAdapter;
 import com.papel.R;
 import com.papel.data.Article;
-import com.papel.data.Portfolio;
 import com.papel.ui.utils.DialogHelper;
 import com.papel.ui.utils.ResponseParser;
 
@@ -33,7 +32,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class ArticlesFragment extends Fragment {
 
@@ -105,8 +103,6 @@ public class ArticlesFragment extends Fragment {
         });
 
         requestQueue.add(request);
-
     }
-
 
 }

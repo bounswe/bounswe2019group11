@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import com.papel.data.Article;
 import com.papel.data.Comment;
@@ -50,8 +51,10 @@ public class ListViewAdapter extends android.widget.BaseAdapter {
         TextView authorText = (TextView) vi.findViewById(R.id.item_author);
         TextView dateText = (TextView) vi.findViewById(R.id.item_date);
         ImageView authorImageView = (ImageView) vi.findViewById(R.id.item_user_pic);
+        RatingBar rankRatingBar = (RatingBar) vi.findViewById(R.id.event_rank_ratingBar);
 
-        String strDate="", title="", content="", author="";
+        String strDate = "", title = "", content = "", author = "";
+        double rank= 5 ;
 
         if (data.get(position) instanceof Article){
             Article item = (Article) data.get(position);
@@ -70,6 +73,9 @@ public class ListViewAdapter extends android.widget.BaseAdapter {
             content = item.getBody();
             title = item.getTitle();
             author = item.getCountry();
+            rank = item.getRank();
+            rankRatingBar.setRating((float)rank);
+            rankRatingBar.setVisibility(View.VISIBLE);
         }
 
         dateText.setText(strDate);
