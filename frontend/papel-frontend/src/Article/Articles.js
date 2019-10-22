@@ -13,7 +13,7 @@ class Articles extends React.Component {
   componentDidMount() {
     const self = this;
     this.setState({loading: true});
-    $.get("http://localhost:3000/article", (data) => {
+    $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article", (data) => {
       self.setState({articles: data, loading: false});
     });
   }
