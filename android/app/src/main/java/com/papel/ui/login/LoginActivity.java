@@ -328,9 +328,8 @@ public class LoginActivity extends AppCompatActivity {
             jsonBody.put("surname", surname);
             jsonBody.put("email", email);
             jsonBody.put("password", password);
-            // TODO change hardcoded strings
-            jsonBody.put("idNumber", "12345678910");
-            jsonBody.put("iban", "TR33 0006 1005 1978 6457 8413 26");
+            jsonBody.put("idNumber", id);
+            jsonBody.put("iban", iban);
             JSONObject location = new JSONObject();
             Log.d("SignUp", "Location" + latitude + " " + longitude);
             location.put("latitude", latitude);
