@@ -7,9 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.papel.data.Article;
 import com.papel.data.Comment;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import com.papel.data.Event;
 import java.util.ArrayList;
 
 
@@ -57,15 +55,21 @@ public class ListViewAdapter extends android.widget.BaseAdapter {
 
         if (data.get(position) instanceof Article){
             Article item = (Article) data.get(position);
-            strDate = item.getDate();
             title = item.getTitle();
-            content = item.getContent();
-            author = item.getAuthor();
+            content = item.getBody();
+            //author = item.getAuthorName();
+            strDate = item.getDate();
         }else if (data.get(position) instanceof Comment){
             Comment item = (Comment) data.get(position);
             strDate = item.getDate();
             content = item.getContent();
             author = item.getAuthor();
+        }else if(data.get(position) instanceof Event){
+            Event item = (Event) data.get(position);
+            strDate = item.getDate();
+            content = item.getBody();
+            title = item.getTitle();
+            author = item.getCountry();
         }
 
         dateText.setText(strDate);
