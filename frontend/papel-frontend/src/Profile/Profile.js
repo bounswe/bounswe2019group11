@@ -29,7 +29,7 @@ class Profile extends React.Component {
     const self = this;
     if (this.state.loggedIn) {
       this.setState({portfoliosLoaded: false});
-      const request_url = "http://localhost:3000/portfolio/user/" + cookies.get('user')._id;
+      const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/portfolio/user/" + cookies.get('user')._id;
       $.get(request_url , (data) => {
         console.log(data);
         self.setState({portfolios: data, portfoliosLoaded: true});
@@ -50,9 +50,9 @@ class Profile extends React.Component {
     var portfolio = {name: "", userId: "", stocks: []};
     portfolio.name = this.state.newPortfolio.name;
     portfolio.userId = cookies.get('user')._id;
-    $.post("http://localhost:3000/portfolio", portfolio, (resp, data) => {
+    $.post("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/portfolio", portfolio, (resp, data) => {
       this.setState({portfoliosLoaded: false});
-      const request_url = "http://localhost:3000/portfolio/user/" + cookies.get('user')._id;
+      const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/portfolio/user/" + cookies.get('user')._id;
       $.get(request_url , portfolios => {
         this.setState({portfolios: portfolios, portfoliosLoaded: true});
       });

@@ -39,11 +39,11 @@ class Article extends React.Component {
   }
   componentDidMount() {
     const self = this;
-    const request_url = "http://localhost:3000/article/" + this.state.id;
+    const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/" + this.state.id;
     this.setState({articleLoading: true});
     $.get(request_url, data => {
       this.setState({articleLoading: false, article: data, authorLoading: true});
-      const request_url = "http://localhost:3000/user/" + data.authorId;
+      const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/user/" + data.authorId;
       $.get(request_url, user => {
         this.setState({author: user, authorLoading: false})
       })

@@ -107,7 +107,7 @@ class Register extends React.Component {
         location: {latitude: this.state.latitude, longitude: this.state.latitude}
       };
       console.log(user);
-      $.post("http://localhost:3000/auth/sign-up", user, (resp, data) => {
+      $.post("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/auth/sign-up", user, (resp, data) => {
         console.log("Wow! It's a response: " + resp);
         if (resp == 'OK') {
           this.setState({registerSuccessful: true});
