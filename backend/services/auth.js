@@ -8,7 +8,7 @@ const emailService = require('./email');
 
 async function sendVerificationEmail(user, verificationToken) {
     const text = `Hi ${user.name} ${user.surname}\nPlease click on the link below to verify your account.\n
-        http://localhost:3000/auth/sign-up/verification/${verificationToken}`;
+        http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/auth/sign-up/verification/${verificationToken}`;
     await emailService.sendMail(user.email, 'Papel Email Verification', text);
 }
 
