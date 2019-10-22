@@ -37,7 +37,7 @@ class EconEvents extends React.Component{
   componentDidMount() {
     const self = this;
     this.setState({loading: true});
-    $.get("http://localhost:3000/event", data => {
+    $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/event", data => {
       console.log(data);
       self.setState({econevent: data, loading: false})
     })

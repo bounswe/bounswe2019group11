@@ -19,7 +19,7 @@ function Portfolio({portfolio}){
   };
   var onAddSelected = function() {
     addStockList.map(stock => {
-      const request_url = "http://localhost:3000/portfolio/" + portfolio._id + "/stock";
+      const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/portfolio/" + portfolio._id + "/stock";
       var index = -1;
       for (var i = 0; i < stockList.length; i++) {
         if (stockList[i]._id == stock) {
@@ -37,7 +37,7 @@ function Portfolio({portfolio}){
     });
   };
   var addStockBtn = function() {
-    $.get("http://localhost:3000/stock", data => {
+    $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/stock", data => {
       setStockList(data);
       showStockAdd(true);
     });

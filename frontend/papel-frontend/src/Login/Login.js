@@ -24,7 +24,7 @@ class Login extends React.Component {
   async submit() {
     const {cookies} = this.props;
     var self = this;
-    $.post("http://localhost:3000/auth/login", {email: this.state.email, password: this.state.password },
+    $.post("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/auth/login", {email: this.state.email, password: this.state.password },
     data => {
       cookies.set('userToken', data.token);
       cookies.set('user', data.user);
@@ -33,8 +33,10 @@ class Login extends React.Component {
     })
       .fail(obj => {
         const error = obj.responseJSON;
-        console.log(error);
-        this.setState({showError: true, errorMessage: error.message})
+        if (!!error) {
+          console.log(error);
+          this.setState({showError: true, errorMessage: error.message});
+        }
       });
   }
   render () {
