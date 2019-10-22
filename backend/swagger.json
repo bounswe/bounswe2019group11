@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Papel Backend"
   },
-  "host": "papel-dev.herokuapp.com",
+  "host": "ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000",
   "basePath": "/",
   "tags": [
     {
