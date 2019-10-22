@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/text_margin">
 
     <TextView
         android:id="@+id/item_title"
@@ -23,25 +24,26 @@
     <TextView
         android:id="@+id/item_content"
         android:layout_width="match_parent"
-        android:layout_height="97dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginStart="@dimen/text_margin"
-        android:layout_marginTop="50dp"
         android:layout_marginEnd="@dimen/text_margin"
-        android:layout_marginBottom="0dp"
+        android:layout_marginBottom="60dp"
         android:maxLines="3"
+        android:paddingBottom="30dp"
         android:text="@string/test_content"
         android:textColor="@color/black"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/item_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_alignEnd="@id/item_user_pic"
-        android:layout_alignBottom="@id/item_content"
-        android:layout_marginEnd="-88dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="-137dp"
         android:layout_marginBottom="0dp"
         android:text="@string/test_username"
         android:textSize="12sp" />
@@ -50,11 +52,11 @@
         android:id="@+id/item_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_alignEnd="@id/item_content"
-        android:layout_alignBottom="@id/item_content"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="0dp"
         android:text="@string/test_date"
         android:textSize="12sp" />
 
@@ -64,7 +66,7 @@
         android:layout_height="30dp"
 
         android:layout_alignStart="@id/item_content"
-        android:layout_alignBottom="@id/item_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginStart="2dp"
         android:layout_marginBottom="-1dp"
         android:contentDescription="@string/profile_image_description"
@@ -75,11 +77,21 @@
         style="@style/Widget.AppCompat.RatingBar.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/item_date"
-        android:layout_alignBottom="@id/item_content"
-        android:layout_marginEnd="150dp"
-        android:layout_marginBottom="1dp"
-        android:numStars="5"
+        android:layout_alignStart="@id/item_user_pic"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="9dp"
+        android:layout_marginBottom="5dp"
+        android:numStars="3"
         android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/item_currency_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/item_title"
+        android:layout_alignEnd="@id/item_title"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        tools:visibility="gone" />
 
 </RelativeLayout>

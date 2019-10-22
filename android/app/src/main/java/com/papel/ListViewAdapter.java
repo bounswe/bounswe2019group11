@@ -50,6 +50,7 @@ public class ListViewAdapter extends android.widget.BaseAdapter {
         TextView contentText = (TextView) vi.findViewById(R.id.item_content);
         TextView authorText = (TextView) vi.findViewById(R.id.item_author);
         TextView dateText = (TextView) vi.findViewById(R.id.item_date);
+        TextView currency = (TextView) vi.findViewById(R.id.item_currency_textView);
         ImageView authorImageView = (ImageView) vi.findViewById(R.id.item_user_pic);
         RatingBar rankRatingBar = (RatingBar) vi.findViewById(R.id.event_rank_ratingBar);
 
@@ -76,6 +77,9 @@ public class ListViewAdapter extends android.widget.BaseAdapter {
             rank = item.getRank();
             rankRatingBar.setRating((float)rank);
             rankRatingBar.setVisibility(View.VISIBLE);
+            contentText.setVisibility(View.GONE);
+            currency.setVisibility(View.VISIBLE);
+            currency.setText(content);
         }
 
         dateText.setText(strDate);

@@ -44,6 +44,8 @@ public class EventsFragment extends Fragment {
         adapter = new ListViewAdapter(getActivity().getApplicationContext(), events);
         eventListView.setAdapter(adapter);
 
+        getEvents(getContext());
+
         return root;
     }
 
@@ -76,6 +78,5 @@ public class EventsFragment extends Fragment {
         });
 
         requestQueue.add(request);
-
     }
 }

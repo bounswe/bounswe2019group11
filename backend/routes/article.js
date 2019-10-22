@@ -57,4 +57,18 @@ router.post('/', isAuthenticated, async (req, res) => {
     }
 });
 
+router.get('/user/:userId',async (req,res)=>{
+    try{
+        const Id = req.params.userId;
+        const response = await articleService.getByUserId(Id);
+        res.status(200).json(response);
+    }catch (e) {
+        if (err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
 module.exports = router;

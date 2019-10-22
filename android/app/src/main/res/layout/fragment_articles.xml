@@ -22,6 +22,6 @@
         android:layout_marginBottom="@dimen/fab_margin"
         android:clickable="true"
         android:focusableInTouchMode="false"
-        app:srcCompat="@android:drawable/ic_menu_add" />
+        app:srcCompat="@android:drawable/ic_input_add" />
 
 </RelativeLayout>
