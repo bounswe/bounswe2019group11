@@ -35,24 +35,36 @@ class ArticleEditor extends React.Component {
 class Article extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {id: this.props.match.params.id, article: {}};
+    this.state = {id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
   }
   componentDidMount() {
-    var request_url = "http://localhost:3000/article/" + this.state.id;
+    const self = this;
+    const request_url = "http://localhost:3000/article/" + this.state.id;
+    this.setState({articleLoading: true});
     $.get(request_url, data => {
-      this.setState({article: data});
-
+      this.setState({articleLoading: false, article: data, authorLoading: true});
+      const request_url = "http://localhost:3000/user/" + data.authorId;
+      $.get(request_url, user => {
+        this.setState({author: user, authorLoading: false})
+      })
     })
   }
 
   render() {
     var article = this.state.article;
+    var author = this.state.author;
+    var authorLine;
+    if (this.state.authorLoading)
+      authorLine = <p style={{color: "gray"}}>author not found</p> ;
+    else
+      authorLine = <p style={{color: "gray"}}>by {author.name} {author.surname}</p> ;
     return (
       <Row className="article">
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}}>
           <Card>
             <Card.Body>
               <Card.Title><h1>{article.title}</h1></Card.Title>
+              {authorLine}
               <hr />
               <Card.Text>{article.body}</Card.Text>
             </Card.Body>

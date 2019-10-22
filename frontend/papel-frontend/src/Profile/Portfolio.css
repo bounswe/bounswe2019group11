@@ -19,3 +19,15 @@
   color: black;
   text-decoration: none;
 }
+
+.add-stock {
+  background-color: #cec;
+}
+.add-stock:hover {
+  background-color: #dfd;
+  cursor: pointer;
+}
+
+.portfolio .drawer {
+  background-color: #cec;
+}

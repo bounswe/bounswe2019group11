@@ -27,7 +27,7 @@ function RegisterSuccessfulModal(props) {
 class Register extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {name: '', surname: '', email: '', password: '', latitude: '', longitude: '', id: null, iban: null, marker: null};
+    this.state = {name: '', surname: '', email: '', password: '', latitude: '', longitude: '', id: null, iban: null, marker: null, showError: false, errorMessage: []};
     this.handleChange = this.handleChange.bind(this);
     this.submit = this.submit.bind(this);
     this.toggleTraderOptions = this.toggleTraderOptions.bind(this);
@@ -68,29 +68,33 @@ class Register extends React.Component {
   }
 
   submit() {
-    var errors = "";
+    var errors = [];
     const emailValid = !!this.state.email && this.state.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
     if (!emailValid){
-      errors+=("Check e-mail.\n");
+      errors.push("Check e-mail");
     }
     const nameValid = !!this.state.name && this.state.name.match(/^[a-zA-ZıİğĞçÇşŞüÜöÖ ]+$/i);
     if (!nameValid){
-      errors+=("Check Name.\n\t•Name should contain only English and Turkish characters and the space character.\n");
+      errors.push("Check Name");
+      errors.push("•Name should contain only English and Turkish characters and the space character.")
     }
     const surnameValid = !!this.state.surname && this.state.surname.match(/^[a-zA-ZıİğĞçÇşŞüÜöÖ]+$/i);
     if (!surnameValid){
-      errors+=("Check Surname.\n\t•Surname should contain only English and Turkish characters and the space character.\n");
+      errors.push("Check Surname");
+      errors.push("•Surname should contain only English and Turkish characters and the space character.");
     }
     const passwordValid = !!this.state.password && this.state.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$/i);
     if (!passwordValid){
-      errors+=("Check Password.\n\t•It should contain at least one upper and one lowercase letter, one  numeric and one special character.\n\t•It should be at least 8 characters long.\n");
+      errors.push("Check Password");
+      errors.push("•It should contain at least one upper and one lowercase letter, one  numeric and one special character.");
+      errors.push("•It should be at least 8 characters long.");
     }
     const locationChosen = !!this.state.latitude;
     if (!locationChosen){
-      errors+=("Choose a location point from the map.");
+      errors.push("Choose a location point from the map.");
     }
-    if (errors != "") {
-      alert(errors)
+    if (errors.length > 0) {
+      this.setState({errorMessage: errors, showError: true});
     }
     else {
       var user = {
@@ -129,8 +133,25 @@ class Register extends React.Component {
     if (this.state.redirect === "login") {
       return <Redirect to="/login"/>
     }
+    var i = 0;
     return (
       <div id="register-form" className="card container-fluid col-sm-10">
+        <Modal
+          show={this.state.showError}
+          onHide={() => this.setState({showError: false})}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Register Error</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {
+              this.state.errorMessage.map(error => {
+                if (error[0] === "•") return <p key={i++} style={{color: "red"}}>{error}</p>
+                else return <p key={i++} style={{color: "#444", fontWeight: "bold"}}>{error}</p>;
+              })
+            }
+          </Modal.Body>
+        </Modal>
         <RegisterSuccessfulModal show={this.state.registerSuccessful} onClose={() => this.setState({redirect: "login"})}/>
         <div className="row">
           <div id="form-inputs" className="col-sm-4">
