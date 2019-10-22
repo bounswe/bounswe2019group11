@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import Logo from './logo-green-small.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -14,44 +14,63 @@ import EconEvent from './EconEvent/EconEvent';
 import EconEvents from './EconEvent/EconEvents';
 import Validation from './Register/Validation';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
+import { useCookies, CookiesProvider } from 'react-cookie';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
+function NavBar(props) {
+  const [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken'])
+  var profileBtn, logoutBtn, registerBtn, loginBtn;
+  const [loggedIn, login] = useState(!!cookies.userToken);
+  const logout = function () {
+    props.removeCookie('userToken');
+    props.removeCookie('user');
+    login(false);
   }
+  if(!!loggedIn) {
+    profileBtn = <li><Link to="/profile">Profile</Link></li>
+    logoutBtn = <li><Link to="/" onClick={() => logout()}>Logout</Link></li>;
+  }
+  else {
+    loginBtn = <li><Link to="/login" style={{paddingLeft:0}}>Login</Link></li>;
+    registerBtn = <li><Link to="/register">Register</Link></li>;
+  }
+  return (
+  <Router>
+    <ul id="menu">
+      <Link to="/">
+        <img id="logo-green-small" className="menu-logo" src={Logo} style = { { borderright: "2px solid rgba(0, 0, 0, 0.151)", width: 390/4, height: 135/4}} />
+      </Link>
+      {loginBtn}
+      {registerBtn}
+      {profileBtn}
+      <li><Link to="/articles">Articles</Link></li>
+      <li><Link to="/events">Events</Link></li>
+      {logoutBtn}
+    </ul>
+    <CookiesProvider>
+      <div className="container">
+        <Switch>
+          <Route exact path="/"><Home /></Route>
+          <Route path="/login"><Login login={login} /></Route>
+          <Route path="/register"><Register /></Route>
+          <Route path="/profile"><Profile /></Route>
+          <Route path="/stock/:id" component={TradingEquipment}/>
+          <Route path="/article/:id" component={Article} />
+          <Route path="/event/:id"><EconEvent /></Route>
+          <Route path="/validation"><Validation /></Route>
+          <Route path="/articles"><Articles /></Route>
+          <Route path="/events"><EconEvents /></Route>
+        </Switch>
+      </div>
+    </CookiesProvider>
+  </Router>);
+}
+function App() {
+  let [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken']);
 
-  
-  render() {
-    return (
-      <Router>
-        <ul id="menu">
-            
-          <Link to="/">
-            <img id="logo-green-small" classname="menu-logo" src={Logo} style = { { borderright: "2px solid rgba(0, 0, 0, 0.151)", width: 390/4, height: 135/4}} />
-          </Link>
-          <li><Link to="/login" style={{paddingLeft:0}}>Login</Link></li>
-          <li><Link to="/register">Register</Link></li>
-          <li><Link to="/profile">Profile</Link></li>
-          <li><Link to="/articles">Articles</Link></li>
-          <li><Link to="/events">Events</Link></li>
-        </ul>
-        <div className="container">
-          <Switch>
-            <Route exact path="/"><Home /></Route>
-            <Route path="/login"><Login /></Route>
-            <Route path="/register"><Register /></Route>
-            <Route path="/profile"><Profile /></Route>
-            <Route path="/currency/:id"><TradingEquipment /></Route>
-            <Route path="/article/:id"><Article /></Route>
-            <Route path="/event/:id"><EconEvent /></Route>
-            <Route path="/validation"><Validation /></Route>
-            <Route path="/articles"><Articles /></Route>
-            <Route path="/events"><EconEvents /></Route>
-          </Switch>
-        </div>
-      </Router>
-    );
-  }
+
+  return (
+    <NavBar />
+  );
 }
 
 export default App;

@@ -47,8 +47,7 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_articles, R.id.nav_portfolio,
-                R.id.nav_tools, R.id.nav_share, R.id.nav_send)
+                R.id.nav_events, R.id.nav_articles, R.id.nav_portfolio)
                 .setDrawerLayout(drawer)
                 .build();
 
@@ -95,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

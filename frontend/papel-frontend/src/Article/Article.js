@@ -4,6 +4,7 @@ import 'draft-js/dist/Draft.css';
 import './Article.css';
 import {useParams} from 'react-router-dom';
 import $ from 'jquery';
+import {Row, Col, Card} from 'react-bootstrap';
 
 class ArticleEditor extends React.Component {
   constructor(props) {
@@ -23,7 +24,6 @@ class ArticleEditor extends React.Component {
     return (
       <div id="content">
         <h4>Edit Article:</h4>
-        <button className="btn" onClick={this.onBoldClick.bind(this)}>Bold</button>
         <div className="editor">
           <Editor editorState={this.state.editorState} onChange={this.onChange} />
         </div>
@@ -35,32 +35,30 @@ class ArticleEditor extends React.Component {
 class Article extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {article: {}};
+    this.state = {id: this.props.match.params.id, article: {}};
   }
   componentDidMount() {
-    fetch('https://jsonplaceholder.typicode.com/posts/1')
-      .then(response => response.json())
-      .then(json => {
-        console.log(json);
-        this.setState({article: json});
-      });
+    var request_url = "http://localhost:3000/article/" + this.state.id;
+    $.get(request_url, data => {
+      this.setState({article: data});
+
+    })
   }
 
   render() {
     var article = this.state.article;
     return (
-      <div className="container">
-        <div className="row">
-          <div className="col-6 offset-3">
-            <div className="row">
-              <h3>{article.title}</h3>
-            </div>
-            <div className="row">
-              <div className="article"> {article.body} </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Row className="article">
+        <Col sm={{span: 10, offset: 1}} xs={{span: 12}}>
+          <Card>
+            <Card.Body>
+              <Card.Title><h1>{article.title}</h1></Card.Title>
+              <hr />
+              <Card.Text>{article.body}</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     );
   }
 }

@@ -1,16 +1,16 @@
-const mongoose  = require('mongoose');
+const mongoose = require('mongoose');
 
 const tradingEquipmentSchema = new mongoose.Schema({
-    name:{
+    name: {
         type: String,
-        required:true
+        required: true
     },
-    price:{
+    price: {
         type: Number,
         required: true
     },
 
-    monthlyPrice:{
+    monthlyPrice: {
         type: Object
     },
     dailyPrice: {

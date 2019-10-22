@@ -4,12 +4,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import com.papel.data.Article;
 import com.papel.data.Comment;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import com.papel.data.Event;
 import java.util.ArrayList;
 
 
@@ -52,20 +51,31 @@ public class ListViewAdapter extends android.widget.BaseAdapter {
         TextView authorText = (TextView) vi.findViewById(R.id.item_author);
         TextView dateText = (TextView) vi.findViewById(R.id.item_date);
         ImageView authorImageView = (ImageView) vi.findViewById(R.id.item_user_pic);
+        RatingBar rankRatingBar = (RatingBar) vi.findViewById(R.id.event_rank_ratingBar);
 
-        String strDate="", title="", content="", author="";
+        String strDate = "", title = "", content = "", author = "";
+        double rank= 5 ;
 
         if (data.get(position) instanceof Article){
             Article item = (Article) data.get(position);
-            strDate = item.getDate();
             title = item.getTitle();
-            content = item.getContent();
-            author = item.getAuthor();
+            content = item.getBody();
+            //author = item.getAuthorName();
+            strDate = item.getDate();
         }else if (data.get(position) instanceof Comment){
             Comment item = (Comment) data.get(position);
             strDate = item.getDate();
             content = item.getContent();
             author = item.getAuthor();
+        }else if(data.get(position) instanceof Event){
+            Event item = (Event) data.get(position);
+            strDate = item.getDate();
+            content = item.getBody();
+            title = item.getTitle();
+            author = item.getCountry();
+            rank = item.getRank();
+            rankRatingBar.setRating((float)rank);
+            rankRatingBar.setVisibility(View.VISIBLE);
         }
 
         dateText.setText(strDate);
