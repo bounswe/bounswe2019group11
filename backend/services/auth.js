@@ -2,7 +2,7 @@ const User = require('../models/user');
 const VerificationToken = require('../models/verificationToken');
 const authHelper = require('../helpers/auth');
 const errors = require('../helpers/errors');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const emailService = require('./email');
 
@@ -53,7 +53,7 @@ module.exports.login = async (email, password) => {
     if (!user) {
         throw errors.INVALID_CREDENTIALS();
     }
-    const isPasswordMatched = await bcrypt.compare(password, user.password);
+    const isPasswordMatched = await bcrypt.compareSync(password, user.password);
     if (!isPasswordMatched) {
         throw errors.INVALID_CREDENTIALS();
     }
