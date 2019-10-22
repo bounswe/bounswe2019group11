@@ -70,4 +70,16 @@
         android:contentDescription="@string/profile_image_description"
         tools:srcCompat="@mipmap/ic_launcher" />
 
+    <RatingBar
+        android:id="@+id/event_rank_ratingBar"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/item_date"
+        android:layout_alignBottom="@id/item_content"
+        android:layout_marginEnd="150dp"
+        android:layout_marginBottom="1dp"
+        android:numStars="5"
+        android:visibility="invisible" />
+
 </RelativeLayout>
