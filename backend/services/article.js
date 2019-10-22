@@ -17,9 +17,12 @@ module.exports.getById = async (_id) => {
     return article;
 };
 
-module.exports.getByUserID = async (userID) => {
+module.exports.getByUserId = async (_userId) => {
+    if (!(mongoose.Types.ObjectId.isValid(_userId))) {
+        throw errors.USER_NOT_FOUND();
+    }
     return await Article.find({
-        authorID: userID
+        authorID: _userId
     });
 };
 
