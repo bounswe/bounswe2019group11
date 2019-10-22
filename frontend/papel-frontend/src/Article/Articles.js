@@ -2,20 +2,8 @@ import React from 'react';
 import './Article.css';
 import {Row, Col, Card} from 'react-bootstrap';
 import $ from 'jquery';
+import ArticlePreview from './ArticlePreview';
 
-function ArticlePreview({articleId, title, text}) {
-  const path = "../article/" + articleId;
-  return (
-    <a href={path}>
-      <Card style={{width: "100%", marginBottom: 10}}>
-        <Card.Body>
-          <Card.Title>{title}</Card.Title>
-          <Card.Text>{text.slice(0, 100)}{(text.length < 100) ? "" : "..."}</Card.Text>
-        </Card.Body>
-      </Card>
-    </a>
-  );
-}
 
 class Articles extends React.Component {
   constructor(props) {

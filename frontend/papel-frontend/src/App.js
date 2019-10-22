@@ -20,9 +20,11 @@ function NavBar(props) {
   const [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken'])
   var profileBtn, logoutBtn, registerBtn, loginBtn;
   const [loggedIn, login] = useState(!!cookies.userToken);
+
   const logout = function () {
-    props.removeCookie('userToken');
-    props.removeCookie('user');
+    console.log(cookies);
+    removeCookie('userToken');
+    removeCookie('user');
     login(false);
   }
   if(!!loggedIn) {
