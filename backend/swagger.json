@@ -330,7 +330,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#definitions/User"
+                "$ref": "#/definitions/User"
               }
             }
           },
@@ -559,7 +559,7 @@
             }
           },
           {
-            "name": "portfolioId",
+            "name": "_id",
             "in": "path",
             "description": "Portfolio ID",
             "required": true,
@@ -603,7 +603,7 @@
             }
           },
           {
-            "name": "portfolioId",
+            "name": "_id",
             "in": "path",
             "description": "Portfolio ID",
             "required": true,
@@ -727,7 +727,7 @@
           "200": {
             "description": "OK. Article is successfully added.",
             "schema": {
-              "$ref": "#definitions/Article"
+              "$ref": "#/definitions/Article"
             }
           },
           "400": {
@@ -802,6 +802,9 @@
                   },
                   "comment": {
                     "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
                     "description": "Comments of the event",
                     "example": [
                       "comment2",
@@ -868,6 +871,9 @@
                 },
                 "comment": {
                   "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
                   "description": "Comments of the event",
                   "example": [
                     "comment2",
@@ -1064,6 +1070,9 @@
         },
         "comment": {
           "type": "array",
+          "items": {
+            "type": "string"
+          },
           "description": "Comments made on the article",
           "example": [
             "Nice!",
