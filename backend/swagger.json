@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Papel Backend"
   },
-  "host": "ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000",
+  "host": "localhost:3000",
   "basePath": "/",
   "tags": [
     {
@@ -770,6 +770,66 @@
         }
       }
     },
+    "/article/{id}/comment": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint to add a comment to an article.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "comment",
+            "description": "Comment to be added.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "body"
+              ],
+              "properties": {
+                "body": {
+                  "type": "string",
+                  "description": "Body of the comment.",
+                  "example": "Wow, this is interesting!"
+                }
+              }
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment successfully added."
+          },
+          "400": {
+            "description": "Validation error. The body of the comment may be missing or the article with the given id not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
     "/event": {
       "get": {
         "tags": [
@@ -1084,7 +1144,7 @@
           "description": "User ID of the article's author.",
           "example": "5da07611e407903a5d01b265"
         },
-        "voterNumber": {
+        "voteCount": {
           "type": "number",
           "description": "Number of users that ranked the article.",
           "example": "72"
