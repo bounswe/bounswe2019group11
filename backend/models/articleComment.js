@@ -6,19 +6,29 @@ const articleCommentSchema = new mongoose.Schema({
       required: true,
       ref: 'Article',
     },
-    userId: {
+    authorId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User',
     },
     body: {
         type: String,
-        required: true,
+        required: 'InvalidBody',
     },
     date: {
         type: Date,
         required: true,
         default: Date.now,
+    },
+    edited: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    lastEditDate: {
+        type: Date,
+        required: false,
+        default: null
     }
 });
 

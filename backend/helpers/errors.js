@@ -82,4 +82,7 @@ module.exports = {
     INVALID_BODY: (cause) => {
       return PapelError('InvalidBody', 'Body was missing.', cause);
     },
+    COMMENT_NOT_FOUND: (cause) => {
+        return PapelError('CommentNotFound', 'Comment not found.', cause);
+    }
 };

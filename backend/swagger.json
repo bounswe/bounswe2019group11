@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Papel Backend"
   },
-  "host": "localhost:3000",
+  "host": "ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000",
   "basePath": "/",
   "tags": [
     {
@@ -764,7 +764,7 @@
           "200": {
             "description": "OK. The article with the given id is returned.",
             "schema": {
-              "$ref": "#/definitions/Article"
+              "$ref": "#/definitions/ArticleDetail"
             }
           }
         }
@@ -801,7 +801,7 @@
                 "body": {
                   "type": "string",
                   "description": "Body of the comment.",
-                  "example": "Wow, this is interesting!"
+                  "example": "That's not even remotely funny."
                 }
               }
             }
@@ -823,6 +823,142 @@
           },
           "401": {
             "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/article/{id}/comment/{commentId}": {
+      "get": {
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint that returns the selected comment.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment returned.",
+            "schema": {
+              "$ref": "#/definitions/Comment"
+            }
+          },
+          "400": {
+            "description": "Validation error. Either the comment or the article not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint that updates the selected comment.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "commentBody",
+            "description": "New body of the comment.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "body"
+              ],
+              "properties": {
+                "body": {
+                  "type": "string",
+                  "description": "New body of the comment.",
+                  "example": "That's not even remotely funny."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment updated."
+          },
+          "400": {
+            "description": "Validation error. Either the comment or the article not found or the body was empty."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint that deletes the selected comment.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment deleted."
+          },
+          "400": {
+            "description": "Article, user or the comment not found."
           },
           "500": {
             "description": "Internal error occurred. Check the cause field for the diagnostics."
@@ -1118,6 +1254,11 @@
     "Article": {
       "type": "object",
       "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of the article",
+          "example": "5da07611e407903a5d01b265"
+        },
         "title": {
           "type": "string",
           "description": "Title of the article",
@@ -1128,16 +1269,56 @@
           "description": "Body part of the article",
           "example": "The central bank cut rates for the first time since the Great Recession in late July..."
         },
-        "comment": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Comments made on the article",
-          "example": [
-            "Nice!",
-            "Thank you."
-          ]
+        "authorId": {
+          "type": "string",
+          "description": "User ID of the article's author.",
+          "example": "5da07611e407903a5d01b265"
+        },
+        "voteCount": {
+          "type": "number",
+          "description": "Number of users that ranked the article.",
+          "example": "72"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date when the article is created.",
+          "example": "2019-11-14T21:52:05.381Z"
+        },
+        "author": {
+          "type": "object",
+          "description": "Name and surname of the author of this comment.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the author.",
+              "example": "John"
+            },
+            "surname": {
+              "type": "string",
+              "description": "Surname of the author.",
+              "example": "Doe"
+            }
+          }
+        }
+      }
+    },
+    "ArticleDetail": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of the article",
+          "example": "5da07611e407903a5d01b265"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the article",
+          "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
+        },
+        "body": {
+          "type": "string",
+          "description": "Body part of the article",
+          "example": "The central bank cut rates for the first time since the Great Recession in late July..."
         },
         "authorId": {
           "type": "string",
@@ -1148,6 +1329,91 @@
           "type": "number",
           "description": "Number of users that ranked the article.",
           "example": "72"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date when the article is created.",
+          "example": "2019-11-14T21:52:05.381Z"
+        },
+        "author": {
+          "type": "object",
+          "description": "Name and surname of the author of this comment.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the author.",
+              "example": "John"
+            },
+            "surname": {
+              "type": "string",
+              "description": "Surname of the author.",
+              "example": "Doe"
+            }
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": [
+            {
+              "$ref": "#/definitions/Comment"
+            }
+          ]
+        }
+      }
+    },
+    "Comment": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of the comment.",
+          "example": "5daedb5af05eb852753ac9c0"
+        },
+        "articleId": {
+          "type": "string",
+          "description": "Id of the article that the comment is posted.",
+          "example": "5daedb5af05eb852753ac9c1"
+        },
+        "authorId": {
+          "type": "string",
+          "description": "Id of the author of this comment.",
+          "example": "5daedb59f05eb852753ac9be"
+        },
+        "body": {
+          "type": "string",
+          "description": "Body of the comment.",
+          "example": "That's not even remotely funny."
+        },
+        "date": {
+          "type": "string",
+          "description": "Date when the comment is created.",
+          "example": "2019-11-14T21:52:05.381Z"
+        },
+        "edited": {
+          "type": "boolean",
+          "description": "Shows whether the comment is edited or not.",
+          "example": "true"
+        },
+        "lastEditDate": {
+          "type": "string",
+          "description": "If the comment is edited, shows the last edit time. It is null otherwise.",
+          "example": "2019-11-14T21:52:05.381Z"
+        },
+        "author": {
+          "type": "object",
+          "description": "Name and surname of the author of this comment.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the author.",
+              "example": "John"
+            },
+            "surname": {
+              "type": "string",
+              "description": "Surname of the author.",
+              "example": "Doe"
+            }
+          }
         }
       }
     }
