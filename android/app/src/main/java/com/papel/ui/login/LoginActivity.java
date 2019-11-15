@@ -136,6 +136,10 @@ public class LoginActivity extends AppCompatActivity {
             });
 
 
+            // Google Sign-In button.
+            //findViewById(R.id.sign_in_button).setOnClickListener(this);
+
+
             sendReq.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
