@@ -1353,11 +1353,9 @@
         },
         "comments": {
           "type": "array",
-          "items": [
-            {
-              "$ref": "#/definitions/Comment"
-            }
-          ]
+          "items": {
+            "$ref": "#/definitions/Comment"
+          }
         }
       }
     },
