@@ -2,7 +2,7 @@ const Article = require('../models/article');
 const mongoose = require('mongoose');
 const errors = require('../helpers/errors');
 const ArticleComment = require('../models/articleComment');
-
+const ArticleVote = require('../models/articleVote');
 
 const STAGES = {
     GET_AUTHOR: {
@@ -113,12 +113,58 @@ const STAGES = {
                 }
             }
         }
-    }
+    },
+    SUM_VOTES: {
+        $lookup: {
+            from: 'articlevotes',
+            let: {
+                articleId: '$_id'
+            },
+            pipeline: [
+                {
+                    $match: {
+                        $expr: {
+                            $eq: ['$$articleId', '$articleId']
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        voteCount: {
+                            $sum: '$value'
+                        },
+                    }
+                },
+                {
+                    $project: {
+                        voteCount: 1,
+                        _id: 0,
+                    }
+                },
+            ],
+            as: 'voteCount',
+        }
+    },
+    UNWIND_VOTES: {
+        $unwind: {
+            path: '$voteCount',
+            preserveNullAndEmptyArrays: true,
+        }
+    },
+    SET_VOTES: {
+        $addFields: {
+            voteCount: {
+                $ifNull: ["$voteCount.voteCount", 0]
+            }
+        }
+    },
 };
 
 module.exports.getAll = async () => {
     return await Article.aggregate([
-        STAGES.GET_AUTHOR, STAGES.UNWIND_AUTHOR
+        STAGES.GET_AUTHOR, STAGES.UNWIND_AUTHOR,
+        STAGES.SUM_VOTES, STAGES.UNWIND_VOTES, STAGES.SET_VOTES
     ]).then();
 };
 
@@ -127,7 +173,8 @@ module.exports.getById = async (_id) => {
         throw errors.ARTICLE_NOT_FOUND();
     }
     const article = await Article.aggregate([
-        STAGES.MATCH_ID(_id), STAGES.GET_AUTHOR, STAGES.UNWIND_AUTHOR, STAGES.GET_COMMENTS
+        STAGES.MATCH_ID(_id), STAGES.GET_AUTHOR, STAGES.UNWIND_AUTHOR, STAGES.GET_COMMENTS,
+        STAGES.SUM_VOTES, STAGES.UNWIND_VOTES, STAGES.SET_VOTES
     ]).then();
     if (!article) {
         throw errors.ARTICLE_NOT_FOUND();
@@ -140,7 +187,8 @@ module.exports.getByUserId = async (_userId) => {
         throw errors.USER_NOT_FOUND();
     }
     return await Article.aggregate([
-        STAGES.MATCH_USER_ID(_userId), STAGES.GET_AUTHOR, STAGES.UNWIND_AUTHOR
+        STAGES.MATCH_USER_ID(_userId), STAGES.GET_AUTHOR, STAGES.UNWIND_AUTHOR,
+        STAGES.SUM_VOTES, STAGES.UNWIND_VOTES, STAGES.SET_VOTES
     ]).then();
 };
 
@@ -216,5 +264,31 @@ module.exports.deleteComment = async (articleId, commentId, authorId) => {
     const comment = await ArticleComment.findOneAndDelete({_id: commentId, articleId, authorId});
     if (!comment) {
         throw errors.COMMENT_NOT_FOUND();
+    }
+};
+
+module.exports.vote = async (articleId, userId, value) => {
+    if (!(mongoose.Types.ObjectId.isValid(articleId))) {
+        throw errors.ARTICLE_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(userId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+
+    await ArticleVote.updateOne({articleId, userId}, {value}, {upsert: true});
+};
+
+module.exports.clearVote = async (articleId, userId) => {
+    if (!(mongoose.Types.ObjectId.isValid(articleId))) {
+        throw errors.ARTICLE_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(userId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+
+    const res = await ArticleVote.deleteOne({articleId, userId});
+    console.log(articleId, userId, res);
+    if (res.n !== 1) {
+        throw errors.VOTE_NOT_FOUND();
     }
 };

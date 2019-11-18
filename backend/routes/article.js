@@ -32,7 +32,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', isAuthenticated, async (req, res) => {
     try {
         const {title, body} = req.body;
-        const authorId = req.token.data._id;
+        const authorId = req.token && req.token.data && req.token.data._id;
         const response = await articleService.create(title, body, authorId);
         res.status(200).send(response);
     } catch (err) {
@@ -74,7 +74,7 @@ router.get('/user/:userId', async (req, res) => {
 router.post('/:id/comment', isAuthenticated, async (req, res) => {
     try {
         const articleId = req.params.id;
-        const userId = req.token.data._id;
+        const userId = req.token && req.token.data && req.token.data._id;
         const body = req.body.body;
         await articleService.postComment(articleId, userId, body);
         res.sendStatus(200);
@@ -151,7 +151,7 @@ router.delete('/:id/comment/:commentId', isAuthenticated, async (req, res) => {
     try {
         const articleId = req.params.id;
         const commentId = req.params.commentId;
-        const userId = req.token.data._id;
+        const userId = req.token && req.token.data && req.token.data._id;
         await articleService.deleteComment(articleId, commentId, userId);
         res.sendStatus(200);
     } catch (err) {
@@ -160,6 +160,59 @@ router.delete('/:id/comment/:commentId', isAuthenticated, async (req, res) => {
         } else if (err.name === 'CommentNotFound') {
             res.status(400).send(err);
         } else if (err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
+router.post('/:id/up-vote', isAuthenticated, async (req, res) => {
+    try {
+        const articleId = req.params.id;
+        const userId = req.token && req.token.data && req.token.data._id;
+        await articleService.vote(articleId, userId, 1);
+        res.sendStatus(200);
+    } catch (err) {
+        if (err.name === 'ArticleNotFound') {
+            res.status(400).send(err);
+        } else if (err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
+router.post('/:id/down-vote', isAuthenticated, async (req, res) => {
+    try {
+        const articleId = req.params.id;
+        const userId = req.token && req.token.data && req.token.data._id;
+        await articleService.vote(articleId, userId, -1);
+        res.sendStatus(200);
+    } catch (err) {
+        if (err.name === 'ArticleNotFound') {
+            res.status(400).send(err);
+        } else if (err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
+router.post('/:id/clear-vote', isAuthenticated, async (req, res) => {
+    try {
+        const articleId = req.params.id;
+        const userId = req.token && req.token.data && req.token.data._id;
+        await articleService.clearVote(articleId, userId);
+        res.sendStatus(200);
+    } catch (err) {
+        if (err.name === 'ArticleNotFound') {
+            res.status(400).send(err);
+        } else if (err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        } else if (err.name === 'VoteNotFound') {
             res.status(400).send(err);
         } else {
             res.status(500).send(errors.INTERNAL_ERROR(err));
