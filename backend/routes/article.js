@@ -116,17 +116,20 @@ router.get('/:id/comment/:commentId', async (req, res) => {
     }
 });
 
-router.post('/:id/comment/:commentId', async (req, res) => {
+router.post('/:id/comment/:commentId', isAuthenticated, async (req, res) => {
     try {
         const articleId = req.params.id;
+        const authorId = req.token && req.token.data && req.token.data._id;
         const commentId = req.params.commentId;
         const newBody = req.body.body;
-        await articleService.editComment(articleId, commentId, newBody);
+        await articleService.editComment(articleId, authorId, commentId, newBody);
         res.sendStatus(200);
     } catch (err) {
         if (err.name === 'ArticleNotFound') {
             res.status(400).send(err);
         } else if (err.name === 'CommentNotFound') {
+            res.status(400).send(err);
+        } else if (err.name === 'UserNotFound') {
             res.status(400).send(err);
         } else if (err.name === 'ValidationError') {
             const causes = [];

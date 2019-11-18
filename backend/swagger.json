@@ -871,6 +871,11 @@
         }
       },
       "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "tags": [
           "article"
         ],
