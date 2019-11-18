@@ -41,6 +41,13 @@ const STAGES = {
             },
             pipeline: [
                 {
+                  $match: {
+                      $expr: {
+                          $eq: ['$$articleId', '$articleId']
+                      }
+                  }
+                },
+                {
                     $lookup: {
                         from: 'users',
                         let: {
