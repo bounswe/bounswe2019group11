@@ -179,14 +179,17 @@ module.exports.getComment = async (articleId, commentId) => {
     return comment[0];
 };
 
-module.exports.editComment = async (articleId, commentId, newBody) => {
+module.exports.editComment = async (articleId, authorId, commentId, newBody) => {
     if (!(mongoose.Types.ObjectId.isValid(articleId))) {
         throw errors.ARTICLE_NOT_FOUND();
     }
     if (!(mongoose.Types.ObjectId.isValid(commentId))) {
         throw errors.COMMENT_NOT_FOUND();
     }
-    const oldComment = await ArticleComment.findOneAndUpdate({_id: commentId},
+    if (!(mongoose.Types.ObjectId.isValid(authorId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    const oldComment = await ArticleComment.findOneAndUpdate({_id: commentId, articleId, authorId},
         {body: newBody, edited: true, lastEditDate: Date.now()});
     if (!oldComment) {
         throw errors.COMMENT_NOT_FOUND();
