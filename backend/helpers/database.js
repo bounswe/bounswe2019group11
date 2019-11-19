@@ -5,5 +5,6 @@ module.exports.establishConnection = async () => {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
+        useFindAndModify: true,
     });
 };
