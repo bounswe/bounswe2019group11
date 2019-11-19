@@ -14,10 +14,6 @@ const articleSchema = new mongoose.Schema({
         required: true,
         ref: 'User',
     },
-    voteCount: {
-        type: Number,
-        default: 0,
-    },
     date: {
         type: Date,
         default: Date.now,
