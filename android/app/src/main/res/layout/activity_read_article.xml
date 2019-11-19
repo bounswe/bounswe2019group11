@@ -130,6 +130,33 @@
 
             </LinearLayout>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/comment_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:gravity="start|top"
+                    android:hint="@string/comment_hint"
+                    android:inputType="textMultiLine"
+                    android:paddingEnd="64dp" />
+
+                <ImageView
+                    android:id="@+id/add_comment_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@id/comment_edittext"
+                    android:layout_alignBottom="@id/comment_edittext"
+                    android:layout_marginEnd="1dp"
+                    android:layout_marginBottom="10dp"
+                    android:clickable="true"
+                    app:srcCompat="@android:drawable/ic_menu_send" />
+
+            </RelativeLayout>
+
             <ListView
                 android:id="@+id/article_comments_listview"
                 android:layout_width="match_parent"

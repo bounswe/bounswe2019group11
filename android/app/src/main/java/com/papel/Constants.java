@@ -1,9 +1,10 @@
 package com.papel;
 
 public class Constants {
-    public static final String LOCALHOST = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/";
+    public static final String LOCALHOST = "http://192.168.1.113:3000/";
 
     public static final String ARTICLE = "article/";
+    public static final String COMMENT   = "comment/";
     public static final String EVENT = "event/";
     public static final String STOCK = "stock/";
     public static final String PORTFOLIO = "portfolio/";

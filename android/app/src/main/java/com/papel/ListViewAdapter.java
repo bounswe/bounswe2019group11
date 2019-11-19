@@ -66,8 +66,12 @@ public class ListViewAdapter extends android.widget.BaseAdapter {
         }else if (data.get(position) instanceof Comment){
             Comment item = (Comment) data.get(position);
             strDate = item.getDate();
+            if(item.isEdited()){
+                strDate = item.getLastEditDate();
+            }
             content = item.getContent();
-            author = item.getAuthor();
+            author = item.getAuthorName();
+            titleText.setVisibility(View.GONE);
         }else if(data.get(position) instanceof Event){
             Event item = (Event) data.get(position);
             strDate = item.getDate();
