@@ -1,12 +1,15 @@
 package com.papel.ui.articles;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -198,6 +201,55 @@ public class ReadArticleActivity extends AppCompatActivity {
     }
 
     private void editArticleComment(final Context context, final String articleId, final String commentId, final String content) {
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = Constants.LOCALHOST + Constants.ARTICLE + articleId + "/" + Constants.COMMENT + commentId;
+        final JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("body", content);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                finish();
+                startActivity(getIntent());
+                adapter.notifyDataSetChanged();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                NetworkResponse networkResponse = error.networkResponse;
+                if (networkResponse != null) {
+                    String data = new String(networkResponse.data);
+                    try {
+                        JSONObject errorObject = new JSONObject(data);
+                        String message = errorObject.getString("message");
+                        Toast.makeText(context, "There was an error when editing your comment: " + message, Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return jsonBody.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+        requestQueue.add(request);
 
     }
 
@@ -211,6 +263,9 @@ public class ReadArticleActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Toast.makeText(ReadArticleActivity.this, "Comment deleted.", Toast.LENGTH_SHORT).show();
+                        finish();
+                        startActivity(getIntent());
+                        adapter.notifyDataSetChanged();
                     }
                 }, new Response.ErrorListener() {
 
@@ -249,27 +304,43 @@ public class ReadArticleActivity extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         if (v.getId() == R.id.article_comments_listview) {
-            int item_pos = ((AdapterView.AdapterContextMenuInfo) menuInfo).position - 1;
-            User user = User.getInstance();
-            if (((Comment)comments.get(item_pos)).getAuthorId() == user.getId()) {
-                MenuInflater inflater = getMenuInflater();
-                inflater.inflate(R.menu.article_comments_menu, menu);
-            }
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.article_comments_menu, menu);
         }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Comment c = (Comment) comments.get(info.position - 1);
+        final Comment c = (Comment) comments.get(info.position - 1);
         if (item.getItemId() == R.id.edit) {
-            // TODO: edit dialog or new intent.
+            LayoutInflater li = LayoutInflater.from(getApplicationContext());
+            View promptsView = li.inflate(R.layout.edit_comment_prompt, null);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setView(promptsView);
+            final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
+            userInput.setText(c.getContent());
+            alertDialogBuilder
+                    .setCancelable(true)
+                    .setPositiveButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    editArticleComment(getApplicationContext(), article.getId(),
+                                            c.getCommentId(), userInput.getText().toString().trim());
+                                }
+                            })
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
             return true;
         } else if (item.getItemId() == R.id.delete) {
             deleteArticleComment(getApplicationContext(), c.getArticleId(), c.getCommentId());
-            finish();
-            startActivity(getIntent());
-            adapter.notifyDataSetChanged();
             return true;
         }
         return false;

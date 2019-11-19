@@ -42,7 +42,7 @@
     <string name="comment_title">"Comments"</string>
     <string name="menu_delete">"Delete"</string>
     <string name="menu_edit">"Edit"</string>
-
+    <string name="comment_prompt_edit">"Edit your comment!"</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
