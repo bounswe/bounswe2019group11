@@ -4,7 +4,9 @@ import 'draft-js/dist/Draft.css';
 import './Article.css';
 import {useParams} from 'react-router-dom';
 import $ from 'jquery';
-import {Row, Col, Card} from 'react-bootstrap';
+import {Row, Col, Button, Card} from 'react-bootstrap';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 class ArticleEditor extends React.Component {
   constructor(props) {
@@ -49,7 +51,9 @@ class Article extends React.Component {
       })
     })
   }
-
+  printID(id) {
+    alert(id);
+  }
   render() {
     var article = this.state.article;
     var author = this.state.author;
@@ -60,7 +64,7 @@ class Article extends React.Component {
       authorLine = <p style={{color: "gray"}}>by {author.name} {author.surname}</p> ;
     return (
       <Row className="article">
-        <Col sm={{span: 10, offset: 1}} xs={{span: 12}}>
+        <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
           <Card>
             <Card.Body>
               <Card.Title><h1>{article.title}</h1></Card.Title>
@@ -70,7 +74,35 @@ class Article extends React.Component {
             </Card.Body>
           </Card>
         </Col>
-      </Row>
+
+        <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
+          <label for="commentEditor">Add a command...</label>
+          <textarea class="form-control" id="commentEditor" rows="4"></textarea>
+        </Col>
+
+        <Col  md={{span: 3, offset: 8}}
+              style={{width: "20", marginBottom: 10}}>
+          
+          <Button size="sm"  onClick={() => alert()}>
+            <FontAwesomeIcon icon={faPlus} />&nbsp;
+            Add Comment
+          </Button>
+              
+        </Col>
+      
+
+        <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
+          <Card>
+            <Card.Body>
+              <Card.Title><h3>{article.title}</h3></Card.Title>
+              {authorLine}
+              <hr />
+              <Card.Text>{this.state.id}</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+
+      </Row >
     );
   }
 }

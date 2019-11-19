@@ -1,8 +1,10 @@
 import React from 'react';
 import './Article.css';
-import {Row, Col, Card} from 'react-bootstrap';
 import $ from 'jquery';
 import ArticlePreview from './ArticlePreview';
+import {Row, Col, Card, ButtonToolbar, Button, Modal, Form} from 'react-bootstrap';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 
 class Articles extends React.Component {
@@ -18,19 +20,34 @@ class Articles extends React.Component {
     });
   }
   goToArticle(id) {
-    console.log(this);
+    console.log("HELLO");
   }
   render() {
+
     return (
-      <Row>
-        <Col md={{span: 8, offset: 2}}>
-          {
-            this.state.articles.map(article => (
-              <ArticlePreview key={article._id} articleId={article._id} title={article.title} text={article.body} onClick={this.goToArticle(article.name)} />
-            ))
-          }
+      <Col md={{span: 8, offset: 2}}>
+        <Col md={{span: 3}}style={{width: "20",marginLeft: -16, marginBottom: 10}}>
+          
+          <Button size="sm"  onClick={() => alert("Not implemented yet")}>
+            <FontAwesomeIcon icon={faPlus} />&nbsp;
+            Add Article
+          </Button>
+          
         </Col>
-      </Row>
+
+      
+        <Row>
+          <Col md={{span: 12}}>
+            {
+              this.state.articles.map(article => (
+                <ArticlePreview key={article._id} articleId={article._id} title={article.title} text={article.body}  />
+              ))
+            }
+          </Col>
+        </Row>
+      </Col>
+
+
     );
   }
 }
