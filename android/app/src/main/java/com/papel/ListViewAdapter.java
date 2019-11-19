@@ -1,5 +1,6 @@
 package com.papel;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,14 +61,18 @@ public class ListViewAdapter extends android.widget.BaseAdapter {
         if (data.get(position) instanceof Article){
             Article item = (Article) data.get(position);
             title = item.getTitle();
-            content = item.getBody();
-            //author = item.getAuthorName();
+            content = "\n" + item.getBody();
+            author = item.getAuthorName();
             strDate = item.getDate();
         }else if (data.get(position) instanceof Comment){
             Comment item = (Comment) data.get(position);
             strDate = item.getDate();
+            if(item.isEdited()){
+                strDate = item.getLastEditDate();
+            }
             content = item.getContent();
-            author = item.getAuthor();
+            title = item.getAuthorName();
+            contentText.setTextSize(14);
         }else if(data.get(position) instanceof Event){
             Event item = (Event) data.get(position);
             strDate = item.getDate();

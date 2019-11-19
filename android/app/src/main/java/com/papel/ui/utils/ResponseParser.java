@@ -26,8 +26,6 @@ import java.util.ArrayList;
 
 public class ResponseParser {
 
-    private static String author;
-
     public static Portfolio parsePortfolio(JSONObject response) {
         Portfolio portfolio = null;
         try {
@@ -84,6 +82,33 @@ public class ResponseParser {
         return event;
     }
 
+    public static Comment parseComment(JSONObject response, String articleIdFromArticle) {
+        Comment comment = null;
+        try {
+            String commentId = response.getString("_id");
+            String authorId = response.getString("authorId");
+            String articleId = articleIdFromArticle;
+            if(response.has("articleId")){
+                articleId = response.getString("articleId");
+            }
+            JSONArray author = response.getJSONArray("author");
+            String authorName = author.getJSONObject(0).getString("name") + " " + author.getJSONObject(0).getString("surname");
+            String body = response.getString("body");
+            String date = response.getString("date");
+            boolean edited = response.getBoolean("edited");
+            String lastEditDate;
+            if(edited){
+                lastEditDate = response.getString("lastEditDate");
+            }else{
+                lastEditDate = date;
+            }
+            comment = new Comment(commentId, articleId, authorId, authorName, body, date, edited, lastEditDate);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return comment;
+    }
+
     public static Article parseArticle(JSONObject response, Context context) {
         Article article = null;
         try {
@@ -91,48 +116,29 @@ public class ResponseParser {
             String articleTitle = response.getString("title");
             String articleBody = response.getString("body");
             String authorId = response.getString("authorId");
-            getAuthorNameFromAuthorId(context, authorId);
+            JSONObject author = response.getJSONObject("author");
+            String authorName = author.getString("name") + " " + author.getString("surname");
+            int voteCount = response.getInt("voteCount");
             String date = response.getString("date");
             double rank = 5.0;
             if(response.has("rank")) {
                 rank = response.getDouble("rank");
             }
-            JSONArray comments = response.getJSONArray("comment");
-            ArrayList<String> articleComments = new ArrayList<>();
-            for(int i = 0; i < comments.length(); i++){
-                articleComments.add(comments.getString(i));
+            article = new Article(articleId, articleTitle, articleBody,authorId, authorName, voteCount, rank, date);
+            if(response.has("comments")) {
+                JSONArray comments = response.getJSONArray("comments");
+                ArrayList<Comment> articleComments = new ArrayList<>();
+                for (int i = 0; i < comments.length(); i++) {
+                    Comment comment = parseComment(comments.getJSONObject(i), articleId);
+                    articleComments.add(comment);
+                }
+                article.setComments(articleComments);
             }
-            article = new Article(articleId, articleTitle, articleBody,authorId, rank, date);
-            article.setComments(articleComments);
-            article.setAuthorName(author);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return article;
-    }
-
-    public static void getAuthorNameFromAuthorId(final Context context, String authorId) {
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        String url = Constants.LOCALHOST + Constants.USER + authorId;
-        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject authorObj = new JSONObject(response);
-                    author = authorObj.getString("name") + " " +  authorObj.getString("surname");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("Author not found", "onErrorResponse: ");
-                author=" ";
-            }
-        });
-
-        requestQueue.add(request);
     }
 
 }

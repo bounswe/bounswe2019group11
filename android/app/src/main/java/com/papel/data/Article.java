@@ -12,18 +12,20 @@ public class Article {
     private String authorId;
     private String authorName;
     private String date;
-    private int voterNumber;
+    private ArrayList<Comment> comments;
+    private int voteCount;
     private double rank;
-    private ArrayList<String> comments = new ArrayList<>();
 
     public Article() {
     }
 
-    public Article(String id, String title, String body, String authorId, double rank, String date) {
+    public Article(String id, String title, String body, String authorId, String authorName, int voteCount, double rank, String date) {
         this.id = id;
         this.title = title;
         this.body = body;
         this.authorId = authorId;
+        this.authorName = authorName;
+        this.voteCount = voteCount;
         this.rank = rank;
         this.date = date;
 
@@ -37,6 +39,18 @@ public class Article {
         }
     }
 
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public ArrayList<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
+    }
+
     public String getDate() {
         return date;
     }
@@ -47,10 +61,6 @@ public class Article {
 
     public String getAuthorName() {
         return authorName;
-    }
-
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
     }
 
     public String getId() {
@@ -85,14 +95,6 @@ public class Article {
         this.authorId = authorId;
     }
 
-    public int getVoterNumber() {
-        return voterNumber;
-    }
-
-    public void setVoterNumber(int voterNumber) {
-        this.voterNumber = voterNumber;
-    }
-
     public double getRank() {
         return rank;
     }
@@ -101,12 +103,5 @@ public class Article {
         this.rank = rank;
     }
 
-    public ArrayList<String> getComments() {
-        return comments;
-    }
-
-    public void setComments(ArrayList<String> comments) {
-        this.comments = comments;
-    }
 
 }
