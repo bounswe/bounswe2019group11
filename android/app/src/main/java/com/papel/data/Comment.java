@@ -27,6 +27,22 @@ public class Comment {
         this.date = date;
         this.edited = edited;
         this.lastEditDate = lastEditDate;
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+            Date dateObj = formatter.parse(date.replaceAll("Z$", "+0000"));
+            SimpleDateFormat formatter2 = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm:ss a", Locale.US);
+            this.date = formatter2.format(dateObj);
+        } catch (Exception e) {
+            Log.d(TAG, "Comment: Date cannot be formatted. Exception: %s", e);
+        }
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+            Date dateObj = formatter.parse(lastEditDate.replaceAll("Z$", "+0000"));
+            SimpleDateFormat formatter2 = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm:ss a", Locale.US);
+            this.lastEditDate = formatter2.format(dateObj);
+        } catch (Exception e) {
+            Log.d(TAG, "Comment: lastEditDate cannot be formatted. Exception: %s", e);
+        }
     }
 
     public Comment(String commentId, String articleId, String authorId, String authorName, String content, String date) {
@@ -44,6 +60,10 @@ public class Comment {
         } catch (Exception e) {
             Log.d(TAG, "Comment: Date cannot be formatted. Exception: %s", e);
         }
+    }
+
+    public String getCommentId() {
+        return commentId;
     }
 
     public String getArticleId() {

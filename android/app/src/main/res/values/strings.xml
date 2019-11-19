@@ -39,6 +39,10 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="comment_hint">"Share your comment!"</string>
+    <string name="comment_title">"Comments"</string>
+    <string name="menu_delete">"Delete"</string>
+    <string name="menu_edit">"Edit"</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -82,14 +82,17 @@ public class ResponseParser {
         return event;
     }
 
-    public static Comment parseComment(JSONObject response) {
+    public static Comment parseComment(JSONObject response, String articleIdFromArticle) {
         Comment comment = null;
         try {
-            String commentId = response.getString("id_");
+            String commentId = response.getString("_id");
             String authorId = response.getString("authorId");
-            String articleId = response.getString("articleId");
-            JSONObject author = response.getJSONObject("author");
-            String authorName = author.getString("name") + " " + author.getString("surname");
+            String articleId = articleIdFromArticle;
+            if(response.has("articleId")){
+                articleId = response.getString("articleId");
+            }
+            JSONArray author = response.getJSONArray("author");
+            String authorName = author.getJSONObject(0).getString("name") + " " + author.getJSONObject(0).getString("surname");
             String body = response.getString("body");
             String date = response.getString("date");
             boolean edited = response.getBoolean("edited");
@@ -121,14 +124,17 @@ public class ResponseParser {
             if(response.has("rank")) {
                 rank = response.getDouble("rank");
             }
-            JSONArray comments = response.getJSONArray("comments");
-            ArrayList<Comment> articleComments = new ArrayList<>();
-            for(int i = 0; i < comments.length(); i++){p
-                Comment comment = parseComment(comments.getJSONObject(i));
-                articleComments.add(comment);
-            }
             article = new Article(articleId, articleTitle, articleBody,authorId, authorName, voteCount, rank, date);
-            article.setComments(articleComments);
+            if(response.has("comments")) {
+                JSONArray comments = response.getJSONArray("comments");
+                ArrayList<Comment> articleComments = new ArrayList<>();
+                for (int i = 0; i < comments.length(); i++) {
+                    Comment comment = parseComment(comments.getJSONObject(i), articleId);
+                    articleComments.add(comment);
+                }
+                article.setComments(articleComments);
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
