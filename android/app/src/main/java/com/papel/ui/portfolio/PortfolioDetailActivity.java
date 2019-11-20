@@ -15,7 +15,11 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.abdeveloper.library.MultiSelectDialog;
+import com.abdeveloper.library.MultiSelectModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -129,12 +133,11 @@ public class PortfolioDetailActivity extends AppCompatActivity {
     }
 
     private void showListDialog() {
-        Context context = PortfolioDetailActivity.this;
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+        final Context context = PortfolioDetailActivity.this;
+       /* AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
         dialogBuilder.setTitle("Select trading equipments");
 
         // Add checkbox list
-        //String[] items = {"item1","item2","item3","item4","item5","item6","item7","item8","item9","item10","item11","item12","item13","item14","item15","item16","item17"};
         String[] tradingEquipmentOptionsSymbols = new String[tradingEquipmentOptions.size()];
         for(int i = 0; i<tradingEquipmentOptions.size(); i++) {
             tradingEquipmentOptionsSymbols[i] = tradingEquipmentOptions.get(i).getSymbol();
@@ -182,10 +185,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                     }
                 }
 
-                //tradingEquipments.clear();
-                //tradingEquipments.addAll(tempTradingEquipment);
                 tempTradingEquipment.clear();
-                //tradingEquipmentListViewAdapter.notifyDataSetChanged();
             }
         });
 
@@ -198,9 +198,52 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         });
 
 
-
         AlertDialog dialog = dialogBuilder.create();
-        dialog.show();
+        dialog.show();*/
+
+        ArrayList<MultiSelectModel> list = new ArrayList<>();
+        MultiSelectModel multiSelectModel1 = new MultiSelectModel(0,"Hasan");
+        MultiSelectModel multiSelectModel2 = new MultiSelectModel(1,"Yaman");
+        MultiSelectModel multiSelectModel3 = new MultiSelectModel(2,"Boun");
+        list.add(multiSelectModel1);
+        list.add(multiSelectModel2);
+        list.add(multiSelectModel3);
+
+        ArrayList<Integer> selectedIds = new ArrayList<>();
+        selectedIds.add(1);
+
+        MultiSelectDialog multiSelectDialog = new MultiSelectDialog()
+                .title("Title") //setting title for dialog
+                .titleSize(25)
+                .positiveText("Done")
+                .negativeText("Cancel")
+                .setMinSelectionLimit(1) //you can set minimum checkbox selection limit (Optional)
+                .setMaxSelectionLimit(list.size()) //you can set maximum checkbox selection limit (Optional)
+                .preSelectIDsList(selectedIds) //List of ids that you need to be selected
+                .multiSelectList(list) // the multi select model list with ids and name
+                .onSubmit(new MultiSelectDialog.SubmitCallbackListener() {
+                    @Override
+                    public void onSelected(ArrayList<Integer> selectedIds, ArrayList<String> selectedNames, String dataString) {
+                        //will return list of selected IDS
+                        for (int i = 0; i < selectedIds.size(); i++) {
+                            Toast.makeText(context, "Selected Ids : " + selectedIds.get(i) + "\n" +
+                                    "Selected Names : " + selectedNames.get(i) + "\n" +
+                                    "DataString : " + dataString, Toast.LENGTH_SHORT).show();
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Log.d("Info","Dialog cancelled");
+                    }
+
+
+                });
+
+        multiSelectDialog.show(getSupportFragmentManager(), "multiSelectDialog");
+
     }
 
     private void addTradingEquipment(final TradingEquipment tradingEquipment) {
