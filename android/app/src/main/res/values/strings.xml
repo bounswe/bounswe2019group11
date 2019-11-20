@@ -45,8 +45,7 @@
     <string name="menu_delete">"Delete"</string>
     <string name="menu_edit">"Edit"</string>
     <string name="comment_prompt_edit">"Edit your comment!"</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="server_client_id">37887929093-plu9v695uq8s42b43d1l9jdbk0pd2qeb.apps.googleusercontent.com</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_portfolio_detail">PortfolioDetailActivity</string>
     <string name="title_activity_try_basic">TryBasicActivity</string>

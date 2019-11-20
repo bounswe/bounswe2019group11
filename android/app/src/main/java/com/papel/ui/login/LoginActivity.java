@@ -151,6 +151,7 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestEmail()
                     .requestProfile()
+                    .requestIdToken(getString(R.string.server_client_id))
                     .build();
             final GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this,googleSignInOptions);
 
@@ -259,12 +260,14 @@ public class LoginActivity extends AppCompatActivity {
                 String personFamilyName = account.getFamilyName();
                 String personEmail = account.getEmail();
                 String personId = account.getId();
+                String personIdToken = account.getIdToken();
                 Log.d("Info","Google Sign Up");
                 Log.d("Info","Person name: " + personName);
                 Log.d("Info","Person given name: " + personGivenName);
                 Log.d("Info","Person family name: " + personFamilyName);
                 Log.d("Info","Person email: " + personEmail);
                 Log.d("Info","Person Id: " + personId);
+                Log.d("Info","Person Id Token: " + personIdToken);
             } catch (ApiException e) {
                 e.printStackTrace();
             }
