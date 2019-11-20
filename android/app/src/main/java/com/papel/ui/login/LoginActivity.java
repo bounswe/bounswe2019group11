@@ -11,6 +11,7 @@ import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -34,6 +35,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -72,10 +79,10 @@ public class LoginActivity extends AppCompatActivity {
     private Button sendReq;
     private ProgressBar progressBar;
     private User user;
+    private SignInButton googleSignInButton;
 
     private FusedLocationProviderClient fusedLocationProviderClient;
-
-
+    
     private Double latitude = null;
     private Double longitude = null;
 
@@ -126,6 +133,7 @@ public class LoginActivity extends AppCompatActivity {
             progressBar = findViewById(R.id.progressBar);
 
             sendReq = findViewById(R.id.sendReqButton);
+            googleSignInButton = findViewById(R.id.googleSignInButton);
 
             traderCheckBox = findViewById(R.id.checkBox);
             traderCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -140,10 +148,38 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
+            GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .requestProfile()
+                    .build();
+            final GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this,googleSignInOptions);
 
-            // Google Sign-In button.
-            //findViewById(R.id.sign_in_button).setOnClickListener(this);
-
+            googleSignInButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(isLogin) {
+                        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(LoginActivity.this);
+                        if(account != null) {
+                            String personName = account.getDisplayName();
+                            String personGivenName = account.getGivenName();
+                            String personFamilyName = account.getFamilyName();
+                            String personEmail = account.getEmail();
+                            String personId = account.getId();
+                            Log.d("Info","Google Login");
+                            Log.d("Info","Person name: " + personName);
+                            Log.d("Info","Person given name: " + personGivenName);
+                            Log.d("Info","Person family name: " + personFamilyName);
+                            Log.d("Info","Person email: " + personEmail);
+                            Log.d("Info","Person Id: " + personId);
+                        } else {
+                            Log.d("Info","No signed Google account.");
+                        }
+                    } else {
+                        Intent googleSignInIntent = googleSignInClient.getSignInIntent();
+                        startActivityForResult(googleSignInIntent,Constants.GOOGLE_SIGN_IN_REQUEST_CODE);
+                    }
+                }
+            });
 
             sendReq.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -199,13 +235,42 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
             @Override
             public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                if(!task.isSuccessful()) {
-                    Log.d("Info","Cannot get the token");
+                if (!task.isSuccessful()) {
+                    Log.d("Info", "Cannot get the token");
                 }
                 String token = task.getResult().getToken();
-                Log.d("Info","Token: " + token);
+                Log.d("Info", "Token: " + token);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        if (requestCode == Constants.GOOGLE_SIGN_IN_REQUEST_CODE) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                String personName = account.getDisplayName();
+                String personGivenName = account.getGivenName();
+                String personFamilyName = account.getFamilyName();
+                String personEmail = account.getEmail();
+                String personId = account.getId();
+                Log.d("Info","Google Sign Up");
+                Log.d("Info","Person name: " + personName);
+                Log.d("Info","Person given name: " + personGivenName);
+                Log.d("Info","Person family name: " + personFamilyName);
+                Log.d("Info","Person email: " + personEmail);
+                Log.d("Info","Person Id: " + personId);
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
+
+
+        }
     }
 
     public void checkPermission() {
@@ -314,7 +379,6 @@ public class LoginActivity extends AppCompatActivity {
         traderCheckBox.setVisibility(View.VISIBLE);
         //changeScreen.setText(getText(R.string.changeLogin));
         sendReq.setText(getText(R.string.signUp_button));
-
     }
 
 

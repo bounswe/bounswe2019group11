@@ -19,4 +19,5 @@ public class Constants {
     public static final String VALIDATION_ERROR = "ValidationError";
 
     public static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    public static final int GOOGLE_SIGN_IN_REQUEST_CODE = 2;
 }
