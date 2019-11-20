@@ -39,9 +39,13 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.papel.Constants;
 import com.papel.MainActivity;
 import com.papel.R;
@@ -84,6 +88,7 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
             checkPermission();
+            getDeviceToken();
 
             TabLayout tabLayout = findViewById(R.id.tabLayout);
             tabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
@@ -188,6 +193,19 @@ public class LoginActivity extends AppCompatActivity {
 
             });
         }
+    }
+
+    public void getDeviceToken() {
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if(!task.isSuccessful()) {
+                    Log.d("Info","Cannot get the token");
+                }
+                String token = task.getResult().getToken();
+                Log.d("Info","Token: " + token);
+            }
+        });
     }
 
     public void checkPermission() {

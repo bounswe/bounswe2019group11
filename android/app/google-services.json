@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "37887929093",
+    "firebase_url": "https://papel-65d18.firebaseio.com",
+    "project_id": "papel-65d18",
+    "storage_bucket": "papel-65d18.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37887929093:android:650fb1921153b06bc1656c",
+        "android_client_info": {
+          "package_name": "com.papel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "37887929093-p5soinuuqvi3l6ertvnqs7j54kkf0naj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYhIKjXDdVvaZFlPYdzn2l6M1kQao9Z3M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "37887929093-p5soinuuqvi3l6ertvnqs7j54kkf0naj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
