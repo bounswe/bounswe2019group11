@@ -56,6 +56,7 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.papel.Constants;
 import com.papel.MainActivity;
 import com.papel.R;
+import com.papel.data.GoogleUserAccount;
 import com.papel.data.User;
 import com.papel.ui.utils.ConnectionHelper;
 import com.papel.ui.utils.DialogHelper;
@@ -176,6 +177,7 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d("Info","No signed Google account.");
                         }
                     } else {
+                        //Signup case
                         Intent googleSignInIntent = googleSignInClient.getSignInIntent();
                         startActivityForResult(googleSignInIntent,Constants.GOOGLE_SIGN_IN_REQUEST_CODE);
                     }
@@ -255,19 +257,16 @@ public class LoginActivity extends AppCompatActivity {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                String personName = account.getDisplayName();
-                String personGivenName = account.getGivenName();
-                String personFamilyName = account.getFamilyName();
-                String personEmail = account.getEmail();
-                String personId = account.getId();
-                String personIdToken = account.getIdToken();
-                Log.d("Info","Google Sign Up");
-                Log.d("Info","Person name: " + personName);
-                Log.d("Info","Person given name: " + personGivenName);
-                Log.d("Info","Person family name: " + personFamilyName);
-                Log.d("Info","Person email: " + personEmail);
-                Log.d("Info","Person Id: " + personId);
-                Log.d("Info","Person Id Token: " + personIdToken);
+                String name = account.getGivenName();
+                String surname = account.getFamilyName();
+                String email = account.getEmail();
+                String googleUserId = account.getId();
+
+                Intent intent = new Intent(LoginActivity.this, GoogleSignUpActivity.class);
+                GoogleUserAccount googleAccount = new GoogleUserAccount(latitude,longitude,name,surname,email,googleUserId);
+                intent.putExtra("GoogleAccount", googleAccount);
+                startActivity(intent);
+
             } catch (ApiException e) {
                 e.printStackTrace();
             }
@@ -367,8 +366,6 @@ public class LoginActivity extends AppCompatActivity {
         traderCheckBox.setChecked(false);
         idInput.setVisibility(View.INVISIBLE);
         ibanInput.setVisibility(View.INVISIBLE);
-
-        //changeScreen.setText(getText(R.string.changeSignup));
         sendReq.setText(getText(R.string.login_button));
     }
 
@@ -380,7 +377,6 @@ public class LoginActivity extends AppCompatActivity {
         nameInput.setVisibility(View.VISIBLE);
         surnameInput.setVisibility(View.VISIBLE);
         traderCheckBox.setVisibility(View.VISIBLE);
-        //changeScreen.setText(getText(R.string.changeLogin));
         sendReq.setText(getText(R.string.signUp_button));
     }
 
