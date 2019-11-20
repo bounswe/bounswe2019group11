@@ -141,4 +141,27 @@ public class ResponseParser {
         return article;
     }
 
+    public static User parseUser(JSONObject response) {
+        User user = null;
+        try {
+            String token = response.getString("token");
+            JSONObject userObject = response.getJSONObject("user");
+            JSONObject location = userObject.getJSONObject("location");
+            double latitude = location.getDouble("latitude");
+            double longitude = location.getDouble("longitude");
+            String role = userObject.getString("role");
+            String id = userObject.getString("_id");
+            String name = userObject.getString("name");
+            String surname = userObject.getString("surname");
+            String email = userObject.getString("email");
+            String idNumber = userObject.getString("idNumber");
+            String iban = userObject.getString("iban");
+
+            user = new User(token, latitude, longitude, role, id, name, surname, email, idNumber, iban);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
 }

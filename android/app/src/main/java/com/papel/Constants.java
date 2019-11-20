@@ -11,6 +11,7 @@ public class Constants {
     public static final String PORTFOLIO_USER = "portfolio/user/";
     public static final String SIGN_UP = "auth/sign-up";
     public static final String LOGIN = "auth/login";
+    public static final String GOOGLE_LOGIN = "auth/login/google";
     public static final String USER = "user/";
     public static final String TEST_USER_ID = "5da076d955d9b93a7308f3d7";
     public static final int DAILY_CHART = 0;
