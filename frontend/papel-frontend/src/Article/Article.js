@@ -7,33 +7,8 @@ import $ from 'jquery';
 import {Row, Col, Button, Card, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus,faThumbsUp,faThumbsDown, faUserCircle} from '@fortawesome/free-solid-svg-icons';
+import CommentPreview from './CommentPreview';
 
-/*class ArticleEditor extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {editorState: EditorState.createEmpty()};
-    this.onChange = (editorState) => this.setState({editorState});
-  }
-
-  onBoldClick() {
-    this.onChange(RichUtils.toggleInlineStyle(
-      this.state.editorState,
-      'BOLD'
-    ));
-  }
-
-  render() {
-    return (
-      <div id="content">
-        <h4>Edit Article:</h4>
-        <div className="editor">
-          <Editor editorState={this.state.editorState} onChange={this.onChange} />
-        </div>
-      </div>
-    );
-  }
-}
-*/
 class Article extends React.Component {
   constructor(props) {
     super(props);
@@ -82,6 +57,7 @@ class Article extends React.Component {
     var author = this.state.author;
     var authorLine;
     var voteCount = this.state.article.voteCount;
+    var comments = this.state.article.comments;
     if (this.state.authorLoading)
       authorLine = <p style={{color: "gray"}}>author not found</p> ;
     else
@@ -138,29 +114,31 @@ class Article extends React.Component {
           </Form>
         </Col>
 
-
-
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
+          
           <Card>
             <Card.Body>
               <Card.Title><h4>Comments</h4></Card.Title>
 
+              { comments ? comments.map(article => (
+                <CommentPreview key={comments._id} id={comments._id} author={comments.authorId} body={comments.body} date={comments.date} lastEditDate={comments.lastEditDate}  />
+              )) : "Comments are loading" }  
                 <hr />
 
               <Card.Title >
-                <h6><FontAwesomeIcon name="Like" icon={faUserCircle} />&nbsp; Burak Yılmaz</h6>
+                <h6><FontAwesomeIcon name="Like" icon={faUserCircle} />&nbsp; {comments ? comments[0].author[0].name+" "+comments[0].author[0].surname : "Comments are loading..."}</h6>
               </Card.Title>
-
+              
               <Card.Text >
-                This is a very nice place holder comment. Isn't it? :)
+                {comments ? comments[0].body : "Comments are loading..."}
               </Card.Text>
-
+              
               <Row className="">
 
                 <Col sm={{span: 2, offset: 0}} xs={{span: 12}}>
-
+                  
                   <Button size="sm"  onClick={() => alert("impelement et")}>
-
+                    
                     <FontAwesomeIcon name="Like" icon={faThumbsUp} />&nbsp;
                     !15!
                   </Button>
@@ -168,23 +146,16 @@ class Article extends React.Component {
                 </Col>
 
                 <Col sm={{span: 2, offset: 0}} xs={{span: 12}}>
-
+                  
                   <Button size="sm"  onClick={() => alert("implement et")}>
-                    <FontAwesomeIcon name="Dislike" icon={faThumbsDown} />&nbsp;
+                    <FontAwesomeIcon name="Dislike" icon={faThumbsDown} />&nbsp;        
                     !5!
                   </Button>
-
-
                 </Col>
-
-              </Row>
-
-
-
+              </Row>    
             </Card.Body>
           </Card>
         </Col>
-
       </Row >
     );
   }
