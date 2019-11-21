@@ -6,6 +6,22 @@ const VerificationToken = require('./verificationToken');
 const crypto = require('crypto');
 const LostPasswordToken = require('./lostPasswordToken');
 
+const profileSettingsSchema = new mongoose.Schema({
+    privacy:{
+        type: String,
+        enum: ['public','private'],
+        default: 'public'
+    },
+    alertForTE: {
+        type: Boolean,
+        default: false
+    },
+    alertForEvents: {
+        type: Boolean,
+        default: false
+    }
+});
+
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -86,6 +102,8 @@ const userSchema = new mongoose.Schema({
         {
             type: mongoose.Schema.Types.ObjectId, ref: 'User'
         }],
+
+    profileSettings : profileSettingsSchema
 
 });
 
