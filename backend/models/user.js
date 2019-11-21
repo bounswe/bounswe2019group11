@@ -77,8 +77,18 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: undefined,
         select: false,
-    }
+    },
+    following: [
+        {
+            type: mongoose.Schema.Types.ObjectId, ref: 'User'
+        }],
+    followers:[
+        {
+            type: mongoose.Schema.Types.ObjectId, ref: 'User'
+        }],
+
 });
+
 
 userSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
@@ -102,6 +112,13 @@ userSchema.methods.generateLostPasswordToken = async function () {
         _userId: this._id,
         token,
     });
+};
+userSchema.methods.follow =async function(userId){
+    if(this.following.indexOf(userId) === -1){
+        this.following.push(userId);
+    }
+
+    return await this.save();
 };
 
 const User = mongoose.model('User', userSchema);
