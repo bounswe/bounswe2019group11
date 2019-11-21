@@ -25,13 +25,11 @@ router.get('/:id', async (req, res) => {
     try {
         const id = req.params.id;
         const user = await userService.getById(id);
-        console.log(user.profileSettings.privacy);
         if(user.profileSettings.privacy === 'public'){
             res.status(200).send(publicProfileDataTransferObject(user));
         }else{
             res.status(200).send(privateProfileDataTransferObject(user));
         }
-
 
     } catch (err) {
         if (err.name === 'UserNotFound') {
