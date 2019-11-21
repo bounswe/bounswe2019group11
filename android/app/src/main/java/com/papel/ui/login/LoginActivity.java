@@ -11,6 +11,7 @@ import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -34,6 +35,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -49,9 +56,11 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.papel.Constants;
 import com.papel.MainActivity;
 import com.papel.R;
+import com.papel.data.GoogleUserAccount;
 import com.papel.data.User;
 import com.papel.ui.utils.ConnectionHelper;
 import com.papel.ui.utils.DialogHelper;
+import com.papel.ui.utils.ResponseParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,10 +81,10 @@ public class LoginActivity extends AppCompatActivity {
     private Button sendReq;
     private ProgressBar progressBar;
     private User user;
+    private SignInButton googleSignInButton;
 
     private FusedLocationProviderClient fusedLocationProviderClient;
-
-
+    
     private Double latitude = null;
     private Double longitude = null;
 
@@ -126,6 +135,7 @@ public class LoginActivity extends AppCompatActivity {
             progressBar = findViewById(R.id.progressBar);
 
             sendReq = findViewById(R.id.sendReqButton);
+            googleSignInButton = findViewById(R.id.googleSignInButton);
 
             traderCheckBox = findViewById(R.id.checkBox);
             traderCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -140,15 +150,41 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
+            GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .requestProfile()
+                    .requestIdToken(getString(R.string.server_client_id))
+                    .build();
+            final GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this,googleSignInOptions);
 
-            // Google Sign-In button.
-            //findViewById(R.id.sign_in_button).setOnClickListener(this);
-
+            googleSignInButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(isLogin) {
+                        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(LoginActivity.this);
+                        if(account != null) {
+                            googleSignInButton.setClickable(false);
+                            sendReq.setClickable(false);
+                            String googleIdToken = account.getIdToken();
+                            String googleId = account.getId();
+                            Log.d("Info","Google id: " + googleId);
+                            sendGoogleLoginRequest(googleIdToken);
+                        } else {
+                            DialogHelper.showBasicDialog(LoginActivity.this, "Error", "", null);
+                        }
+                    } else {
+                        //Signup case
+                        Intent googleSignInIntent = googleSignInClient.getSignInIntent();
+                        startActivityForResult(googleSignInIntent,Constants.GOOGLE_SIGN_IN_REQUEST_CODE);
+                    }
+                }
+            });
 
             sendReq.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.d("Send Request", "Clicked");
+                    googleSignInButton.setClickable(false);
                     sendReq.setClickable(false);
                     progressBar.setVisibility(View.VISIBLE);
 
@@ -159,6 +195,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (email.length() == 0 || password.length() == 0) {
                             DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.", null);
                             progressBar.setVisibility(View.INVISIBLE);
+                            googleSignInButton.setClickable(true);
                             sendReq.setClickable(true);
                         } else {
                             sendLoginRequest(email, password);
@@ -174,6 +211,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (email.length() == 0 || password.length() == 0 || name.length() == 0 || surname.length() == 0 || id.length() == 0 || iban.length() == 0) {
                                 DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.", null);
                                 progressBar.setVisibility(View.INVISIBLE);
+                                googleSignInButton.setClickable(true);
                                 sendReq.setClickable(true);
                             } else {
                                 sendSignUpRequest(email, password, name, surname, id, iban);
@@ -182,6 +220,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (email.length() == 0 || password.length() == 0 || name.length() == 0 || surname.length() == 0) {
                                 DialogHelper.showBasicDialog(LoginActivity.this, "Error", "You must fill all fields.", null);
                                 progressBar.setVisibility(View.INVISIBLE);
+                                googleSignInButton.setClickable(true);
                                 sendReq.setClickable(true);
                             } else {
                                 sendSignUpRequest(email, password, name, surname, "", "");
@@ -199,13 +238,41 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
             @Override
             public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                if(!task.isSuccessful()) {
-                    Log.d("Info","Cannot get the token");
+                if (!task.isSuccessful()) {
+                    Log.d("Info", "Cannot get the token");
                 }
                 String token = task.getResult().getToken();
-                Log.d("Info","Token: " + token);
+                Log.d("Info", "Token: " + token);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        if (requestCode == Constants.GOOGLE_SIGN_IN_REQUEST_CODE) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                String name = account.getGivenName();
+                String surname = account.getFamilyName();
+                String email = account.getEmail();
+                String googleUserId = account.getId();
+
+                Intent intent = new Intent(LoginActivity.this, GoogleSignUpActivity.class);
+                GoogleUserAccount googleAccount = new GoogleUserAccount(latitude,longitude,name,surname,email,googleUserId);
+                intent.putExtra("GoogleAccount", googleAccount);
+                startActivity(intent);
+
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
+
+
+        }
     }
 
     public void checkPermission() {
@@ -299,8 +366,6 @@ public class LoginActivity extends AppCompatActivity {
         traderCheckBox.setChecked(false);
         idInput.setVisibility(View.INVISIBLE);
         ibanInput.setVisibility(View.INVISIBLE);
-
-        //changeScreen.setText(getText(R.string.changeSignup));
         sendReq.setText(getText(R.string.login_button));
     }
 
@@ -312,9 +377,7 @@ public class LoginActivity extends AppCompatActivity {
         nameInput.setVisibility(View.VISIBLE);
         surnameInput.setVisibility(View.VISIBLE);
         traderCheckBox.setVisibility(View.VISIBLE);
-        //changeScreen.setText(getText(R.string.changeLogin));
         sendReq.setText(getText(R.string.signUp_button));
-
     }
 
 
@@ -364,6 +427,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 progressBar.setVisibility(View.INVISIBLE);
+                googleSignInButton.setClickable(true);
                 sendReq.setClickable(true);
                 // Success
                 validationDialog();
@@ -374,6 +438,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressBar.setVisibility(View.INVISIBLE);
+                googleSignInButton.setClickable(true);
                 sendReq.setClickable(true);
                 NetworkResponse networkResponse = error.networkResponse;
                 if (networkResponse != null) {
@@ -429,21 +494,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 try {
                     JSONObject responseObject = new JSONObject(response);
-                    String token = responseObject.getString("token");
-                    JSONObject userObject = responseObject.getJSONObject("user");
-                    JSONObject location = userObject.getJSONObject("location");
-                    double latitude = location.getDouble("latitude");
-                    double longitude = location.getDouble("longitude");
-                    String role = userObject.getString("role");
-                    String id = userObject.getString("_id");
-                    String name = userObject.getString("name");
-                    String surname = userObject.getString("surname");
-                    String email = userObject.getString("email");
-                    String idNumber = userObject.getString("idNumber");
-                    String iban = userObject.getString("iban");
-
-                    user = new User(token, latitude, longitude, role, id, name, surname, email, idNumber, iban);
-
+                    user = ResponseParser.parseUser(responseObject);
                     User.setInstance(user);
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -451,6 +502,8 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                 } catch (JSONException e) {
                     DialogHelper.showBasicDialog(LoginActivity.this, "Error", "We couldn't make it.Please try again.", null);
+                    googleSignInButton.setClickable(true);
+                    sendReq.setClickable(true);
                     e.printStackTrace();
                 }
             }
@@ -485,6 +538,65 @@ public class LoginActivity extends AppCompatActivity {
         requestQueue.add(request);
     }
 
+    private void sendGoogleLoginRequest(String idToken) {
+        RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
+        String url = Constants.LOCALHOST + Constants.GOOGLE_LOGIN;
+        final JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("idToken", idToken);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject responseObject = new JSONObject(response);
+                    user = ResponseParser.parseUser(responseObject);
+                    User.setInstance(user);
+
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("User", user);
+                    startActivity(intent);
+                } catch (JSONException e) {
+                    googleSignInButton.setClickable(true);
+                    sendReq.setClickable(true);
+                    DialogHelper.showBasicDialog(LoginActivity.this, "Error", "We couldn't make it.Please try again.", null);
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.INVISIBLE);
+                googleSignInButton.setClickable(true);
+                sendReq.setClickable(true);
+                NetworkResponse networkResponse = error.networkResponse;
+                if (networkResponse != null) {
+                    String data = new String(networkResponse.data);
+                    try {
+                        JSONObject errorObject = new JSONObject(data);
+                        String message = errorObject.getString("message");
+                        DialogHelper.showBasicDialog(LoginActivity.this, "Error", message, null);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }){
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return jsonBody.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+        requestQueue.add(request);
+    }
 
     private void validationDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
