@@ -2,7 +2,7 @@ import React from 'react';
 import './Article.css';
 import $ from 'jquery';
 import ArticlePreview from './ArticlePreview';
-import {Row, Col, Card, ButtonToolbar, Button, Modal, Form} from 'react-bootstrap';
+import {Row, Col, Card, Person, ButtonToolbar, Button, Modal, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 

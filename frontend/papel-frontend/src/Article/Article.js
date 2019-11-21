@@ -4,9 +4,9 @@ import 'draft-js/dist/Draft.css';
 import './Article.css';
 import {useParams} from 'react-router-dom';
 import $ from 'jquery';
-import {Row, Col, Button, Card} from 'react-bootstrap';
+import {Row, Col, Button, Card, Form } from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus,faThumbsUp,faThumbsDown, faUserCircle} from '@fortawesome/free-solid-svg-icons';
 
 class ArticleEditor extends React.Component {
   constructor(props) {
@@ -68,36 +68,93 @@ class Article extends React.Component {
           <Card>
             <Card.Body>
               <Card.Title><h1>{article.title}</h1></Card.Title>
-              {authorLine}
+                <a href="http://localhost:3000">{authorLine}</a>
               <hr />
               <Card.Text>{article.body}</Card.Text>
             </Card.Body>
+            <hr/>
+            <Row className="" >
+                <Col sm={{span: 6, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
+                 </Col>
+
+                <Col sm={{span: 2, offset: 0}} xs={{span: 12}} style={{marginBottom: 20}}>
+                    <Button size="sm"  onClick={() => alert("impelement et")}>
+                      
+                      <FontAwesomeIcon name="Like" icon={faThumbsUp} />&nbsp;
+                      !15!
+                    </Button>  
+                </Col>
+
+                <Col sm={{span: 2, offset: 0}} xs={{span: 12}}style={{marginBottom: 20}}>
+                  <Button size="sm"  onClick={() => alert("implement et")}>
+                    <FontAwesomeIcon name="Dislike" icon={faThumbsDown} />&nbsp;        
+                    !5!
+                  </Button>
+                </Col>
+          
+              </Row>
+
           </Card>
+          
         </Col>
 
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
-          <label for="commentEditor">Add a command...</label>
-          <textarea class="form-control" id="commentEditor" rows="4"></textarea>
+          <label for="commentEditor">You can share your opinion</label>
+          <Form action="google.com">
+            <textarea class="form-control" id="commentEditor" rows="4"></textarea>
+            
+            <Col  md={{span: 2, offset: 10}}
+                style={{width: "20", marginTop: 5, marginBottom: 10 }}>
+                <Button size="m" type="submit" onClick={() => alert("text")}>
+                  <FontAwesomeIcon icon={faPlus} />&nbsp; Add 
+                </Button>
+            </Col>
+          </Form>
         </Col>
 
-        <Col  md={{span: 3, offset: 8}}
-              style={{width: "20", marginBottom: 10}}>
-          
-          <Button size="sm"  onClick={() => alert()}>
-            <FontAwesomeIcon icon={faPlus} />&nbsp;
-            Add Comment
-          </Button>
-              
-        </Col>
       
 
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
           <Card>
             <Card.Body>
-              <Card.Title><h3>{article.title}</h3></Card.Title>
-              {authorLine}
-              <hr />
-              <Card.Text>{this.state.id}</Card.Text>
+              <Card.Title><h4>Comments</h4></Card.Title>
+            
+                <hr />
+
+              <Card.Title >
+                <h6><FontAwesomeIcon name="Like" icon={faUserCircle} />&nbsp; Burak Yılmaz</h6>
+              </Card.Title>
+              
+              <Card.Text >
+                This is a very nice place holder comment. Isn't it? :)
+              </Card.Text>
+              
+              <Row className="">
+
+                <Col sm={{span: 2, offset: 0}} xs={{span: 12}}>
+                  
+                  <Button size="sm"  onClick={() => alert("impelement et")}>
+                    
+                    <FontAwesomeIcon name="Like" icon={faThumbsUp} />&nbsp;
+                    !15!
+                  </Button>
+
+                </Col>
+
+                <Col sm={{span: 2, offset: 0}} xs={{span: 12}}>
+                  
+                  <Button size="sm"  onClick={() => alert("implement et")}>
+                    <FontAwesomeIcon name="Dislike" icon={faThumbsDown} />&nbsp;        
+                    !5!
+                  </Button>
+
+                  
+                </Col>
+          
+              </Row>
+
+            
+              
             </Card.Body>
           </Card>
         </Col>
