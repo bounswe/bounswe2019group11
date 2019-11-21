@@ -6,22 +6,6 @@ const VerificationToken = require('./verificationToken');
 const crypto = require('crypto');
 const LostPasswordToken = require('./lostPasswordToken');
 
-const profileSettingsSchema = new mongoose.Schema({
-    privacy:{
-        type: String,
-        enum: ['public','private'],
-        default: 'public'
-    },
-    alertForTE: {
-        type: Boolean,
-        default: false
-    },
-    alertForEvents: {
-        type: Boolean,
-        default: false
-    }
-});
-
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -99,10 +83,11 @@ const userSchema = new mongoose.Schema({
             userId: {
                 type: mongoose.Schema.Types.ObjectId, ref: 'User'
             },
-            isAccepted:{
+            isAccepted:{ // This controls follow request is accepted or not
                 type: Boolean,
                 default: false
-            }
+            },
+            _id:false
 
         }],
     followers:[
@@ -110,17 +95,18 @@ const userSchema = new mongoose.Schema({
             userId: {
                 type: mongoose.Schema.Types.ObjectId, ref: 'User'
             },
-            isAccepted:{
+            isAccepted:{ // This controls incoming follow request is accepted by the user or not
                 type: Boolean,
                 default: false
-            }
+            },
+            _id:false
 
         }],
-
-    profileSettings : {
-        type: profileSettingsSchema,
-        default: profileSettingsSchema
-    }
+    privacy:{
+        type: String,
+        enum: ['public','private'],
+        default: 'public'
+    },
 
 });
 
@@ -150,8 +136,14 @@ userSchema.methods.generateLostPasswordToken = async function () {
 userSchema.methods.follow =async function(userToBeFollowed){
     const userIdToBeFollowed = userToBeFollowed._id;
     if(this.following.indexOf(userIdToBeFollowed) === -1){
-        this.following.push({userId:userIdToBeFollowed, isAccepted:false});
-        userToBeFollowed.followers.push({userId:this._id,isAccepted:false});
+        if(userToBeFollowed.profileSettings.privacy === 'public'){
+            this.following.push({userId:userIdToBeFollowed, isAccepted:true});
+            userToBeFollowed.followers.push({userId:this._id,isAccepted:true});
+        }else{
+            this.following.push({userId:userIdToBeFollowed, isAccepted:false});
+            userToBeFollowed.followers.push({userId:this._id,isAccepted:false});
+        }
+
     }
     await userToBeFollowed.save();
     return await this.save();
