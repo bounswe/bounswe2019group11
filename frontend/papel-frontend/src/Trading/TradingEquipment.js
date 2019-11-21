@@ -15,7 +15,7 @@ class TradingEquipment extends React.Component {
 
   componentDidMount() {
     var stockId;
-    $.get(`http://localhost:3000/stock/${this.state.id}`, (data) => {
+    $.get(`http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/stock/${this.state.id}`, (data) => {
       this.setState({stock: data, dailyPrice: data.dailyPrice, monthlyPrice: data.monthlyPrice});
     });
   }

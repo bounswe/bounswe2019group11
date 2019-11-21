@@ -2,7 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/text_margin">
 
     <TextView
         android:id="@+id/item_title"
@@ -12,6 +14,9 @@
         android:layout_marginStart="@dimen/text_margin"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="@dimen/text_margin"
+        android:maxLines="2"
+        android:minLines="2"
+        android:singleLine="false"
         android:text="@string/test_title"
         android:textColor="@android:color/black"
         android:textStyle="bold" />
@@ -19,37 +24,42 @@
     <TextView
         android:id="@+id/item_content"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_below="@+id/item_title"
-        android:layout_alignBottom="@id/item_title"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentBottom="false"
         android:layout_marginStart="@dimen/text_margin"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="38dp"
         android:layout_marginEnd="@dimen/text_margin"
-        android:layout_marginBottom="-84dp"
+        android:layout_marginBottom="22dp"
+        android:maxLines="3"
+        android:paddingBottom="30dp"
         android:text="@string/test_content"
         android:textColor="@color/black"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/item_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_alignEnd="@id/item_user_pic"
-        android:layout_alignBottom="@id/item_content"
-        android:layout_marginEnd="-95dp"
-        android:layout_marginBottom="@dimen/nav_header_vertical_spacing"
-        android:text="@string/test_username" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="-137dp"
+        android:layout_marginBottom="0dp"
+        android:text="@string/test_username"
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/item_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_alignEnd="@id/item_content"
-        android:layout_alignBottom="@id/item_content"
-        android:layout_marginBottom="@dimen/nav_header_vertical_spacing"
-        android:text="@string/test_date" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="0dp"
+        android:text="@string/test_date"
+        android:textSize="12sp" />
 
     <ImageView
         android:id="@+id/item_user_pic"
@@ -57,9 +67,32 @@
         android:layout_height="30dp"
 
         android:layout_alignStart="@id/item_content"
-        android:layout_alignBottom="@id/item_content"
-        android:layout_marginBottom="2dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="-1dp"
         android:contentDescription="@string/profile_image_description"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@mipmap/ic_launcher" />
+
+    <RatingBar
+        android:id="@+id/event_rank_ratingBar"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/item_user_pic"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="9dp"
+        android:layout_marginBottom="5dp"
+        android:numStars="3"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/item_currency_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/item_title"
+        android:layout_alignEnd="@id/item_title"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        tools:visibility="gone" />
 
 </RelativeLayout>

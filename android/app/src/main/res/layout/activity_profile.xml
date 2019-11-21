@@ -73,4 +73,17 @@
         android:textColor="@color/colorPrimary"
         android:visibility="invisible" />
 
+    <Switch
+        android:id="@+id/publicPrivateProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Public Profile"
+        android:textOff="@string/public_profile_text"
+        android:textOn="@string/private_profile_text"
+        android:layout_alignTop="@id/user_description"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="56dp"
+        android:visibility="invisible" />
+
+
 </RelativeLayout>

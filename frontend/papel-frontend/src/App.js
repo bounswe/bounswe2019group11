@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import ReactDOM from 'react-dom';
 import Logo from './logo-green-small.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -20,9 +19,11 @@ function NavBar(props) {
   const [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken'])
   var profileBtn, logoutBtn, registerBtn, loginBtn;
   const [loggedIn, login] = useState(!!cookies.userToken);
+
   const logout = function () {
-    props.removeCookie('userToken');
-    props.removeCookie('user');
+    console.log(cookies);
+    removeCookie('userToken');
+    removeCookie('user');
     login(false);
   }
   if(!!loggedIn) {

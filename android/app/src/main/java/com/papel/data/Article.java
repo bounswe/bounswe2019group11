@@ -1,46 +1,54 @@
 package com.papel.data;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 public class Article {
-    private int id;
+    private String id;
     private String title;
-    private String content;
-    private String author;
+    private String body;
+    private String authorId;
+    private String authorName;
     private String date;
+    private ArrayList<Comment> comments;
+    private int voteCount;
     private double rank;
 
-    public Article(int id, String title, String content, String author, String date, double rank) {
+    public Article() {
+    }
+
+    public Article(String id, String title, String body, String authorId, String authorName, int voteCount, double rank, String date) {
         this.id = id;
         this.title = title;
-        this.content = content;
-        this.author = author;
-        this.date = date;
+        this.body = body;
+        this.authorId = authorId;
+        this.authorName = authorName;
+        this.voteCount = voteCount;
         this.rank = rank;
+        this.date = date;
+
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+            Date dateObj = formatter.parse(date.replaceAll("Z$", "+0000"));
+            SimpleDateFormat formatter2 = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm:ss a", Locale.US);
+            this.date = formatter2.format(dateObj);
+        } catch (Exception e) {
+
+        }
     }
 
-    public String getTitle() {
-        return title;
+    public int getVoteCount() {
+        return voteCount;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public ArrayList<Comment> getComments() {
+        return comments;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
     }
 
     public String getDate() {
@@ -51,6 +59,42 @@ public class Article {
         this.date = date;
     }
 
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
+    }
+
     public double getRank() {
         return rank;
     }
@@ -59,11 +103,5 @@ public class Article {
         this.rank = rank;
     }
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 }
