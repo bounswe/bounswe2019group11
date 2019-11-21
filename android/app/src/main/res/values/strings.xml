@@ -14,7 +14,7 @@
     <string name="menu_events">Events</string>
     <string name="menu_articles">Articles</string>
     <string name="menu_portfolio">Portfolios</string>
-    <string name="menu_tools">Tools</string>
+    <string name="menu_trading_eq">Trading Equipments</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
     <string name="profile_image_description">Profile image.</string>
@@ -54,7 +54,7 @@
     <string name="iban_hint">Type your IBAN number</string>
     <string name="like">Like</string>
     <string name="dislike">Dislike</string>
-
+    <string name="search_trading_eq_hint">Search in Trading Equipments</string>
 </resources>
 
 
