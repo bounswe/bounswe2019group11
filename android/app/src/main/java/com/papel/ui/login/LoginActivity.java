@@ -269,6 +269,7 @@ public class LoginActivity extends AppCompatActivity {
 
             } catch (ApiException e) {
                 e.printStackTrace();
+                Log.d("ERROR", "onActivityResult: "+ e.toString());
             }
 
 

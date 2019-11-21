@@ -85,12 +85,52 @@
                         android:textStyle="italic" />
                 </LinearLayout>
 
-                <ImageView
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+                <ImageButton
+                    android:id="@+id/like_imageButton"
+                    android:layout_width="10dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="0.5"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/like"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_like" />
+
+                <ImageButton
+                    android:id="@+id/dislike_imageButton"
+                    android:layout_width="10dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="0.5"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/dislike"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_dislike" />
+
+                <TextView
+                    android:id="@+id/vote_count_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="31dp"
+                    android:layout_marginStart="@dimen/text_margin"
+                    android:layout_marginEnd="@dimen/text_margin"
+                    android:layout_weight="2"
+                    android:textSize="14sp" />
+
+                <ImageButton
                     android:id="@+id/article_share_imageview"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|end"
-                    android:layout_weight="1"
+                    android:layout_weight="0.5"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/menu_share"
                     app:srcCompat="@drawable/ic_menu_share" />
 
             </LinearLayout>
