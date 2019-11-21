@@ -80,6 +80,7 @@ public class ListViewAdapter extends android.widget.BaseAdapter {
             title = item.getTitle();
             author = item.getCountry();
             rank = item.getRank();
+            authorImageView.setVisibility(View.GONE);
             rankRatingBar.setRating((float)rank);
             rankRatingBar.setVisibility(View.VISIBLE);
             contentText.setVisibility(View.GONE);
