@@ -15,7 +15,11 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.abdeveloper.library.MultiSelectDialog;
+import com.abdeveloper.library.MultiSelectModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -45,7 +49,6 @@ public class PortfolioDetailActivity extends AppCompatActivity {
     private ArrayList<TradingEquipment> tradingEquipments = new ArrayList<>();
     private TradingEquipmentListViewAdapter tradingEquipmentListViewAdapter;
     private ArrayList<TradingEquipment> tradingEquipmentOptions = new ArrayList<>();
-    private ArrayList<TradingEquipment> tempTradingEquipment = new ArrayList<>();
 
     private Portfolio portfolio;
 
@@ -129,78 +132,62 @@ public class PortfolioDetailActivity extends AppCompatActivity {
     }
 
     private void showListDialog() {
-        Context context = PortfolioDetailActivity.this;
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-        dialogBuilder.setTitle("Select trading equipments");
-
-        // Add checkbox list
-        //String[] items = {"item1","item2","item3","item4","item5","item6","item7","item8","item9","item10","item11","item12","item13","item14","item15","item16","item17"};
-        String[] tradingEquipmentOptionsSymbols = new String[tradingEquipmentOptions.size()];
+        ArrayList<MultiSelectModel> tradingEquipmentList = new ArrayList<>();
         for(int i = 0; i<tradingEquipmentOptions.size(); i++) {
-            tradingEquipmentOptionsSymbols[i] = tradingEquipmentOptions.get(i).getSymbol();
+            tradingEquipmentList.add(new MultiSelectModel(i,tradingEquipmentOptions.get(i).getSymbol()));
         }
 
-        boolean[] checked = new boolean[tradingEquipmentOptions.size()];
-        tempTradingEquipment.addAll(tradingEquipments);
+        final ArrayList<Integer> selectedTradingEquipments = new ArrayList<>();
+        final ArrayList<Integer> initialSelectedTradingEquipments = new ArrayList<>();
+
         for(int i = 0; i<tradingEquipmentOptions.size(); i++) {
             for (int j = 0; j<tradingEquipments.size(); j++) {
                 if (tradingEquipmentOptions.get(i).getId().equals(tradingEquipments.get(j).getId())) {
-                    checked[i] = true;
+                    selectedTradingEquipments.add(i);
+                    initialSelectedTradingEquipments.add(i);
                 }
             }
         }
 
-        dialogBuilder.setMultiChoiceItems(tradingEquipmentOptionsSymbols, checked, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                Log.d("Dialog","Multichoice i: " + i + " b: " + b);
-                TradingEquipment selected = tradingEquipmentOptions.get(i);
-                if (b) {
-                    tempTradingEquipment.add(selected);
-                } else {
-                    tempTradingEquipment.remove(selected);
-                }
-            }
-        });
-
-        dialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Log.d("Dialog","Positive button is clicked");
-
-                for (int j=0;j<tradingEquipmentOptions.size();j++) {
-                    TradingEquipment current = tradingEquipmentOptions.get(j);
-                    int temp = tempTradingEquipment.indexOf(current);
-                    int orig = tradingEquipments.indexOf(current);
-                    if (temp == -1 && orig != -1) { // Not in temp but in origin
-                        Log.d("Dialog","Delete " + current.getSymbol());
-                        deleteTradingEquipment(current);
+        MultiSelectDialog multiSelectDialog = new MultiSelectDialog()
+                .title("Select trading equipments") //setting title for dialog
+                .titleSize(18)
+                .positiveText("Ok")
+                .setMinSelectionLimit(0)
+                .negativeText("Cancel")
+                .preSelectIDsList(selectedTradingEquipments) //List of ids that you need to be selected
+                .multiSelectList(tradingEquipmentList) // the multi select model list with ids and name
+                .onSubmit(new MultiSelectDialog.SubmitCallbackListener() {
+                    @Override
+                    public void onSelected(ArrayList<Integer> selectedIds, ArrayList<String> selectedNames, String dataString) {
+                        //will return list of selected IDS
+                        for (int i=0;i<tradingEquipmentOptions.size();i++) {
+                            TradingEquipment current = tradingEquipmentOptions.get(i);
+                            int beforeSelected = initialSelectedTradingEquipments.indexOf(i);
+                            int currentSelected = selectedIds.indexOf(i);
+                            if(beforeSelected != -1 && currentSelected == -1) {
+                                // The current item was in the list, but it is not in the list right now
+                                Log.d("Dialog","Delete " + current.getSymbol());
+                                deleteTradingEquipment(current);
+                            }
+                            if (beforeSelected == -1 && currentSelected != -1) {
+                                // The current item wasn't in the list, but it is in the list right now
+                                Log.d("Dialog","Add " + current.getSymbol());
+                                addTradingEquipment(current);
+                            }
+                        }
                     }
-                    if (temp != -1 && orig == -1) { // in temp but not in orig
-                        Log.d("Dialog","Add " + current.getSymbol());
-                        addTradingEquipment(current);
+
+                    @Override
+                    public void onCancel() {
+                        Log.d("Info","Dialog cancelled");
                     }
-                }
-
-                //tradingEquipments.clear();
-                //tradingEquipments.addAll(tempTradingEquipment);
-                tempTradingEquipment.clear();
-                //tradingEquipmentListViewAdapter.notifyDataSetChanged();
-            }
-        });
-
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Log.d("Dialog","Negative button is clicked");
-                tempTradingEquipment.clear();
-            }
-        });
 
 
+                });
 
-        AlertDialog dialog = dialogBuilder.create();
-        dialog.show();
+        multiSelectDialog.show(getSupportFragmentManager(), "multiSelectDialog");
+
     }
 
     private void addTradingEquipment(final TradingEquipment tradingEquipment) {

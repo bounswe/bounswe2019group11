@@ -12,29 +12,43 @@ public class Article {
     private String authorId;
     private String authorName;
     private String date;
-    private int voterNumber;
+    private ArrayList<Comment> comments;
+    private int voteCount;
     private double rank;
-    private ArrayList<String> comments = new ArrayList<>();
 
     public Article() {
     }
 
-    public Article(String id, String title, String body, String authorId, double rank, String date) {
+    public Article(String id, String title, String body, String authorId, String authorName, int voteCount, double rank, String date) {
         this.id = id;
         this.title = title;
         this.body = body;
         this.authorId = authorId;
+        this.authorName = authorName;
+        this.voteCount = voteCount;
         this.rank = rank;
         this.date = date;
 
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
             Date dateObj = formatter.parse(date.replaceAll("Z$", "+0000"));
-            SimpleDateFormat formatter2 = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm:ss a", Locale.US);
+            SimpleDateFormat formatter2 = new SimpleDateFormat("dd MMM yy • HH:mm a", Locale.US);
             this.date = formatter2.format(dateObj);
         } catch (Exception e) {
 
         }
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public ArrayList<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
     }
 
     public String getDate() {
@@ -47,10 +61,6 @@ public class Article {
 
     public String getAuthorName() {
         return authorName;
-    }
-
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
     }
 
     public String getId() {
@@ -85,14 +95,6 @@ public class Article {
         this.authorId = authorId;
     }
 
-    public int getVoterNumber() {
-        return voterNumber;
-    }
-
-    public void setVoterNumber(int voterNumber) {
-        this.voterNumber = voterNumber;
-    }
-
     public double getRank() {
         return rank;
     }
@@ -101,12 +103,5 @@ public class Article {
         this.rank = rank;
     }
 
-    public ArrayList<String> getComments() {
-        return comments;
-    }
-
-    public void setComments(ArrayList<String> comments) {
-        this.comments = comments;
-    }
 
 }

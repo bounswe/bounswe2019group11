@@ -73,6 +73,11 @@ const userSchema = new mongoose.Schema({
             required: 'InvalidLongitude',
         },
     },
+    googleUserId: {
+        type: String,
+        default: undefined,
+        select: false,
+    }
 });
 
 userSchema.pre('save', async function (next) {

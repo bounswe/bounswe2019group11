@@ -51,6 +51,7 @@
           "auth"
         ],
         "summary": "Sign up endpoint for the Papel.",
+        "description": "Either the password or the Google user id must be set, not both. When Google user id is set, password will be discarded so if you are not doing sign up with Google, do not set it.",
         "consumes": [
           "application/json"
         ],
@@ -190,6 +191,51 @@
                   "type": "string",
                   "description": "Password of the user.",
                   "example": "strongPa$.$word"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. User successfully logged in. User object and JWT token is returned."
+          },
+          "401": {
+            "description": "Invalid credentials. Either the user with the given email does not exists or the password does not matches the password for the given email."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/auth/login/google": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Google login endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "idToken",
+            "description": "Id token for the login request.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "idToken"
+              ],
+              "properties": {
+                "idToken": {
+                  "type": "string",
+                  "description": "Id token for the login request.",
+                  "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImRiMDJhYjMwZTBiNzViOGVjZDRmODE2YmI5ZTE5NzhmNjI4NDk4OTQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiIzNzg4NzkyOTA5My04czkxY21mbXRudTlqOWI0bWFiZG1mMzg0am0yaTk0by5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6IjM3ODg3OTI5MDkzLXBsdTl2Njk1dXE4czQyYjQzZDFsOWpkYmswcGQycWViLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTE3MDI3NTIyNDIzNDI2NTUyODk1IiwiZW1haWwiOiJoYXNhbm55YW1hbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ikhhc2FuIFlhbWFuIiwicGljdHVyZSI6Imh0dHBzOi8vbGg1Lmdvb2dsZXVzZXJjb250ZW50LmNvbS8tN1BxZzZIM0NTTnMvQUFBQUFBQUFBQUkvQUFBQUFBQUFBQUEvQUNIaTNyZHZKWTd5RnpoTWdJWnZOeXB3dFlSYk1KVUptZy9zOTYtYy9waG90by5qcGciLCJnaXZlbl9uYW1lIjoiSGFzYW4iLCJmYW1pbHlfbmFtZSI6IllhbWFuIiwibG9jYWxlIjoidHIiLCJpYXQiOjE1NzQyNzE0NTQsImV4cCI6MTU3NDI3NTA1NH0.pfwBB3B4BmCMcuAyoDb8ZDBrJS4xqyJfirSANhoLtDX35kgf1VPsxeIlauACWGrcd6SRnX7YIpvAL9L36wuNaQ-JDq2C3mSlQ5MppVFcqRtlxRcJ9ICa7xfminkGM9v0juMhrXlyWNU5BSND9W0gVDl2Wc4VcxjOmVYhAj7KFHmqeI25uLk5J3z7wUCU2nZGCcBa_U4PdoSeDhOBw_kqTHFKGJ7Ni5AUHMgvEScgxkG8H7XPTVysu1KCwhmM6PFhrJVAqIYWFF6ee6UXCt0H9FkDSY0NqmoPh2faenKMXVWhetgUH02XFtTrcA2S25lQWOyLATrc8NI4TTRdssssss"
                 }
               }
             }
@@ -1225,8 +1271,7 @@
       "required": [
         "name",
         "surname",
-        "email",
-        "password"
+        "email"
       ],
       "properties": {
         "_id": {
@@ -1277,6 +1322,11 @@
               "example": 29.044008
             }
           }
+        },
+        "googleUserId": {
+          "type": "string",
+          "description": "Google user id.",
+          "example": "117027522423426552111"
         }
       }
     },

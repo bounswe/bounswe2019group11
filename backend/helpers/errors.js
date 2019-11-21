@@ -35,7 +35,7 @@ module.exports = {
         return PapelError('EmailInUse', 'Email is associated with an existing user.', cause);
     },
     INVALID_CREDENTIALS: (cause) => {
-        return PapelError('InvalidCredentials', 'Email or the password is invalid.', cause);
+        return PapelError('InvalidCredentials', 'Email, password or the Google id is invalid.', cause);
     },
     INVALID_VERIFICATION_TOKEN: (cause) => {
         return PapelError('InvalidVerificationToken', 'Verification token cannot be found or expired.', cause);
