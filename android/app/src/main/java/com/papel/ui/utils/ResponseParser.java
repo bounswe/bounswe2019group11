@@ -120,11 +120,7 @@ public class ResponseParser {
             String authorName = author.getString("name") + " " + author.getString("surname");
             int voteCount = response.getInt("voteCount");
             String date = response.getString("date");
-            double rank = 5.0;
-            if(response.has("rank")) {
-                rank = response.getDouble("rank");
-            }
-            article = new Article(articleId, articleTitle, articleBody,authorId, authorName, voteCount, rank, date);
+            article = new Article(articleId, articleTitle, articleBody,authorId, authorName, voteCount, date);
             if(response.has("comments")) {
                 JSONArray comments = response.getJSONArray("comments");
                 ArrayList<Comment> articleComments = new ArrayList<>();

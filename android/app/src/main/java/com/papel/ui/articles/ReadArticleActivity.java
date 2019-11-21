@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,12 +53,10 @@ public class ReadArticleActivity extends AppCompatActivity {
     private TextView content;
     private TextView author;
     private TextView date;
-    private TextView ratingTextView;
     private ImageView profile_pic;
     private ImageView share;
     private ImageButton addCommentButton;
     private EditText commentEditText;
-    private RatingBar ratingBar;
     private ListView commentListView;
     private ArrayList<Object> comments = new ArrayList<>();
     private ListViewAdapter adapter;
@@ -78,12 +75,10 @@ public class ReadArticleActivity extends AppCompatActivity {
         content = (TextView) header.findViewById(R.id.read_article_content_textview);
         author = (TextView) header.findViewById(R.id.read_article_author_textview);
         date = (TextView) header.findViewById(R.id.read_article_date_textview);
-        ratingTextView = (TextView) header.findViewById(R.id.article_rating_textview);
         profile_pic = (ImageView) header.findViewById(R.id.read_article_pic_image);
         share = (ImageView) header.findViewById(R.id.article_share_imageview);
         addCommentButton = (ImageButton) header.findViewById(R.id.add_comment_button);
         commentEditText = (EditText) header.findViewById(R.id.comment_edittext);
-        ratingBar = (RatingBar) header.findViewById(R.id.article_rating_bar);
         commentListView = (ListView) findViewById(R.id.article_comments_listview);
         commentListView.addHeaderView(header);
 
@@ -98,13 +93,6 @@ public class ReadArticleActivity extends AppCompatActivity {
                     addArticleComment(getApplicationContext(), articleId, content);
                 }
 
-            }
-        });
-
-        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            public void onRatingChanged(RatingBar ratingBar, float rating,
-                                        boolean fromUser) {
-                Toast.makeText(ReadArticleActivity.this, "Article voted", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -123,9 +111,7 @@ public class ReadArticleActivity extends AppCompatActivity {
                     title.setText(article.getTitle());
                     content.setText(article.getBody());
                     author.setText(article.getAuthorName());
-                    String rank = "" + (article.getRank() / 2) + " / 5";
-                    ratingTextView.setText(rank);
-                    date.setText(article.getDate());
+                    date.setText(article.getLongDate());
                     ArrayList<Comment> comments_list = article.getComments();
                     for (int i = 0; i < comments_list.size(); i++) {
                         comments.add(comments_list.get(i));

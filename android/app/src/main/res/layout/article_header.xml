@@ -48,35 +48,6 @@
                 android:text="@string/test_content"
                 android:textColor="@color/black" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/article_rating_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="37dp"
-                    android:layout_marginEnd="@dimen/text_margin"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical|end"
-                    android:textAlignment="textEnd"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="18sp" />
-
-                <RatingBar
-                    android:id="@+id/article_rating_bar"
-                    style="@style/Widget.AppCompat.RatingBar.Indicator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginTop="@dimen/text_margin"
-                    android:layout_marginBottom="@dimen/text_margin"
-                    android:isIndicator="false"
-                    android:numStars="5"
-                    android:stepSize="1.0"
-                    android:textAlignment="viewEnd" />
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
