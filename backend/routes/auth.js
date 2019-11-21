@@ -6,13 +6,13 @@ const router = express.Router();
 
 router.post('/sign-up', async (req, res) => {
     try {
-        const {name, surname, email, password, idNumber, iban, location} = req.body;
+        const {name, surname, email, password, idNumber, iban, location, privacy} = req.body;
         const isUserExists = await authService.isUserExists(email);
         if (isUserExists) {
             res.status(400).send(errors.EMAIL_IN_USE());
             return;
         }
-        await authService.signUp(name, surname, email, password, idNumber, iban, location);
+        await authService.signUp(name, surname, email, password, idNumber, iban, location, privacy);
         res.sendStatus(200);
     } catch (err) {
         if (err.name === 'ValidationError') {
