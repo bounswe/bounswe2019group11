@@ -91,17 +91,33 @@ const userSchema = new mongoose.Schema({
     },
     following: [
         {
-            type: mongoose.Schema.Types.ObjectId, ref: 'User'
+            userId: {
+                type: mongoose.Schema.Types.ObjectId, ref: 'User'
+            },
+            isAccepted:{
+                type: Boolean,
+                default: false
+            }
+
         }],
     followers:[
-        {
-            type: mongoose.Schema.Types.ObjectId, ref: 'User'
+        {   
+            userId: {
+                type: mongoose.Schema.Types.ObjectId, ref: 'User'
+            },
+            isAccepted:{
+                type: Boolean,
+                default: false
+            }
+
         }],
 
-    profileSettings : profileSettingsSchema
+    profileSettings : {
+        type: profileSettingsSchema,
+        default: profileSettingsSchema
+    }
 
 });
-
 
 userSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
@@ -126,11 +142,13 @@ userSchema.methods.generateLostPasswordToken = async function () {
         token,
     });
 };
-userSchema.methods.follow =async function(userId){
-    if(this.following.indexOf(userId) === -1){
-        this.following.push(userId);
+userSchema.methods.follow =async function(userToBeFollowed){
+    const userIdToBeFollowed = userToBeFollowed._id;
+    if(this.following.indexOf(userIdToBeFollowed) === -1){
+        this.following.push({userId:userIdToBeFollowed, isAccepted:false});
+        userToBeFollowed.followers.push({userId:this._id,isAccepted:false});
     }
-
+    await userToBeFollowed.save();
     return await this.save();
 };
 

@@ -19,6 +19,7 @@ module.exports.getById = async (_id) => {
     if (!mongoose.Types.ObjectId.isValid(_id)) {
         throw errors.USER_NOT_FOUND();
     }
+    console.log(_id)
     const user = await User.findOne({_id});
     if (!user) {
         throw errors.USER_NOT_FOUND();
