@@ -22,7 +22,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.papel.Constants;
 import com.papel.R;
-import com.papel.data.Event;
 import com.papel.data.TradingEquipment;
 import com.papel.ui.portfolio.TradingEquipmentDetailActivity;
 import com.papel.ui.portfolio.TradingEquipmentListViewAdapter;

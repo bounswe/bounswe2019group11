@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.TextView;
 
@@ -13,9 +12,6 @@ import com.papel.R;
 import com.papel.data.TradingEquipment;
 
 import java.util.ArrayList;
-
-import static android.text.method.TextKeyListener.clear;
-import static java.util.Collections.addAll;
 
 public class TradingEquipmentListViewAdapter extends BaseAdapter {
 
