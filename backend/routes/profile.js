@@ -25,7 +25,7 @@ router.get('/:id', async (req, res) => {
     try {
         const id = req.params.id;
         const user = await userService.getById(id);
-        if(user.profileSettings.privacy === 'public'){
+        if(user.privacy === 'public'){
             res.status(200).send(publicProfileDataTransferObject(user));
         }else{
             res.status(200).send(privateProfileDataTransferObject(user));
@@ -46,7 +46,7 @@ router.post('/:id/follow', async (req, res) => {
         const userId = req.body.id;
         const user = await userService.getById(userId);
         const userToBeFollowed = await userService.getById(id);
-        res.status(200).send(await user.follow(userToBeFollowed));
+        res.status(200).json({msg:await user.follow(userToBeFollowed)});
 
     } catch (err) {
         if (err.name === 'UserNotFound') {

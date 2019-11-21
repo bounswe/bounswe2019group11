@@ -136,17 +136,22 @@ userSchema.methods.generateLostPasswordToken = async function () {
 userSchema.methods.follow =async function(userToBeFollowed){
     const userIdToBeFollowed = userToBeFollowed._id;
     if(this.following.indexOf(userIdToBeFollowed) === -1){
-        if(userToBeFollowed.profileSettings.privacy === 'public'){
+        if(userToBeFollowed.privacy === 'public'){
             this.following.push({userId:userIdToBeFollowed, isAccepted:true});
             userToBeFollowed.followers.push({userId:this._id,isAccepted:true});
+            await userToBeFollowed.save();
+            await this.save();
+            return  userToBeFollowed.name + " "+ userToBeFollowed.surname + " successfully followed";
         }else{
             this.following.push({userId:userIdToBeFollowed, isAccepted:false});
             userToBeFollowed.followers.push({userId:this._id,isAccepted:false});
+            await userToBeFollowed.save();
+            await this.save();
+            return "Follow request has been sent to " + userToBeFollowed.name + " "+ userToBeFollowed.surname;
         }
 
     }
-    await userToBeFollowed.save();
-    return await this.save();
+
 };
 
 const User = mongoose.model('User', userSchema);

@@ -21,7 +21,8 @@ module.exports.isUserExists = async (email) => {
     return count !== 0;
 };
 
-module.exports.signUp = async (name, surname, email, password, idNumber, iban, location, googleUserId) => {
+module.exports.signUp = async (name, surname, email, password, idNumber, iban, location, googleUserId,privacy) => {
+
     let role;
     if (authHelper.isTrader(idNumber, iban)) {
         role = authHelper.ROLES.TRADER;
@@ -34,7 +35,8 @@ module.exports.signUp = async (name, surname, email, password, idNumber, iban, l
         password = crypto.randomBytes(32).toString('hex');
     }
     const user = await User.create({
-        name, surname, email, password, idNumber, iban, role, location, googleUserId, isVerified
+
+        name, surname, email, password, idNumber, iban, role, location, googleUserId,privacy, isVerified
     });
     if (!googleUserId) {
         const verificationToken = await user.generateVerificationToken();
