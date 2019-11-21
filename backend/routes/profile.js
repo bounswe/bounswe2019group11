@@ -1,23 +1,28 @@
 const express = require('express');
 const userService = require('../services/user');
+const articleService = require('../services/article');
+const portfolioService = require('../services/portfolio');
 const errors = require('../helpers/errors');
 const router = express.Router();
 
-const privateProfileDataTransferObject = (user) => {
+const privateProfileDataTransferObject = (user,articles) => {
     return {
         privacy: 'private',
         name:user.name,
         surname:user.surname,
-        location: user.location
+        location: user.location,
+        articles: articles
     };
 };
 
-const publicProfileDataTransferObject = (user) => {
+const publicProfileDataTransferObject = (user,articles,portfolios) => {
     return {
         privacy: 'public',
         name:user.name,
         surname:user.surname,
-        location: user.location
+        location: user.location,
+        articles: articles,
+        portfolios: portfolios
     };
 };
 
@@ -25,10 +30,12 @@ router.get('/:id', async (req, res) => {
     try {
         const id = req.params.id;
         const user = await userService.getById(id);
+        const articles = await articleService.getByUserId(id);
+        const portfolios = await portfolioService.getByUserId(id);
         if(user.privacy === 'public'){
-            res.status(200).send(publicProfileDataTransferObject(user));
+            res.status(200).send(publicProfileDataTransferObject(user,articles,portfolios));
         }else{
-            res.status(200).send(privateProfileDataTransferObject(user));
+            res.status(200).send(privateProfileDataTransferObject(user,articles));
         }
 
     } catch (err) {
