@@ -14,24 +14,24 @@ public class Article {
     private String date;
     private ArrayList<Comment> comments;
     private int voteCount;
-    private double rank;
+    private Date dateObj;
 
     public Article() {
     }
 
-    public Article(String id, String title, String body, String authorId, String authorName, int voteCount, double rank, String date) {
+    public Article(String id, String title, String body, String authorId, String authorName, int voteCount, String date) {
         this.id = id;
         this.title = title;
         this.body = body;
         this.authorId = authorId;
         this.authorName = authorName;
         this.voteCount = voteCount;
-        this.rank = rank;
         this.date = date;
 
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
             Date dateObj = formatter.parse(date.replaceAll("Z$", "+0000"));
+            this.dateObj = dateObj;
             SimpleDateFormat formatter2 = new SimpleDateFormat("dd MMM yy • HH:mm a", Locale.US);
             this.date = formatter2.format(dateObj);
         } catch (Exception e) {
@@ -53,6 +53,11 @@ public class Article {
 
     public String getDate() {
         return date;
+    }
+
+    public String getLongDate() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yy • HH:mm a", Locale.US);
+        return  formatter.format(dateObj);
     }
 
     public void setDate(String date) {
@@ -94,14 +99,5 @@ public class Article {
     public void setAuthorId(String authorId) {
         this.authorId = authorId;
     }
-
-    public double getRank() {
-        return rank;
-    }
-
-    public void setRank(double rank) {
-        this.rank = rank;
-    }
-
 
 }
