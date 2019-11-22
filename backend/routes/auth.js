@@ -6,9 +6,7 @@ const router = express.Router();
 
 router.post('/sign-up', async (req, res) => {
     try {
-
         const {name, surname, email, password, idNumber, iban, location, googleUserId, privacy} = req.body;
-
         const isUserExists = await authService.isUserExists(email);
         if (isUserExists) {
             res.status(400).send(errors.EMAIL_IN_USE());

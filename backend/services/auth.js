@@ -35,8 +35,8 @@ module.exports.signUp = async (name, surname, email, password, idNumber, iban, l
         password = crypto.randomBytes(32).toString('hex');
     }
     const user = await User.create({
-
         name, surname, email, password, idNumber, iban, role, location, googleUserId,privacy, isVerified
+
     });
     if (!googleUserId) {
         const verificationToken = await user.generateVerificationToken();
