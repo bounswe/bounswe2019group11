@@ -39,7 +39,7 @@ const privateProfileDataTransferObject = (user,articles,inInMyNetwork) => {
         surname:user.surname,
         location: user.location,
         articles: articles,
-        isInInMyNetwork: inInMyNetwork
+        isInMyNetwork: inInMyNetwork
     };
 };
 
@@ -51,7 +51,7 @@ const publicProfileDataTransferObject = (user,articles,portfolios,inInMyNetwork)
         location: user.location,
         articles: articles,
         portfolios: portfolios,
-        isInInMyNetwork: inInMyNetwork
+        isInMyNetwork: inInMyNetwork
     };
 };
 
