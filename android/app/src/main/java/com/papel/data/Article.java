@@ -32,8 +32,7 @@ public class Article {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
             Date dateObj = formatter.parse(date.replaceAll("Z$", "+0000"));
             this.dateObj = dateObj;
-            SimpleDateFormat formatter2 = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm:ss a", Locale.US);
-
+            SimpleDateFormat formatter2 = new SimpleDateFormat("dd MMM yy • HH:mm a", Locale.US);
             this.date = formatter2.format(dateObj);
         } catch (Exception e) {
 
