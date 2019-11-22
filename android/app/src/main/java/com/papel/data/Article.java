@@ -56,7 +56,7 @@ public class Article {
     }
 
     public String getLongDate() {
-        SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy HH:mm:ss a", Locale.US);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yy • HH:mm a", Locale.US);
         return  formatter.format(dateObj);
     }
 
