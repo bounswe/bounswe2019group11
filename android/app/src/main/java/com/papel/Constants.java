@@ -5,6 +5,9 @@ public class Constants {
 
     public static final String ARTICLE = "article/";
     public static final String COMMENT   = "comment/";
+    public static final String UPVOTE   = "up-vote/";
+    public static final String DOWNVOTE   = "down-vote/";
+    public static final String CLEARVOTE   = "clear-vote/";
     public static final String EVENT = "event/";
     public static final String STOCK = "stock/";
     public static final String PORTFOLIO = "portfolio/";

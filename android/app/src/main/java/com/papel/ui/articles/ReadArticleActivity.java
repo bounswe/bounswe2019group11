@@ -2,10 +2,13 @@ package com.papel.ui.articles;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -19,7 +22,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,22 +56,25 @@ public class ReadArticleActivity extends AppCompatActivity {
     private TextView content;
     private TextView author;
     private TextView date;
-    private TextView ratingTextView;
+    private TextView voteCount;
     private ImageView profile_pic;
     private ImageView share;
     private ImageButton addCommentButton;
+    private ImageButton likeButton;
+    private ImageButton dislikeButton;
     private EditText commentEditText;
-    private RatingBar ratingBar;
     private ListView commentListView;
     private ArrayList<Object> comments = new ArrayList<>();
     private ListViewAdapter adapter;
     private Article article;
+    private ColorStateList cl_primary;
+    private ColorStateList cl_black;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_article);
-        View header = getLayoutInflater().inflate(R.layout.article_header, null);
+        final View header = getLayoutInflater().inflate(R.layout.article_header, null);
         article = null;
 
         final String articleId = getIntent().getStringExtra("articleId");
@@ -78,22 +83,23 @@ public class ReadArticleActivity extends AppCompatActivity {
         content = (TextView) header.findViewById(R.id.read_article_content_textview);
         author = (TextView) header.findViewById(R.id.read_article_author_textview);
         date = (TextView) header.findViewById(R.id.read_article_date_textview);
-        ratingTextView = (TextView) header.findViewById(R.id.article_rating_textview);
+        voteCount = header.findViewById(R.id.vote_count_textview);
         profile_pic = (ImageView) header.findViewById(R.id.read_article_pic_image);
         share = (ImageView) header.findViewById(R.id.article_share_imageview);
         addCommentButton = (ImageButton) header.findViewById(R.id.add_comment_button);
+        likeButton = header.findViewById(R.id.like_imageButton);
+        dislikeButton = header.findViewById(R.id.dislike_imageButton);
         commentEditText = (EditText) header.findViewById(R.id.comment_edittext);
-        ratingBar = (RatingBar) header.findViewById(R.id.article_rating_bar);
         commentListView = (ListView) findViewById(R.id.article_comments_listview);
         commentListView.addHeaderView(header);
-
+        cl_primary = ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary));
+        cl_black = ColorStateList.valueOf(getResources().getColor(R.color.black));
         getArticleFromEndpoint(getApplicationContext(), articleId);
 
         addCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (commentEditText.getText() != null) {
-                    Log.d("COMMENT ADDED", "onClick: ");
                     String content = commentEditText.getText().toString().trim();
                     addArticleComment(getApplicationContext(), articleId, content);
                 }
@@ -101,10 +107,35 @@ public class ReadArticleActivity extends AppCompatActivity {
             }
         });
 
-        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            public void onRatingChanged(RatingBar ratingBar, float rating,
-                                        boolean fromUser) {
-                Toast.makeText(ReadArticleActivity.this, "Article voted", Toast.LENGTH_SHORT).show();
+        likeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(likeButton.getImageTintList() == cl_primary){
+                    voteArticle(getApplicationContext(), articleId, true, false);
+                    likeButton.setImageTintList(cl_black);
+                    dislikeButton.setImageTintList(cl_black);
+                }else{
+                    voteArticle(getApplicationContext(), articleId, false, true);
+                    likeButton.setImageTintList(cl_primary);
+                    dislikeButton.setImageTintList(cl_black);
+                }
+
+            }
+        });
+
+        dislikeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(likeButton.getImageTintList() == cl_primary){
+                    voteArticle(getApplicationContext(), articleId, true, false);
+                    dislikeButton.setImageTintList(cl_black);
+                    likeButton.setImageTintList(cl_black);
+                }else{
+                    voteArticle(getApplicationContext(), articleId, false, false);
+                    dislikeButton.setImageTintList(cl_primary);
+                    likeButton.setImageTintList(cl_black);
+                }
+
             }
         });
 
@@ -123,13 +154,10 @@ public class ReadArticleActivity extends AppCompatActivity {
                     title.setText(article.getTitle());
                     content.setText(article.getBody());
                     author.setText(article.getAuthorName());
-                    String rank = "" + (article.getRank() / 2) + " / 5";
-                    ratingTextView.setText(rank);
-                    date.setText(article.getDate());
+                    date.setText(article.getLongDate());
+                    voteCount.setText("" + article.getVoteCount());
                     ArrayList<Comment> comments_list = article.getComments();
-                    for (int i = 0; i < comments_list.size(); i++) {
-                        comments.add(comments_list.get(i));
-                    }
+                    comments.addAll(comments_list);
                     adapter = new ListViewAdapter(getApplicationContext(), comments);
                     commentListView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
@@ -345,5 +373,72 @@ public class ReadArticleActivity extends AppCompatActivity {
         }
         return false;
     }
+
+    private void voteArticle(final Context context, String articleId, boolean isClear, boolean isUp){
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        String endpoint="";
+        int voteCountVal = article.getVoteCount();
+        if(isClear){
+            endpoint = Constants.CLEARVOTE;
+        }else if(isUp){
+            voteCountVal ++;
+            endpoint = Constants.UPVOTE;
+        }else{
+            voteCountVal --;
+            endpoint = Constants.DOWNVOTE;
+
+        }
+        String url = Constants.LOCALHOST + Constants.ARTICLE + articleId + "/" + endpoint;
+        final String vote = ""+voteCountVal;
+        final JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("body", content);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                voteCount.setText(vote);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                NetworkResponse networkResponse = error.networkResponse;
+                if (networkResponse != null) {
+                    String data = new String(networkResponse.data);
+                    try {
+                        JSONObject errorObject = new JSONObject(data);
+                        String message = errorObject.getString("message");
+                        Toast.makeText(context, "There was an error when voting the article: " + message, Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return jsonBody.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+        requestQueue.add(request);
+
+
+    }
+
 }
 

@@ -16,10 +16,10 @@
             android:id="@+id/nav_portfolio"
             android:icon="@drawable/ic_menu_portfolio"
             android:title="@string/menu_portfolio" />
-       <!--  <item
-            android:id="@+id/nav_tools"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_tools" /> -->
+        <item
+            android:id="@+id/nav_trading_equipments"
+            android:icon="@drawable/ic_menu_trading"
+            android:title="@string/menu_trading_eq" />
     </group>
 
     <!-- <item android:title="Communicate">
