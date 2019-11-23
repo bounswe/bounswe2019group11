@@ -1471,7 +1471,42 @@
             "description": "OK. Given currency and its rate and the last 7 daily rates are returned.",
             "schema": {
               "type": "object",
-              "$ref": "#/definitions/CurrencyDaily"
+              "$ref": "#/definitions/CurrencyLastWeek"
+            }
+          },
+          "400": {
+            "description": "Given code for the currency is not valid."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/last-month": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the rate and the last 30 daily rates of the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given currency and its rate and the last 30 daily rates are returned.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyLastMonth"
             }
           },
           "400": {
@@ -1866,7 +1901,7 @@
         }
       }
     },
-    "CurrencyDaily": {
+    "CurrencyLastWeek": {
       "allOf": [
         {
           "$ref": "#/definitions/CurrencyMinimal"
@@ -1876,7 +1911,29 @@
       "properties": {
         "lastWeek": {
           "type": "object",
-          "description": "Daily rates.",
+          "description": "Last 7 daily rates.",
+          "example": {
+            "2019-11-22": {
+              "1. open": "1.1066",
+              "2. high": "1.1088",
+              "3. low": "1.1013",
+              "4. close": "1.1022"
+            }
+          }
+        }
+      }
+    },
+    "CurrencyLastMonth": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CurrencyMinimal"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "lastMonth": {
+          "type": "object",
+          "description": "Last 30 daily rates.",
           "example": {
             "2019-11-22": {
               "1. open": "1.1066",

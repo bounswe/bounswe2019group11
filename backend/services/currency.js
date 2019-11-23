@@ -58,3 +58,24 @@ module.exports.getLastWeek = async (code) => {
     delete currency.dailyRates;
     return currency;
 };
+
+module.exports.getLastMonth = async (code) => {
+    code = code.toUpperCase();
+    if (!SUPPORTED_CURRENCIES.has(code)) {
+        throw errors.INVALID_CURRENCY_CODE();
+    }
+    let currency = await Currency
+        .findOne({code})
+        .select('code name rate dailyRates -_id')
+        .exec();
+    currency = currency.toObject();
+    const dailyRateKeys = Object.keys(currency.dailyRates);
+    const lastMonth = {};
+    const limit = Math.min(30, dailyRateKeys.length);
+    for (let i = 0; i < limit; i++) {
+        lastMonth[dailyRateKeys[i]] = currency.dailyRates[dailyRateKeys[i]];
+    }
+    currency.lastMonth = lastMonth;
+    delete currency.dailyRates;
+    return currency;
+};
