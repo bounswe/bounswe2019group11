@@ -1,33 +1,30 @@
 const Event = require("../models/event");
 
 
-
-module.exports.getByID = async (eventID) => {
+module.exports.getByID = async (_id) => {
     return await Event.findOne({
-        _id: eventID,
+        _id,
     });
 };
 
-module.exports.getAll = async ()=>{
+module.exports.getAll = async () => {
     return await Event.find();
 };
 
-module.exports.getByCountry = async (country_) => {
+module.exports.getByCountry = async (country) => {
     return await Event.find({
-        country: country_,
+        country,
     });
 };
 
 module.exports.create = async (title, body, comment, date, rank, country) => {
-    
-    const event = await Event.create({
+    return await Event.create({
         title, body, comment, date, rank, country
     });
-    return event;
 };
 
-module.exports.delete = async (eventID) => {
-    return await Event.findByIdAndDelete(eventID);
+module.exports.delete = async (_id) => {
+    return await Event.deleteOne({_id});
 }; 
 
 

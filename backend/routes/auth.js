@@ -6,13 +6,13 @@ const router = express.Router();
 
 router.post('/sign-up', async (req, res) => {
     try {
-        const {name, surname, email, password, idNumber, iban, location} = req.body;
+        const {name, surname, email, password, idNumber, iban, location, googleUserId} = req.body;
         const isUserExists = await authService.isUserExists(email);
         if (isUserExists) {
             res.status(400).send(errors.EMAIL_IN_USE());
             return;
         }
-        await authService.signUp(name, surname, email, password, idNumber, iban, location);
+        await authService.signUp(name, surname, email, password, idNumber, iban, location, googleUserId);
         res.sendStatus(200);
     } catch (err) {
         if (err.name === 'ValidationError') {
@@ -54,7 +54,6 @@ router.post('/sign-up', async (req, res) => {
     }
 });
 
-
 router.get('/sign-up/verification/:token', async (req, res) => {
     try {
         const verificationToken = await authService.findVerificationToken(req.params.token);
@@ -87,6 +86,34 @@ router.post('/login', async (req, res) => {
     } catch (err) {
         if (err.name === 'InvalidCredentials' || err.name === 'UserNotVerified') {
             res.status(401).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
+router.post('/login/google', async (req, res) => {
+    try {
+        const {idToken} = req.body;
+        const response = await authService.loginWithGoogle(idToken);
+        res.status(200).send(response);
+    } catch (err) {
+        if (err.name === 'InvalidCredentials' || err.name === 'UserNotVerified') {
+            res.status(401).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
+router.post('/sign-up/verification/resend', async (req, res) => {
+    try {
+        const email = req.body.email;
+        await authService.resendVerificationMail(email);
+        res.sendStatus(200);
+    } catch (err) {
+        if (err.name === 'UserNotFound' || err.name === 'UserAlreadyVerified') {
+            res.status(400).send(err);
         } else {
             res.status(500).send(errors.INTERNAL_ERROR(err));
         }

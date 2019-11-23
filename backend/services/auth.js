@@ -1,32 +1,19 @@
 const User = require('../models/user');
 const VerificationToken = require('../models/verificationToken');
 const authHelper = require('../helpers/auth');
-const nodemailer = require('nodemailer');
 const errors = require('../helpers/errors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const emailService = require('./email');
+const crypto = require('crypto');
+const {OAuth2Client} = require('google-auth-library');
 
-
-const transporter = nodemailer.createTransport({
-    service: process.env.SMTP_SERVICE,
-    auth: {
-        user: process.env.SMTP_USERNAME,
-        pass: process.env.SMTP_PASSWORD,
-    }
-});
-
-function generateSignUpMail(name, surname, email, verificationToken) {
-    return {
-        from: '"Papel" < c3198352@urhen.com >',
-        to: email,
-        subject: 'Papel Email Verification',
-        text: `Hi ${name} ${surname}\nPlease click on the link below to verify your account.\n
-        http://localhost:3000/auth/sign-up/verification/${verificationToken}`,
-    };
-}
+const client = new OAuth2Client(process.env.OAUTH2_CLIENT_ID);
 
 async function sendVerificationEmail(user, verificationToken) {
-    await transporter.sendMail(generateSignUpMail(user.name, user.surname, user.email, verificationToken));
+    const text = `Hi ${user.name} ${user.surname}\nPlease click on the link below to verify your account.\n
+        http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/auth/sign-up/verification/${verificationToken}`;
+    await emailService.sendMail(user.email, 'Papel Email Verification', text);
 }
 
 module.exports.isUserExists = async (email) => {
@@ -34,18 +21,25 @@ module.exports.isUserExists = async (email) => {
     return count !== 0;
 };
 
-module.exports.signUp = async (name, surname, email, password, idNumber, iban, location) => {
+module.exports.signUp = async (name, surname, email, password, idNumber, iban, location, googleUserId) => {
     let role;
     if (authHelper.isTrader(idNumber, iban)) {
         role = authHelper.ROLES.TRADER;
     } else {
         role = authHelper.ROLES.BASIC;
     }
+    let isVerified = false;
+    if (googleUserId) {
+        isVerified = true;
+        password = crypto.randomBytes(32).toString('hex');
+    }
     const user = await User.create({
-        name, surname, email, password, idNumber, iban, role, location
+        name, surname, email, password, idNumber, iban, role, location, googleUserId, isVerified
     });
-    const verificationToken = await user.generateVerificationToken();
-    await sendVerificationEmail(user, verificationToken.token);
+    if (!googleUserId) {
+        const verificationToken = await user.generateVerificationToken();
+        await sendVerificationEmail(user, verificationToken.token);
+    }
 };
 
 module.exports.findVerificationToken = async (verificationToken) => {
@@ -66,7 +60,7 @@ function generateJwtToken(_id) {
 }
 
 module.exports.login = async (email, password) => {
-    const user = await User.findOne({email}).select('+password').exec();
+    let user = await User.findOne({email}).select('+password').exec();
     if (!user) {
         throw errors.INVALID_CREDENTIALS();
     }
@@ -77,8 +71,49 @@ module.exports.login = async (email, password) => {
     if (!user.isVerified) {
         throw errors.USER_NOT_VERIFIED();
     }
-    delete user.password;
     const token = generateJwtToken(user._id);
+    user = user.toObject();
+    delete user.password;
+    return {
+        token,
+        user,
+    };
+};
+
+module.exports.resendVerificationMail = async (email) => {
+    const user = await User.findOne({email}).exec();
+    if (!user) {
+        throw errors.USER_NOT_FOUND();
+    }
+    if (user.isVerified) {
+        throw errors.USER_ALREADY_VERIFIED();
+    }
+    let verificationToken = VerificationToken.findOne({_userId: user._id});
+    if (!verificationToken) {
+        verificationToken = await user.generateVerificationToken();
+    }
+    await sendVerificationEmail(user, verificationToken.token);
+};
+
+module.exports.loginWithGoogle = async (idToken) => {
+    let ticket;
+    try {
+        ticket = await client.verifyIdToken({
+            idToken,
+            audience: process.env.OAUTH2_CLIENT_ID,
+        });
+    } catch (e) {
+        throw errors.INVALID_CREDENTIALS(e);
+    }
+
+    const googleUserId = ticket.getUserId();
+
+    let user = await User.findOne({googleUserId}).exec();
+    if (!user) {
+        throw errors.INVALID_CREDENTIALS();
+    }
+    const token = generateJwtToken(user._id);
+    user = user.toObject();
     return {
         token,
         user,

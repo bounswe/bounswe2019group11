@@ -1,31 +1,30 @@
 const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema({
-    title:{
-        type:String,
+    title: {
+        type: String,
         required: true
     },
     body: {
         type: String,
         required: true
     },
-    comment:{
+    comment: {
         type: Array,
         ref: 'Comment'
     },
     StartDate: {
         type: Date,
-        required: true    
+        required: true
     },
-    rank:{
+    rank: {
         type: Number,
         enum: [1, 2, 3],
         default: 3
     },
-    country:{
+    country: {
         type: String
     }
-
 });
 
 const Event = mongoose.model('Event', eventSchema);

@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Papel Backend"
   },
-  "host": "localhost:3000",
+  "host": "ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000",
   "basePath": "/",
   "tags": [
     {
@@ -13,10 +13,33 @@
       "description": "Authentication endpoints"
     },
     {
+      "name": "stock",
+      "description": "Stock fetch endpoints"
+    },
+    {
       "name": "event",
       "description": "Event fetch endpoints"
+    },
+    {
+      "name": "article",
+      "description": "Article fetch endpoints"
+    },
+    {
+      "name": "portfolio",
+      "description": "Portfolio create-fetch-update endpoints"
+    },
+    {
+      "name": "user",
+      "description": "User related endpoints"
     }
   ],
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
   "schemes": [
     "http",
     "https"
@@ -28,9 +51,10 @@
           "auth"
         ],
         "summary": "Sign up endpoint for the Papel.",
+        "description": "Either the password or the Google user id must be set, not both. When Google user id is set, password will be discarded so if you are not doing sign up with Google, do not set it.",
         "consumes": [
           "application/json"
-          ],
+        ],
         "produces": [
           "application/json"
         ],
@@ -40,60 +64,7 @@
             "name": "user",
             "description": "The user to sign up.",
             "schema": {
-              "type": "object",
-              "required": [
-                "name",
-                "surname",
-                "email",
-                "password"
-              ],
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "description": "Name of the user.",
-                  "example": "John"
-                },
-                "surname": {
-                  "type": "string",
-                  "description": "Surname of the user.",
-                  "example": "Doe"
-                },
-                "email": {
-                  "type": "string",
-                  "description": "Email of the user.",
-                  "example": "johndoe@gmail.com"
-                },
-                "password": {
-                  "type": "string",
-                  "description": "Password of the user.",
-                  "example": "strongPa$.$word"
-                },
-                "idNumber": {
-                  "type": "string",
-                  "description": "ID number of the user.",
-                  "example": "12345678910"
-                },
-                "iban": {
-                  "type": "string",
-                  "description": "IBAN number of the user.",
-                  "example": "TR33 0006 1005 1978 6457 8413 26"
-                },
-                "location": {
-                  "type": "object",
-                  "properties": {
-                    "latitude": {
-                      "type": "number",
-                      "description": "Latitude of the location.",
-                      "example": 41.085987
-                    },
-                    "longitude": {
-                      "type": "number",
-                      "description": "Longitude of the location.",
-                      "example": 29.044008
-                    }
-                  }
-                }
-              }
+              "$ref": "#/definitions/User"
             }
           }
         ],
@@ -142,6 +113,51 @@
         }
       }
     },
+    "/auth/sign-up/verification/resend": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Email verification resend endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "email",
+            "description": "Email of the user.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "description": "Email of the user.",
+                  "example": "john@doe.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Verification email successfully resent."
+          },
+          "400": {
+            "description": "Either a user not found with the given email or the user already verified."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
     "/auth/login": {
       "post": {
         "tags": [
@@ -181,7 +197,7 @@
           }
         ],
         "responses": {
-          "200":{
+          "200": {
             "description": "OK. User successfully logged in. User object and JWT token is returned."
           },
           "401": {
@@ -192,125 +208,1348 @@
           }
         }
       }
-    },"/event": {
+    },
+    "/auth/login/google": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Google login endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "idToken",
+            "description": "Id token for the login request.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "idToken"
+              ],
+              "properties": {
+                "idToken": {
+                  "type": "string",
+                  "description": "Id token for the login request.",
+                  "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImRiMDJhYjMwZTBiNzViOGVjZDRmODE2YmI5ZTE5NzhmNjI4NDk4OTQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiIzNzg4NzkyOTA5My04czkxY21mbXRudTlqOWI0bWFiZG1mMzg0am0yaTk0by5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6IjM3ODg3OTI5MDkzLXBsdTl2Njk1dXE4czQyYjQzZDFsOWpkYmswcGQycWViLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTE3MDI3NTIyNDIzNDI2NTUyODk1IiwiZW1haWwiOiJoYXNhbm55YW1hbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ikhhc2FuIFlhbWFuIiwicGljdHVyZSI6Imh0dHBzOi8vbGg1Lmdvb2dsZXVzZXJjb250ZW50LmNvbS8tN1BxZzZIM0NTTnMvQUFBQUFBQUFBQUkvQUFBQUFBQUFBQUEvQUNIaTNyZHZKWTd5RnpoTWdJWnZOeXB3dFlSYk1KVUptZy9zOTYtYy9waG90by5qcGciLCJnaXZlbl9uYW1lIjoiSGFzYW4iLCJmYW1pbHlfbmFtZSI6IllhbWFuIiwibG9jYWxlIjoidHIiLCJpYXQiOjE1NzQyNzE0NTQsImV4cCI6MTU3NDI3NTA1NH0.pfwBB3B4BmCMcuAyoDb8ZDBrJS4xqyJfirSANhoLtDX35kgf1VPsxeIlauACWGrcd6SRnX7YIpvAL9L36wuNaQ-JDq2C3mSlQ5MppVFcqRtlxRcJ9ICa7xfminkGM9v0juMhrXlyWNU5BSND9W0gVDl2Wc4VcxjOmVYhAj7KFHmqeI25uLk5J3z7wUCU2nZGCcBa_U4PdoSeDhOBw_kqTHFKGJ7Ni5AUHMgvEScgxkG8H7XPTVysu1KCwhmM6PFhrJVAqIYWFF6ee6UXCt0H9FkDSY0NqmoPh2faenKMXVWhetgUH02XFtTrcA2S25lQWOyLATrc8NI4TTRdssssss"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. User successfully logged in. User object and JWT token is returned."
+          },
+          "401": {
+            "description": "Invalid credentials. Either the user with the given email does not exists or the password does not matches the password for the given email."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/stock": {
       "get": {
         "tags": [
-          "event" ],
-          "summary": "Event get all endpoint.",
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-  
-          "responses": {
-            "200":{
-              "description": "OK. All Events returned succesfully.",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties":  {
-                    "title":{
-                      "type": "string",
-                      "description": "Title of the event",
-                      "example": "title"
+          "stock"
+        ],
+        "summary": "Stock(Trading Equipment) get all endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. All Stocks returned succesfully.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Stock"
+              }
+            }
+          },
+          "503": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/stock/{_id}": {
+      "get": {
+        "tags": [
+          "stock"
+        ],
+        "summary": "Returns requested stock with historical data",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "Unique Stock ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. All Stocks returned succesfully.",
+            "schema": {
+              "$ref": "#/definitions/StockDetail"
+            }
+          },
+          "503": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/user/lost-password": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Lost password endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "email",
+            "description": "Email of the password who lost his password.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "description": "Email of the password who lost his password.",
+                  "example": "john@doe.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. An email that contains instruction about how the user can reset his password is sent."
+          },
+          "400": {
+            "description": "User with the given email not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "An endpoint that returns all the users.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. A list of users are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "An endpoint that returns the user with the given id.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the requested user.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. User with the given id is returned.",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "There is no such user with the given id."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/user/lost-password/reset": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Password reset endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Token and password",
+            "description": "Lost password verification token and new password of the user.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "token",
+                "password"
+              ],
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "description": "Lost password token.",
+                  "example": "6b4c4760efb1f1a4115f391fec2f89das5dcd7ce9448464747f6f936eea4caed"
+                },
+                "password": {
+                  "type": "string",
+                  "description": "New password of the user.",
+                  "example": "new#pas$word"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Credentials are updated with the new password."
+          },
+          "400": {
+            "description": "Given lost password token is expired, invalid or the password is too short."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/portfolio": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Portfolio get all endpoint.(Actually its unnecessary but still it can be useful for development)",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. All Stocks returned succesfully.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Portfolio"
+              }
+            }
+          },
+          "503": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Create portfolio endpoint",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "portfolio",
+            "description": "The portfolio to create",
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "userId"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the Portfolio",
+                  "example": "My Portfolio"
+                },
+                "userId": {
+                  "type": "string",
+                  "description": "User ID of the portfolio",
+                  "example": "5da076d955d9b93a7308f3d7"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The portfolio created successfully",
+            "schema": {
+              "$ref": "#/definitions/Portfolio"
+            }
+          },
+          "503": {
+            "description": "Internal error occurred."
+          }
+        }
+      }
+    },
+    "/portfolio/{portfolioId}": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Portfolio get all endpoint.(Actually its unnecessary but still it can be useful for development)",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "portfolioId",
+            "in": "path",
+            "description": "Portfolio ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. All Stocks returned successfully.",
+            "schema": {
+              "$ref": "#/definitions/Portfolio"
+            }
+          },
+          "503": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/portfolio/{_id}/stock": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Add the stock to addressed portfolio /portfolio/:id describes the portfolio and /stock describes that request body should be a stock ",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "stock",
+            "description": "Add a stock to specific portfolio",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/Stock"
+            }
+          },
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "Portfolio ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The portfolio created successfully",
+            "schema": {
+              "$ref": "#/definitions/Portfolio"
+            }
+          },
+          "503": {
+            "description": "Internal error occurred."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Delete the stock to addressed portfolio /portfolio/:id describes the portfolio and /stock describes that request body should be a stock ",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "stock",
+            "description": "Delete the specific stock from specific portfolio Note: _id field should be provided it is required",
+            "schema": {
+              "type": "object",
+              "required": [
+                "_id"
+              ],
+              "$ref": "#/definitions/Stock"
+            }
+          },
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "Portfolio ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The portfolio deleted successfully, Actually it should be No Content but for updating the portfolio immediately the endpoint sends the updated portfolio ",
+            "schema": {
+              "$ref": "#/definitions/Portfolio"
+            }
+          },
+          "503": {
+            "description": "Internal error occurred."
+          }
+        }
+      }
+    },
+    "/portfolio/user/{userId}": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Returns all portfolios of the specific user.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The portfolios sent successfully",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Portfolio"
+              }
+            }
+          },
+          "503": {
+            "description": "Internal error occurred."
+          }
+        }
+      }
+    },
+    "/article": {
+      "get": {
+        "tags": [
+          "article"
+        ],
+        "summary": "Article get all endpoint.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. All articles returned succesfully.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Article"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint to add an article.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "article",
+            "description": "Article to be added.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "title",
+                "body"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Title of the article.",
+                  "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
+                },
+                "body": {
+                  "type": "string",
+                  "description": "Body of the article",
+                  "example": "The central bank cut rates for the first time since the Great Recession in late July..."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Article is successfully added.",
+            "schema": {
+              "$ref": "#/definitions/Article"
+            }
+          },
+          "400": {
+            "description": "Validation error. Either the title or the body of the article was missing. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/article/{id}": {
+      "get": {
+        "tags": [
+          "article"
+        ],
+        "summary": "An endpoint that returns the article with the given id.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The article with the given id is returned.",
+            "schema": {
+              "$ref": "#/definitions/ArticleDetail"
+            }
+          }
+        }
+      }
+    },
+    "/article/{id}/comment": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint to add a comment to an article.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "comment",
+            "description": "Comment to be added.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "body"
+              ],
+              "properties": {
+                "body": {
+                  "type": "string",
+                  "description": "Body of the comment.",
+                  "example": "That's not even remotely funny."
+                }
+              }
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment successfully added."
+          },
+          "400": {
+            "description": "Validation error. The body of the comment may be missing or the article with the given id not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/article/{id}/comment/{commentId}": {
+      "get": {
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint that returns the selected comment.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment returned.",
+            "schema": {
+              "$ref": "#/definitions/Comment"
+            }
+          },
+          "400": {
+            "description": "Validation error. Either the comment or the article not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint that updates the selected comment.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "commentBody",
+            "description": "New body of the comment.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "body"
+              ],
+              "properties": {
+                "body": {
+                  "type": "string",
+                  "description": "New body of the comment.",
+                  "example": "That's not even remotely funny."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment updated."
+          },
+          "400": {
+            "description": "Validation error. Either the comment or the article not found or the body was empty."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint that deletes the selected comment.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment deleted."
+          },
+          "400": {
+            "description": "Article, user or the comment not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/article/{id}/up-vote": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint to up vote an article.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Article successfully up voted."
+          },
+          "400": {
+            "description": "Validation error. Either the article with the given id or the user with the given token not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/article/{id}/down-vote": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint to down vote an article.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Article successfully down voted."
+          },
+          "400": {
+            "description": "Validation error. Either the article with the given id or the user with the given token not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/article/{id}/clear-vote": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint to clear vote on an article.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Vote for the article successfully cleared."
+          },
+          "400": {
+            "description": "Validation error. Either the article with the given id, the user with the given token or the vote not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/event": {
+      "get": {
+        "tags": [
+          "event"
+        ],
+        "summary": "Event get all endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. All Events returned succesfully.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Title of the event",
+                    "example": "title"
+                  },
+                  "body": {
+                    "type": "string",
+                    "description": "Event body",
+                    "example": "272.7 example"
+                  },
+                  "comment": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     },
-                    "body":{
-                      "type": "string",
-                      "description": "Event body",
-                      "example": "272.7 example"
-                    },
-                    "comment":{
-                      "type": "array",
-                      "description": "Comments of the event",
-                      "example": ["comment2","comment2"]
-                    },
-                    "date":{
-                      "type": "date",
-                      "description": "Start day of the event"
-                    },
-                    "rank":{
-                      "type": "number",
-                      "description": "Rank of the event",
-                      "example": 3
-                    },
-                    "country":{
-                      "type": "string",
-                      "description": "Country of the event",
-                      "example": "Turkey"
-                    }
+                    "description": "Comments of the event",
+                    "example": [
+                      "comment2",
+                      "comment2"
+                    ]
+                  },
+                  "date": {
+                    "type": "string",
+                    "description": "Start day of the event"
+                  },
+                  "rank": {
+                    "type": "number",
+                    "description": "Rank of the event",
+                    "example": 3
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "Country of the event",
+                    "example": "Turkey"
                   }
                 }
               }
             }
           }
         }
-      },
-      "/event/{_id}": {
-        "get": {
-          "tags": [
-            "event"
-          ],
-          "summary": "Returns requested event with historical data",
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "parameters": [
-            {
-              "name": "_id",
-              "in": "path",
-              "description": "Unique event ID",
-              "required": true,
-              "type": "string"
-            }
-          ],
-  
-          "responses": {
-            "200":{
-              "description": "OK. Event returned succesfully.",
-              "schema": {
-                "type": "object",
-                "properties":  {
-                  "title":{
-                    "type": "string",
-                    "description": "Title of the event",
-                    "example": "title"
+      }
+    },
+    "/event/{_id}": {
+      "get": {
+        "tags": [
+          "event"
+        ],
+        "summary": "Returns requested event with historical data",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "Unique event ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Event returned succesfully.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Title of the event",
+                  "example": "title"
+                },
+                "body": {
+                  "type": "string",
+                  "description": "Event body",
+                  "example": "272.7 example"
+                },
+                "comment": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
                   },
-                  "body":{
-                    "type": "string",
-                    "description": "Event body",
-                    "example": "272.7 example"
-                  },
-                  "comment":{
-                    "type": "array",
-                    "description": "Comments of the event",
-                    "example": ["comment2","comment2"]
-                  },
-                  "date":{
-                    "type": "date",
-                    "description": "Start day of the event"
-                  },
-                  "rank":{
-                    "type": "number",
-                    "description": "Rank of the event",
-                    "example": 3
-                  },
-                  "country":{
-                    "type": "string",
-                    "description": "Country of the event",
-                    "example": "Turkey"
-                  }
+                  "description": "Comments of the event",
+                  "example": [
+                    "comment2",
+                    "comment2"
+                  ]
+                },
+                "date": {
+                  "type": "string",
+                  "description": "Start day of the event"
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Rank of the event",
+                  "example": 3
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Country of the event",
+                  "example": "Turkey"
                 }
-  
               }
             }
           }
         }
       }
     }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "required": [
+        "name",
+        "surname",
+        "email"
+      ],
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Unique id of the user (it is created by database so when create a user this field should not provided by the client side )"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the user.",
+          "example": "John"
+        },
+        "surname": {
+          "type": "string",
+          "description": "Surname of the user.",
+          "example": "Doe"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email of the user.",
+          "example": "johndoe@gmail.com"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password of the user.",
+          "example": "strongPa$.$word"
+        },
+        "idNumber": {
+          "type": "string",
+          "description": "ID number of the user.",
+          "example": "12345678910"
+        },
+        "iban": {
+          "type": "string",
+          "description": "IBAN number of the user.",
+          "example": "TR33 0006 1005 1978 6457 8413 26"
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "latitude": {
+              "type": "number",
+              "description": "Latitude of the location.",
+              "example": 41.085987
+            },
+            "longitude": {
+              "type": "number",
+              "description": "Longitude of the location.",
+              "example": 29.044008
+            }
+          }
+        },
+        "googleUserId": {
+          "type": "string",
+          "description": "Google user id.",
+          "example": "117027522423426552111"
+        }
+      }
+    },
+    "Portfolio": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Unique id of the portfolio (it is created by database so when create a portfolio this field should not provided by the client side )"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the Portfolio",
+          "example": "My Portfolio"
+        },
+        "userId": {
+          "type": "string",
+          "description": "User ID of the portfolio",
+          "example": "5da076d955d9b93a7308f3d7"
+        },
+        "stocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Stock"
+          }
+        }
+      }
+    },
+    "Stock": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Unique id of the stock (it is created by database so when create a stock this field should not provided by the client side )"
+        },
+        "name": {
+          "type": "string",
+          "description": "Include both symbol and name of the stock (useful for searching)",
+          "example": "ADBE - Adobe Inc. - Common Stock"
+        },
+        "price": {
+          "type": "number",
+          "description": "Current price of the stock",
+          "example": 272.7
+        },
+        "stockSymbol": {
+          "type": "string",
+          "description": "Official Symbol of the Stock",
+          "example": "ADBE"
+        },
+        "stockName": {
+          "type": "string",
+          "description": "Name of the Stock without abbr",
+          "example": "Adobe Inc. - Common Stock"
+        }
+      }
+    },
+    "StockDetail": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Unique id of the stock"
+        },
+        "name": {
+          "type": "string",
+          "description": "Include both symbol and name of the stock (useful for searching)",
+          "example": "ADBE - Adobe Inc. - Common Stock"
+        },
+        "price": {
+          "type": "number",
+          "description": "Current price of the stock",
+          "example": 272.7
+        },
+        "monthlyPrice": {
+          "type": "object",
+          "description": "Historical data day by day ",
+          "example": "\"2019-10-16\": {\n            \"1. open\": \"270.2300\",\n            \"2. high\": \"272.8100\",\n            \"3. low\": \"267.5200\",\n            \"4. close\": \"272.7000\",\n            \"5. volume\": \"3860465\"\n        },\n        \"2019-10-15\": {\n            \"1. open\": \"278.1700\",\n            \"2. high\": \"281.5100\",\n            \"3. low\": \"278.0200\",\n            \"4. close\": \"279.3900\",\n            \"5. volume\": \"1964000\"\n        },\n        \"2019-10-14\": {\n            \"1. open\": \"278.1100\",\n            \"2. high\": \"279.4200\",\n            \"3. low\": \"277.1500\",\n            \"4. close\": \"277.7800\",\n            \"5. volume\": \"1372600\"\n        }"
+        },
+        "dailyPrice": {
+          "type": "object",
+          "description": "Historical data in a day with 5 mins interval",
+          "example": "\"2019-10-16 16:00:00\": {\n            \"1. open\": \"272.7000\",\n            \"2. high\": \"272.8300\",\n            \"3. low\": \"272.4600\",\n            \"4. close\": \"272.7900\",\n            \"5. volume\": \"161462\"\n        },\n        \"2019-10-16 15:55:00\": {\n            \"1. open\": \"272.6888\",\n            \"2. high\": \"273.0154\",\n            \"3. low\": \"272.6650\",\n            \"4. close\": \"272.6688\",\n            \"5. volume\": \"70732\"\n        },\n        \"2019-10-16 15:50:00\": {\n            \"1. open\": \"272.3350\",\n            \"2. high\": \"272.7500\",\n            \"3. low\": \"272.2300\",\n            \"4. close\": \"272.7000\",\n            \"5. volume\": \"65368\"\n        },\n        \"2019-10-16 15:45:00\": {\n            \"1. open\": \"272.6100\",\n            \"2. high\": \"272.6950\",\n            \"3. low\": \"272.3100\",\n            \"4. close\": \"272.3400\",\n            \"5. volume\": \"63315\"\n        }"
+        },
+        "stockSymbol": {
+          "type": "string",
+          "description": "Official Symbol of the Stock",
+          "example": "ADBE"
+        },
+        "stockName": {
+          "type": "string",
+          "description": "Name of the Stock without abbr",
+          "example": "Adobe Inc. - Common Stock"
+        }
+      }
+    },
+    "Article": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of the article",
+          "example": "5da07611e407903a5d01b265"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the article",
+          "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
+        },
+        "body": {
+          "type": "string",
+          "description": "Body part of the article",
+          "example": "The central bank cut rates for the first time since the Great Recession in late July..."
+        },
+        "authorId": {
+          "type": "string",
+          "description": "User ID of the article's author.",
+          "example": "5da07611e407903a5d01b265"
+        },
+        "voteCount": {
+          "type": "number",
+          "description": "Number of users that ranked the article.",
+          "example": "72"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date when the article is created.",
+          "example": "2019-11-14T21:52:05.381Z"
+        },
+        "author": {
+          "type": "object",
+          "description": "Name and surname of the author of this comment.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the author.",
+              "example": "John"
+            },
+            "surname": {
+              "type": "string",
+              "description": "Surname of the author.",
+              "example": "Doe"
+            }
+          }
+        },
+        "userVote": {
+          "type": "number",
+          "description": "Vote of the user determined from the token. -1, 0 or 1.",
+          "example": 1
+        }
+      }
+    },
+    "ArticleDetail": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Article"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Comment"
+          }
+        }
+      }
+    },
+    "Comment": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of the comment.",
+          "example": "5daedb5af05eb852753ac9c0"
+        },
+        "articleId": {
+          "type": "string",
+          "description": "Id of the article that the comment is posted.",
+          "example": "5daedb5af05eb852753ac9c1"
+        },
+        "authorId": {
+          "type": "string",
+          "description": "Id of the author of this comment.",
+          "example": "5daedb59f05eb852753ac9be"
+        },
+        "body": {
+          "type": "string",
+          "description": "Body of the comment.",
+          "example": "That's not even remotely funny."
+        },
+        "date": {
+          "type": "string",
+          "description": "Date when the comment is created.",
+          "example": "2019-11-14T21:52:05.381Z"
+        },
+        "edited": {
+          "type": "boolean",
+          "description": "Shows whether the comment is edited or not.",
+          "example": "true"
+        },
+        "lastEditDate": {
+          "type": "string",
+          "description": "If the comment is edited, shows the last edit time. It is null otherwise.",
+          "example": "2019-11-14T21:52:05.381Z"
+        },
+        "author": {
+          "type": "object",
+          "description": "Name and surname of the author of this comment.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the author.",
+              "example": "John"
+            },
+            "surname": {
+              "type": "string",
+              "description": "Surname of the author.",
+              "example": "Doe"
+            }
+          }
+        }
+      }
+    }
   }
+}
