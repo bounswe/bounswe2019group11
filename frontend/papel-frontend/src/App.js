@@ -66,6 +66,7 @@ function NavBar(props) {
     </CookiesProvider>
   </Router>);
 }
+
 function App() {
   let [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken']);
 
