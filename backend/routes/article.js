@@ -2,14 +2,15 @@ const express = require('express');
 const articleService = require('../services/article');
 const errors = require('../helpers/errors');
 const isAuthenticated = require('../middlewares/isAuthenticated');
+const authHelper = require('../helpers/auth');
 
 const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const response = await articleService.getAll();
+        const userId = authHelper.getUserIdOrNull(req);
+        const response = await articleService.getAll(userId);
         res.status(200).json(response);
-
     } catch (err) {
         res.status(500).send(errors.INTERNAL_ERROR(err));
     }
@@ -18,7 +19,8 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const ID = req.params.id;
-        const response = await articleService.getById(ID);
+        const userId = authHelper.getUserIdOrNull(req);
+        const response = await articleService.getById(ID, userId);
         res.status(200).send(response);
     } catch (err) {
         if (err.name === 'ArticleNotFound') {
