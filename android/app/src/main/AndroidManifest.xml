@@ -16,7 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.portfolio.TradingEquipmentDetailActivity"></activity>
+        <activity android:name=".ui.login.GoogleSignUpActivity"></activity>
+        <activity android:name=".ui.portfolio.TradingEquipmentDetailActivity" />
         <activity android:name=".ui.portfolio.PortfolioDetailActivity" />
         <activity android:name=".ui.articles.ReadArticleActivity" />
         <activity android:name=".ui.articles.AddArticleActivity" />
@@ -27,14 +28,22 @@
             android:label="@string/app_name">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
+
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <service
+            android:name=".FirebaseNotificationService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

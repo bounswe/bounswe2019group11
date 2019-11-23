@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.papel.R;
@@ -29,6 +30,15 @@ public class ProfileActivity extends AppCompatActivity {
         if(otherProfile) {
             followButton.setVisibility(View.VISIBLE);
         }
+        final Switch publicPrivateButton = findViewById(R.id.publicPrivateProfile);
+
+        // Add the public or private profile button if profile page is own profile page.
+        if(!otherProfile){
+            publicPrivateButton.setVisibility(View.VISIBLE);
+            //publicPrivateButton.setText(Buraya user'ın profili public mi degil mi infosu gelecek.);
+            // Sets the text for when the button is first created.
+        }
+
 
         try {
             // TODO Test HERE

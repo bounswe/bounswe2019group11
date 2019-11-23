@@ -5,10 +5,14 @@ const errors = require('../helpers/errors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const emailService = require('./email');
+const crypto = require('crypto');
+const {OAuth2Client} = require('google-auth-library');
+
+const client = new OAuth2Client(process.env.OAUTH2_CLIENT_ID);
 
 async function sendVerificationEmail(user, verificationToken) {
     const text = `Hi ${user.name} ${user.surname}\nPlease click on the link below to verify your account.\n
-        http://localhost:3000/auth/sign-up/verification/${verificationToken}`;
+        http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/auth/sign-up/verification/${verificationToken}`;
     await emailService.sendMail(user.email, 'Papel Email Verification', text);
 }
 
@@ -17,18 +21,25 @@ module.exports.isUserExists = async (email) => {
     return count !== 0;
 };
 
-module.exports.signUp = async (name, surname, email, password, idNumber, iban, location) => {
+module.exports.signUp = async (name, surname, email, password, idNumber, iban, location, googleUserId) => {
     let role;
     if (authHelper.isTrader(idNumber, iban)) {
         role = authHelper.ROLES.TRADER;
     } else {
         role = authHelper.ROLES.BASIC;
     }
+    let isVerified = false;
+    if (googleUserId) {
+        isVerified = true;
+        password = crypto.randomBytes(32).toString('hex');
+    }
     const user = await User.create({
-        name, surname, email, password, idNumber, iban, role, location
+        name, surname, email, password, idNumber, iban, role, location, googleUserId, isVerified
     });
-    const verificationToken = await user.generateVerificationToken();
-    await sendVerificationEmail(user, verificationToken.token);
+    if (!googleUserId) {
+        const verificationToken = await user.generateVerificationToken();
+        await sendVerificationEmail(user, verificationToken.token);
+    }
 };
 
 module.exports.findVerificationToken = async (verificationToken) => {
@@ -82,4 +93,29 @@ module.exports.resendVerificationMail = async (email) => {
         verificationToken = await user.generateVerificationToken();
     }
     await sendVerificationEmail(user, verificationToken.token);
+};
+
+module.exports.loginWithGoogle = async (idToken) => {
+    let ticket;
+    try {
+        ticket = await client.verifyIdToken({
+            idToken,
+            audience: process.env.OAUTH2_CLIENT_ID,
+        });
+    } catch (e) {
+        throw errors.INVALID_CREDENTIALS(e);
+    }
+
+    const googleUserId = ticket.getUserId();
+
+    let user = await User.findOne({googleUserId}).exec();
+    if (!user) {
+        throw errors.INVALID_CREDENTIALS();
+    }
+    const token = generateJwtToken(user._id);
+    user = user.toObject();
+    return {
+        token,
+        user,
+    };
 };

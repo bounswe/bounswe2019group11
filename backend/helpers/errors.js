@@ -35,7 +35,7 @@ module.exports = {
         return PapelError('EmailInUse', 'Email is associated with an existing user.', cause);
     },
     INVALID_CREDENTIALS: (cause) => {
-        return PapelError('InvalidCredentials', 'Email or the password is invalid.', cause);
+        return PapelError('InvalidCredentials', 'Email, password or the Google id is invalid.', cause);
     },
     INVALID_VERIFICATION_TOKEN: (cause) => {
         return PapelError('InvalidVerificationToken', 'Verification token cannot be found or expired.', cause);
@@ -81,5 +81,11 @@ module.exports = {
     },
     INVALID_BODY: (cause) => {
       return PapelError('InvalidBody', 'Body was missing.', cause);
+    },
+    COMMENT_NOT_FOUND: (cause) => {
+        return PapelError('CommentNotFound', 'Comment not found.', cause);
+    },
+    VOTE_NOT_FOUND: (cause) => {
+        return PapelError('VoteNotFound', 'Vote for the given article or the user id not found.', cause);
     },
 };

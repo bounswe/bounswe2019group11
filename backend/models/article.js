@@ -9,19 +9,10 @@ const articleSchema = new mongoose.Schema({
         type: String,
         required: 'InvalidBody',
     },
-    comment: {
-        type: Array,
-        default: [],
-        ref: 'Comment',
-    },
     authorId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User',
-    },
-    voterNumber: {
-        type: Number,
-        default: 0,
     },
     date: {
         type: Date,

@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import ReactDOM from 'react-dom';
 import Logo from './logo-green-small.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';

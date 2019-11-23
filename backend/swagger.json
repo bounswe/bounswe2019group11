@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Papel Backend"
   },
-  "host": "papel-dev.herokuapp.com",
+  "host": "ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000",
   "basePath": "/",
   "tags": [
     {
@@ -51,6 +51,7 @@
           "auth"
         ],
         "summary": "Sign up endpoint for the Papel.",
+        "description": "Either the password or the Google user id must be set, not both. When Google user id is set, password will be discarded so if you are not doing sign up with Google, do not set it.",
         "consumes": [
           "application/json"
         ],
@@ -208,6 +209,51 @@
         }
       }
     },
+    "/auth/login/google": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Google login endpoint.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "idToken",
+            "description": "Id token for the login request.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "idToken"
+              ],
+              "properties": {
+                "idToken": {
+                  "type": "string",
+                  "description": "Id token for the login request.",
+                  "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImRiMDJhYjMwZTBiNzViOGVjZDRmODE2YmI5ZTE5NzhmNjI4NDk4OTQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiIzNzg4NzkyOTA5My04czkxY21mbXRudTlqOWI0bWFiZG1mMzg0am0yaTk0by5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6IjM3ODg3OTI5MDkzLXBsdTl2Njk1dXE4czQyYjQzZDFsOWpkYmswcGQycWViLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTE3MDI3NTIyNDIzNDI2NTUyODk1IiwiZW1haWwiOiJoYXNhbm55YW1hbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ikhhc2FuIFlhbWFuIiwicGljdHVyZSI6Imh0dHBzOi8vbGg1Lmdvb2dsZXVzZXJjb250ZW50LmNvbS8tN1BxZzZIM0NTTnMvQUFBQUFBQUFBQUkvQUFBQUFBQUFBQUEvQUNIaTNyZHZKWTd5RnpoTWdJWnZOeXB3dFlSYk1KVUptZy9zOTYtYy9waG90by5qcGciLCJnaXZlbl9uYW1lIjoiSGFzYW4iLCJmYW1pbHlfbmFtZSI6IllhbWFuIiwibG9jYWxlIjoidHIiLCJpYXQiOjE1NzQyNzE0NTQsImV4cCI6MTU3NDI3NTA1NH0.pfwBB3B4BmCMcuAyoDb8ZDBrJS4xqyJfirSANhoLtDX35kgf1VPsxeIlauACWGrcd6SRnX7YIpvAL9L36wuNaQ-JDq2C3mSlQ5MppVFcqRtlxRcJ9ICa7xfminkGM9v0juMhrXlyWNU5BSND9W0gVDl2Wc4VcxjOmVYhAj7KFHmqeI25uLk5J3z7wUCU2nZGCcBa_U4PdoSeDhOBw_kqTHFKGJ7Ni5AUHMgvEScgxkG8H7XPTVysu1KCwhmM6PFhrJVAqIYWFF6ee6UXCt0H9FkDSY0NqmoPh2faenKMXVWhetgUH02XFtTrcA2S25lQWOyLATrc8NI4TTRdssssss"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. User successfully logged in. User object and JWT token is returned."
+          },
+          "401": {
+            "description": "Invalid credentials. Either the user with the given email does not exists or the password does not matches the password for the given email."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
     "/stock": {
       "get": {
         "tags": [
@@ -330,7 +376,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#definitions/User"
+                "$ref": "#/definitions/User"
               }
             }
           },
@@ -559,7 +605,7 @@
             }
           },
           {
-            "name": "portfolioId",
+            "name": "_id",
             "in": "path",
             "description": "Portfolio ID",
             "required": true,
@@ -603,7 +649,7 @@
             }
           },
           {
-            "name": "portfolioId",
+            "name": "_id",
             "in": "path",
             "description": "Portfolio ID",
             "required": true,
@@ -727,7 +773,7 @@
           "200": {
             "description": "OK. Article is successfully added.",
             "schema": {
-              "$ref": "#definitions/Article"
+              "$ref": "#/definitions/Article"
             }
           },
           "400": {
@@ -764,8 +810,326 @@
           "200": {
             "description": "OK. The article with the given id is returned.",
             "schema": {
-              "$ref": "#/definitions/Article"
+              "$ref": "#/definitions/ArticleDetail"
             }
+          }
+        }
+      }
+    },
+    "/article/{id}/comment": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint to add a comment to an article.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "comment",
+            "description": "Comment to be added.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "body"
+              ],
+              "properties": {
+                "body": {
+                  "type": "string",
+                  "description": "Body of the comment.",
+                  "example": "That's not even remotely funny."
+                }
+              }
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment successfully added."
+          },
+          "400": {
+            "description": "Validation error. The body of the comment may be missing or the article with the given id not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/article/{id}/comment/{commentId}": {
+      "get": {
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint that returns the selected comment.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment returned.",
+            "schema": {
+              "$ref": "#/definitions/Comment"
+            }
+          },
+          "400": {
+            "description": "Validation error. Either the comment or the article not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint that updates the selected comment.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "commentBody",
+            "description": "New body of the comment.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "body"
+              ],
+              "properties": {
+                "body": {
+                  "type": "string",
+                  "description": "New body of the comment.",
+                  "example": "That's not even remotely funny."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment updated."
+          },
+          "400": {
+            "description": "Validation error. Either the comment or the article not found or the body was empty."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint that deletes the selected comment.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment deleted."
+          },
+          "400": {
+            "description": "Article, user or the comment not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/article/{id}/up-vote": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint to up vote an article.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Article successfully up voted."
+          },
+          "400": {
+            "description": "Validation error. Either the article with the given id or the user with the given token not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/article/{id}/down-vote": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint to down vote an article.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Article successfully down voted."
+          },
+          "400": {
+            "description": "Validation error. Either the article with the given id or the user with the given token not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/article/{id}/clear-vote": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "article"
+        ],
+        "summary": "Endpoint to clear vote on an article.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the article.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Vote for the article successfully cleared."
+          },
+          "400": {
+            "description": "Validation error. Either the article with the given id, the user with the given token or the vote not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
       }
@@ -802,6 +1166,9 @@
                   },
                   "comment": {
                     "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
                     "description": "Comments of the event",
                     "example": [
                       "comment2",
@@ -868,6 +1235,9 @@
                 },
                 "comment": {
                   "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
                   "description": "Comments of the event",
                   "example": [
                     "comment2",
@@ -901,8 +1271,7 @@
       "required": [
         "name",
         "surname",
-        "email",
-        "password"
+        "email"
       ],
       "properties": {
         "_id": {
@@ -953,6 +1322,11 @@
               "example": 29.044008
             }
           }
+        },
+        "googleUserId": {
+          "type": "string",
+          "description": "Google user id.",
+          "example": "117027522423426552111"
         }
       }
     },
@@ -1052,6 +1426,11 @@
     "Article": {
       "type": "object",
       "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of the article",
+          "example": "5da07611e407903a5d01b265"
+        },
         "title": {
           "type": "string",
           "description": "Title of the article",
@@ -1062,23 +1441,149 @@
           "description": "Body part of the article",
           "example": "The central bank cut rates for the first time since the Great Recession in late July..."
         },
-        "comment": {
-          "type": "array",
-          "description": "Comments made on the article",
-          "example": [
-            "Nice!",
-            "Thank you."
-          ]
+        "authorId": {
+          "type": "string",
+          "description": "User ID of the article's author.",
+          "example": "5da07611e407903a5d01b265"
+        },
+        "voteCount": {
+          "type": "number",
+          "description": "Number of users that ranked the article.",
+          "example": "72"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date when the article is created.",
+          "example": "2019-11-14T21:52:05.381Z"
+        },
+        "author": {
+          "type": "object",
+          "description": "Name and surname of the author of this comment.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the author.",
+              "example": "John"
+            },
+            "surname": {
+              "type": "string",
+              "description": "Surname of the author.",
+              "example": "Doe"
+            }
+          }
+        }
+      }
+    },
+    "ArticleDetail": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of the article",
+          "example": "5da07611e407903a5d01b265"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the article",
+          "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
+        },
+        "body": {
+          "type": "string",
+          "description": "Body part of the article",
+          "example": "The central bank cut rates for the first time since the Great Recession in late July..."
         },
         "authorId": {
           "type": "string",
           "description": "User ID of the article's author.",
           "example": "5da07611e407903a5d01b265"
         },
-        "voterNumber": {
+        "voteCount": {
           "type": "number",
           "description": "Number of users that ranked the article.",
           "example": "72"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date when the article is created.",
+          "example": "2019-11-14T21:52:05.381Z"
+        },
+        "author": {
+          "type": "object",
+          "description": "Name and surname of the author of this comment.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the author.",
+              "example": "John"
+            },
+            "surname": {
+              "type": "string",
+              "description": "Surname of the author.",
+              "example": "Doe"
+            }
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Comment"
+          }
+        }
+      }
+    },
+    "Comment": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of the comment.",
+          "example": "5daedb5af05eb852753ac9c0"
+        },
+        "articleId": {
+          "type": "string",
+          "description": "Id of the article that the comment is posted.",
+          "example": "5daedb5af05eb852753ac9c1"
+        },
+        "authorId": {
+          "type": "string",
+          "description": "Id of the author of this comment.",
+          "example": "5daedb59f05eb852753ac9be"
+        },
+        "body": {
+          "type": "string",
+          "description": "Body of the comment.",
+          "example": "That's not even remotely funny."
+        },
+        "date": {
+          "type": "string",
+          "description": "Date when the comment is created.",
+          "example": "2019-11-14T21:52:05.381Z"
+        },
+        "edited": {
+          "type": "boolean",
+          "description": "Shows whether the comment is edited or not.",
+          "example": "true"
+        },
+        "lastEditDate": {
+          "type": "string",
+          "description": "If the comment is edited, shows the last edit time. It is null otherwise.",
+          "example": "2019-11-14T21:52:05.381Z"
+        },
+        "author": {
+          "type": "object",
+          "description": "Name and surname of the author of this comment.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the author.",
+              "example": "John"
+            },
+            "surname": {
+              "type": "string",
+              "description": "Surname of the author.",
+              "example": "Doe"
+            }
+          }
         }
       }
     }
