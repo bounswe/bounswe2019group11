@@ -10,6 +10,7 @@ import {Row, Col, Button, Card, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus,faThumbsUp,faThumbsDown, faUserCircle} from '@fortawesome/free-solid-svg-icons';
 import CommentPreview from './CommentPreview';
+import {authorizedPost} from '../helpers/request';
 
 class Article extends React.Component {
   static propTypes = {cookies: instanceOf(Cookies).isRequired};
@@ -43,18 +44,27 @@ class Article extends React.Component {
   }
 
   handleCommentEditorSubmit(event) {
-    
     const {cookies} = this.props;
-    if(!this.state.loggedIn){
-    alert('A name was submitted: ' + this.state.commentText);
-    }else{ 
-    event.preventDefault();
-    var comment = {body : this.state.commentText};
-    $.post("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment", comment, (resp, data) => {
-        console.log("Wow! It's a response: " + resp);
-        if (resp == 'OK') {
-          alert("ok");
-        };
+    if (!this.state.loggedIn) {
+      alert('A name was submitted: ' + this.state.commentText);
+    }
+    else{
+      event.preventDefault();
+      var comment = {body : this.state.commentText};
+      // $.ajax({
+      //   type: "POST",
+      //   url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment",
+      //   dataType: 'json',
+      //   async: true,
+      //   data: comment,
+      //   success: () => console.log("Wow! It's a response: "),
+      //   beforeSend: (xhr) => xhr.setRequestHeader("Authorization", "Bearer " + cookies.get('userToken'))
+      // })
+      authorizedPost({
+        url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment",
+        data: comment,
+        success: function() { console.log("Comment sent!") },
+        authToken: cookies.get('userToken')
       })
     }
   }
@@ -126,11 +136,11 @@ class Article extends React.Component {
         </Col>
 
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
-          <label for="commentEditor"></label>
+          <label htmlFor="commentEditor"></label>
 
-            <form class="span6" onSubmit={this.handleCommentEditorSubmit}>
-              <textarea id="commentBox" value={this.state.commentText} onChange={this.handleCommentEditorChange} class="form-control" id="commentEditor" placeHolder="You can share your opinion by adding a comment." rows="4"></textarea>
-              
+            <form className="span6" onSubmit={this.handleCommentEditorSubmit}>
+              <textarea id="commentBox" value={this.state.commentText} onChange={this.handleCommentEditorChange} className="form-control" id="commentEditor" placeholder="You can share your opinion by adding a comment." rows="4"></textarea>
+
               <Col  md={{span: 2, offset: 10}}
                   style={{width: "20", marginTop: 5, marginBottom: 10 }}>
                   <Button size="sm" type="submit" >
@@ -141,15 +151,15 @@ class Article extends React.Component {
         </Col>
 
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
-          
+
           <Card>
             <Card.Body>
               <Card.Title><h4>Comments</h4></Card.Title>
               <hr/>
               { comments ? (comments.map(comment => (
                 <CommentPreview key={comment._id} id={comment._id} author={comment.author[0].name +" "+comment.author[0].surname } body={comment.body} date={comment.date} lastEditDate={comment.lastEditDate}  />
-              ))) : "Comments are loading" }  
-                
+              ))) : "Comments are loading" }
+
             </Card.Body>
           </Card>
         </Col>

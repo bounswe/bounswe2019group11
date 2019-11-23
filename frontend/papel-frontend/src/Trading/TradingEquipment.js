@@ -58,7 +58,7 @@ class TradingEquipment extends React.Component {
         </div>
         <div className="row">
           <div className="col-sm-3">
-            <h3>Price: {this.state.stock.price}</h3>
+            <h3>Price: {this.state.stock.price}$</h3>
           </div>
           <div className="graphic col-sm-9 ">
             <CanvasJSChart options={options}/>
