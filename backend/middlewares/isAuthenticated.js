@@ -1,19 +1,10 @@
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
-const User = require('../models/user');
 const errors = require('../helpers/errors');
-
-function getTokenFromHeader(req) {
-    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-        return req.headers.authorization.split(' ')[1];
-    } else if (req.query && req.query.token) {
-        return req.query.token;
-    }
-    return null;
-}
+const authHelper = require('../helpers/auth');
 
 module.exports = (req, res, next) => {
-    const token = getTokenFromHeader(req);
+    const token = authHelper.getTokenFromHeader(req);
     if (!token) {
         return res.status(401).send(errors.MISSING_TOKEN());
     }
