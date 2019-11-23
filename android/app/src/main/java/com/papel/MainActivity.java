@@ -4,82 +4,101 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import android.view.View;
+
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
 import com.google.android.material.navigation.NavigationView;
+import com.papel.data.User;
 import com.papel.ui.profile.ProfileActivity;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.Menu;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+
+        Intent comingIntent = getIntent();
+        final User user = comingIntent.getParcelableExtra("User");
+
+        final Intent profileIntent = new Intent(this, ProfileActivity.class);
+        profileIntent.putExtra("User", user);
+
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        final NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_articles, R.id.nav_slideshow,
-                R.id.nav_tools, R.id.nav_share, R.id.nav_send)
+                R.id.nav_events, R.id.nav_articles, R.id.nav_portfolio, R.id.nav_trading_equipments)
                 .setDrawerLayout(drawer)
                 .build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        final Intent intent = new Intent(this, ProfileActivity.class);
         // otherProfile is true when the user clicks the profile other user.
-        // otherProfile is false when the user clickc the him profile.
+        // otherProfile is false when the user clicks the him/her profile.
 
         View header = navigationView.getHeaderView(0);
 
         MaterialCardView imageCard = header.findViewById(R.id.profileImageCard);
-        TextView username = header.findViewById(R.id.username);
-        TextView usermail = header.findViewById(R.id.title);
+        TextView userName = header.findViewById(R.id.username);
+        TextView userEmail = header.findViewById(R.id.title);
+
+        String userFullName = user.getName() + " " + user.getSurname();
+        userName.setText(userFullName);
+        userEmail.setText(user.getEmail());
 
         imageCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent.putExtra("otherProfile",false);
-                startActivity(intent);
+                profileIntent.putExtra("otherProfile", false);
+                startActivity(profileIntent);
             }
         });
 
-        username.setOnClickListener(new View.OnClickListener() {
+        userName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent.putExtra("otherProfile",true);
-                startActivity(intent);
+                profileIntent.putExtra("otherProfile", true);
+                startActivity(profileIntent);
             }
         });
 
-        usermail.setOnClickListener(new View.OnClickListener() {
+        userEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent.putExtra("otherProfile",true);
-                startActivity(intent);
+                profileIntent.putExtra("otherProfile", true);
+                startActivity(profileIntent);
             }
         });
     }
 
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -94,4 +113,5 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
 }

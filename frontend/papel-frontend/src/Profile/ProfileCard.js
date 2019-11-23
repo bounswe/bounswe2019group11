@@ -1,35 +1,47 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './Profile.css';
-import logo from "./logo.jpg"
+import logo from "./logo.jpg";
+import {useCookies} from 'react-cookie';
+import { getFormattedAddress } from '../helpers/geocoder';
 
-class ProfileCard extends React.Component {
+function ProfileCard() {
+  const [cookies] = useCookies(['user']);
+  const [formattedAddress, setFormattedAddress] = useState("");
 
-  render () {
+  var user = cookies.user;
+  var geocodeLocation = async function() {
+    var response = await getFormattedAddress(user.location)
+    if (response.status !== 'error') {
+      setFormattedAddress(response.result)
+      console.log(response.result)
+    }
+    else {
+      setFormattedAddress("")
+      console.log("Error: " + response.message)
+    }
+  }()
 
-    return (
-    <div className="container">
-      <div id="profile-card" className="card">
-        <div className='row'>
-          <div className="col-sm-6">
-            <img id="photo" src={logo} style = { {width: 150, height:150, borderRadius:150}} />
+  return (
+    <>
+      <div className='row'>
+        <div className="col-sm-6">
+          <img id="photo" src={logo} style = { {width: 150, height:150, borderRadius:150}} />
+        </div>
+        <div id= "profile-info" className="col-sm-6" >
+          <div className="row">
+            {user.name} {user.surname}
           </div>
-          <div id= "profile-info" className="col-sm-6" >
-            <div className="row">
-              NAME SURNAME
-            </div>
-            <div className="row">
-              📌 LOCATION / LOCATION
-            </div>
-            <div className="row">
-              emailaddress@mail.com
-            </div>
+          <div className="row">
+            {formattedAddress === "" ? "" : "📌 " +formattedAddress}
+          </div>
+          <div className="row">
+            {user.email}
           </div>
         </div>
       </div>
-    </div>
+    </>
+  );
 
-    );
-  }
 }
 
 

@@ -3,22 +3,29 @@
     package="com.papel">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/papel_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/papel_icon_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".ui.articles.ReadArticleActivity"></activity>
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".ui.login.GoogleSignUpActivity"></activity>
+        <activity android:name=".ui.portfolio.TradingEquipmentDetailActivity" />
+        <activity android:name=".ui.portfolio.PortfolioDetailActivity" />
+        <activity android:name=".ui.articles.ReadArticleActivity" />
         <activity android:name=".ui.articles.AddArticleActivity" />
         <activity android:name=".ui.profile.ProfileActivity" />
         <activity android:name=".ui.articles.ArticlesFragment" />
         <activity
-            android:name=".ui.home.ui.login.LoginActivity"
-            android:label="Login or Sign Up">
+            android:name=".ui.login.LoginActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
 
@@ -28,16 +35,15 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
-            <!--
+        <service
+            android:name=".FirebaseNotificationService"
+            android:exported="false">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter> !
-            -->
-        </activity>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
