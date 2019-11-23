@@ -1,6 +1,4 @@
-require('dotenv').config({
-    path: '../.env'
-});
+require('dotenv').config();
 
 const database = require('../helpers/database');
 database.establishConnection().then(r => console.log(new Date() + ' Database connection is initialized.'));
@@ -33,8 +31,7 @@ class RoundRobinKeyPicker {
     }
 }
 
-//const apiKeyPicker = new RoundRobinKeyPicker(process.env.ALPHAVANTAGE_API_KEY.split(','));
-const apiKeyPicker = new RoundRobinKeyPicker('CA54MMMQMH7JURN0,H0V9T7JGA6PZ8210'.split(','));
+const apiKeyPicker = new RoundRobinKeyPicker(process.env.ALPHAVANTAGE_API_KEY.split(','));
 const apiUrl = process.env.ALPHAVANTAGE_URL;
 
 const intradayRatesJob = new CronJob('0 */5 * * * *', async () => {

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy-dev": "git subtree push --prefix backend heroku master"
+    "deploy-dev": "git subtree push --prefix backend heroku master",
+    "cron": "node jobs/jobs.js > cron_log.txt &"
   },
   "author": "",
   "license": "ISC",
