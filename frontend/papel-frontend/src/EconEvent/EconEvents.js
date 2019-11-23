@@ -11,23 +11,23 @@ function EconEventPreview({eventId, title, text}) {
   }
   const path = "../event/" + eventId;
   return (
-      <a href={path}>
-        <Card style={{width: "100%", marginBottom: 10}}>
-          <Card.Body>
-            <Card.Title>{title}</Card.Title>
-            <Card.Text>{text.slice(0, 100)}{(text.length < 100) ? "" : "..."}</Card.Text>
+    <a href={path}>
+      <Card style={{width: "100%", marginBottom: 10}}>
+        <Card.Body>
+          <Card.Title>{title}</Card.Title>
+          <Card.Text>{text.slice(0, 100)}{(text.length < 100) ? "" : "..."}</Card.Text>
 
-            <ion-icon name = {star[0]}></ion-icon>
-            <ion-icon name = {star[1]}></ion-icon>
-            <ion-icon name = {star[2]}></ion-icon>
-            <ion-icon name = {star[3]}></ion-icon>
-            <ion-icon name = {star[4]}></ion-icon>
+          <ion-icon name = {star[0]}></ion-icon>
+          <ion-icon name = {star[1]}></ion-icon>
+          <ion-icon name = {star[2]}></ion-icon>
+          <ion-icon name = {star[3]}></ion-icon>
+          <ion-icon name = {star[4]}></ion-icon>
 
-          </Card.Body>
-        </Card>
-      </a>
-    );
-  }
+        </Card.Body>
+      </Card>
+    </a>
+  );
+}
 
 class EconEvents extends React.Component{
   constructor(props){
@@ -39,7 +39,7 @@ class EconEvents extends React.Component{
     this.setState({loading: true});
     $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/event", data => {
       console.log(data);
-      self.setState({econevent: data, loading: false})
+      self.setState({econevents: data, loading: false})
     })
   }
   render(){
@@ -49,7 +49,7 @@ class EconEvents extends React.Component{
         <Col md={{span: 8, offset: 2}}>
           {
             this.state.econevents.map(econevent => (
-              <EconEventPreview key={econevent.id} title={econevent.title} text={econevent.body} eventId={econevent.id} />
+              <EconEventPreview key={econevent._id} title={econevent.title} text={econevent.body} eventId={econevent._id} />
             ))
           }
         </Col>
