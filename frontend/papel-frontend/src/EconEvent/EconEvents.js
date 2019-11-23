@@ -4,7 +4,6 @@ import {Row, Col, Card} from 'react-bootstrap';
 import $ from 'jquery';
 import EconEventPreview from './EconEventPreview';
 
-
 class EconEvents extends React.Component{
   constructor(props){
     super(props);
@@ -15,7 +14,7 @@ class EconEvents extends React.Component{
     this.setState({loading: true});
     $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/event", (data) => {
       console.log(data);
-      self.setState({econevent: data, loading: false})
+      self.setState({econevents: data, loading: false})
     })
   }
   render(){
@@ -23,11 +22,11 @@ class EconEvents extends React.Component{
     return (
       <Row>
         <Col md={{span: 8, offset: 2}}>
-  
-          { this.state.econevents.map(econevent => (
-                <EconEventPreview key={econevent._id} id={econevent._id} body={econevent.body} title={econevent.title}   />
-              ))  }  
-              
+          {
+            this.state.econevents.map(econevent => (
+              <EconEventPreview key={econevent._id} title={econevent.title} text={econevent.body} eventId={econevent._id} />
+            ))
+          }
         </Col>
       </Row>
     );

@@ -85,13 +85,15 @@ function Portfolio({portfolio}){
           <Modal.Body>
             <Form>
             {
-              stockList.map(stock => (
+              stockList
+                .filter(s => portfolio.stocks.filter(o => o._id === s._id).length === 0)
+                .map(stock => (
                 <Form.Check
                   onChange={handleCheckbox}
                   key={stock._id}
                   type='checkbox'
                   id={stock._id}
-                  label={stock.stockSymbol}
+                  label={stock.stockName.split(" - ")[0]}
                   value={stock}
                 />
               ))
