@@ -56,7 +56,7 @@ function NavBar(props) {
           <Route path="/profile"><Profile /></Route>
           <Route path="/stock/:id" component={TradingEquipment}/>
           <Route path="/article/:id" component={Article} />
-          <Route path="/event/:id"><EconEvent /></Route>
+          <Route path="/event/:id" component={EconEvent} />
           <Route path="/validation"><Validation /></Route>
           <Route path="/articles"><Articles /></Route>
           <Route path="/events"><EconEvents /></Route>
@@ -65,6 +65,7 @@ function NavBar(props) {
     </CookiesProvider>
   </Router>);
 }
+
 function App() {
   let [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken']);
 
