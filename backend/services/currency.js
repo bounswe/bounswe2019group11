@@ -37,3 +37,24 @@ module.exports.getIntraday = async (code) => {
         .select('code name rate intradayRates -_id')
         .exec();
 };
+
+module.exports.getLastWeek = async (code) => {
+    code = code.toUpperCase();
+    if (!SUPPORTED_CURRENCIES.has(code)) {
+        throw errors.INVALID_CURRENCY_CODE();
+    }
+    let currency = await Currency
+        .findOne({code})
+        .select('code name rate dailyRates -_id')
+        .exec();
+    currency = currency.toObject();
+    const dailyRateKeys = Object.keys(currency.dailyRates);
+    const lastWeek = {};
+    const limit = Math.min(7, dailyRateKeys.length);
+    for (let i = 0; i < limit; i++) {
+        lastWeek[dailyRateKeys[i]] = currency.dailyRates[dailyRateKeys[i]];
+    }
+    currency.lastWeek = lastWeek;
+    delete currency.dailyRates;
+    return currency;
+};

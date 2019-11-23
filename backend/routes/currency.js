@@ -41,4 +41,18 @@ router.get('/:code/intraday', async (req, res) => {
     }
 });
 
+router.get('/:code/last-week', async (req, res) => {
+    try {
+        const code = req.params.code;
+        const response = await currencyService.getLastWeek(code);
+        res.status(200).send(response);
+    } catch (err) {
+        if (err.name === 'InvalidCurrencyCode') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
 module.exports = router;
