@@ -26,3 +26,14 @@ module.exports.get = async (code) => {
         .select('code name rate -_id')
         .exec();
 };
+
+module.exports.getIntraday = async (code) => {
+    code = code.toUpperCase();
+    if (!SUPPORTED_CURRENCIES.has(code)) {
+        throw errors.INVALID_CURRENCY_CODE();
+    }
+    return await Currency
+        .findOne({code})
+        .select('code name rate intradayRates -_id')
+        .exec();
+};

@@ -1412,6 +1412,41 @@
           }
         }
       }
+    },
+    "/currency/{code}/intraday": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the rate and the intraday rates with 5 minutes intervals of the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given currency and its rate and intraday rates with 5 minutes intervals are returned.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyIntraday"
+            }
+          },
+          "400": {
+            "description": "Given code for the currency is not valid."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1771,6 +1806,28 @@
           "type": "number",
           "description": "Rate of the currency to the USD",
           "example": 0.91
+        }
+      }
+    },
+    "CurrencyIntraday": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CurrencyMinimal"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "intradayRates": {
+          "type": "object",
+          "description": "Last 100 intraday rates with 5 minute intervals.",
+          "example": {
+            "2019-11-22 20:00:00": {
+              "1. open": "0.9072",
+              "2. high": "0.9072",
+              "3. low": "0.9071",
+              "4. close": "0.9071"
+            }
+          }
         }
       }
     }
