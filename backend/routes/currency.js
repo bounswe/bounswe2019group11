@@ -13,4 +13,18 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/:code', async (req, res) => {
+    try {
+        const code = req.params.code;
+        const response = await currencyService.get(code);
+        res.status(200).send(response);
+    } catch (err) {
+        if (err.name === 'InvalidCurrencyCode') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
 module.exports = router;
