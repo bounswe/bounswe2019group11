@@ -90,3 +90,14 @@ module.exports.getLast100 = async (code) => {
         .select('code name rate dailyRates -_id')
         .exec();
 };
+
+module.exports.getLastFull = async (code) => {
+    code = code.toUpperCase();
+    if (!SUPPORTED_CURRENCIES.has(code)) {
+        throw errors.INVALID_CURRENCY_CODE();
+    }
+    return await Currency
+        .findOne({code})
+        .select('-__v -_id')
+        .exec();
+};
