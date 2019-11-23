@@ -39,14 +39,14 @@
         android:textColor="@color/black"
         android:textStyle="bold" />
 
-    <TextView
+    <!-- <TextView
         android:id="@+id/usermail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/username"
         android:layout_marginStart="32dp"
         android:layout_marginBottom="-16dp"
-        android:text="@string/test_usermail" />
+        android:text="@string/test_usermail" /> -->
 
     <Button
         android:id="@+id/followButton"

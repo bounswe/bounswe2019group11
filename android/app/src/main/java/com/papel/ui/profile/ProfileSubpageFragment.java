@@ -23,6 +23,8 @@ import com.papel.R;
 public class ProfileSubpageFragment extends Fragment {
 
     public static final String ARG_SUBPAGE_NAME = "subpage_name";
+    public static final String ARG_ARTICLES = "articles";
+    public static final String ARG_PORTFOLIOS = "portfolios";
 
     private String subpageName;
 

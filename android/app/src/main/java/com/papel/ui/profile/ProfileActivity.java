@@ -23,14 +23,26 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.material.tabs.TabLayout;
 import com.papel.Constants;
 import com.papel.R;
+import com.papel.data.Article;
+import com.papel.data.Portfolio;
 import com.papel.data.User;
+import com.papel.ui.utils.ResponseParser;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class ProfileActivity extends AppCompatActivity implements ProfileSubpageFragment.OnFragmentInteractionListener {
     private String userId;
 
+    private ArrayList<Article> articles = new ArrayList<>();
+    private ArrayList<Portfolio> portfolios = new ArrayList<>();
+
+    private ProfileSubpageAdapter adapter;
+
+    private TextView userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +52,8 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
         Intent intent = getIntent();
         userId = intent.getStringExtra("UserId");
 
-        ProfileSubpageAdapter adapter;
+        userName = findViewById(R.id.username);
+
         ViewPager pager;
         TabLayout tabLayout;
 
@@ -61,6 +74,8 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
         }
 
         fetchProfile();
+
+
 
         /*TextView userName = findViewById(R.id.username);
         TextView userEmail = findViewById(R.id.usermail);
@@ -98,8 +113,19 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
             public void onResponse(String response) {
                 try {
                     JSONObject responseJSON = new JSONObject(response);
+                    String privacy = responseJSON.getString("privacy");
                     String name = responseJSON.getString("name");
-                    Log.d("Info","Profile name: " + name);
+                    String surname = responseJSON.getString("surname");
+                    JSONArray articleArray = responseJSON.getJSONArray("articles");
+                    for(int i = 0; i<articleArray.length(); i++) {
+                        articles.add(ResponseParser.parseArticle(articleArray.getJSONObject(i)));
+                    }
+                    JSONArray portfolioArray = responseJSON.getJSONArray("portfolios");
+                    for(int i = 0;i<portfolioArray.length(); i++) {
+                        portfolios.add(ResponseParser.parsePortfolio(portfolioArray.getJSONObject(i)));
+                    }
+
+                    updateUI(privacy,name,surname);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -112,6 +138,11 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
         });
 
         requestQueue.add(request);
+    }
+
+
+    private void updateUI(String privacy, String name, String surname) {
+        userName.setText(name + " " + surname);
     }
 
     @Override

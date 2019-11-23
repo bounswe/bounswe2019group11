@@ -181,7 +181,7 @@ public class ReadArticleActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 try {
                     JSONObject object = new JSONObject(response);
-                    article = ResponseParser.parseArticle(object, context);
+                    article = ResponseParser.parseArticle(object);
                     title.setText(article.getTitle());
                     content.setText(article.getBody());
                     authorId = article.getAuthorId();
