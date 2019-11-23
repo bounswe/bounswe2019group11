@@ -67,9 +67,6 @@ module.exports = {
     ARTICLE_NOT_FOUND: (cause) => {
       return PapelError('ArticleNotFound', 'Article with the given id is not found.', cause);
     },
-    EVENT_NOT_FOUND: (cause) => {
-        return PapelError('EventNotFound', 'Event with the given id is not found.', cause);
-    },
     MISSING_TOKEN: (cause) => {
       return PapelError('MissingToken', 'Authorization token not found.', cause);
     },

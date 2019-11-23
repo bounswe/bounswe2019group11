@@ -77,7 +77,37 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: undefined,
         select: false,
-    }
+    },
+    following: [
+        {
+            userId: {
+                type: mongoose.Schema.Types.ObjectId, ref: 'User'
+            },
+            isAccepted:{ // This controls follow request is accepted or not
+                type: Boolean,
+                default: false
+            },
+            _id:false
+
+        }],
+    followers:[
+        {   
+            userId: {
+                type: mongoose.Schema.Types.ObjectId, ref: 'User'
+            },
+            isAccepted:{ // This controls incoming follow request is accepted by the user or not
+                type: Boolean,
+                default: false
+            },
+            _id:false
+
+        }],
+    privacy:{
+        type: String,
+        enum: ['public','private'],
+        default: 'public'
+    },
+
 });
 
 userSchema.pre('save', async function (next) {
@@ -102,6 +132,26 @@ userSchema.methods.generateLostPasswordToken = async function () {
         _userId: this._id,
         token,
     });
+};
+userSchema.methods.follow =async function(userToBeFollowed){
+    const userIdToBeFollowed = userToBeFollowed._id;
+    if(this.following.indexOf(userIdToBeFollowed) === -1){
+        if(userToBeFollowed.privacy === 'public'){
+            this.following.push({userId:userIdToBeFollowed, isAccepted:true});
+            userToBeFollowed.followers.push({userId:this._id,isAccepted:true});
+            await userToBeFollowed.save();
+            await this.save();
+            return  userToBeFollowed.name + " "+ userToBeFollowed.surname + " successfully followed";
+        }else{
+            this.following.push({userId:userIdToBeFollowed, isAccepted:false});
+            userToBeFollowed.followers.push({userId:this._id,isAccepted:false});
+            await userToBeFollowed.save();
+            await this.save();
+            return "Follow request has been sent to " + userToBeFollowed.name + " "+ userToBeFollowed.surname;
+        }
+
+    }
+
 };
 
 const User = mongoose.model('User', userSchema);
