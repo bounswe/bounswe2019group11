@@ -18,9 +18,12 @@ class Article extends React.Component {
     super(props);
     const {cookies} = props;
     const loggedIn = !!cookies.get('userToken');
-    if(loggedIn) {console.log(cookies.get("userToken"));}
+    const userId = cookies.get('user')._id?cookies.get('user')._id:"check get user id";
+
+    if(loggedIn) {console.log(cookies.get("userToken"));
+                  }
     else {console.log("not logged");} 
-    this.state = {loggedIn: loggedIn, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
+    this.state = {loggedIn: loggedIn, userId:userId, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
     this._article={};
     this._article_vote_type=0;
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -48,20 +51,20 @@ class Article extends React.Component {
   handleCommentEditorSubmit(event) {
     const {cookies} = this.props;
     if (!this.state.loggedIn) {
-      alert('A name was submitted: ' + this.state.commentText);
+      alert("To add a comment please log in.");
     }
     else{
       event.preventDefault();
       var comment = {body : this.state.commentText};
-      // $.ajax({
-      //   type: "POST",
-      //   url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment",
-      //   dataType: 'json',
-      //   async: true,
-      //   data: comment,
-      //   success: () => console.log("Wow! It's a response: "),
-      //   beforeSend: (xhr) => xhr.setRequestHeader("Authorization", "Bearer " + cookies.get('userToken'))
-      // })
+       $.ajax({
+         type: "POST",
+         url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment",
+         dataType: 'json',
+         async: true,
+         data: comment,
+         success: () => console.log("Wow! It's a response: "),
+         beforeSend: (xhr) => xhr.setRequestHeader("Authorization", "Bearer " + cookies.get('userToken'))
+       })
       authorizedPost({
         url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment",
         data: comment,
@@ -95,6 +98,10 @@ class Article extends React.Component {
     var authorLine;
     var voteCount = this.state.article.voteCount;
     var comments = this.state.article.comments;
+    var userId = this.state.userId;
+    console.log(userId);
+    var loggedIn = this.state.loggedIn;
+    
     if (this.state.authorLoading)
       authorLine = <p style={{color: "gray"}}>author not found</p> ;
     else
@@ -108,8 +115,8 @@ class Article extends React.Component {
                 <a href="http://localhost:3000">{authorLine}</a>
               <hr />
               <Card.Text>{article.body}</Card.Text>
+              <hr/>
             </Card.Body>
-            <hr/>
             <Row className="" >
                 <Col sm={{span: 4, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
                  </Col>
@@ -159,7 +166,7 @@ class Article extends React.Component {
               <Card.Title><h4>Comments</h4></Card.Title>
               <hr/>
               { comments ? (comments.map(comment => (
-                <CommentPreview key={comment._id} id={comment._id} author={comment.author[0].name +" "+comment.author[0].surname } body={comment.body} date={comment.date} lastEditDate={comment.lastEditDate}  />
+                <CommentPreview key={comment._id} id={comment._id} loggedIn={loggedIn} userId={userId} authorId={comment.authorId} author={comment.author[0].name +" "+comment.author[0].surname } body={comment.body} date={comment.date} lastEditDate={comment.lastEditDate}  />
               ))) : "Comments are loading" }
 
             </Card.Body>

@@ -1,4 +1,6 @@
 import React from 'react';
+import USD from "./USD";
+import CurencyChart from "./CurencyChart"
 import {Editor, EditorState, RichUtils} from 'draft-js';
 import 'draft-js/dist/Draft.css';
 import './Home.css';
@@ -12,9 +14,11 @@ import { faPlus,faThumbsUp,faThumbsDown } from '@fortawesome/free-solid-svg-icon
 class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {loading: false, redirect: false, articles: [], previewer1article:"active",previewer1event:""};
+    this.state = {loading: false, redirect: false, articles: [], previewer1article:"active",previewer1event:"",previewer2USD:"active",previewer2EUR:""};
     this.handleArticleClick=this.handleArticleClick.bind(this);
     this.handleEventClick=this.handleEventClick.bind(this);
+    this.handleUSDClick=this.handleUSDClick.bind(this);
+    this.handleEURClick=this.handleEURClick.bind(this);
     
   }
   componentDidMount() {
@@ -24,30 +28,52 @@ class Home extends React.Component {
       self.setState({articles: [data[0],data[1],data[2  ]], loading: false});
     });
   }
+  
+  handleEventClick(event) {
+    this.setState({previewer1article:""});
+    this.setState({previewer1event:"active"});
+    Array.from(document.getElementsByClassName("ArticleSection")).forEach((item) => { 
+      item.setAttribute('hidden', null);
+       });
+    Array.from(document.getElementsByClassName("EventSection")).forEach((item) => { item.removeAttribute('hidden'); });
+    
+  }
   handleArticleClick(event) {
     this.setState({previewer1event:""});
     this.setState({previewer1article:"active"});
     Array.from(document.getElementsByClassName("ArticleSection")).forEach((item) => { item.removeAttribute('hidden'); });
     Array.from(document.getElementsByClassName("EventSection")).forEach((item) => { 
       item.setAttribute('hidden', null);
-      item.lastChild.lastChild.value = ""; });    
-  }
-  handleEventClick(event) {
-    this.setState({previewer1article:""});
-    this.setState({previewer1event:"active"});
-    Array.from(document.getElementsByClassName("ArticleSection")).forEach((item) => { 
-      item.setAttribute('hidden', null);
-      item.lastChild.lastChild.value = ""; });
-    Array.from(document.getElementsByClassName("EventSection")).forEach((item) => { item.removeAttribute('hidden'); });
-    
+       });    
   }
 
+ 
+
+  handleUSDClick(event) {
+    this.setState({previewer2EUR:""});
+    this.setState({previewer2USD:"active"});
+    Array.from(document.getElementsByClassName("USDSection")).forEach((item) => { item.removeAttribute('hidden'); });
+    Array.from(document.getElementsByClassName("EURSection")).forEach((item) => { 
+      item.setAttribute('hidden', null);
+       });    
+  }
+  handleEURClick(event) {
+    this.setState({previewer2EUR:"active"});
+    this.setState({previewer2USD:""});
+    Array.from(document.getElementsByClassName("EURSection")).forEach((item) => { item.removeAttribute('hidden'); });
+    Array.from(document.getElementsByClassName("USDSection")).forEach((item) => { 
+      item.setAttribute('hidden', null);
+      });    
+  }
   render() {
   
     return (
       <Row >
 
-        <Col sm={{span: 6 ,offset:0}} xs={{span: 12}}>
+        <Col md={{span: 5 ,offset:0}}  style ={{marginTop:10,
+  marginBottom: 100,
+  marginRight: 0,
+  marginLeft: -150}}>
           <div name="v1" class="card text-center">
             <div class="card-header">
               <ul class="nav nav-tabs card-header-tabs">
@@ -67,9 +93,9 @@ class Home extends React.Component {
                 <p class="card-text">
                   {
                     
-                    this.state.articles.map(article => (
+                    this.state.articles ? this.state.articles.map(article => (
                       <ArticleListPreview key={article._id} articleId={article._id} title={article.title} text={article.body}  />
-                    ))
+                    )) : "loading..."
                   }
                 </p>
               </div>
@@ -87,7 +113,41 @@ class Home extends React.Component {
             </div>
           </div>
         </Col>
+        
+        <Col md={{span: 9 ,offset:0}}style ={{marginTop:10,
+  marginBottom: 100,
+  marginRight: -180,
+  marginLeft: 0}}>
+          <div name="v2" class="card text-center">
+            <div class="card-header">
+              <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item" >
+                  <a class={"nav-link "+this.state.previewer2USD} onClick={this.handleUSDClick} href="#">USD</a>
+                </li>
+                <li class="nav-item">
+                  <a class={"nav-link "+this.state.previewer2EUR}  onClick={this.handleEURClick} href="#">EUR</a>
+                </li>
+              </ul>
+            </div>
+        
+            <div  class="card-body">
+              <div  className="USDSection">
+                
+                <USD currency={"USD"}></USD >
+              </div>
+              <div  hidden className="EURSection">
+                
+                <p class="card-text">
+                <CurencyChart currency={"EUR"}></CurencyChart >
+                </p>
+              </div>
+            </div>
+          </div>
+        </Col>
 
+        
+        
+        
       </Row>
       
     );

@@ -6,7 +6,7 @@ function ArticleListPreview({articleId, title, text}) {
   return (
     
         <Card.Body>
-          <Card.Title><a href={path}>{title} </a></Card.Title>
+          <Card.Title><a href={path}><b><h6>{title? title : "Loading..."}</h6></b></a></Card.Title>
           <Card.Text>{text.slice(0, 120)}{(text.length < 100) ? "" : "..."}<hr/></Card.Text>
           
 
