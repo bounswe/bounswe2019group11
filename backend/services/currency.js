@@ -79,3 +79,14 @@ module.exports.getLastMonth = async (code) => {
     delete currency.dailyRates;
     return currency;
 };
+
+module.exports.getLast100 = async (code) => {
+    code = code.toUpperCase();
+    if (!SUPPORTED_CURRENCIES.has(code)) {
+        throw errors.INVALID_CURRENCY_CODE();
+    }
+    return await Currency
+        .findOne({code})
+        .select('code name rate dailyRates -_id')
+        .exec();
+};
