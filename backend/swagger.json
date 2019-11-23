@@ -1471,58 +1471,22 @@
               "example": "Doe"
             }
           }
+        },
+        "userVote": {
+          "type": "number",
+          "description": "Vote of the user determined from the token. -1, 0 or 1.",
+          "example": 1
         }
       }
     },
     "ArticleDetail": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Article"
+        }
+      ],
       "type": "object",
       "properties": {
-        "_id": {
-          "type": "string",
-          "description": "Id of the article",
-          "example": "5da07611e407903a5d01b265"
-        },
-        "title": {
-          "type": "string",
-          "description": "Title of the article",
-          "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
-        },
-        "body": {
-          "type": "string",
-          "description": "Body part of the article",
-          "example": "The central bank cut rates for the first time since the Great Recession in late July..."
-        },
-        "authorId": {
-          "type": "string",
-          "description": "User ID of the article's author.",
-          "example": "5da07611e407903a5d01b265"
-        },
-        "voteCount": {
-          "type": "number",
-          "description": "Number of users that ranked the article.",
-          "example": "72"
-        },
-        "date": {
-          "type": "string",
-          "description": "Date when the article is created.",
-          "example": "2019-11-14T21:52:05.381Z"
-        },
-        "author": {
-          "type": "object",
-          "description": "Name and surname of the author of this comment.",
-          "properties": {
-            "name": {
-              "type": "string",
-              "description": "Name of the author.",
-              "example": "John"
-            },
-            "surname": {
-              "type": "string",
-              "description": "Surname of the author.",
-              "example": "Doe"
-            }
-          }
-        },
         "comments": {
           "type": "array",
           "items": {
