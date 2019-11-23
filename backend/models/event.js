@@ -3,18 +3,15 @@ const mongoose = require('mongoose');
 const eventSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true
+        required: 'InvalidTitle',
     },
     body: {
         type: String,
-        required: true
-    },
-    comment: {
-        type: Array,
-        ref: 'Comment'
+        required: 'InvalidBody',
     },
     StartDate: {
         type: Date,
+        default: Date.now,
         required: true
     },
     rank: {
