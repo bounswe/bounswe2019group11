@@ -26,4 +26,7 @@ public class Constants {
 
     public static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     public static final int GOOGLE_SIGN_IN_REQUEST_CODE = 2;
+
+    public static final String ARTICLE_TITLE = "ARTICLE";
+    public static final String PORTFOLIO_TITLE = "PORTFOLIO";
 }

@@ -41,8 +41,11 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
     private ArrayList<Portfolio> portfolios = new ArrayList<>();
 
     private ProfileSubpageAdapter adapter;
+    private ViewPager pager;
+    private TabLayout tabLayout;
 
     private TextView userName;
+    private Button followButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,18 +54,15 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
 
         Intent intent = getIntent();
         userId = intent.getStringExtra("UserId");
+        Log.d("Info","Profile userid: " + userId);
 
         userName = findViewById(R.id.username);
+        followButton = findViewById(R.id.followButton);
 
-        ViewPager pager;
-        TabLayout tabLayout;
-
-        adapter = new ProfileSubpageAdapter(getSupportFragmentManager());
         pager = findViewById(R.id.pager);
         tabLayout = findViewById(R.id.tabLayout);
 
-        pager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(pager);
+
 
         try {
             // TODO Test HERE
@@ -75,17 +75,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
 
         fetchProfile();
 
-
-
-        /*TextView userName = findViewById(R.id.username);
-        TextView userEmail = findViewById(R.id.usermail);
-
-        String fullName = user.getName() + " " + user.getSurname();
-        userName.setText(fullName);
-        userEmail.setText(user.getEmail());
-
-
-        followButton.setOnClickListener(new View.OnClickListener() {
+        /*followButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(following) {
@@ -116,6 +106,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                     String privacy = responseJSON.getString("privacy");
                     String name = responseJSON.getString("name");
                     String surname = responseJSON.getString("surname");
+                    boolean isMe = false; // TODO is must be come from the server
                     JSONArray articleArray = responseJSON.getJSONArray("articles");
                     for(int i = 0; i<articleArray.length(); i++) {
                         articles.add(ResponseParser.parseArticle(articleArray.getJSONObject(i)));
@@ -125,7 +116,10 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                         portfolios.add(ResponseParser.parsePortfolio(portfolioArray.getJSONObject(i)));
                     }
 
-                    updateUI(privacy,name,surname);
+                    Log.d("Info","Privacy: " + privacy);
+
+                    updateUI(privacy,isMe,name,surname);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -141,8 +135,22 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
     }
 
 
-    private void updateUI(String privacy, String name, String surname) {
+    private void updateUI(String privacy, boolean isMe,String name, String surname) {
         userName.setText(name + " " + surname);
+        if (!isMe) {
+            // Looking other's profile
+            followButton.setVisibility(View.VISIBLE);
+
+            if (privacy.equals("private")) {
+                // Other's private profile
+                portfolios = null;
+            }
+        }
+        adapter = new ProfileSubpageAdapter(getSupportFragmentManager(),articles,portfolios);
+        pager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(pager);
+
+        //adapter.notifyDataSetChanged();
     }
 
     @Override

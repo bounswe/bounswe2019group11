@@ -6,11 +6,19 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.papel.Constants;
 import com.papel.R;
+import com.papel.data.Article;
+import com.papel.data.Portfolio;
+import com.papel.ui.portfolio.PortfolioListViewAdapter;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +35,8 @@ public class ProfileSubpageFragment extends Fragment {
     public static final String ARG_PORTFOLIOS = "portfolios";
 
     private String subpageName;
+    private ArrayList<Article> articles;
+    private ArrayList<Portfolio> portfolios;
 
     private OnFragmentInteractionListener mListener;
 
@@ -41,10 +51,12 @@ public class ProfileSubpageFragment extends Fragment {
      * @param subpageName Name of subpage
      * @return A new instance of fragment ProfileSubpageFragment.
      */
-    public static ProfileSubpageFragment newInstance(String subpageName) {
+    public static ProfileSubpageFragment newInstance(String subpageName, ArrayList<Article> articles,ArrayList<Portfolio> portfolios) {
         ProfileSubpageFragment fragment = new ProfileSubpageFragment();
         Bundle args = new Bundle();
         args.putString(ARG_SUBPAGE_NAME, subpageName);
+        args.putParcelableArrayList(ARG_ARTICLES,articles);
+        args.putParcelableArrayList(ARG_PORTFOLIOS,portfolios);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,6 +66,8 @@ public class ProfileSubpageFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             subpageName = getArguments().getString(ARG_SUBPAGE_NAME);
+            articles = getArguments().getParcelableArrayList(ARG_ARTICLES);
+            portfolios = getArguments().getParcelableArrayList(ARG_PORTFOLIOS);
         }
     }
 
@@ -61,7 +75,21 @@ public class ProfileSubpageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile_subpage, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile_subpage, container, false);
+        ListView listView = view.findViewById(R.id.listView);
+        if (subpageName.equals(Constants.ARTICLE_TITLE)) {
+            // TODO if size of articles is zero show no articles message
+            ProfileListViewAdapter adapter = new ProfileListViewAdapter(getContext(),articles);
+            listView.setAdapter(adapter);
+        } else if (subpageName.equals(Constants.PORTFOLIO_TITLE)) {
+            if (portfolios != null) {
+                //TODO if size of portfolios is zero show no portfolio message
+                PortfolioListViewAdapter adapter = new PortfolioListViewAdapter(getContext(),portfolios);
+                listView.setAdapter(adapter);
+            }
+            // TODO Show this profile is private message
+        }
+        return view;
     }
 
     public void onButtonPressed(Uri uri) {

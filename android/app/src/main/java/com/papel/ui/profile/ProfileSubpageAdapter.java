@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.papel.Constants;
 import com.papel.data.Article;
 import com.papel.data.Portfolio;
 
@@ -27,11 +28,12 @@ public class ProfileSubpageAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         Fragment fragment = new ProfileSubpageFragment();
         Bundle args = new Bundle();
-        if(position == 0) {
-            args.putString(ProfileSubpageFragment.ARG_SUBPAGE_NAME,"Article");
-            args.putParcelableArrayList(ProfileSubpageFragment.ARG_ARTICLES,this.articles);
+        if (position == 0) {
+            args.putString(ProfileSubpageFragment.ARG_SUBPAGE_NAME, Constants.ARTICLE_TITLE);
+            args.putParcelableArrayList(ProfileSubpageFragment.ARG_ARTICLES, this.articles);
         } else if (position == 1) {
-            args.putString(ProfileSubpageFragment.ARG_SUBPAGE_NAME,"Portfolio");
+            args.putString(ProfileSubpageFragment.ARG_SUBPAGE_NAME, Constants.PORTFOLIO_TITLE);
+            args.putParcelableArrayList(ProfileSubpageFragment.ARG_PORTFOLIOS, this.portfolios);
         }
         fragment.setArguments(args);
         return fragment;
@@ -45,10 +47,10 @@ public class ProfileSubpageAdapter extends FragmentPagerAdapter {
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        if(position == 0) {
-            return "ARTICLES";
-        } else if(position == 1) {
-            return "PORTFOLIOS";
+        if (position == 0) {
+            return Constants.ARTICLE_TITLE;
+        } else if (position == 1) {
+            return Constants.PORTFOLIO_TITLE;
         }
         return "PAGE TITLE";
     }
