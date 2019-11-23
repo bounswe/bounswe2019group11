@@ -19,9 +19,7 @@ class Articles extends React.Component {
       self.setState({articles: data, loading: false});
     });
   }
-  goToArticle(id) {
-    console.log("HELLO");
-  }
+
   render() {
 
     return (

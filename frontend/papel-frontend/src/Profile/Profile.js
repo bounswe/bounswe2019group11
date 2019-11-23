@@ -2,7 +2,6 @@ import React from 'react';
 import './Profile.css';
 import ProfileCard from './ProfileCard';
 import Portfolio from './Portfolio';
-import logo from "./logo.jpg";
 import {instanceOf} from 'prop-types'
 import {withCookies, Cookies} from 'react-cookie';
 import {Row, Col, Card, Button, Modal, Form} from 'react-bootstrap';

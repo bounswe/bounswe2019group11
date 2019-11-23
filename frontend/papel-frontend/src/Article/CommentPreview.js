@@ -4,9 +4,9 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus,faThumbsUp,faThumbsDown, faUserCircle} from '@fortawesome/free-solid-svg-icons';
 
 function CommentPreview({id, author, body, date, lastEditDate}) {
-  return (
+   return (
 
-    <Card>
+    
       <Card.Body>
 
         <Card.Title >
@@ -17,7 +17,7 @@ function CommentPreview({id, author, body, date, lastEditDate}) {
           {body ? body : "Comments are loading..."}
         </Card.Text>
         
-        <Row className="">
+        {/*<Row className="">
 
           <Col sm={{span: 2, offset: 0}} xs={{span: 12}}>
             
@@ -36,9 +36,10 @@ function CommentPreview({id, author, body, date, lastEditDate}) {
               !5!
             </Button>
           </Col>
-        </Row>    
+   </Row>*/}    
+        <hr/>
       </Card.Body>
-    </Card>
+    
   );
 }
 export default CommentPreview;
