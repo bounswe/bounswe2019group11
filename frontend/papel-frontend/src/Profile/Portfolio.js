@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Row, Col, Card, Modal, Button, Form} from 'react-bootstrap';
+import {Row, Col, Card, Modal, Button, Form, Table} from 'react-bootstrap';
 import $ from 'jquery';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -13,6 +13,8 @@ function Portfolio({portfolio}){
   const [newStock, setNewStock] = useState({});
   const [stockList, setStockList] = useState([]);
   const [addStockList, setAddStockList] = useState([]);
+  const [searchbarText, setSearchbarText] = useState("");
+  const [originalStockList, setOriginalStockList] = useState([]);
 
   var handleChange = function(event) {
     setNewStock({name: event.target.value});
@@ -39,6 +41,8 @@ function Portfolio({portfolio}){
   var addStockBtn = function() {
     $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/stock", data => {
       setStockList(data);
+      setOriginalStockList(data);
+      setSearchbarText("");
       showStockAdd(true);
     });
   };
@@ -58,6 +62,13 @@ function Portfolio({portfolio}){
       }
     }
   };
+  var handleSearchbarChange = function(event) {
+    var searchbarNewText = event.target.value.toLowerCase();
+    setSearchbarText(searchbarNewText);
+    var list = originalStockList.filter(stock => stock.stockName.toLowerCase().includes(searchbarNewText));
+    console.log(list);
+    setStockList(list);
+  }
   return (
     <Card className="portfolio">
       <Card.Body>
@@ -65,7 +76,7 @@ function Portfolio({portfolio}){
         <ul className="portfolio-stocks" hidden={!stocksShown}>
         { portfolio.stocks.map(
           stock =>
-          <a key={stock._id} href={"../stock/" + stock._id}><li>{stock.name.split(" ")[0]}</li></a>
+          <a key={stock._id} href={"../stock/" + stock._id}><li>{stock.stockName.split(" - ")[0]}</li></a>
           )
         }
           <li>
@@ -84,20 +95,34 @@ function Portfolio({portfolio}){
           </Modal.Header>
           <Modal.Body>
             <Form>
-            {
-              stockList
-                .filter(s => portfolio.stocks.filter(o => o._id === s._id).length === 0)
-                .map(stock => (
-                <Form.Check
-                  onChange={handleCheckbox}
-                  key={stock._id}
-                  type='checkbox'
-                  id={stock._id}
-                  label={stock.stockName.split(" - ")[0]}
-                  value={stock}
-                />
-              ))
-            }
+              <Form.Control type="text" placeholder="Search" onChange={handleSearchbarChange} />
+              <Table>
+                <thead>
+                  <tr><th>Symbol</th><th>Stock Name</th></tr>
+                </thead>
+                <tbody>
+                {
+                  stockList
+                    .filter(s => portfolio.stocks.filter(o => o._id === s._id).length === 0)
+                    .map(stock => (
+                    <tr key={stock._id}>
+                      <td xs={{span: 2}}>
+                        {stock.stockSymbol}
+                      </td>
+                      <td xs={{span: 10}}>
+                        <Form.Check
+                          onChange={handleCheckbox}
+                          type='checkbox'
+                          id={stock._id}
+                          label={stock.stockName.split(" - ")[0]}
+                          value={stock}
+                        />
+                      </td>
+                    </tr>
+                  ))
+                }
+                </tbody>
+              </Table>
               <div onClick={onAddSelected} style={{textAlign: "center"}} className="add-stock">Add Selected</div>
             </Form>
           </Modal.Body>
