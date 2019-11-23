@@ -25,6 +25,7 @@ function CurencyChart({currency}) {
       },
       data: [{
         type: "area",
+        color : "#3DA544",
         name: "TRY",
         showInLegend: false,
         dataPoints: [

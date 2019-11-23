@@ -26,6 +26,7 @@ function USD({currency}) {
       data: [{
         type: "area",
         name: "TRY",
+        color : "#3DA544",
         showInLegend: false,
         dataPoints: [
           {x:new Date(2019,11,22),	y: 5.7132},
