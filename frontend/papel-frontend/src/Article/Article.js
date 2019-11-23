@@ -17,6 +17,8 @@ class Article extends React.Component {
     super(props);
     const {cookies} = props;
     const loggedIn = !!cookies.get('userToken');
+    if(loggedIn) {console.log(cookies.get("userToken"));}
+    else {console.log("not logged");} 
     this.state = {loggedIn: loggedIn, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
     this._article={};
     this._article_vote_type=0;
@@ -30,10 +32,10 @@ class Article extends React.Component {
     const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/" + this.state.id;
     this.setState({articleLoading: true});
     $.get(request_url, data => {
-      this.setState({articleLoading: false, article: data, authorLoading: true});
+      self.setState({articleLoading: false, article: data, authorLoading: true});
       const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/user/" + data.authorId;
       $.get(request_url, user => {this.setState( {author: user, authorLoading: false} ) } );
-      this._article=this.state.article;
+      self._article=this.state.article;
       }
     )
   }
