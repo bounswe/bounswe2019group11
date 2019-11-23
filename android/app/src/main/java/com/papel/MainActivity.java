@@ -40,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
         final User user = comingIntent.getParcelableExtra("User");
 
         final Intent profileIntent = new Intent(this, ProfileActivity.class);
-        profileIntent.putExtra("User", user);
+        profileIntent.putExtra("UserId",user.getId());
+
 
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         final NavigationView navigationView = findViewById(R.id.nav_view);
@@ -72,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
         imageCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profileIntent.putExtra("otherProfile", false);
                 startActivity(profileIntent);
             }
         });
@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
         userName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profileIntent.putExtra("otherProfile", true);
                 startActivity(profileIntent);
             }
         });
@@ -88,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
         userEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profileIntent.putExtra("otherProfile", true);
                 startActivity(profileIntent);
             }
         });

@@ -17,6 +17,8 @@ public class Constants {
     public static final String GOOGLE_LOGIN = "auth/login/google";
     public static final String USER = "user/";
     public static final String TEST_USER_ID = "5da076d955d9b93a7308f3d7";
+    public static final String PROFILE = "profile/";
+
     public static final int DAILY_CHART = 0;
     public static final int MONTHLY_CHART = 1;
 

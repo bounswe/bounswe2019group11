@@ -2,20 +2,35 @@ package com.papel.ui.profile;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.material.tabs.TabLayout;
+import com.papel.Constants;
 import com.papel.R;
 import com.papel.data.User;
 
-public class ProfileActivity extends AppCompatActivity {
-    private boolean following = false;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class ProfileActivity extends AppCompatActivity implements ProfileSubpageFragment.OnFragmentInteractionListener {
+    private String userId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,22 +38,18 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         Intent intent = getIntent();
-        User user = intent.getParcelableExtra("User");
-        boolean otherProfile = intent.getBooleanExtra("otherProfile", false);
+        userId = intent.getStringExtra("UserId");
 
-        final Button followButton = findViewById(R.id.followButton);
-        if(otherProfile) {
-            followButton.setVisibility(View.VISIBLE);
-        }
-        final Switch publicPrivateButton = findViewById(R.id.publicPrivateProfile);
+        ProfileSubpageAdapter adapter;
+        ViewPager pager;
+        TabLayout tabLayout;
 
-        // Add the public or private profile button if profile page is own profile page.
-        if(!otherProfile){
-            publicPrivateButton.setVisibility(View.VISIBLE);
-            //publicPrivateButton.setText(Buraya user'ın profili public mi degil mi infosu gelecek.);
-            // Sets the text for when the button is first created.
-        }
+        adapter = new ProfileSubpageAdapter(getSupportFragmentManager());
+        pager = findViewById(R.id.pager);
+        tabLayout = findViewById(R.id.tabLayout);
 
+        pager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(pager);
 
         try {
             // TODO Test HERE
@@ -49,7 +60,9 @@ public class ProfileActivity extends AppCompatActivity {
             exp.printStackTrace();
         }
 
-        TextView userName = findViewById(R.id.username);
+        fetchProfile();
+
+        /*TextView userName = findViewById(R.id.username);
         TextView userEmail = findViewById(R.id.usermail);
 
         String fullName = user.getName() + " " + user.getSurname();
@@ -72,7 +85,37 @@ public class ProfileActivity extends AppCompatActivity {
                     following = true;
                 }
             }
+        }); */
+
+    }
+
+    private void fetchProfile() {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        String url = Constants.LOCALHOST + Constants.PROFILE + userId;
+
+        StringRequest request = new StringRequest(Request.Method.GET, url,new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject responseJSON = new JSONObject(response);
+                    String name = responseJSON.getString("name");
+                    Log.d("Info","Profile name: " + name);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
         });
+
+        requestQueue.add(request);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 
