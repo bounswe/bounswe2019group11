@@ -1,0 +1,12 @@
+.my-articles-card {
+  height: 500px;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+}
+.my-articles-card::-webkit-scrollbar {
+  width: 5px;
+  background-color: #f0f0f0;
+}
+.my-articles-card::-webkit-scrollbar-thumb {
+  background: #cdcdcd;
+}

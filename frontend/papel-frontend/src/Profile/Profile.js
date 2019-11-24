@@ -64,7 +64,7 @@ class Profile extends React.Component {
         <>
           <Row>
             <Col md={{span: 6}}>
-              <ProfileCard/>
+              <ProfileCard isMe={true}/>
             </Col>
             <Col md={{span: 6}}>
               <h3>Portfolios: </h3>

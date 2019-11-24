@@ -66,7 +66,6 @@ function Portfolio({portfolio}){
     var searchbarNewText = event.target.value.toLowerCase();
     setSearchbarText(searchbarNewText);
     var list = originalStockList.filter(stock => stock.stockName.toLowerCase().includes(searchbarNewText));
-    console.log(list);
     setStockList(list);
   }
   return (
