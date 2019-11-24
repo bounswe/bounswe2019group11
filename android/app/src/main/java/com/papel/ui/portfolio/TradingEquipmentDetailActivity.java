@@ -32,6 +32,7 @@ import com.github.mikephil.charting.data.CandleDataSet;
 import com.github.mikephil.charting.data.CandleEntry;
 import com.papel.Constants;
 import com.papel.R;
+import com.papel.data.Currency;
 import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
 import com.papel.ui.utils.DialogHelper;
@@ -43,18 +44,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Locale;
 
 public class TradingEquipmentDetailActivity extends AppCompatActivity {
 
 
     private ArrayList<CandleEntry> dailyPoints = new ArrayList<>();
+    private ArrayList<CandleEntry> weeklyPoints = new ArrayList<>();
     private ArrayList<CandleEntry> monthlyPoints = new ArrayList<>();
     private ArrayList<Calendar> dailyDates = new ArrayList<>();
+    private ArrayList<Calendar> weeklyDates = new ArrayList<>();
     private ArrayList<Calendar> monthlyDates = new ArrayList<>();
     private int chartType = Constants.DAILY_CHART;
 
@@ -64,6 +65,15 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
     private TextView value;
     private ListView commentList;
 
+    private Stock stock;
+    private Currency currency;
+
+    private String[] chartItems;
+
+    final SimpleDateFormat dailyDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+    final SimpleDateFormat monthlyDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,8 +81,14 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
         final View header = getLayoutInflater().inflate(R.layout.trading_equipment_header, null);
 
         Intent intent = getIntent();
-        Stock tradingEquipment = intent.getParcelableExtra("TradingEquipment");
-        setTitle(tradingEquipment.getSymbol());
+        TradingEquipment tradingEquipment = intent.getParcelableExtra("TradingEquipment");
+        if (tradingEquipment instanceof Stock) {
+            stock = (Stock) tradingEquipment;
+            setTitle(stock.getSymbol());
+        } else if (tradingEquipment instanceof Currency) {
+            currency = (Currency) tradingEquipment;
+            setTitle(currency.getName());
+        }
 
         commentList = findViewById(R.id.trading_equipment_comments);
         commentList.addHeaderView(header);
@@ -82,7 +98,12 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
         commentList.setAdapter(adapter);
 
         value = header.findViewById(R.id.value);
-        String valueText = tradingEquipment.getPrice() + "$";
+        String valueText = "";
+        if (stock != null) {
+            valueText = stock.getPrice() + "$";
+        } else if (currency != null) {
+            valueText = currency.getRate() + "$";
+        }
         value.setText(valueText);
 
         try {
@@ -95,27 +116,43 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
         }
 
         dropdown = header.findViewById(R.id.spinner);
-        final String[] items = new String[]{"Daily", "Monthly"};
-        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        chartItems = new String[]{"Daily", "Monthly"};
+        if (currency != null) {
+            chartItems = new String[]{"Daily", "Weekly", "Monthly"};
+        }
+        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, chartItems);
         dropdown.setAdapter(dropdownAdapter);
 
 
         dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String clicked = items[i];
-                Log.d("Dropdown","Selected: " + clicked);
-                if(clicked.equals("Daily")) {
-                    chartType = Constants.DAILY_CHART;
-                } else if (clicked.equals("Monthly")){
-                    chartType = Constants.MONTHLY_CHART;
+                String clicked = chartItems[i];
+                Log.d("Dropdown", "Selected: " + clicked);
+
+                if (stock != null) {
+                    if (clicked.equals("Daily")) {
+                        chartType = Constants.DAILY_CHART;
+                    } else if (clicked.equals("Monthly")) {
+                        chartType = Constants.MONTHLY_CHART;
+                    }
+                    showChart();
+                } else if (currency != null) {
+                    if (clicked.equals("Daily")) {
+                        chartType = Constants.DAILY_CHART;
+                    } else if (clicked.equals("Weekly")) {
+                        chartType = Constants.WEEKLY_CHART;
+                    } else if (clicked.equals("Monthly")) {
+                        chartType = Constants.MONTHLY_CHART;
+                    }
                 }
-                showChart();
+
+
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                Log.d("Dropdown","Nothing selected");
+                Log.d("Dropdown", "Nothing selected");
             }
         });
 
@@ -125,16 +162,73 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
         chart = header.findViewById(R.id.chart);
         chartSetup();
 
-        fetchChartData(tradingEquipment.getId());
+        if (stock != null) {
+            fetchStockChartData(stock.getId());
+        } else if (currency != null) {
+            fetchCurrencyDailyChartData(currency.getCode());
+        }
 
     }
 
-    private void fetchChartData(String id) {
-        final SimpleDateFormat dailyDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-        final SimpleDateFormat monthlyDateFormat = new SimpleDateFormat("yyyy-MM-dd",Locale.US);
+    private void fetchCurrencyDailyChartData(String code) {
 
-        Log.d("Info","Trading Equipment Detail: " + id);
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        String url = Constants.LOCALHOST + Constants.CURRENCY + code + "/" + Constants.INTRADAY;
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject responseJSON = new JSONObject(response);
+                    JSONObject intradayRates = responseJSON.getJSONObject("intradayRates");
 
+                    Iterator<String> keysIterator = intradayRates.keys();
+
+                    ArrayList<String> keys = new ArrayList<>();
+                    while (keysIterator.hasNext()) {
+                        keys.add(keysIterator.next());
+                    }
+
+                    int index = 0;
+                    for (int i = keys.size() - 1; i >= 0; i--) {
+                        String key = keys.get(i);
+                        Log.d("Response", "Key: " + key);
+                        JSONObject object = intradayRates.getJSONObject(key);
+
+                        double high = object.getDouble("2. high");
+                        double low = object.getDouble("3. low");
+                        double open = object.getDouble("1. open");
+                        double close = object.getDouble("4. close");
+
+                        dailyPoints.add(new CandleEntry(index, (float) high, (float) low, (float) open, (float) close));
+                        index += 1;
+
+                        try {
+                            Date date = dailyDateFormat.parse(key);
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTime(date);
+                            dailyDates.add(calendar);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this, "Error", "We couldn't get detail of the trading equipment.Please try again.", null);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this, "Error", "We couldn't get detail of the trading equipment.Please try again.", null);
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        requestQueue.add(request);
+    }
+
+    private void fetchStockChartData(String id) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         String url = Constants.LOCALHOST + Constants.STOCK + id;
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
@@ -161,7 +255,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                     int dailyIndex = 0;
                     int monthlyIndex = 0;
 
-                    for(int i = dailyKeys.size() - 1; i>=0;i--) {
+                    for (int i = dailyKeys.size() - 1; i >= 0; i--) {
                         String key = dailyKeys.get(i);
                         Log.d("Response", "Daily key: " + key);
                         JSONObject object = daily.getJSONObject(key);
@@ -181,12 +275,12 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                             dailyDates.add(calendar);
                         } catch (ParseException e) {
                             e.printStackTrace();
-                            DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this,"Error","We couldn't get detail of the trading equipment.Please try again.",null);
+                            DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this, "Error", "We couldn't get detail of the trading equipment.Please try again.", null);
                             progressBar.setVisibility(View.INVISIBLE);
                         }
                     }
 
-                    for (int i = monthlyKeys.size() - 1; i>=0;i--) {
+                    for (int i = monthlyKeys.size() - 1; i >= 0; i--) {
                         String key = monthlyKeys.get(i);
                         Log.d("Response", "Monthly key: " + key);
                         JSONObject object = monthly.getJSONObject(key);
@@ -206,7 +300,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                             monthlyDates.add(calendar);
                         } catch (ParseException e) {
                             e.printStackTrace();
-                            DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this,"Error","We couldn't get detail of the trading equipment.Please try again.",null);
+                            DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this, "Error", "We couldn't get detail of the trading equipment.Please try again.", null);
                             progressBar.setVisibility(View.INVISIBLE);
                         }
                     }
@@ -220,14 +314,14 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this,"Error","We couldn't get detail of the trading equipment.Please try again.",null);
+                    DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this, "Error", "We couldn't get detail of the trading equipment.Please try again.", null);
                     progressBar.setVisibility(View.INVISIBLE);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this,"Error","We couldn't get detail of the trading equipment.Please try again.",null);
+                DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this, "Error", "We couldn't get detail of the trading equipment.Please try again.", null);
                 progressBar.setVisibility(View.INVISIBLE);
             }
         });
@@ -251,9 +345,12 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
         if (chartType == Constants.DAILY_CHART) {
             set = new CandleDataSet(dailyPoints, "DataSet 1");
             xAxis.setValueFormatter(new ChartTimeValueFormatter(dailyDates, chartType));
-        } else {
+        } else if (chartType == Constants.MONTHLY_CHART) {
             set = new CandleDataSet(monthlyPoints, "DataSet 1");
             xAxis.setValueFormatter(new ChartTimeValueFormatter(monthlyDates, chartType));
+        } else {
+            set = new CandleDataSet(weeklyPoints, "DataSet 1");
+            xAxis.setValueFormatter(new ChartTimeValueFormatter(weeklyDates, chartType));
         }
 
         set.setDecreasingColor(getResources().getColor(R.color.chart_red));

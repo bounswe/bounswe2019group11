@@ -9,6 +9,7 @@ import android.widget.Filter;
 import android.widget.TextView;
 
 import com.papel.R;
+import com.papel.data.Currency;
 import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
 
@@ -47,11 +48,15 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
             view = LayoutInflater.from(context).inflate(R.layout.trading_equipment_row,viewGroup,false);
         }
 
-        Stock item = (Stock) filteredData.get(i);
+        TradingEquipment item = filteredData.get(i);
 
         TextView name = view.findViewById(R.id.trading_equipment_name);
 
-        name.setText(item.getSymbol());
+        if (item instanceof Stock) {
+            name.setText(((Stock)item).getSymbol());
+        } else if (item instanceof Currency) {
+            name.setText(((Currency)item).getCode());
+        }
 
         return view;
     }
