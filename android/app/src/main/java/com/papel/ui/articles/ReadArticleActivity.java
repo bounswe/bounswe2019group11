@@ -58,7 +58,6 @@ public class ReadArticleActivity extends AppCompatActivity {
     private TextView date;
     private TextView voteCount;
     private ImageView profile_pic;
-    private ImageView share;
     private ImageButton addCommentButton;
     private ImageButton likeButton;
     private ImageButton dislikeButton;
@@ -85,7 +84,6 @@ public class ReadArticleActivity extends AppCompatActivity {
         date = (TextView) header.findViewById(R.id.read_article_date_textview);
         voteCount = header.findViewById(R.id.vote_count_textview);
         profile_pic = (ImageView) header.findViewById(R.id.read_article_pic_image);
-        share = (ImageView) header.findViewById(R.id.article_share_imageview);
         addCommentButton = (ImageButton) header.findViewById(R.id.add_comment_button);
         likeButton = header.findViewById(R.id.like_imageButton);
         dislikeButton = header.findViewById(R.id.dislike_imageButton);
