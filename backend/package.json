@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy-dev": "git subtree push --prefix backend heroku master"
+    "deploy-dev": "git subtree push --prefix backend heroku master",
+    "cron": "node jobs/jobs.js > cron_log.txt &"
   },
   "author": "",
   "license": "ISC",
@@ -14,6 +15,7 @@
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "cron": "^1.7.2",
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "google-auth-library": "^5.5.1",
