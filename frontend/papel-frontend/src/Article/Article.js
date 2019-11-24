@@ -18,7 +18,12 @@ class Article extends React.Component {
     super(props);
     const {cookies} = props;
     const loggedIn = !!cookies.get('userToken');
-    this.state = {loggedIn: loggedIn, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
+    const userId = cookies.get('user')._id?cookies.get('user')._id:"check get user id";
+
+    if(loggedIn) {console.log(cookies.get("userToken"));
+                  }
+    else {console.log("not logged");} 
+    this.state = {loggedIn: loggedIn, userId:userId, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
     this._article={};
     this._article_vote_type=0;
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -31,10 +36,10 @@ class Article extends React.Component {
     const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/" + this.state.id;
     this.setState({articleLoading: true});
     $.get(request_url, data => {
-      this.setState({articleLoading: false, article: data, authorLoading: true});
+      self.setState({articleLoading: false, article: data, authorLoading: true});
       const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/user/" + data.authorId;
       $.get(request_url, user => {this.setState( {author: user, authorLoading: false} ) } );
-      this._article=this.state.article;
+      self._article=this.state.article;
       }
     )
   }
@@ -46,7 +51,7 @@ class Article extends React.Component {
   handleCommentEditorSubmit(event) {
     const {cookies} = this.props;
     if (!this.state.loggedIn) {
-      alert('A name was submitted: ' + this.state.commentText);
+      alert("To add a comment please log in.");
     }
     else{
       event.preventDefault();
@@ -93,6 +98,10 @@ class Article extends React.Component {
     var authorLine;
     var voteCount = this.state.article.voteCount;
     var comments = this.state.article.comments;
+    var userId = this.state.userId;
+    console.log(userId);
+    var loggedIn = this.state.loggedIn;
+    
     if (this.state.authorLoading)
       authorLine = <p style={{color: "gray"}}>author not found</p> ;
     else
@@ -106,8 +115,8 @@ class Article extends React.Component {
                 <a href="http://localhost:3000">{authorLine}</a>
               <hr />
               <Card.Text>{article.body}</Card.Text>
+              <hr/>
             </Card.Body>
-            <hr/>
             <Row className="" >
                 <Col sm={{span: 4, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
                  </Col>
@@ -157,7 +166,7 @@ class Article extends React.Component {
               <Card.Title><h4>Comments</h4></Card.Title>
               <hr/>
               { comments ? (comments.map(comment => (
-                <CommentPreview key={comment._id} id={comment._id} author={comment.author[0].name +" "+comment.author[0].surname } body={comment.body} date={comment.date} lastEditDate={comment.lastEditDate}  />
+                <CommentPreview key={comment._id} id={comment._id} loggedIn={loggedIn} userId={userId} authorId={comment.authorId} author={comment.author[0].name +" "+comment.author[0].surname } body={comment.body} date={comment.date} lastEditDate={comment.lastEditDate}  />
               ))) : "Comments are loading" }
 
             </Card.Body>

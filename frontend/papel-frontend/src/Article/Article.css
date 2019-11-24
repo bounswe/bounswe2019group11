@@ -18,3 +18,24 @@
 .container a {
   text-decoration: none;
 }
+
+#interactive :hover {
+  
+  cursor: pointer;
+}
+
+
+#userLine{
+  background-color: rgb(221, 221, 221);
+  
+}
+
+hr {
+  display: block;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: auto;
+  margin-right: auto;
+  border-style: inset;
+  border-width: 1px;
+}
