@@ -7,43 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.portfolio.TradingEquipmentDetailActivity">
 
-    <TextView
-        android:id="@+id/value"
-        android:visibility="invisible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="2$"
-        android:textColor="@color/black"
-        android:textSize="36sp" />
-
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:visibility="invisible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:spinnerMode="dropdown"/>
-
-    <com.github.mikephil.charting.charts.CandleStickChart
-        android:id="@+id/chart"
-        android:visibility="invisible"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="112dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="12dp"
-        />
-
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
@@ -51,4 +14,10 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"/>
+
+    <ListView
+        android:id="@+id/trading_equipment_comments"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listheader="@layout/trading_equipment_header" />
 </RelativeLayout>
