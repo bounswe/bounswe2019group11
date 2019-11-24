@@ -99,10 +99,10 @@ module.exports.getByCountry = async (country) => {
     });
 };
 
-module.exports.create = async (title, body, comment, date, rank, country) => {
-    return await Event.create({
-        title, body, comment, date, rank, country
-    });
+module.exports.create = async (theEvent) => {
+    const event = {...theEvent};
+    const createdEvent = await Event.create(event);
+    return createdEvent;
 };
 
 module.exports.delete = async (_id) => {
