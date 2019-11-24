@@ -32,6 +32,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.papel.Constants;
 import com.papel.R;
+import com.papel.data.Currency;
 import com.papel.data.Portfolio;
 import com.papel.data.TradingEquipment;
 import com.papel.ui.utils.CustomHurlStack;
@@ -48,7 +49,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
 
     private ArrayList<TradingEquipment> tradingEquipments = new ArrayList<>();
     private TradingEquipmentListViewAdapter tradingEquipmentListViewAdapter;
-    private ArrayList<TradingEquipment> tradingEquipmentOptions = new ArrayList<>();
+    private ArrayList<Object> tradingEquipmentOptions = new ArrayList<>();
 
     private Portfolio portfolio;
     private boolean isMe;
@@ -62,6 +63,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
     private RequestQueue addRequestQueue;
 
     private int requestNumber = 0;
+    private int numberOfTradingEquipmentRequest = 0;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,7 +142,18 @@ public class PortfolioDetailActivity extends AppCompatActivity {
     private void showListDialog() {
         ArrayList<MultiSelectModel> tradingEquipmentList = new ArrayList<>();
         for(int i = 0; i<tradingEquipmentOptions.size(); i++) {
-            tradingEquipmentList.add(new MultiSelectModel(i,tradingEquipmentOptions.get(i).getSymbol()));
+            Object object = tradingEquipmentOptions.get(i);
+            Log.d("Info","Object");
+            if(object instanceof TradingEquipment) {
+                TradingEquipment tradingEquipment = (TradingEquipment) object;
+                tradingEquipmentList.add(new MultiSelectModel(i,tradingEquipment.getSymbol()));
+                Log.d("Info","TradingEquipment");
+            } else if (object instanceof Currency) {
+                Currency currency = (Currency) object;
+                tradingEquipmentList.add(new MultiSelectModel(i,currency.getCode()));
+                Log.d("Info","Currency");
+            }
+
         }
 
         final ArrayList<Integer> selectedTradingEquipments = new ArrayList<>();
@@ -148,10 +161,15 @@ public class PortfolioDetailActivity extends AppCompatActivity {
 
         for(int i = 0; i<tradingEquipmentOptions.size(); i++) {
             for (int j = 0; j<tradingEquipments.size(); j++) {
-                if (tradingEquipmentOptions.get(i).getId().equals(tradingEquipments.get(j).getId())) {
-                    selectedTradingEquipments.add(i);
-                    initialSelectedTradingEquipments.add(i);
+                Object object = tradingEquipmentOptions.get(i);
+                if (object instanceof TradingEquipment) {
+                    TradingEquipment tradingEquipment = (TradingEquipment) object;
+                    if (tradingEquipment.getId().equals(tradingEquipments.get(j).getId())) {
+                        selectedTradingEquipments.add(i);
+                        initialSelectedTradingEquipments.add(i);
+                    }
                 }
+
             }
         }
 
@@ -168,19 +186,37 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                     public void onSelected(ArrayList<Integer> selectedIds, ArrayList<String> selectedNames, String dataString) {
                         //will return list of selected IDS
                         for (int i=0;i<tradingEquipmentOptions.size();i++) {
-                            TradingEquipment current = tradingEquipmentOptions.get(i);
-                            int beforeSelected = initialSelectedTradingEquipments.indexOf(i);
-                            int currentSelected = selectedIds.indexOf(i);
-                            if(beforeSelected != -1 && currentSelected == -1) {
-                                // The current item was in the list, but it is not in the list right now
-                                Log.d("Dialog","Delete " + current.getSymbol());
-                                deleteTradingEquipment(current);
+                            Object object = tradingEquipmentOptions.get(i);
+                            if (object instanceof TradingEquipment) {
+                                TradingEquipment current = (TradingEquipment) object;
+                                int beforeSelected = initialSelectedTradingEquipments.indexOf(i);
+                                int currentSelected = selectedIds.indexOf(i);
+                                if(beforeSelected != -1 && currentSelected == -1) {
+                                    // The current item was in the list, but it is not in the list right now
+                                    Log.d("Dialog","Delete " + current.getSymbol());
+                                    deleteTradingEquipment(current);
+                                }
+                                if (beforeSelected == -1 && currentSelected != -1) {
+                                    // The current item wasn't in the list, but it is in the list right now
+                                    Log.d("Dialog","Add " + current.getSymbol());
+                                    addTradingEquipment(current);
+                                }
+                            } else if(object instanceof Currency) {
+                                Currency current = (Currency) object;
+                                int beforeSelected = initialSelectedTradingEquipments.indexOf(i);
+                                int currentSelected = selectedIds.indexOf(i);
+                                if(beforeSelected != -1 && currentSelected == -1) {
+                                    // TODO delete currency
+                                    Log.d("Info","Delete currency: " + current.getCode());
+                                }
+                                if (beforeSelected == -1 && currentSelected != -1) {
+                                    // TODO add curreny
+                                    Log.d("Info", "Add currency: " + current.getCode());
+                                }
                             }
-                            if (beforeSelected == -1 && currentSelected != -1) {
-                                // The current item wasn't in the list, but it is in the list right now
-                                Log.d("Dialog","Add " + current.getSymbol());
-                                addTradingEquipment(current);
-                            }
+
+
+
                         }
                     }
 
@@ -363,16 +399,21 @@ public class PortfolioDetailActivity extends AppCompatActivity {
     }
 
     private void fetchTradingEquipments() {
+        numberOfTradingEquipmentRequest = 2;
         progressBar.setVisibility(View.VISIBLE);
 
         RequestQueue requestQueue = Volley.newRequestQueue(PortfolioDetailActivity.this);
-        String url = Constants.LOCALHOST + Constants.STOCK;
-        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        String stockUrl = Constants.LOCALHOST + Constants.STOCK;
+        String currencyUrl = Constants.LOCALHOST + Constants.CURRENCY;
+
+        tradingEquipmentOptions.clear();
+
+
+        StringRequest stockRequest = new StringRequest(Request.Method.GET, stockUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     JSONArray responseArray = new JSONArray(response);
-                    tradingEquipmentOptions.clear();
                     for(int i = 0; i<responseArray.length(); i++) {
                         JSONObject object = responseArray.getJSONObject(i);
                         String id = object.getString("_id");
@@ -383,10 +424,50 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                         Log.d("Response","stockName: " + stockName);
                         tradingEquipmentOptions.add(new TradingEquipment(id,name,price,symbol,stockName));
                     }
+                    numberOfTradingEquipmentRequest -= 1;
+                    if (numberOfTradingEquipmentRequest == 0) {
+                        // Show ui
+                        progressBar.setVisibility(View.INVISIBLE);
+                        showListDialog();
+                        addTradingEquipmentButton.setClickable(true);
+                    }
+                } catch (JSONException exp) {
+                    exp.printStackTrace();
+                }
 
-                    progressBar.setVisibility(View.INVISIBLE);
-                    showListDialog();
-                    addTradingEquipmentButton.setClickable(true);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't get trading equipments.Please try again.",null);
+                numberOfTradingEquipmentRequest -= 1;
+                progressBar.setVisibility(View.INVISIBLE);
+                addTradingEquipmentButton.setClickable(true);
+            }
+        });
+
+        StringRequest currencyRequest = new StringRequest(Request.Method.GET, currencyUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray responseArray = new JSONArray(response);
+                    for(int i = 0;i<responseArray.length(); i++ ){
+                        JSONObject object = responseArray.getJSONObject(i);
+                        String code = object.getString("code");
+                        String name = object.getString("name");
+                        double rate = object.getDouble("rate");
+
+                        Log.d("Info","Currency code: " + code);
+                        tradingEquipmentOptions.add(new Currency(code,name,rate));
+                    }
+
+                    numberOfTradingEquipmentRequest -= 1;
+                    if (numberOfTradingEquipmentRequest == 0) {
+                        // Show ui
+                        progressBar.setVisibility(View.INVISIBLE);
+                        showListDialog();
+                        addTradingEquipmentButton.setClickable(true);
+                    }
 
                 } catch (JSONException exp) {
                     exp.printStackTrace();
@@ -397,12 +478,14 @@ public class PortfolioDetailActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't get trading equipments.Please try again.",null);
+                numberOfTradingEquipmentRequest -= 1;
                 progressBar.setVisibility(View.INVISIBLE);
                 addTradingEquipmentButton.setClickable(true);
             }
         });
 
-        requestQueue.add(request);
+        requestQueue.add(stockRequest);
+        requestQueue.add(currencyRequest);
 
     }
 }
