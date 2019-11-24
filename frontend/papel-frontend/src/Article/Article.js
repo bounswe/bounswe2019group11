@@ -96,7 +96,7 @@ class Article extends React.Component {
     if (this.state.authorLoading)
       authorLine = <p style={{color: "gray"}}>author not found</p> ;
     else
-      authorLine = <p style={{color: "gray"}}>by {author.name} {author.surname}</p> ;
+      authorLine = <a href={"../user/" + author._id} style={{color: "gray"}}>by {author.name} {author.surname}</a> ;
     return (
       <Row className="article">
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>

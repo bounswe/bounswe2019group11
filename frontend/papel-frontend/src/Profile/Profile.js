@@ -74,7 +74,7 @@ class Profile extends React.Component {
                 {
                   this.state.portfolios.map (
                     portfolio =>
-                    <Portfolio key={portfolio._id} portfolio={portfolio} />
+                    <Portfolio key={portfolio._id} portfolio={portfolio} isMe={true} />
                   )
                 }
                   <Modal

@@ -7,7 +7,7 @@ import { faAngleDown, faAngleUp, faPlus} from '@fortawesome/free-solid-svg-icons
 import './Portfolio.css';
 
 
-function Portfolio({portfolio}){
+function Portfolio({portfolio, isMe}){
   const [stocksShown, showStocks] = useState(false);
   const [stockAddShown, showStockAdd] = useState(false);
   const [newStock, setNewStock] = useState({});
@@ -78,12 +78,17 @@ function Portfolio({portfolio}){
           <a key={stock._id} href={"../stock/" + stock._id}><li>{stock.stockName.split(" - ")[0]}</li></a>
           )
         }
-          <li>
+        {
+          isMe ?
+          (<li>
             <div className="add-stock" onClick={addStockBtn} style={{width: "100%", textAlign: "center"}}>
               <FontAwesomeIcon icon={faPlus} />&nbsp;
               Add Stock
             </div>
-          </li>
+          </li>)
+          :
+          ""
+        }
         </ul>
         <Modal
           show={stockAddShown}

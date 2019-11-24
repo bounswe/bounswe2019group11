@@ -5,6 +5,7 @@ import {withCookies, Cookies} from 'react-cookie'
 import {getRequest as get} from '../helpers/request'
 import ArticlePreview from '../Article/ArticlePreview'
 import './UserProfile.css'
+import Portfolio from './Portfolio'
 
 class UserProfile extends React.Component {
   // const [cookies, setCookie, removeCookie] = useCookies('user', 'userToken')
@@ -39,14 +40,32 @@ class UserProfile extends React.Component {
         <Col md={{span: 6}}>
           <ProfileCard isMe={false} user={this.state.user}/>
         </Col>
-        <Col>
-          <Card className="my-articles-card" >
-            <Card.Title style={{textAlign: "center"}}>My Articles</Card.Title>
-            <hr />
-            <Card.Body>
-              {this.state.articles.map(article => (
-                <ArticlePreview key={article._id} articleId={article._id} title={article.title} text={article.body}  />
+        <Col md={{span: 6}}>
+          <h3>Porfolios:</h3>
+          <Row>
+            <Col>
+              {this.state.portfolios.map(portfolio => (
+                <Portfolio key={portfolio._id} portfolio={portfolio} />
               ))}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Card  >
+            <Card.Title style={{textAlign: "center"}}>
+              <h3>My Articles</h3>
+              <hr/>
+            </Card.Title>
+            <Card.Body className="my-articles container-fluid">
+              <Row className="flex-row flex-nowrap">
+                {this.state.articles.map(article => (
+                  <Col key={article._id} sm={{span: 6}} style={{float: "left"}}>
+                  <ArticlePreview articleId={article._id} title={article.title} text={article.body} fixedHeight={240} />
+                  </Col>
+                ))}
+              </Row>
             </Card.Body>
 
           </Card>
