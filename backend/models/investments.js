@@ -11,26 +11,14 @@ const investmentsSchema = new mongoose.Schema({
             stock: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref:'Stock',
+                autopopulate: true
             },
             amount: {
                 type: Number,
                 required: true,
             },
-            _id:false,
-            autopopulate: true
-        }],
-    tradingEquipments: [
-        {
-            tradingEquipment: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref:'TradingEquipment'
-            },
-            amount: {
-                type: Number,
-                required: true,
-            },
-            _id:false,
-            autopopulate: true
+            _id:false
+      
         }
     ],
     currencies: [
@@ -38,13 +26,13 @@ const investmentsSchema = new mongoose.Schema({
             currency: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref:'Currency',
+                autopopulate: true
             },
             amount: {
                 type: Number,
                 required: true,
             },
-            _id:false,
-            autopopulate: true
+            _id:false
         }
     ]
 });

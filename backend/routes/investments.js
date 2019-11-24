@@ -22,7 +22,7 @@ router.get('/:id',async (req,res)=>{
     }
 });
 
-router.post('/:id/stock',async (req,res) => {
+router.post('/:id/stock',isAuthenticated, async (req,res) => {
 
     try{
         const Id = req.params.id;
@@ -35,7 +35,7 @@ router.post('/:id/stock',async (req,res) => {
 
 });
 
-router.delete('/:id/stock',async (req,res) => {
+router.delete('/:id/stock',isAuthenticated,async (req,res) => {
 
     try{
         const Id = req.params.id;
@@ -48,7 +48,34 @@ router.delete('/:id/stock',async (req,res) => {
 
 });
 
-router.post('/',async (req,res) => {
+router.post('/:id/currency',isAuthenticated,async (req,res) => {
+
+    try{
+        const Id = req.params.id;
+        const {theCurrency, amount} = req.body;
+        const response = await investmentsService.addCurrency(theCurrency,amount, Id);
+        res.status(200).json(response);
+    }catch (e) {
+        res.status(503).json(e)
+    }
+
+});
+
+router.delete('/:id/currency',isAuthenticated,async (req,res) => {
+
+    try{
+        const Id = req.params.id;
+        const theCurrency = {...req.body};
+        const response = await investmentsService.removeCurrency(theCurrency,Id);
+        res.status(200).json(response);
+    }catch (e) {
+        res.status(503).json(e)
+    }
+
+});
+
+
+router.post('/',isAuthenticated,async (req,res) => {
 
     try{
         const myInvestments = {...req.body};
