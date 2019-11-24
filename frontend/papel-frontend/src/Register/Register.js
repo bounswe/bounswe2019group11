@@ -104,7 +104,7 @@ class Register extends React.Component {
         password: this.state.password,
         idNumber: this.state.id,
         iban: this.state.iban,
-        location: {latitude: this.state.latitude, longitude: this.state.latitude}
+        location: {latitude: this.state.latitude, longitude: this.state.longitude}
       };
       console.log(user);
       $.post("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/auth/sign-up", user, (resp, data) => {
