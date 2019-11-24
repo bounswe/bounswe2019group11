@@ -40,10 +40,12 @@ public class ProfileSubpageFragment extends Fragment {
     public static final String ARG_SUBPAGE_NAME = "subpage_name";
     public static final String ARG_ARTICLES = "articles";
     public static final String ARG_PORTFOLIOS = "portfolios";
+    public static final String ARG_ISME = "isMe";
 
     private String subpageName;
     private ArrayList<Article> articles;
     private ArrayList<Portfolio> portfolios;
+    private boolean isMe;
 
     private OnFragmentInteractionListener mListener;
 
@@ -58,12 +60,13 @@ public class ProfileSubpageFragment extends Fragment {
      * @param subpageName Name of subpage
      * @return A new instance of fragment ProfileSubpageFragment.
      */
-    public static ProfileSubpageFragment newInstance(String subpageName, ArrayList<Article> articles,ArrayList<Portfolio> portfolios) {
+    public static ProfileSubpageFragment newInstance(String subpageName, ArrayList<Article> articles,ArrayList<Portfolio> portfolios, boolean isMe) {
         ProfileSubpageFragment fragment = new ProfileSubpageFragment();
         Bundle args = new Bundle();
         args.putString(ARG_SUBPAGE_NAME, subpageName);
         args.putParcelableArrayList(ARG_ARTICLES,articles);
         args.putParcelableArrayList(ARG_PORTFOLIOS,portfolios);
+        args.putBoolean(ARG_ISME, isMe);
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,6 +78,7 @@ public class ProfileSubpageFragment extends Fragment {
             subpageName = getArguments().getString(ARG_SUBPAGE_NAME);
             articles = getArguments().getParcelableArrayList(ARG_ARTICLES);
             portfolios = getArguments().getParcelableArrayList(ARG_PORTFOLIOS);
+            isMe = getArguments().getBoolean(ARG_ISME);
         }
     }
 
@@ -121,6 +125,7 @@ public class ProfileSubpageFragment extends Fragment {
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         Portfolio currentPortfolio = portfolios.get(i);
                         portfolioIntent.putExtra("Portfolio", currentPortfolio);
+                        portfolioIntent.putExtra("isMe", isMe);
                         startActivity(portfolioIntent);
                     }
                 });

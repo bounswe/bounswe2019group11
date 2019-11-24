@@ -17,11 +17,12 @@ public class ProfileSubpageAdapter extends FragmentPagerAdapter {
 
     private ArrayList<Article> articles;
     private ArrayList<Portfolio> portfolios;
-
-    public ProfileSubpageAdapter(FragmentManager fragmentManager, ArrayList<Article> articles, ArrayList<Portfolio> portfolios) {
+    private boolean isMe;
+    public ProfileSubpageAdapter(FragmentManager fragmentManager, ArrayList<Article> articles, ArrayList<Portfolio> portfolios, boolean isMe) {
         super(fragmentManager);
         this.articles = articles;
         this.portfolios = portfolios;
+        this.isMe = isMe;
     }
 
     @Override
@@ -35,6 +36,7 @@ public class ProfileSubpageAdapter extends FragmentPagerAdapter {
             args.putString(ProfileSubpageFragment.ARG_SUBPAGE_NAME, Constants.PORTFOLIO_TITLE);
             args.putParcelableArrayList(ProfileSubpageFragment.ARG_PORTFOLIOS, this.portfolios);
         }
+        args.putBoolean(ProfileSubpageFragment.ARG_ISME, this.isMe);
         fragment.setArguments(args);
         return fragment;
     }
