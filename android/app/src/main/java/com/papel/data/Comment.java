@@ -1,5 +1,7 @@
 package com.papel.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
@@ -8,7 +10,7 @@ import java.util.Locale;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
-public class Comment {
+public class Comment implements Parcelable {
     private String commentId;
     private String articleId;
     private String authorId;
@@ -60,6 +62,45 @@ public class Comment {
         } catch (Exception e) {
             Log.d(TAG, "Comment: Date cannot be formatted. Exception: %s", e);
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(this.commentId);
+        parcel.writeString(this.articleId);
+        parcel.writeString(this.authorId);
+        parcel.writeString(this.authorName);
+        parcel.writeString(this.content);
+        parcel.writeString(this.date);
+        parcel.writeByte((byte) (this.edited ? 1 : 0));
+        parcel.writeString(this.lastEditDate);
+
+    }
+
+    public static final Parcelable.Creator<Comment> CREATOR = new Parcelable.Creator<Comment>() {
+        public Comment createFromParcel(Parcel in) {
+            return new Comment(in);
+        }
+
+        public Comment[] newArray(int size) {
+            return new Comment[size];
+        }
+    };
+
+    private Comment(Parcel in) {
+        this.commentId = in.readString();
+        this.articleId = in.readString();
+        this.authorId = in.readString();
+        this.authorName = in.readString();
+        this.content = in.readString();
+        this.date = in.readString();
+        this.edited = in.readByte() != 0;
+        this.lastEditDate = in.readString();
     }
 
     public String getCommentId() {

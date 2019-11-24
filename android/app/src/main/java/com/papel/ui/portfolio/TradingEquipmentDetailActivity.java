@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -60,17 +61,26 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
     private Spinner dropdown;
     private ProgressBar progressBar;
     private TextView value;
+    private ListView commentList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trading_equipment_detail);
+        final View header = getLayoutInflater().inflate(R.layout.trading_equipment_header, null);
 
         Intent intent = getIntent();
         TradingEquipment tradingEquipment = intent.getParcelableExtra("TradingEquipment");
         setTitle(tradingEquipment.getSymbol());
 
-        value = findViewById(R.id.value);
+        commentList = findViewById(R.id.trading_equipment_comments);
+        commentList.addHeaderView(header);
+        ArrayList<String> list = new ArrayList<>();
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+        commentList.setAdapter(adapter);
+
+        value = header.findViewById(R.id.value);
         String valueText = tradingEquipment.getPrice() + "$";
         value.setText(valueText);
 
@@ -83,7 +93,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             exp.printStackTrace();
         }
 
-        dropdown = findViewById(R.id.spinner);
+        dropdown = header.findViewById(R.id.spinner);
         final String[] items = new String[]{"Daily", "Monthly"};
         ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
         dropdown.setAdapter(dropdownAdapter);
@@ -111,7 +121,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.progressBar);
 
-        chart = findViewById(R.id.chart);
+        chart = header.findViewById(R.id.chart);
         chartSetup();
 
         fetchChartData(tradingEquipment.getId());

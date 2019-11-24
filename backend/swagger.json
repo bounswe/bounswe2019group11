@@ -31,6 +31,14 @@
     {
       "name": "user",
       "description": "User related endpoints"
+    },
+    {
+      "name": "profile",
+      "description": "User profile information endpoints"
+    },
+    {
+      "name": "currency",
+      "description": "Currency related endpoints."
     }
   ],
   "securityDefinitions": {
@@ -1219,7 +1227,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK. Event returned succesfully.",
+            "description": "OK. Event returned successfully.",
             "schema": {
               "type": "object",
               "properties": {
@@ -1260,6 +1268,322 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/profile/{_id}": {
+      "get": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Returns requested user profile with his/her articles and portfolios",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "user ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The user profile with the given id is returned.",
+            "schema": {
+              "$ref": "#/definitions/Profile"
+            }
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+      },
+    "/profile/{_id}/follow": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Performs follow function on the user who is to followed",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "user ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The user profile with the given id is returned.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "msg": {
+                  "type": "string",
+                  "description": "According to privacy of the user msg could be two different string ('${userToBeFollowed.name} ${userToBeFollowed.surname} successfully followed' or 'Follow request has been sent to ${userToBeFollowed.name}  ${userToBeFollowed.surname} )",
+                  "example": "Follow request has been sent to İbrahim Kamacı"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the list of currencies with their current rates.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. All of the currencies and their rates are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CurrencyMinimal"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the rate of the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given currency and its rate are returned.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyMinimal"
+            }
+          },
+          "400": {
+            "description": "Given code for the currency is not valid."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/intraday": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the rate and the intraday rates with 5 minutes intervals of the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given currency and its rate and intraday rates with 5 minutes intervals are returned.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyIntraday"
+            }
+          },
+          "400": {
+            "description": "Given code for the currency is not valid."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/last-week": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the rate and the last 7 daily rates of the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given currency and its rate and the last 7 daily rates are returned.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyLastWeek"
+            }
+          },
+          "400": {
+            "description": "Given code for the currency is not valid."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/last-month": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the rate and the last 30 daily rates of the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given currency and its rate and the last 30 daily rates are returned.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyLastMonth"
+            }
+          },
+          "400": {
+            "description": "Given code for the currency is not valid."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/last-100": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the rate and the last 100 daily rates of the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given currency and its rate and the last 100 daily rates are returned.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyLast100"
+            }
+          },
+          "400": {
+            "description": "Given code for the currency is not valid."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/full": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the rate, intraday rates with 5 minute intervals and the last 100 daily rates of the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given currency and its rate, intraday rates with 5 minute intervals and the last 100 daily rates are returned.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyFull"
+            }
+          },
+          "400": {
+            "description": "Given code for the currency is not valid."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
       }
@@ -1471,58 +1795,22 @@
               "example": "Doe"
             }
           }
+        },
+        "userVote": {
+          "type": "number",
+          "description": "Vote of the user determined from the token. -1, 0 or 1.",
+          "example": 1
         }
       }
     },
     "ArticleDetail": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Article"
+        }
+      ],
       "type": "object",
       "properties": {
-        "_id": {
-          "type": "string",
-          "description": "Id of the article",
-          "example": "5da07611e407903a5d01b265"
-        },
-        "title": {
-          "type": "string",
-          "description": "Title of the article",
-          "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
-        },
-        "body": {
-          "type": "string",
-          "description": "Body part of the article",
-          "example": "The central bank cut rates for the first time since the Great Recession in late July..."
-        },
-        "authorId": {
-          "type": "string",
-          "description": "User ID of the article's author.",
-          "example": "5da07611e407903a5d01b265"
-        },
-        "voteCount": {
-          "type": "number",
-          "description": "Number of users that ranked the article.",
-          "example": "72"
-        },
-        "date": {
-          "type": "string",
-          "description": "Date when the article is created.",
-          "example": "2019-11-14T21:52:05.381Z"
-        },
-        "author": {
-          "type": "object",
-          "description": "Name and surname of the author of this comment.",
-          "properties": {
-            "name": {
-              "type": "string",
-              "description": "Name of the author.",
-              "example": "John"
-            },
-            "surname": {
-              "type": "string",
-              "description": "Surname of the author.",
-              "example": "Doe"
-            }
-          }
-        },
         "comments": {
           "type": "array",
           "items": {
@@ -1582,6 +1870,202 @@
               "type": "string",
               "description": "Surname of the author.",
               "example": "Doe"
+            }
+          }
+        }
+      }
+    },
+    "Profile": {
+      "type": "object",
+      "properties": {
+        "privacy": {
+          "type": "string",
+          "description": "public or private profile setting",
+          "example": "private"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the user.",
+          "example": "John"
+        },
+        "surname": {
+          "type": "string",
+          "description": "Surname of the user.",
+          "example": "Doe"
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "latitude": {
+              "type": "number",
+              "description": "Latitude of the location.",
+              "example": 41.085987
+            },
+            "longitude": {
+              "type": "number",
+              "description": "Longitude of the location.",
+              "example": 29.044008
+            }
+          }
+        },
+        "articles": {
+          "type": "array",
+          "description": "Articles of the User",
+          "items": {
+            "$ref": "#/definitions/Article"
+          }
+        },
+        "portfolios": {
+          "type": "array",
+          "description": "portfolios of the User",
+          "items": {
+            "$ref": "#/definitions/Portfolio"
+          }
+        },
+        "isInMyNetwork": {
+          "type": "string",
+          "description": "Declares if the user followed, not followed yet or follow request has been sent but not accepted yet (true,false,pending)",
+          "example": "pending"
+        }
+      }
+    },
+    "CurrencyMinimal": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Short code of the currency.",
+          "example": "EUR"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the currency.",
+          "example": "European Euro"
+        },
+        "rate": {
+          "type": "number",
+          "description": "Rate of the currency to the USD",
+          "example": 0.91
+        }
+      }
+    },
+    "CurrencyIntraday": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CurrencyMinimal"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "intradayRates": {
+          "type": "object",
+          "description": "Last 100 intraday rates with 5 minute intervals.",
+          "example": {
+            "2019-11-22 20:00:00": {
+              "1. open": "0.9072",
+              "2. high": "0.9072",
+              "3. low": "0.9071",
+              "4. close": "0.9071"
+            }
+          }
+        }
+      }
+    },
+    "CurrencyLastWeek": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CurrencyMinimal"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "lastWeek": {
+          "type": "object",
+          "description": "Last 7 daily rates.",
+          "example": {
+            "2019-11-22": {
+              "1. open": "1.1066",
+              "2. high": "1.1088",
+              "3. low": "1.1013",
+              "4. close": "1.1022"
+            }
+          }
+        }
+      }
+    },
+    "CurrencyLastMonth": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CurrencyMinimal"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "lastMonth": {
+          "type": "object",
+          "description": "Last 30 daily rates.",
+          "example": {
+            "2019-11-22": {
+              "1. open": "1.1066",
+              "2. high": "1.1088",
+              "3. low": "1.1013",
+              "4. close": "1.1022"
+            }
+          }
+        }
+      }
+    },
+    "CurrencyLast100": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CurrencyMinimal"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "dailyRates": {
+          "type": "object",
+          "description": "Last 100 daily rates.",
+          "example": {
+            "2019-11-22": {
+              "1. open": "1.1066",
+              "2. high": "1.1088",
+              "3. low": "1.1013",
+              "4. close": "1.1022"
+            }
+          }
+        }
+      }
+    },
+    "CurrencyFull": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CurrencyMinimal"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "intradayRates": {
+          "type": "object",
+          "description": "Last 100 intraday rates with 5 minute intervals.",
+          "example": {
+            "2019-11-22 20:00:00": {
+              "1. open": "0.9072",
+              "2. high": "0.9072",
+              "3. low": "0.9071",
+              "4. close": "0.9071"
+            }
+          }
+        },
+        "dailyRates": {
+          "type": "object",
+          "description": "Last 100 daily rates.",
+          "example": {
+            "2019-11-22": {
+              "1. open": "1.1066",
+              "2. high": "1.1088",
+              "3. low": "1.1013",
+              "4. close": "1.1022"
             }
           }
         }

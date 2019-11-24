@@ -2,20 +2,50 @@ package com.papel.ui.profile;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.material.tabs.TabLayout;
+import com.papel.Constants;
 import com.papel.R;
+import com.papel.data.Article;
+import com.papel.data.Portfolio;
 import com.papel.data.User;
+import com.papel.ui.utils.ResponseParser;
 
-public class ProfileActivity extends AppCompatActivity {
-    private boolean following = false;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+public class ProfileActivity extends AppCompatActivity implements ProfileSubpageFragment.OnFragmentInteractionListener {
+    private String userId;
+
+    private ArrayList<Article> articles = new ArrayList<>();
+    private ArrayList<Portfolio> portfolios = new ArrayList<>();
+
+    private ProfileSubpageAdapter adapter;
+    private ViewPager pager;
+    private TabLayout tabLayout;
+
+    private TextView userName;
+    private Button followButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,21 +53,15 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         Intent intent = getIntent();
-        User user = intent.getParcelableExtra("User");
-        boolean otherProfile = intent.getBooleanExtra("otherProfile", false);
+        userId = intent.getStringExtra("UserId");
+        Log.d("Info","Profile userid: " + userId);
 
-        final Button followButton = findViewById(R.id.followButton);
-        if(otherProfile) {
-            followButton.setVisibility(View.VISIBLE);
-        }
-        final Switch publicPrivateButton = findViewById(R.id.publicPrivateProfile);
+        userName = findViewById(R.id.username);
+        followButton = findViewById(R.id.followButton);
 
-        // Add the public or private profile button if profile page is own profile page.
-        if(!otherProfile){
-            publicPrivateButton.setVisibility(View.VISIBLE);
-            //publicPrivateButton.setText(Buraya user'ın profili public mi degil mi infosu gelecek.);
-            // Sets the text for when the button is first created.
-        }
+        pager = findViewById(R.id.pager);
+        tabLayout = findViewById(R.id.tabLayout);
+
 
 
         try {
@@ -49,15 +73,9 @@ public class ProfileActivity extends AppCompatActivity {
             exp.printStackTrace();
         }
 
-        TextView userName = findViewById(R.id.username);
-        TextView userEmail = findViewById(R.id.usermail);
+        fetchProfile();
 
-        String fullName = user.getName() + " " + user.getSurname();
-        userName.setText(fullName);
-        userEmail.setText(user.getEmail());
-
-
-        followButton.setOnClickListener(new View.OnClickListener() {
+        /*followButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(following) {
@@ -72,7 +90,71 @@ public class ProfileActivity extends AppCompatActivity {
                     following = true;
                 }
             }
+        }); */
+
+    }
+
+    private void fetchProfile() {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        String url = Constants.LOCALHOST + Constants.PROFILE + userId;
+
+        StringRequest request = new StringRequest(Request.Method.GET, url,new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject responseJSON = new JSONObject(response);
+                    String privacy = responseJSON.getString("privacy");
+                    String name = responseJSON.getString("name");
+                    String surname = responseJSON.getString("surname");
+                    boolean isMe = false; // TODO is must be come from the server
+                    JSONArray articleArray = responseJSON.getJSONArray("articles");
+                    for(int i = 0; i<articleArray.length(); i++) {
+                        articles.add(ResponseParser.parseArticle(articleArray.getJSONObject(i)));
+                    }
+                    JSONArray portfolioArray = responseJSON.getJSONArray("portfolios");
+                    for(int i = 0;i<portfolioArray.length(); i++) {
+                        portfolios.add(ResponseParser.parsePortfolio(portfolioArray.getJSONObject(i)));
+                    }
+
+                    Log.d("Info","Privacy: " + privacy);
+
+                    updateUI(privacy,isMe,name,surname);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
         });
+
+        requestQueue.add(request);
+    }
+
+
+    private void updateUI(String privacy, boolean isMe,String name, String surname) {
+        userName.setText(name + " " + surname);
+        if (!isMe) {
+            // Looking other's profile
+            followButton.setVisibility(View.VISIBLE);
+
+            if (privacy.equals("private")) {
+                // Other's private profile
+                portfolios = null;
+            }
+        }
+        adapter = new ProfileSubpageAdapter(getSupportFragmentManager(),articles,portfolios);
+        pager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(pager);
+
+        //adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 
