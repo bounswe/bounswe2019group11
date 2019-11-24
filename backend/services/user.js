@@ -54,3 +54,21 @@ module.exports.resetPassword = async (token, password) => {
     await user.save();
     await LostPasswordToken.deleteOne({token});
 };
+
+module.exports.getSocialNetworkById= async (_id) => {
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+        throw errors.USER_NOT_FOUND();
+    }
+     return  User.findOne({_id})
+        .populate({
+            path:'following.userId',
+            model:'User',
+            select: 'id name surname email'
+        })
+         .populate({
+             path:'followers.userId',
+             model:'User',
+             select: 'id name surname email'
+         })
+        .exec();
+};

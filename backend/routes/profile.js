@@ -33,6 +33,22 @@ const isInMyNetwork = (user,userToBeChecked) =>{
 
 };
 
+const myProfileDataTransferObject = (user,articles,portfolios,following,followingPending,followers,followerPending) => {
+    return {
+        privacy: 'private',
+        name:user.name,
+        surname:user.surname,
+        location: user.location,
+        articles: articles,
+        portfolios: portfolios,
+        following:following,
+        followingPending:followingPending,
+        followers:followers,
+        followerPending:followerPending
+
+    };
+};
+
 const privateProfileDataTransferObject = (user,articles,inInMyNetwork) => {
     return {
         privacy: 'private',
@@ -69,7 +85,7 @@ const myProfileDataTransferObject = (user,articles,portfolios,investments,inInMy
     };
 };
 
-router.get('/:id', async (req, res) => {
+router.get('/other/:id', async (req, res) => {
     try {
         const token = getTokenFromHeader(req);
         if (token) {
@@ -121,6 +137,30 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+router.get('/myprofile',isAuthenticated, async (req, res) => {
+    try {
+        const userId =  req.token && req.token.data && req.token.data._id;
+        const articles = await articleService.getByUserId(userId);
+        const portfolios = await portfolioService.getByUserId(userId);
+        userService.getSocialNetworkById(userId).then(user=>{
+            const followingPending = user.following.filter(elm => elm.isAccepted === false).map(elm => elm.userId);
+            const following = user.following.filter(elm => elm.isAccepted === true).map(elm => elm.userId);
+            const followerPending = user.followers.filter(elm => elm.isAccepted === false).map(elm => elm.userId);
+            const follower = user.followers.filter(elm => elm.isAccepted === true).map(elm => elm.userId);
+            res.status(200).json(myProfileDataTransferObject(user,articles,portfolios,following,followingPending,follower,followerPending));
+        });
+
+    }catch (err) {
+        if (err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+
+
+});
+
 router.post('/:id/follow',isAuthenticated, async (req, res) => {
     try {
         const id = req.params.id;
@@ -137,5 +177,7 @@ router.post('/:id/follow',isAuthenticated, async (req, res) => {
         }
     }
 });
+
+
 
 module.exports = router;
