@@ -23,14 +23,15 @@ import {Dropdown, Badge, Row, Col} from 'react-bootstrap';
 
 function NavBar(props) {
   const [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken'])
+
   var profileBtn, logoutBtn,notificationBtn, registerBtn, loginBtn;
+
   const [loggedIn, login] = useState(!!cookies.userToken);
 
   const logout = function () {
     console.log(cookies);
     removeCookie('userToken');
     removeCookie('user');
-    removeCookie('name');
     login(false);
   }
   if(!!loggedIn) {

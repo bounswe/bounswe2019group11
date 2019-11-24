@@ -24,7 +24,13 @@ function ProfileCard(props) {
     }
   }
   geocodeLocation()
-
+  // async function please() {
+  //   await geocodeLocation()
+  //   if (formattedAddress === "")
+  //     geocodeLocation()
+  //   else
+  //     console.log("i cry")
+  // }
   return (
     <>
       <div className='row'>
