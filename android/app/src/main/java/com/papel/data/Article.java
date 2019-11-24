@@ -15,6 +15,7 @@ public class Article {
     private ArrayList<Comment> comments;
     private int voteCount;
     private Date dateObj;
+    private int userVote=0;
 
     public Article() {
     }
@@ -37,6 +38,14 @@ public class Article {
         } catch (Exception e) {
 
         }
+    }
+
+    public int getUserVote() {
+        return userVote;
+    }
+
+    public void setUserVote(int userVote) {
+        this.userVote = userVote;
     }
 
     public int getVoteCount() {
