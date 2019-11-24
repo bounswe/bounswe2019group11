@@ -1,42 +1,65 @@
 import React from 'react';
 import {Row, Col, Button, Card, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faPlus,faThumbsUp,faThumbsDown, faUserCircle} from '@fortawesome/free-solid-svg-icons';
+import { faPlus,faThumbsUp,faThumbsDown, faUserCircle, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
+import $ from 'jquery';
+import {authorizedPost} from '../helpers/request';
+import Article from './Article';
 
-function CommentPreview({id, author, body, date, lastEditDate}) {
-   return (
+function CommentPreview({id, userId, authorId, author, cookies, loggedIn, body, date, lastEditDate}) {
+  var deleteBtn;
+  
+  if(loggedIn & (userId == authorId)){
+    deleteBtn = <Col sm={{span: 3, offset: 5}} xs={{span: 12}}>
+            
+      <FontAwesomeIcon id="interactive" name="Delete" 
+      
+         icon={faTrashAlt} 
+      />&nbsp;Delete Comment         
+
+    </Col>
+  }
+  return (
 
     
       <Card.Body>
-
-        <Card.Title >
-          <h6><FontAwesomeIcon name="UserCircle" icon={faUserCircle} />&nbsp; {author ? author : "Comments are loading..."}</h6>
+    
+        <Card.Title id="interactive" >
+          <h6><FontAwesomeIcon  name="UserCircle" icon={faUserCircle} />&nbsp; {author}</h6>
         </Card.Title>
-        
         <Card.Text >
           {body ? body : "Comments are loading..."}
         </Card.Text>
         
-        {/*<Row className="">
+        <Row className="">
 
           <Col sm={{span: 2, offset: 0}} xs={{span: 12}}>
-            
-            <Button size="sm"  onClick={() => alert("impelement et")}>
               
-              <FontAwesomeIcon name="Like" icon={faThumbsUp} />&nbsp;
-              !15!
-            </Button>
-
+              <FontAwesomeIcon id="interactive" name="Like" 
+              onClick={
+                function handleDelete(event) {
+                  alert("attempt to like comment");
+                  }
+                } icon={faThumbsUp} 
+              />&nbsp; xxx Likes
+              
           </Col>
 
           <Col sm={{span: 2, offset: 0}} xs={{span: 12}}>
             
-            <Button size="sm"  onClick={() => alert("implement et")}>
-              <FontAwesomeIcon name="Dislike" icon={faThumbsDown} />&nbsp;        
-              !5!
-            </Button>
+              <FontAwesomeIcon id="interactive" name="Dislike" 
+              onClick={
+                function handleDelete(event) {
+                  alert("attempt to dislike comment");
+                  }
+                } icon={faThumbsDown} 
+              />&nbsp; xxx Dislikes    
+          
           </Col>
-   </Row>*/}    
+          
+          {deleteBtn}
+
+        </Row>    
         <hr/>
       </Card.Body>
     

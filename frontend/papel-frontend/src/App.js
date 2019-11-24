@@ -6,6 +6,7 @@ import Home from './Home/Home';
 import Login from './Login/Login';
 import Register from './Register/Register';
 import Profile from './Profile/Profile';
+import UserProfile from './Profile/UserProfile';
 import TradingEquipment from './Trading/TradingEquipment';
 import Article from './Article/Article';
 import Articles from './Article/Articles';
@@ -14,9 +15,12 @@ import EconEvents from './EconEvent/EconEvents';
 import Validation from './Register/Validation';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import { useCookies, CookiesProvider } from 'react-cookie';
+import { faPlus,faThumbsUp,faThumbsDown,faSignInAlt, faSignOutAlt, faUser, faNewspaper, faCalendarWeek, faHome} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+
 
 function NavBar(props) {
-  const [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken'])
+  const [cookies, setCookie, removeCookie] = useCookies(['name', 'user', 'userToken'])
   var profileBtn, logoutBtn, registerBtn, loginBtn;
   const [loggedIn, login] = useState(!!cookies.userToken);
 
@@ -24,28 +28,33 @@ function NavBar(props) {
     console.log(cookies);
     removeCookie('userToken');
     removeCookie('user');
+    removeCookie('name');
     login(false);
   }
   if(!!loggedIn) {
-    profileBtn = <li><Link to="/profile">Profile</Link></li>
-    logoutBtn = <li><Link to="/" onClick={() => logout()}>Logout</Link></li>;
+  profileBtn = <li><Link to="/profile"> <FontAwesomeIcon name="User Icon" icon={faUser} />&nbsp;
+  Profile</Link></li>
+    logoutBtn = <li><Link to="/" onClick={() => logout()}><FontAwesomeIcon name="Login Icon" icon={faSignOutAlt} />&nbsp;Logout</Link></li>;
   }
   else {
-    loginBtn = <li><Link to="/login" style={{paddingLeft:0}}>Login</Link></li>;
-    registerBtn = <li><Link to="/register">Register</Link></li>;
+    loginBtn = <li><Link to="/login" style={{paddingLeft:0}}><FontAwesomeIcon name="Login Icon" icon={faSignInAlt} />&nbsp;Login</Link></li>;
+    
   }
   return (
   <Router>
     <ul id="menu">
       <Link to="/">
-        <img id="logo-green-small" className="menu-logo" src={Logo} style = { { borderright: "2px solid rgba(0, 0, 0, 0.151)", width: 390/4, height: 135/4}} />
+        <img id="logo-green-small" className="menu-logo" src={Logo} style = { { borderright: "2px solid rgba(0, 0, 0, 0.151)", width: 390/3, height: 135/3}} />
       </Link>
+      <li><Link to="/#"><FontAwesomeIcon name="Article Icon" icon={faHome} />&nbsp;Home</Link></li>
       {loginBtn}
       {registerBtn}
       {profileBtn}
-      <li><Link to="/articles">Articles</Link></li>
-      <li><Link to="/events">Events</Link></li>
+      <li><Link to="/articles"><FontAwesomeIcon name="Article Icon" icon={faNewspaper} />&nbsp;Articles</Link></li>
+      <li><Link to="/events"><FontAwesomeIcon name="Events Icon" icon={faCalendarWeek} />&nbsp;Events</Link></li>
+
       {logoutBtn}
+
     </ul>
     <CookiesProvider>
       <div className="container">
@@ -60,6 +69,7 @@ function NavBar(props) {
           <Route path="/validation"><Validation /></Route>
           <Route path="/articles"><Articles /></Route>
           <Route path="/events"><EconEvents /></Route>
+          <Route path="/user/:id" component={UserProfile} />
         </Switch>
       </div>
     </CookiesProvider>
