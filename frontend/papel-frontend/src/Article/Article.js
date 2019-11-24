@@ -86,7 +86,7 @@ class Article extends React.Component {
           voteCount: this.state.article ? this.state.article.voteCount + 1 : 0,
         }
       });
-      authorizedPost({
+      postRequest({
         url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/up-vote",
         success: function() { console.log("Vote sent!") },
         authToken: cookies.get('userToken')
@@ -103,7 +103,7 @@ class Article extends React.Component {
         voteCount: this.state.article ? this.state.article.voteCount - 1 : 0,
       }
     });
-    authorizedPost({
+    postRequest({
       url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/down-vote",
       success: function() { console.log("Vote sent!") },
       authToken: cookies.get('userToken')
