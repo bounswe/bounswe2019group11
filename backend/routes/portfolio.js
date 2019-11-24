@@ -49,6 +49,58 @@ router.delete('/:id/stock',async (req,res) => {
 
 });
 
+router.post('/:id/tradingEquipment',async (req,res) => {
+
+    try{
+        const Id = req.params.id;
+        const theTradingEquipment = {...req.body};
+        const response = await portfolioService.addTradingEquipment(theTradingEquipment,Id);
+        res.status(200).json(response);
+    }catch (e) {
+        res.status(503).json(e)
+    }
+
+});
+
+router.delete('/:id/tradingEquipment',async (req,res) => {
+
+    try{
+        const Id = req.params.id;
+        const theTradingEquipment = {...req.body};
+        const response = await portfolioService.removeTradingEquipment(theTradingEquipment,Id);
+        res.status(200).json(response);
+    }catch (e) {
+        res.status(503).json(e)
+    }
+
+});
+
+router.post('/:id/currency',async (req,res) => {
+
+    try{
+        const Id = req.params.id;
+        const theCurrency = {...req.body};
+        const response = await portfolioService.addCurrency(theCurrency,Id);
+        res.status(200).json(response);
+    }catch (e) {
+        res.status(503).json(e)
+    }
+
+});
+
+router.delete('/:id/currency',async (req,res) => {
+
+    try{
+        const Id = req.params.id;
+        const theCurrency = {...req.body};
+        const response = await portfolioService.removeCurrency(theCurrency,Id);
+        res.status(200).json(response);
+    }catch (e) {
+        res.status(503).json(e)
+    }
+
+});
+
 router.post('/',async (req,res) => {
 
     try{
