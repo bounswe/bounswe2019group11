@@ -53,9 +53,9 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
         TextView name = view.findViewById(R.id.trading_equipment_name);
 
         if (item instanceof Stock) {
-            name.setText(((Stock)item).getSymbol());
+            name.setText(((Stock)item).getName());
         } else if (item instanceof Currency) {
-            name.setText(((Currency)item).getCode());
+            name.setText(((Currency)item).getName());
         }
 
         return view;
@@ -75,17 +75,18 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
                 suggestions.addAll(tradingEquipments);
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
-
-                /*for (TradingEquipment item : tradingEquipments) {
-                    if (item.getName().toLowerCase().contains(filterPattern)) {
-                        suggestions.add(item);
-                    }
-                }*/
                 for (int i = 0; i<tradingEquipments.size(); i++) {
-                    Stock item = (Stock) tradingEquipments.get(i);
-                    if(item.getName().toLowerCase().contains(filterPattern)) {
-                        suggestions.add(item);
+                    TradingEquipment item = tradingEquipments.get(i);
+                    if (item instanceof Stock) {
+                        if(((Stock)item).getName().toLowerCase().contains(filterPattern)) {
+                            suggestions.add(item);
+                        }
+                    } else if (item instanceof Currency) {
+                        if(((Currency)item).getName().toLowerCase().contains(filterPattern)) {
+                            suggestions.add(item);
+                        }
                     }
+
                 }
             }
 

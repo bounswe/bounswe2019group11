@@ -1,17 +1,8 @@
 package com.papel.ui.utils;
 
-import android.content.Context;
-import android.util.Log;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.papel.Constants;
 import com.papel.data.Article;
 import com.papel.data.Comment;
+import com.papel.data.Currency;
 import com.papel.data.Event;
 import com.papel.data.Portfolio;
 import com.papel.data.Stock;
@@ -22,7 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ResponseParser {
@@ -36,9 +26,9 @@ public class ResponseParser {
             ArrayList<TradingEquipment> tradingEquipments = new ArrayList<>();
             for (int j = 0; j < stocks.length(); j++) {
                 JSONObject stockObject = stocks.getJSONObject(j);
-                TradingEquipment tradingEquipment = parseTradingEquipment(stockObject);
-                if(tradingEquipment != null) {
-                    tradingEquipments.add(tradingEquipment);
+                Stock stock = parseStock(stockObject);
+                if(stock != null) {
+                    tradingEquipments.add(stock);
                 }
             }
             portfolio = new Portfolio(portfolioId,portfolioName,tradingEquipments);
@@ -48,19 +38,32 @@ public class ResponseParser {
         return portfolio;
     }
 
-    public static TradingEquipment parseTradingEquipment(JSONObject response) {
-        TradingEquipment tradingEquipment = null;
+    public static Stock parseStock(JSONObject response) {
+        Stock stock = null;
         try {
             String stockId = response.getString("_id");
             String name = response.getString("name");
             //String stockName = response.getString("stockName");
             String stockSymbol = response.getString("stockSymbol");
             double stockPrice = response.getDouble("price");
-            tradingEquipment = new Stock(stockId,name,stockPrice,stockSymbol);
+            stock = new Stock(stockId,name,stockPrice,stockSymbol);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return tradingEquipment;
+        return stock;
+    }
+
+    public static Currency parseCurrency(JSONObject response) {
+        Currency currency = null;
+        try {
+            String code = response.getString("code");
+            String name = response.getString("name");
+            double rate = response.getDouble("rate");
+            currency = new Currency(code,name,rate);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return currency;
     }
 
     public static Event parseEvent(JSONObject response) {

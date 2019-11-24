@@ -417,13 +417,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                     JSONArray responseArray = new JSONArray(response);
                     for(int i = 0; i<responseArray.length(); i++) {
                         JSONObject object = responseArray.getJSONObject(i);
-                        String id = object.getString("_id");
-                        String name = object.getString("name");
-                        //String stockName = object.getString("stockName");
-                        double price = object.getDouble("price");
-                        String symbol = object.getString("stockSymbol");
-                        //Log.d("Response","stockName: " + stockName);
-                        tradingEquipmentOptions.add(new Stock(id,name,price,symbol));
+                        tradingEquipmentOptions.add(ResponseParser.parseStock(object));
                     }
 
                     numberOfTradingEquipmentRequest -= 1;
@@ -457,10 +451,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                     JSONArray responseArray = new JSONArray(response);
                     for(int i = 0; i<responseArray.length(); i++) {
                         JSONObject object = responseArray.getJSONObject(i);
-                        String code = object.getString("code");
-                        String name = object.getString("name");
-                        double rate = object.getDouble("rate");
-                        tradingEquipmentOptions.add(new Currency(code,name,rate));
+                        tradingEquipmentOptions.add(ResponseParser.parseCurrency(object));
                     }
                     numberOfTradingEquipmentRequest -= 1;
                     if (numberOfTradingEquipmentRequest == 0) {
