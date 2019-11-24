@@ -145,6 +145,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                     } else if (clicked.equals("Monthly")) {
                         chartType = Constants.MONTHLY_CHART;
                     }
+                    fetchCurrencyChartData(currency.getCode());
                 }
 
 
@@ -165,23 +166,44 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
         if (stock != null) {
             fetchStockChartData(stock.getId());
         } else if (currency != null) {
-            fetchCurrencyDailyChartData(currency.getCode());
+            fetchCurrencyChartData(currency.getCode());
         }
 
     }
 
-    private void fetchCurrencyDailyChartData(String code) {
+    private void fetchCurrencyChartData(String code) {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String url = Constants.LOCALHOST + Constants.CURRENCY + code + "/" + Constants.INTRADAY;
+        String url = "";
+        if (chartType == Constants.DAILY_CHART) {
+            url = Constants.LOCALHOST + Constants.CURRENCY + code + "/" + Constants.INTRADAY;
+            dailyPoints.clear();
+            dailyDates.clear();
+        } else if (chartType == Constants.WEEKLY_CHART) {
+            url = Constants.LOCALHOST + Constants.CURRENCY + code + "/" + Constants.LAST_WEEK;
+            weeklyPoints.clear();
+            weeklyDates.clear();
+        } else if (chartType == Constants.MONTHLY_CHART){
+            url = Constants.LOCALHOST + Constants.CURRENCY + code + "/" + Constants.LAST_MONTH;
+            monthlyPoints.clear();
+            monthlyDates.clear();
+        }
+
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     JSONObject responseJSON = new JSONObject(response);
-                    JSONObject intradayRates = responseJSON.getJSONObject("intradayRates");
+                    JSONObject rates = new JSONObject();
+                    if(chartType == Constants.DAILY_CHART) {
+                        rates = responseJSON.getJSONObject("intradayRates");
+                    } else if(chartType == Constants.WEEKLY_CHART) {
+                        rates = responseJSON.getJSONObject("lastWeek");
+                    } else if (chartType == Constants.MONTHLY_CHART) {
+                        rates = responseJSON.getJSONObject("lastMonth");
+                    }
 
-                    Iterator<String> keysIterator = intradayRates.keys();
+                    Iterator<String> keysIterator = rates.keys();
 
                     ArrayList<String> keys = new ArrayList<>();
                     while (keysIterator.hasNext()) {
@@ -192,29 +214,61 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                     for (int i = keys.size() - 1; i >= 0; i--) {
                         String key = keys.get(i);
                         Log.d("Response", "Key: " + key);
-                        JSONObject object = intradayRates.getJSONObject(key);
+                        JSONObject object = rates.getJSONObject(key);
 
                         double high = object.getDouble("2. high");
                         double low = object.getDouble("3. low");
                         double open = object.getDouble("1. open");
                         double close = object.getDouble("4. close");
 
-                        dailyPoints.add(new CandleEntry(index, (float) high, (float) low, (float) open, (float) close));
+                        if (chartType == Constants.DAILY_CHART) {
+                            dailyPoints.add(new CandleEntry(index, (float) high, (float) low, (float) open, (float) close));
+
+                            try {
+                                Date date = dailyDateFormat.parse(key);
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.setTime(date);
+                                dailyDates.add(calendar);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        } else if (chartType == Constants.WEEKLY_CHART) {
+                            weeklyPoints.add(new CandleEntry(index, (float) high, (float) low, (float) open, (float) close));
+
+                            try {
+                                Date date = monthlyDateFormat.parse(key);
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.setTime(date);
+                                weeklyDates.add(calendar);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        } else if (chartType == Constants.MONTHLY_CHART)  {
+                            monthlyPoints.add(new CandleEntry(index, (float) high, (float) low, (float) open, (float) close));
+
+                            try {
+                                Date date = monthlyDateFormat.parse(key);
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.setTime(date);
+                                monthlyDates.add(calendar);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         index += 1;
 
-                        try {
-                            Date date = dailyDateFormat.parse(key);
-                            Calendar calendar = Calendar.getInstance();
-                            calendar.setTime(date);
-                            dailyDates.add(calendar);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
+                        showChart();
+
+                        progressBar.setVisibility(View.INVISIBLE);
+                        value.setVisibility(View.VISIBLE);
+                        dropdown.setVisibility(View.VISIBLE);
+                        chart.setVisibility(View.VISIBLE);
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                     DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this, "Error", "We couldn't get detail of the trading equipment.Please try again.", null);
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
             }
         }, new Response.ErrorListener() {
@@ -227,6 +281,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
 
         requestQueue.add(request);
     }
+
 
     private void fetchStockChartData(String id) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
