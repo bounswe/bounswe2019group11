@@ -7,6 +7,7 @@ import {getRequest as get} from '../helpers/request'
 import ArticlePreview from '../Article/ArticlePreview'
 import './UserProfile.css'
 import Portfolio from './Portfolio'
+import { getFormattedAddress } from '../helpers/geocoder';
 
 class UserProfile extends React.Component {
   // const [cookies, setCookie, removeCookie] = useCookies('user', 'userToken')
@@ -19,7 +20,20 @@ class UserProfile extends React.Component {
       user: {name: "", surname: "", location: {latitude: 0, longitude: 0}, email: ""},
       articles: [],
       portfolios: [],
+      formattedAddress: "",
       loading: false
+    }
+    this.geocodeLocation = this.geocodeLocation.bind(this)
+  }
+
+  async geocodeLocation(loc) {
+    var response = await getFormattedAddress(loc)
+    if (response.status !== 'error') {
+      this.setState({formattedAddress: response.result})
+    }
+    else {
+      this.setState({formattedAddress: ""})
+      console.log("Error: " + response.message)
     }
   }
 
@@ -34,6 +48,7 @@ class UserProfile extends React.Component {
         console.log(data)
         this.setState({user: data, articles: data.articles, portfolios: data.portfolios})
         this.setState({loading: false})
+        this.geocodeLocation(data.location)
       },
       authToken: userToken
     })
@@ -43,7 +58,7 @@ class UserProfile extends React.Component {
     <>
       <Row>
         <Col md={{span: 6}}>
-          <ProfileCard isMe={false} user={this.state.user}/>
+          <ProfileCard isMe={false} user={this.state.user} address={this.state.formattedAddress}/>
           <Button style={{marginLeft: 10, width: 120}}>Follow</Button>
         </Col>
         <Col md={{span: 6}}>

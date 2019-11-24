@@ -5,10 +5,11 @@ import Portfolio from './Portfolio';
 import {instanceOf} from 'prop-types'
 import {withCookies, Cookies} from 'react-cookie';
 import {Row, Col, Card, Button, Modal, Form} from 'react-bootstrap';
-import $ from 'jquery';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-
+import ArticlePreview from '../Article/ArticlePreview'
+import {getRequest, postRequest} from '../helpers/request'
+import {getFormattedAddress} from '../helpers/geocoder'
 
 class Profile extends React.Component {
   static propTypes = {cookies: instanceOf(Cookies).isRequired};
@@ -16,23 +17,39 @@ class Profile extends React.Component {
     super(props);
     const {cookies} = props;
     const loggedIn = !!cookies.get('userToken');
-    this.state = {loggedIn: loggedIn, portfoliosLoaded: false, portfolios: [], showNewPortfolioDialog: false, newPortfolio: {}};
+    this.state = {loggedIn: loggedIn, portfoliosLoaded: false, portfolios: [], showNewPortfolioDialog: false, newPortfolio: {}, articles: [], formattedAddress: ""};
 
     this.createPortfolio = this.createPortfolio.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.onCreate = this.onCreate.bind(this);
+    this.geocodeLocation = this.geocodeLocation.bind(this);
   }
 
+
   componentDidMount() {
-    const {cookies} = this.props;
-    const self = this;
-    if (this.state.loggedIn) {
-      this.setState({portfoliosLoaded: false});
-      const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/portfolio/user/" + cookies.get('user')._id;
-      $.get(request_url , (data) => {
-        console.log(data);
-        self.setState({portfolios: data, portfoliosLoaded: true});
-      });
+    const {cookies} = this.props
+    const userToken = cookies.get('userToken')
+    const userId = cookies.get('user')._id
+    let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/" + userId
+    getRequest({
+      url: requestUrl,
+      success: (data) => {
+        console.log(data)
+        this.setState({articles: data.articles, portfolios: data.portfolios})
+      },
+      authToken: userToken
+    })
+    this.geocodeLocation(cookies.get('user').location)
+  }
+
+  async geocodeLocation(loc) {
+    var response = await getFormattedAddress(loc)
+    if (response.status !== 'error') {
+      this.setState({formattedAddress: response.result})
+    }
+    else {
+      this.setState({formattedAddress: ""})
+      console.log("Error: " + response.message)
     }
   }
 
@@ -49,12 +66,20 @@ class Profile extends React.Component {
     var portfolio = {name: "", userId: "", stocks: []};
     portfolio.name = this.state.newPortfolio.name;
     portfolio.userId = cookies.get('user')._id;
-    $.post("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/portfolio", portfolio, (resp, data) => {
-      this.setState({portfoliosLoaded: false});
-      const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/portfolio/user/" + cookies.get('user')._id;
-      $.get(request_url , portfolios => {
-        this.setState({portfolios: portfolios, portfoliosLoaded: true});
-      });
+    postRequest({
+      url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/portfolio",
+      data: portfolio,
+      success: (resp, data) => {
+        this.setState({portfoliosLoaded: false});
+        const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/portfolio/user/" + cookies.get('user')._id;
+        getRequest({
+          url: request_url,
+          success: portfolios => {
+            this.setState({portfolios: portfolios, portfoliosLoaded: true});
+          }
+        });
+      },
+      authToken: cookies.get("userToken")
     });
   }
 
@@ -64,7 +89,7 @@ class Profile extends React.Component {
         <>
           <Row>
             <Col md={{span: 6}}>
-              <ProfileCard isMe={true}/>
+              <ProfileCard isMe={true} address={this.state.formattedAddress}/>
             </Col>
             <Col md={{span: 6}}>
               <h3>Portfolios: </h3>
@@ -97,8 +122,25 @@ class Profile extends React.Component {
 
             </Col>
           </Row>
-          <Row>
+          <Row style={{marginTop: 10}}>
+            <Col>
+              <Card  >
+                <Card.Title style={{textAlign: "center"}}>
+                  <h3>My Articles</h3>
+                  <hr/>
+                </Card.Title>
+                <Card.Body className="my-articles container-fluid">
+                  <Row className="flex-row flex-nowrap">
+                    {this.state.articles.map(article => (
+                      <Col key={article._id} sm={{span: 6}} style={{float: "left"}}>
+                      <ArticlePreview articleId={article._id} title={article.title} text={article.body} fixedHeight={240} />
+                      </Col>
+                    ))}
+                  </Row>
+                </Card.Body>
 
+              </Card>
+            </Col>
           </Row>
         </>
       );
