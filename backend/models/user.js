@@ -135,7 +135,7 @@ userSchema.methods.generateLostPasswordToken = async function () {
 };
 userSchema.methods.follow =async function(userToBeFollowed){
     const userIdToBeFollowed = userToBeFollowed._id;
-    if(this.following.indexOf(userIdToBeFollowed) === -1){
+    if(this.following.findIndex(elm => elm.userId.toString() === userIdToBeFollowed.toString()) !== -1){
         if(userToBeFollowed.privacy === 'public'){
             this.following.push({userId:userIdToBeFollowed, isAccepted:true});
             userToBeFollowed.followers.push({userId:this._id,isAccepted:true});
@@ -150,6 +150,8 @@ userSchema.methods.follow =async function(userToBeFollowed){
             return "Follow request has been sent to " + userToBeFollowed.name + " "+ userToBeFollowed.surname;
         }
 
+    }else{
+        return "You are already following this user";
     }
 
 };

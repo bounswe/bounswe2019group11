@@ -56,7 +56,8 @@ const privateProfileDataTransferObject = (user,articles,inInMyNetwork) => {
         surname:user.surname,
         location: user.location,
         articles: articles,
-        isInMyNetwork: inInMyNetwork
+        isInMyNetwork: inInMyNetwork,
+        isMe:false
     };
 };
 
@@ -68,7 +69,8 @@ const publicProfileDataTransferObject = (user,articles,portfolios,inInMyNetwork)
         location: user.location,
         articles: articles,
         portfolios: portfolios,
-        isInMyNetwork: inInMyNetwork
+        isInMyNetwork: inInMyNetwork,
+        isMe:false
     };
 };
 
@@ -91,15 +93,21 @@ router.get('/other/:id', async (req, res) => {
             const userId = req.token && req.token.data && req.token.data._id;
             const mainUser = await userService.getById(userId);
             const id = req.params.id;
-            const user = await userService.getById(id);
-            const articles = await articleService.getByUserId(id);
-            const portfolios = await portfolioService.getByUserId(id);
-            const _isInMyNetwork = isInMyNetwork(mainUser,user);
-            if(user.privacy === 'public' || _isInMyNetwork === "true"){
-                res.status(200).send(publicProfileDataTransferObject(user,articles,portfolios,_isInMyNetwork));
+            if(id.toString() === userId){
+                res.status(200).json({isMe:true});
             }else{
-                res.status(200).send(privateProfileDataTransferObject(user,articles,_isInMyNetwork));
+                const user = await userService.getById(id);
+                const articles = await articleService.getByUserId(id);
+                const portfolios = await portfolioService.getByUserId(id);
+                const _isInMyNetwork = isInMyNetwork(mainUser,user);
+                if(user.privacy === 'public' || _isInMyNetwork === "true"){
+
+                    res.status(200).send(publicProfileDataTransferObject(user,articles,portfolios,_isInMyNetwork));
+                }else{
+                    res.status(200).send(privateProfileDataTransferObject(user,articles,_isInMyNetwork));
+                }
             }
+
         }else{
             const id = req.params.id;
             const user = await userService.getById(id);
