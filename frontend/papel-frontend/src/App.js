@@ -6,6 +6,7 @@ import Home from './Home/Home';
 import Login from './Login/Login';
 import Register from './Register/Register';
 import Profile from './Profile/Profile';
+import UserProfile from './Profile/UserProfile';
 import TradingEquipment from './Trading/TradingEquipment';
 import Article from './Article/Article';
 import Articles from './Article/Articles';
@@ -29,6 +30,7 @@ function NavBar(props) {
     console.log(cookies);
     removeCookie('userToken');
     removeCookie('user');
+    removeCookie('name');
     login(false);
   }
   if(!!loggedIn) {
@@ -98,6 +100,7 @@ function NavBar(props) {
           <Route path="/validation"><Validation /></Route>
           <Route path="/articles"><Articles /></Route>
           <Route path="/events"><EconEvents /></Route>
+          <Route path="/user/:id" component={UserProfile} />
         </Switch>
       </div>
     </CookiesProvider>

@@ -18,8 +18,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:maxLines="3"
+        android:paddingBottom="20dp"
         android:layout_marginTop="32dp"
         android:textColor="@color/black"
         android:text="Content"/>
 
+    <TextView
+        android:id="@+id/article_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/black"
+        android:text="08-19-1996"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        />
 </RelativeLayout>

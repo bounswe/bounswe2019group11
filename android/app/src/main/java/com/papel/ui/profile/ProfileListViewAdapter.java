@@ -47,9 +47,11 @@ public class ProfileListViewAdapter extends BaseAdapter {
 
         TextView title = view.findViewById(R.id.article_title);
         TextView content = view.findViewById(R.id.article_content);
+        TextView date = view.findViewById(R.id.article_date);
 
         title.setText(article.getTitle());
-        content.setText(article.getBody());
+        date.setText(article.getDate());
+        content.setText("\n" + article.getBody());
 
         return view;
     }
