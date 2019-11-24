@@ -105,6 +105,7 @@ public class TradingEquipmentsFragment extends Fragment {
                 DialogHelper.showBasicDialog(context, "Error", "We couldn't load the trading equipments. Please try again.", null);
             }
         });
+        
         requestQueue.add(request);
 
     }
