@@ -5,13 +5,14 @@ import { faPlus,faThumbsUp,faThumbsDown, faUserCircle, faTrashAlt} from '@fortaw
 import $ from 'jquery';
 import {authorizedPost} from '../helpers/request';
 import Article from './Article';
+import { useCookies} from 'react-cookie';
 
 function CommentPreview({id, userId, authorId, author, cookies, loggedIn, body, date, lastEditDate}) {
   var deleteBtn;
   
-  if(loggedIn & (userId == authorId)){
+  if(loggedIn && (userId == authorId)){
     deleteBtn = <Col sm={{span: 3, offset: 5}} xs={{span: 12}}>
-            
+           
       <FontAwesomeIcon id="interactive" name="Delete" 
       
          icon={faTrashAlt} 
