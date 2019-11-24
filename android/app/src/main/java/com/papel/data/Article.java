@@ -18,6 +18,7 @@ public class Article implements Parcelable {
     private ArrayList<Comment> comments;
     private int voteCount;
     private Date dateObj;
+    private int userVote=0;
 
     public Article() {
     }
@@ -78,6 +79,13 @@ public class Article implements Parcelable {
         this.date = in.readString();
         this.voteCount = in.readInt();
         this.comments = in.readArrayList(null);
+    }
+    public int getUserVote() {
+        return userVote;
+    }
+
+    public void setUserVote(int userVote) {
+        this.userVote = userVote;
     }
 
     public int getVoteCount() {

@@ -131,6 +131,10 @@ public class ResponseParser {
                 article.setComments(articleComments);
             }
 
+            if(response.has("userVote")){
+                article.setUserVote(response.getInt("userVote"));
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -43,7 +43,6 @@ import com.papel.ui.profile.ProfileActivity;
 import com.papel.ui.utils.DialogHelper;
 import com.papel.ui.utils.ResponseParser;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,17 +58,18 @@ public class ReadArticleActivity extends AppCompatActivity {
     private TextView date;
     private TextView voteCount;
     private ImageView profile_pic;
-    private ImageView share;
     private ImageButton addCommentButton;
     private ImageButton likeButton;
     private ImageButton dislikeButton;
     private EditText commentEditText;
     private ListView commentListView;
-    private ArrayList<Object> comments = new ArrayList<>();
+    private ArrayList<Object> comments;
     private ListViewAdapter adapter;
     private Article article;
     private ColorStateList cl_primary;
     private ColorStateList cl_black;
+    private String articleId;
+
 
     private String authorId;
 
@@ -78,9 +78,8 @@ public class ReadArticleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_article);
         final View header = getLayoutInflater().inflate(R.layout.article_header, null);
-        article = null;
 
-        final String articleId = getIntent().getStringExtra("articleId");
+        articleId = getIntent().getStringExtra("articleId");
 
         title = (TextView) header.findViewById(R.id.read_article_title_textview);
         content = (TextView) header.findViewById(R.id.read_article_content_textview);
@@ -88,7 +87,6 @@ public class ReadArticleActivity extends AppCompatActivity {
         date = (TextView) header.findViewById(R.id.read_article_date_textview);
         voteCount = header.findViewById(R.id.vote_count_textview);
         profile_pic = (ImageView) header.findViewById(R.id.read_article_pic_image);
-        share = (ImageView) header.findViewById(R.id.article_share_imageview);
         addCommentButton = (ImageButton) header.findViewById(R.id.add_comment_button);
         likeButton = header.findViewById(R.id.like_imageButton);
         dislikeButton = header.findViewById(R.id.dislike_imageButton);
@@ -157,7 +155,7 @@ public class ReadArticleActivity extends AppCompatActivity {
         dislikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(likeButton.getImageTintList() == cl_primary){
+                if(dislikeButton.getImageTintList() == cl_primary){
                     voteArticle(getApplicationContext(), articleId, true, false);
                     dislikeButton.setImageTintList(cl_black);
                     likeButton.setImageTintList(cl_black);
@@ -172,6 +170,7 @@ public class ReadArticleActivity extends AppCompatActivity {
 
         registerForContextMenu(commentListView);
     }
+
 
     private void getArticleFromEndpoint(final Context context, final String articleId) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -188,11 +187,12 @@ public class ReadArticleActivity extends AppCompatActivity {
                     author.setText(article.getAuthorName());
                     date.setText(article.getLongDate());
                     voteCount.setText("" + article.getVoteCount());
-                    ArrayList<Comment> comments_list = article.getComments();
-                    comments.addAll(comments_list);
-                    adapter = new ListViewAdapter(getApplicationContext(), comments);
-                    commentListView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
+                    if(article.getUserVote() == 1){
+                        likeButton.setImageTintList(cl_primary);
+                    }else if(article.getUserVote() == -1){
+                        dislikeButton.setImageTintList(cl_primary);
+                    }
+                    setComments(article.getComments());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -202,7 +202,61 @@ public class ReadArticleActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 DialogHelper.showBasicDialog(context, "Error", "We couldn't load the article. Please try again.", null);
             }
-        });
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+
+        requestQueue.add(request);
+    }
+
+    private void setComments(ArrayList<Comment> comments_list){
+        comments = new ArrayList<>();
+        comments.addAll(comments_list);
+        adapter = new ListViewAdapter(getApplicationContext(), comments);
+        commentListView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void refreshVoteCount(final Context context, final String articleId){
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = Constants.LOCALHOST + Constants.ARTICLE + articleId;
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    article = ResponseParser.parseArticle(object, context);
+                    voteCount.setText(""+article.getVoteCount());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                DialogHelper.showBasicDialog(context, "Error", "We couldn't load the article. Please try again.", null);
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
 
         requestQueue.add(request);
     }
@@ -219,9 +273,8 @@ public class ReadArticleActivity extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                finish();
-                startActivity(getIntent());
-                adapter.notifyDataSetChanged();
+                getArticleFromEndpoint(context, articleId);
+                commentEditText.setText("");
             }
         }, new Response.ErrorListener() {
             @Override
@@ -272,9 +325,7 @@ public class ReadArticleActivity extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                finish();
-                startActivity(getIntent());
-                adapter.notifyDataSetChanged();
+                getArticleFromEndpoint(context, articleId);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -323,9 +374,7 @@ public class ReadArticleActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Toast.makeText(ReadArticleActivity.this, "Comment deleted.", Toast.LENGTH_SHORT).show();
-                        finish();
-                        startActivity(getIntent());
-                        adapter.notifyDataSetChanged();
+                        getArticleFromEndpoint(context, articleId);
                     }
                 }, new Response.ErrorListener() {
 
@@ -406,33 +455,23 @@ public class ReadArticleActivity extends AppCompatActivity {
         return false;
     }
 
-    private void voteArticle(final Context context, String articleId, boolean isClear, boolean isUp){
+    private void voteArticle(final Context context, final String articleId, boolean isClear, boolean isUp){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
         String endpoint="";
-        int voteCountVal = article.getVoteCount();
         if(isClear){
             endpoint = Constants.CLEARVOTE;
         }else if(isUp){
-            voteCountVal ++;
             endpoint = Constants.UPVOTE;
         }else{
-            voteCountVal --;
             endpoint = Constants.DOWNVOTE;
 
         }
         String url = Constants.LOCALHOST + Constants.ARTICLE + articleId + "/" + endpoint;
-        final String vote = ""+voteCountVal;
-        final JSONObject jsonBody = new JSONObject();
-        try {
-            jsonBody.put("body", content);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                voteCount.setText(vote);
+                refreshVoteCount(context, articleId);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -450,16 +489,6 @@ public class ReadArticleActivity extends AppCompatActivity {
                 }
             }
         }) {
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                return jsonBody.toString().getBytes();
-            }
-
-            @Override
-            public String getBodyContentType() {
-                return "application/json; charset=utf-8";
-            }
-
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<String, String>();
