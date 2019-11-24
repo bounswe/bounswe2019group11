@@ -20,6 +20,7 @@ import com.papel.R;
 import com.papel.data.Article;
 import com.papel.data.Portfolio;
 import com.papel.ui.articles.ReadArticleActivity;
+import com.papel.ui.portfolio.PortfolioDetailActivity;
 import com.papel.ui.portfolio.PortfolioListViewAdapter;
 
 import org.w3c.dom.Text;
@@ -112,6 +113,17 @@ public class ProfileSubpageFragment extends Fragment {
 
                 PortfolioListViewAdapter adapter = new PortfolioListViewAdapter(getContext(),portfolios);
                 listView.setAdapter(adapter);
+
+                final Intent portfolioIntent = new Intent(getActivity().getApplicationContext(), PortfolioDetailActivity.class);
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        Portfolio currentPortfolio = portfolios.get(i);
+                        portfolioIntent.putExtra("Portfolio", currentPortfolio);
+                        startActivity(portfolioIntent);
+                    }
+                });
                 if(portfolios.size() == 0){
                     message.setText(getString(R.string.no_portfolio_message));
                     message.setVisibility(View.VISIBLE);
