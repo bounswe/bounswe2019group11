@@ -167,10 +167,13 @@ public class LoginActivity extends AppCompatActivity {
                             sendReq.setClickable(false);
                             String googleIdToken = account.getIdToken();
                             String googleId = account.getId();
+                            Log.d("Info","Google id token: " + googleIdToken);
                             Log.d("Info","Google id: " + googleId);
                             sendGoogleLoginRequest(googleIdToken);
                         } else {
-                            DialogHelper.showBasicDialog(LoginActivity.this, "Error", "", null);
+                            Intent googleLoginIntent = googleSignInClient.getSignInIntent();
+                            startActivityForResult(googleLoginIntent,Constants.GOOGLE_LOGIN_REQUEST_CODE);
+                            //DialogHelper.showBasicDialog(LoginActivity.this, "Error", "", null);
                         }
                     } else {
                         //Signup case
@@ -270,8 +273,18 @@ public class LoginActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 e.printStackTrace();
             }
-
-
+        } else if(requestCode == Constants.GOOGLE_LOGIN_REQUEST_CODE) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                String googleIdToken = account.getIdToken();
+                String googleId = account.getId();
+                Log.d("Info","Google id token: " + googleIdToken);
+                Log.d("Info","Google id: " + googleId);
+                sendGoogleLoginRequest(googleIdToken);
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
         }
     }
 

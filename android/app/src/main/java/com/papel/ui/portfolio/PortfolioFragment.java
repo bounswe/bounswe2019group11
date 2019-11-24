@@ -71,6 +71,7 @@ public class PortfolioFragment extends Fragment {
         portfolioListView.setAdapter(portfolioListViewAdapter);
 
         final Intent intent = new Intent(getActivity(), PortfolioDetailActivity.class);
+        intent.putExtra("isMe", true);
 
 
         portfolioListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

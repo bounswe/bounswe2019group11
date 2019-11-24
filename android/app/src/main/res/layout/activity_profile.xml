@@ -39,25 +39,14 @@
         android:textColor="@color/black"
         android:textStyle="bold" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/usermail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/username"
         android:layout_marginStart="32dp"
         android:layout_marginBottom="-16dp"
-        android:text="@string/test_usermail" />
-
-    <TextView
-        android:id="@+id/user_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/usermail"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/test_userdescription"
-        android:textColor="@color/black" />
+        android:text="@string/test_usermail" /> -->
 
     <Button
         android:id="@+id/followButton"
@@ -73,7 +62,20 @@
         android:textColor="@color/colorPrimary"
         android:visibility="invisible" />
 
-    <Switch
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="230dp">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </androidx.viewpager.widget.ViewPager>
+
+    <!-- <Switch
         android:id="@+id/publicPrivateProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -83,7 +85,7 @@
         android:layout_alignTop="@id/user_description"
         android:layout_marginStart="32dp"
         android:layout_marginTop="56dp"
-        android:visibility="invisible" />
+        android:visibility="invisible" /> -->
 
 
 </RelativeLayout>
