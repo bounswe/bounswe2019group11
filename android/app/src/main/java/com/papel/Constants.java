@@ -17,6 +17,8 @@ public class Constants {
     public static final String GOOGLE_LOGIN = "auth/login/google";
     public static final String USER = "user/";
     public static final String TEST_USER_ID = "5da076d955d9b93a7308f3d7";
+    public static final String PROFILE = "profile/";
+
     public static final int DAILY_CHART = 0;
     public static final int MONTHLY_CHART = 1;
 
@@ -25,4 +27,7 @@ public class Constants {
     public static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     public static final int GOOGLE_SIGN_IN_REQUEST_CODE = 2;
     public static final int GOOGLE_LOGIN_REQUEST_CODE = 3;
+  
+    public static final String ARTICLE_TITLE = "ARTICLE";
+    public static final String PORTFOLIO_TITLE = "PORTFOLIO";
 }

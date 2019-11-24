@@ -109,7 +109,7 @@ public class ResponseParser {
         return comment;
     }
 
-    public static Article parseArticle(JSONObject response, Context context) {
+    public static Article parseArticle(JSONObject response) {
         Article article = null;
         try {
             String articleId = response.getString("_id");

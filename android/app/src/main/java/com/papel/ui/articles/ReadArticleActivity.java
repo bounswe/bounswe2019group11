@@ -39,6 +39,7 @@ import com.papel.R;
 import com.papel.data.Article;
 import com.papel.data.Comment;
 import com.papel.data.User;
+import com.papel.ui.profile.ProfileActivity;
 import com.papel.ui.utils.DialogHelper;
 import com.papel.ui.utils.ResponseParser;
 
@@ -70,6 +71,8 @@ public class ReadArticleActivity extends AppCompatActivity {
     private String articleId;
 
 
+    private String authorId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +96,34 @@ public class ReadArticleActivity extends AppCompatActivity {
         cl_primary = ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary));
         cl_black = ColorStateList.valueOf(getResources().getColor(R.color.black));
         getArticleFromEndpoint(getApplicationContext(), articleId);
+
+
+        final Intent profileIntent = new Intent(this, ProfileActivity.class);
+        // TODO This should be inactive during the request to server
+        author.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                profileIntent.putExtra("UserId",authorId);
+                startActivity(profileIntent);
+            }
+        });
+
+        profile_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                profileIntent.putExtra("UserId",authorId);
+                startActivity(profileIntent);
+            }
+        });
+
+        commentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Comment clickedComment = (Comment) adapter.getItem(i-1);
+                profileIntent.putExtra("UserId",clickedComment.getAuthorId());
+                startActivity(profileIntent);
+            }
+        });
 
         addCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,9 +180,10 @@ public class ReadArticleActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 try {
                     JSONObject object = new JSONObject(response);
-                    article = ResponseParser.parseArticle(object, context);
+                    article = ResponseParser.parseArticle(object);
                     title.setText(article.getTitle());
                     content.setText(article.getBody());
+                    authorId = article.getAuthorId();
                     author.setText(article.getAuthorName());
                     date.setText(article.getLongDate());
                     voteCount.setText("" + article.getVoteCount());
