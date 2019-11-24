@@ -50,7 +50,7 @@ public class TradingEquipmentsFragment extends Fragment {
 
         searchView = root.findViewById(R.id.trading_eq_searchView);
         tradingEquipmentListView = root.findViewById(R.id.trading_eq_listview);
-        adapter = new TradingEquipmentListViewAdapter(getContext(), tradingEquipmentArrayList);
+        adapter = new TradingEquipmentListViewAdapter(getContext(), tradingEquipmentArrayList,true);
         tradingEquipmentListView.setAdapter(adapter);
         getTradingEquipmentsFromEndpoint(getContext());
 

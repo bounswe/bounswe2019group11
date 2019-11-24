@@ -20,10 +20,13 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<TradingEquipment> tradingEquipments;
     private ArrayList<TradingEquipment> filteredData;
-    public TradingEquipmentListViewAdapter(Context context, ArrayList<TradingEquipment> tradingEquipments) {
+    private boolean showFullname;
+
+    public TradingEquipmentListViewAdapter(Context context, ArrayList<TradingEquipment> tradingEquipments,boolean showFullname) {
         this.context = context;
         this.tradingEquipments = tradingEquipments;
         this.filteredData = tradingEquipments;
+        this.showFullname = showFullname;
     }
 
 
@@ -53,9 +56,17 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
         TextView name = view.findViewById(R.id.trading_equipment_name);
 
         if (item instanceof Stock) {
-            name.setText(((Stock)item).getName());
+            if (showFullname) {
+                name.setText(((Stock)item).getName());
+            } else {
+                name.setText(((Stock)item).getSymbol());
+            }
         } else if (item instanceof Currency) {
-            name.setText(((Currency)item).getName());
+            if (showFullname) {
+                name.setText(((Currency)item).getName());
+            } else {
+                name.setText(((Currency)item).getCode());
+            }
         }
 
         return view;

@@ -104,7 +104,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
 
         //tradingEquipments = portfolio.getTradingEquipments();
 
-        tradingEquipmentListViewAdapter = new TradingEquipmentListViewAdapter(getApplicationContext(), tradingEquipments);
+        tradingEquipmentListViewAdapter = new TradingEquipmentListViewAdapter(getApplicationContext(), tradingEquipments,false);
         tradingEquipmentListView.setAdapter(tradingEquipmentListViewAdapter);
 
         final Intent detailIntent = new Intent(this, TradingEquipmentDetailActivity.class);
