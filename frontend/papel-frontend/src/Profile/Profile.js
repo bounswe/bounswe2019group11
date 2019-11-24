@@ -69,8 +69,7 @@ class Profile extends React.Component {
             <Col md={{span: 6}}>
               <h3>Portfolios: </h3>
               <Row>
-                <Col md={{span: 10, offset: 1}}>
-
+                <Col>
                 {
                   this.state.portfolios.map (
                     portfolio =>

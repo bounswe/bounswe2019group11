@@ -10,7 +10,7 @@ import {Row, Col, Button, Card, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus,faThumbsUp,faThumbsDown, faUserCircle} from '@fortawesome/free-solid-svg-icons';
 import CommentPreview from './CommentPreview';
-import {authorizedPost} from '../helpers/request';
+import {postRequest} from '../helpers/request';
 
 class Article extends React.Component {
   static propTypes = {cookies: instanceOf(Cookies).isRequired};
@@ -60,7 +60,7 @@ class Article extends React.Component {
       //   success: () => console.log("Wow! It's a response: "),
       //   beforeSend: (xhr) => xhr.setRequestHeader("Authorization", "Bearer " + cookies.get('userToken'))
       // })
-      authorizedPost({
+      postRequest({
         url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment",
         data: comment,
         success: function() { console.log("Comment sent!") },
