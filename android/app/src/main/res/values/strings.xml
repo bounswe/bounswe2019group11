@@ -55,6 +55,9 @@
     <string name="like">Like</string>
     <string name="dislike">Dislike</string>
     <string name="search_trading_eq_hint">Search in Trading Equipments</string>
+    <string name="prediction_question">What do you think will happen to the value of this trading equipment?</string>
+    <string name="prediction_increase">Increases</string>
+    <string name="prediction_decreases">Decreases</string>
 </resources>
 
 

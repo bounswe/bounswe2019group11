@@ -91,4 +91,7 @@ module.exports = {
     VOTE_NOT_FOUND: (cause) => {
         return PapelError('VoteNotFound', 'Vote for the given article or the user id not found.', cause);
     },
+    INVALID_CURRENCY_CODE: (cause) => {
+        return PapelError('InvalidCurrencyCode', 'Given currency code is not valid.', cause);
+    },
 };

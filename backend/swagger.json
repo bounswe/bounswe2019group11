@@ -35,6 +35,10 @@
     {
       "name": "profile",
       "description": "User profile information endpoints"
+    },
+    {
+      "name": "currency",
+      "description": "Currency related endpoints."
     }
   ],
   "securityDefinitions": {
@@ -1347,9 +1351,242 @@
             "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
-
       }
-
+    },
+    "/currency": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the list of currencies with their current rates.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. All of the currencies and their rates are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CurrencyMinimal"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the rate of the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given currency and its rate are returned.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyMinimal"
+            }
+          },
+          "400": {
+            "description": "Given code for the currency is not valid."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/intraday": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the rate and the intraday rates with 5 minutes intervals of the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given currency and its rate and intraday rates with 5 minutes intervals are returned.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyIntraday"
+            }
+          },
+          "400": {
+            "description": "Given code for the currency is not valid."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/last-week": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the rate and the last 7 daily rates of the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given currency and its rate and the last 7 daily rates are returned.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyLastWeek"
+            }
+          },
+          "400": {
+            "description": "Given code for the currency is not valid."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/last-month": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the rate and the last 30 daily rates of the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given currency and its rate and the last 30 daily rates are returned.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyLastMonth"
+            }
+          },
+          "400": {
+            "description": "Given code for the currency is not valid."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/last-100": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the rate and the last 100 daily rates of the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given currency and its rate and the last 100 daily rates are returned.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyLast100"
+            }
+          },
+          "400": {
+            "description": "Given code for the currency is not valid."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/full": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Returns the rate, intraday rates with 5 minute intervals and the last 100 daily rates of the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given currency and its rate, intraday rates with 5 minute intervals and the last 100 daily rates are returned.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyFull"
+            }
+          },
+          "400": {
+            "description": "Given code for the currency is not valid."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1689,6 +1926,148 @@
           "type": "string",
           "description": "Declares if the user followed, not followed yet or follow request has been sent but not accepted yet (true,false,pending)",
           "example": "pending"
+        }
+      }
+    },
+    "CurrencyMinimal": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Short code of the currency.",
+          "example": "EUR"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the currency.",
+          "example": "European Euro"
+        },
+        "rate": {
+          "type": "number",
+          "description": "Rate of the currency to the USD",
+          "example": 0.91
+        }
+      }
+    },
+    "CurrencyIntraday": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CurrencyMinimal"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "intradayRates": {
+          "type": "object",
+          "description": "Last 100 intraday rates with 5 minute intervals.",
+          "example": {
+            "2019-11-22 20:00:00": {
+              "1. open": "0.9072",
+              "2. high": "0.9072",
+              "3. low": "0.9071",
+              "4. close": "0.9071"
+            }
+          }
+        }
+      }
+    },
+    "CurrencyLastWeek": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CurrencyMinimal"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "lastWeek": {
+          "type": "object",
+          "description": "Last 7 daily rates.",
+          "example": {
+            "2019-11-22": {
+              "1. open": "1.1066",
+              "2. high": "1.1088",
+              "3. low": "1.1013",
+              "4. close": "1.1022"
+            }
+          }
+        }
+      }
+    },
+    "CurrencyLastMonth": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CurrencyMinimal"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "lastMonth": {
+          "type": "object",
+          "description": "Last 30 daily rates.",
+          "example": {
+            "2019-11-22": {
+              "1. open": "1.1066",
+              "2. high": "1.1088",
+              "3. low": "1.1013",
+              "4. close": "1.1022"
+            }
+          }
+        }
+      }
+    },
+    "CurrencyLast100": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CurrencyMinimal"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "dailyRates": {
+          "type": "object",
+          "description": "Last 100 daily rates.",
+          "example": {
+            "2019-11-22": {
+              "1. open": "1.1066",
+              "2. high": "1.1088",
+              "3. low": "1.1013",
+              "4. close": "1.1022"
+            }
+          }
+        }
+      }
+    },
+    "CurrencyFull": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CurrencyMinimal"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "intradayRates": {
+          "type": "object",
+          "description": "Last 100 intraday rates with 5 minute intervals.",
+          "example": {
+            "2019-11-22 20:00:00": {
+              "1. open": "0.9072",
+              "2. high": "0.9072",
+              "3. low": "0.9071",
+              "4. close": "0.9071"
+            }
+          }
+        },
+        "dailyRates": {
+          "type": "object",
+          "description": "Last 100 daily rates.",
+          "example": {
+            "2019-11-22": {
+              "1. open": "1.1066",
+              "2. high": "1.1088",
+              "3. low": "1.1013",
+              "4. close": "1.1022"
+            }
+          }
         }
       }
     }

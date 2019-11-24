@@ -85,7 +85,7 @@ public class ArticlesFragment extends Fragment {
                     JSONArray responseArray = new JSONArray(response);
                     for(int i = 0;i<responseArray.length(); i++) {
                         JSONObject object = responseArray.getJSONObject(i);
-                        Article article = ResponseParser.parseArticle(object, context);
+                        Article article = ResponseParser.parseArticle(object);
                         if (article != null) {
                             articles.add(article);
                         }

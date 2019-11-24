@@ -1,11 +1,14 @@
 package com.papel.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class Article {
+public class Article implements Parcelable {
     private String id;
     private String title;
     private String body;
@@ -15,6 +18,7 @@ public class Article {
     private ArrayList<Comment> comments;
     private int voteCount;
     private Date dateObj;
+    private int userVote=0;
 
     public Article() {
     }
@@ -37,6 +41,51 @@ public class Article {
         } catch (Exception e) {
 
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(this.id);
+        parcel.writeString(this.title);
+        parcel.writeString(this.body);
+        parcel.writeString(this.authorId);
+        parcel.writeString(this.authorName);
+        parcel.writeString(this.date);
+        parcel.writeInt(this.voteCount);
+        parcel.writeList(this.comments);
+    }
+
+    public static final Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {
+        public Article createFromParcel(Parcel in) {
+            return new Article(in);
+        }
+
+        public Article[] newArray(int size) {
+            return new Article[size];
+        }
+    };
+
+    private Article(Parcel in) {
+        this.id = in.readString();
+        this.title = in.readString();
+        this.body = in.readString();
+        this.authorId = in.readString();
+        this.authorName = in.readString();
+        this.date = in.readString();
+        this.voteCount = in.readInt();
+        this.comments = in.readArrayList(null);
+    }
+    public int getUserVote() {
+        return userVote;
+    }
+
+    public void setUserVote(int userVote) {
+        this.userVote = userVote;
     }
 
     public int getVoteCount() {
