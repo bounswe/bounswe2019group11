@@ -55,7 +55,7 @@ public class TradingEquipmentsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 TradingEquipment clicked = adapter.getItem(i);
-                Log.d("Trading Equipement", "Trading equipment clicked: " + clicked.getName());
+                //Log.d("Trading Equipement", "Trading equipment clicked: " + clicked.getName());
                 Intent intent = new Intent(getContext(), TradingEquipmentDetailActivity.class);
                 intent.putExtra("TradingEquipment",clicked);
                 startActivity(intent);

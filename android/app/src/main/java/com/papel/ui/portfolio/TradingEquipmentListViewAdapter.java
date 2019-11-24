@@ -9,6 +9,7 @@ import android.widget.Filter;
 import android.widget.TextView;
 
 import com.papel.R;
+import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
             view = LayoutInflater.from(context).inflate(R.layout.trading_equipment_row,viewGroup,false);
         }
 
-        TradingEquipment item = filteredData.get(i);
+        Stock item = (Stock) filteredData.get(i);
 
         TextView name = view.findViewById(R.id.trading_equipment_name);
 
@@ -70,8 +71,14 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
 
-                for (TradingEquipment item : tradingEquipments) {
+                /*for (TradingEquipment item : tradingEquipments) {
                     if (item.getName().toLowerCase().contains(filterPattern)) {
+                        suggestions.add(item);
+                    }
+                }*/
+                for (int i = 0; i<tradingEquipments.size(); i++) {
+                    Stock item = (Stock) tradingEquipments.get(i);
+                    if(item.getName().toLowerCase().contains(filterPattern)) {
                         suggestions.add(item);
                     }
                 }
@@ -90,7 +97,7 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
 
         @Override
         public CharSequence convertResultToString(Object resultValue) {
-            return ((TradingEquipment) resultValue).getSymbol();
+            return ((Stock) resultValue).getSymbol();
         }
     };
 }

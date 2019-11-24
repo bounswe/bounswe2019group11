@@ -14,6 +14,7 @@ import com.papel.data.Article;
 import com.papel.data.Comment;
 import com.papel.data.Event;
 import com.papel.data.Portfolio;
+import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
 import com.papel.data.User;
 
@@ -52,10 +53,10 @@ public class ResponseParser {
         try {
             String stockId = response.getString("_id");
             String name = response.getString("name");
-            String stockName = response.getString("stockName");
+            //String stockName = response.getString("stockName");
             String stockSymbol = response.getString("stockSymbol");
             double stockPrice = response.getDouble("price");
-            tradingEquipment = new TradingEquipment(stockId,name,stockPrice,stockSymbol,stockName);
+            tradingEquipment = new Stock(stockId,name,stockPrice,stockSymbol);
         } catch (JSONException e) {
             e.printStackTrace();
         }

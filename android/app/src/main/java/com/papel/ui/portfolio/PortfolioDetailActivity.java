@@ -33,6 +33,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.papel.Constants;
 import com.papel.R;
 import com.papel.data.Portfolio;
+import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
 import com.papel.ui.utils.CustomHurlStack;
 import com.papel.ui.utils.DialogHelper;
@@ -110,7 +111,8 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         tradingEquipmentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                TradingEquipment clicked = tradingEquipmentListViewAdapter.getItem(i);
+                Stock clicked = (Stock)tradingEquipmentListViewAdapter.getItem(i);
+                Log.d("Trading Equipement", "Trading equipment clicked: " + clicked.getId());
                 Log.d("Trading Equipement", "Trading equipment clicked: " + clicked.getName());
                 detailIntent.putExtra("TradingEquipment",clicked);
                 startActivity(detailIntent);
@@ -140,7 +142,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
     private void showListDialog() {
         ArrayList<MultiSelectModel> tradingEquipmentList = new ArrayList<>();
         for(int i = 0; i<tradingEquipmentOptions.size(); i++) {
-            tradingEquipmentList.add(new MultiSelectModel(i,tradingEquipmentOptions.get(i).getSymbol()));
+            tradingEquipmentList.add(new MultiSelectModel(i,((Stock)tradingEquipmentOptions.get(i)).getSymbol()));
         }
 
         final ArrayList<Integer> selectedTradingEquipments = new ArrayList<>();
@@ -148,7 +150,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
 
         for(int i = 0; i<tradingEquipmentOptions.size(); i++) {
             for (int j = 0; j<tradingEquipments.size(); j++) {
-                if (tradingEquipmentOptions.get(i).getId().equals(tradingEquipments.get(j).getId())) {
+                if (((Stock)tradingEquipmentOptions.get(i)).getId().equals(((Stock)tradingEquipments.get(j)).getId())) {
                     selectedTradingEquipments.add(i);
                     initialSelectedTradingEquipments.add(i);
                 }
@@ -168,18 +170,18 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                     public void onSelected(ArrayList<Integer> selectedIds, ArrayList<String> selectedNames, String dataString) {
                         //will return list of selected IDS
                         for (int i=0;i<tradingEquipmentOptions.size();i++) {
-                            TradingEquipment current = tradingEquipmentOptions.get(i);
+                            Stock current = (Stock)tradingEquipmentOptions.get(i);
                             int beforeSelected = initialSelectedTradingEquipments.indexOf(i);
                             int currentSelected = selectedIds.indexOf(i);
                             if(beforeSelected != -1 && currentSelected == -1) {
                                 // The current item was in the list, but it is not in the list right now
                                 Log.d("Dialog","Delete " + current.getSymbol());
-                                deleteTradingEquipment(current);
+                                deleteStock(current);
                             }
                             if (beforeSelected == -1 && currentSelected != -1) {
                                 // The current item wasn't in the list, but it is in the list right now
                                 Log.d("Dialog","Add " + current.getSymbol());
-                                addTradingEquipment(current);
+                                addStock(current);
                             }
                         }
                     }
@@ -196,7 +198,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
 
     }
 
-    private void addTradingEquipment(final TradingEquipment tradingEquipment) {
+    private void addStock(final Stock tradingEquipment) {
         requestNumber += 1;
         hideUI();
         String url = Constants.LOCALHOST + Constants.PORTFOLIO + portfolio.getId() + "/"+ Constants.STOCK;
@@ -206,7 +208,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
             jsonBody.put("name",tradingEquipment.getName());
             jsonBody.put("price",tradingEquipment.getPrice());
             jsonBody.put("stockSymbol",tradingEquipment.getSymbol());
-            jsonBody.put("stockName",tradingEquipment.getStockName());
+            //jsonBody.put("stockName",tradingEquipment.getStockName()); TODO ? important
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -253,7 +255,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
         addRequestQueue.add(request);
     }
 
-    private void deleteTradingEquipment(TradingEquipment tradingEquipment) {
+    private void deleteStock(Stock tradingEquipment) {
         requestNumber += 1;
         hideUI();
         Log.d("Delete","seq num " + deleteRequestQueue.getSequenceNumber());
@@ -377,11 +379,11 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                         JSONObject object = responseArray.getJSONObject(i);
                         String id = object.getString("_id");
                         String name = object.getString("name");
-                        String stockName = object.getString("stockName");
+                        //String stockName = object.getString("stockName");
                         double price = object.getDouble("price");
                         String symbol = object.getString("stockSymbol");
-                        Log.d("Response","stockName: " + stockName);
-                        tradingEquipmentOptions.add(new TradingEquipment(id,name,price,symbol,stockName));
+                        //Log.d("Response","stockName: " + stockName);
+                        tradingEquipmentOptions.add(new Stock(id,name,price,symbol));
                     }
 
                     progressBar.setVisibility(View.INVISIBLE);

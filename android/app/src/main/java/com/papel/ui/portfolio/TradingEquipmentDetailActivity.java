@@ -32,6 +32,7 @@ import com.github.mikephil.charting.data.CandleDataSet;
 import com.github.mikephil.charting.data.CandleEntry;
 import com.papel.Constants;
 import com.papel.R;
+import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
 import com.papel.ui.utils.DialogHelper;
 
@@ -70,7 +71,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
         final View header = getLayoutInflater().inflate(R.layout.trading_equipment_header, null);
 
         Intent intent = getIntent();
-        TradingEquipment tradingEquipment = intent.getParcelableExtra("TradingEquipment");
+        Stock tradingEquipment = intent.getParcelableExtra("TradingEquipment");
         setTitle(tradingEquipment.getSymbol());
 
         commentList = findViewById(R.id.trading_equipment_comments);
@@ -131,6 +132,8 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
     private void fetchChartData(String id) {
         final SimpleDateFormat dailyDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         final SimpleDateFormat monthlyDateFormat = new SimpleDateFormat("yyyy-MM-dd",Locale.US);
+
+        Log.d("Info","Trading Equipment Detail: " + id);
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         String url = Constants.LOCALHOST + Constants.STOCK + id;
