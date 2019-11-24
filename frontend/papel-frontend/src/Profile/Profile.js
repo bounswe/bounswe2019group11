@@ -64,17 +64,16 @@ class Profile extends React.Component {
         <>
           <Row>
             <Col md={{span: 6}}>
-              <ProfileCard/>
+              <ProfileCard isMe={true}/>
             </Col>
             <Col md={{span: 6}}>
               <h3>Portfolios: </h3>
               <Row>
-                <Col md={{span: 10, offset: 1}}>
-
+                <Col>
                 {
                   this.state.portfolios.map (
                     portfolio =>
-                    <Portfolio key={portfolio._id} portfolio={portfolio} />
+                    <Portfolio key={portfolio._id} portfolio={portfolio} isMe={true} />
                   )
                 }
                   <Modal

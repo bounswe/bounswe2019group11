@@ -4,23 +4,33 @@ import logo from "./logo.jpg";
 import {useCookies} from 'react-cookie';
 import { getFormattedAddress } from '../helpers/geocoder';
 
-function ProfileCard() {
-  const [cookies] = useCookies(['user']);
-  const [formattedAddress, setFormattedAddress] = useState("");
+function ProfileCard(props) {
+  const [cookies] = useCookies(['user'])
+  const [formattedAddress, setFormattedAddress] = useState("")
+  var user
+  if (props.isMe)
+    user = cookies.user
+  else
+    user = props.user
 
-  var user = cookies.user;
-  var geocodeLocation = async function() {
+  async function geocodeLocation() {
     var response = await getFormattedAddress(user.location)
     if (response.status !== 'error') {
       setFormattedAddress(response.result)
-      console.log(response.result)
     }
     else {
       setFormattedAddress("")
       console.log("Error: " + response.message)
     }
-  }()
-
+  }
+  geocodeLocation()
+  // async function please() {
+  //   await geocodeLocation()
+  //   if (formattedAddress === "")
+  //     geocodeLocation()
+  //   else
+  //     console.log("i cry")
+  // }
   return (
     <>
       <div className='row'>
