@@ -18,10 +18,10 @@ class Article extends React.Component {
     super(props);
     const {cookies} = props;
     const loggedIn = !!cookies.get('userToken');
-    const userId = cookies.get('user')._id?cookies.get('user')._id:"check get user id";
-
+    var userId ="";
     if(loggedIn) {console.log(cookies.get("userToken"));
-                  }
+     userId = cookies.get('user')._id?cookies.get('user')._id:"check get user id";
+    }
     else {console.log("not logged");} 
     this.state = {loggedIn: loggedIn, userId:userId, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
     this._article={};
@@ -166,7 +166,7 @@ class Article extends React.Component {
               <Card.Title><h4>Comments</h4></Card.Title>
               <hr/>
               { comments ? (comments.map(comment => (
-                <CommentPreview key={comment._id} id={comment._id} loggedIn={loggedIn} userId={userId} authorId={comment.authorId} author={comment.author[0].name +" "+comment.author[0].surname } body={comment.body} date={comment.date} lastEditDate={comment.lastEditDate}  />
+                <CommentPreview key={comment._id} id={comment._id} articleId={this.state.id} authorId={comment.authorId} author={comment.author[0].name +" "+comment.author[0].surname } body={comment.body} date={comment.date} lastEditDate={comment.lastEditDate}  />
               ))) : "Comments are loading" }
 
             </Card.Body>

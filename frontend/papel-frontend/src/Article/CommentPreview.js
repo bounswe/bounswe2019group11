@@ -3,20 +3,25 @@ import {Row, Col, Button, Card, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus,faThumbsUp,faThumbsDown, faUserCircle, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
 import $ from 'jquery';
-import {authorizedPost} from '../helpers/request';
 import Article from './Article';
+import { useCookies} from 'react-cookie';
+import {deleteRequest,postRequest} from "../helpers/request"
+function CommentPreview({id, authorId, articleId, author,   body, date, lastEditDate}) {
+  const [cookies, setCookie, removeCookie] = useCookies(['userToken', 'user' ]);
 
-function CommentPreview({id, userId, authorId, author, cookies, loggedIn, body, date, lastEditDate}) {
   var deleteBtn;
-  
-  if(loggedIn & (userId == authorId)){
-    deleteBtn = <Col sm={{span: 3, offset: 5}} xs={{span: 12}}>
-            
-      <FontAwesomeIcon id="interactive" name="Delete" 
+  const loggedIn = !!cookies.userToken;
+  function handleDelete(){
+    var path = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+articleId+"/comment/"+id;
+    deleteRequest({url:path, success:()=>{window.location.reload()}, authToken:cookies.userToken });
+    
+  }
+  if(loggedIn && (cookies.user._id == authorId)){
+    deleteBtn = <Col sm={{span: 2, offset: 5}} xs={{span: 12}}>
+      <FontAwesomeIcon id="interactive" name="Delete" onClick={handleDelete} 
       
          icon={faTrashAlt} 
-      />&nbsp;Delete Comment         
-
+      />
     </Col>
   }
   return (
