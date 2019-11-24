@@ -208,10 +208,12 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                                 if(beforeSelected != -1 && currentSelected == -1) {
                                     // TODO delete currency
                                     Log.d("Info","Delete currency: " + current.getCode());
+                                    deleteCurrency();
                                 }
                                 if (beforeSelected == -1 && currentSelected != -1) {
                                     // TODO add curreny
                                     Log.d("Info", "Add currency: " + current.getCode());
+                                    addCurrency();
                                 }
                             }
 
@@ -229,6 +231,14 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                 });
 
         multiSelectDialog.show(getSupportFragmentManager(), "multiSelectDialog");
+
+    }
+
+    private void addCurrency() {
+
+    }
+
+    private void deleteCurrency() {
 
     }
 

@@ -10,14 +10,14 @@ import java.util.ArrayList;
 public class Portfolio implements Parcelable {
     private String id;
     private String name;
-    private ArrayList<TradingEquipment> tradingEquipments;
+    private ArrayList<Object> tradingEquipments;
 
     public Portfolio(String id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Portfolio(String id, String name, ArrayList<TradingEquipment> tradingEquipments) {
+    public Portfolio(String id, String name, ArrayList<Object> tradingEquipments) {
         this.id = id;
         this.name = name;
         this.tradingEquipments = tradingEquipments;
@@ -76,11 +76,11 @@ public class Portfolio implements Parcelable {
         this.id = id;
     }
 
-    public ArrayList<TradingEquipment> getTradingEquipments() {
+    public ArrayList<Object> getTradingEquipments() {
         return tradingEquipments;
     }
 
-    public void setTradingEquipments(ArrayList<TradingEquipment> tradingEquipments) {
+    public void setTradingEquipments(ArrayList<Object> tradingEquipments) {
         this.tradingEquipments = tradingEquipments;
     }
 

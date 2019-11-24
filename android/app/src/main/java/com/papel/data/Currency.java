@@ -3,7 +3,7 @@ package com.papel.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Currency implements Parcelable {
+public class Currency extends TradingEquipment implements Parcelable {
     private String code;
     private String name;
     private double rate;
