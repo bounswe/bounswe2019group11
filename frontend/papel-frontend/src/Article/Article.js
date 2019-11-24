@@ -22,7 +22,7 @@ class Article extends React.Component {
 
     if(loggedIn) {console.log(cookies.get("userToken"));
                   }
-    else {console.log("not logged");} 
+    else {console.log("not logged");}
     this.state = {loggedIn: loggedIn, userId:userId, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
     this._article={};
     this._article_vote_type=0;
@@ -73,8 +73,12 @@ class Article extends React.Component {
       })
     }
   }
-  /*this.setState({article:{ voteCount:voteCount+1, title:article.title}})*/
   handleSubmit(event) {
+  const {cookies} = this.props;
+  if (!this.state.loggedIn) {
+    alert('not logged in');
+  }
+  else{
     if(this._article_vote_type==1){
       this.setState({
         article: {
@@ -82,16 +86,30 @@ class Article extends React.Component {
           voteCount: this.state.article ? this.state.article.voteCount + 1 : 0,
         }
       });
-    }
-    if(this._article_vote_type==2){
-      this.setState({
-        article: {
-          ...this.state.article,
-          voteCount: this.state.article ? this.state.article.voteCount - 1 : 0,
-        }
-      });
+      authorizedPost({
+        url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/up-vote",
+        success: function() { console.log("Vote sent!") },
+        authToken: cookies.get('userToken')
+      })
+      console.log(cookies.get('userToken'));
+      console.log("here");
+      console.log(this.state.id);
     }
   }
+  if(this._article_vote_type==2){
+    this.setState({
+      article: {
+        ...this.state.article,
+        voteCount: this.state.article ? this.state.article.voteCount - 1 : 0,
+      }
+    });
+    authorizedPost({
+      url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/down-vote",
+      success: function() { console.log("Vote sent!") },
+      authToken: cookies.get('userToken')
+    })
+  }
+}
   render() {
     var article = this.state.article;
     var author = this.state.author;
@@ -101,7 +119,7 @@ class Article extends React.Component {
     var userId = this.state.userId;
     console.log(userId);
     var loggedIn = this.state.loggedIn;
-    
+
     if (this.state.authorLoading)
       authorLine = <p style={{color: "gray"}}>author not found</p> ;
     else
