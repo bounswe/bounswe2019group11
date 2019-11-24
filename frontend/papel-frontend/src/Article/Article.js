@@ -166,7 +166,7 @@ class Article extends React.Component {
               <Card.Title><h4>Comments</h4></Card.Title>
               <hr/>
               { comments ? (comments.map(comment => (
-                <CommentPreview key={comment._id} id={comment._id} loggedIn={loggedIn} userId={userId} authorId={comment.authorId} author={comment.author[0].name +" "+comment.author[0].surname } body={comment.body} date={comment.date} lastEditDate={comment.lastEditDate}  />
+                <CommentPreview key={comment._id} id={comment._id} articleId={this.state.id} authorId={comment.authorId} author={comment.author[0].name +" "+comment.author[0].surname } body={comment.body} date={comment.date} lastEditDate={comment.lastEditDate}  />
               ))) : "Comments are loading" }
 
             </Card.Body>

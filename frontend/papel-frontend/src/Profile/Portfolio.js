@@ -1,13 +1,14 @@
 import React, {useState} from 'react';
 import {Row, Col, Card, Modal, Button, Form, Table} from 'react-bootstrap';
 import $ from 'jquery';
-
+import {deleteRequest} from '../helpers/request';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faAngleDown, faAngleUp, faPlus, faTrash} from '@fortawesome/free-solid-svg-icons';
 import './Portfolio.css';
-
+import {useCookies} from 'react-cookie'
 
 function Portfolio({portfolio, isMe}){
+  const [cookies, setCookie, removeCookie] = useCookies(['userToken'])
   const [stocksShown, showStocks] = useState(false);
   const [stockAddShown, showStockAdd] = useState(false);
   const [newStock, setNewStock] = useState({});
@@ -70,7 +71,13 @@ function Portfolio({portfolio, isMe}){
   }
 
   var deleteStock = function(stock) {
-    alert("delete " + stock._id)
+    var request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/portfolio/" + portfolio._id + "/stock"
+    deleteRequest({
+      url: request_url,
+      data: stock,
+      success: () => window.location.reload(),
+      authToken: cookies.userToken
+    })
   }
 
   var portfolios = function(isMe) {

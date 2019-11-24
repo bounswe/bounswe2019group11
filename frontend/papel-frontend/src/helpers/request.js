@@ -41,11 +41,13 @@ function simpleGet({url, success}) {
   })
 }
 
-function authorizedDelete({url, success, authToken}) {
+function authorizedDelete({url, success, data, authToken}) {
   $.ajax({
     type: "DELETE",
     url: url,
     async: true,
+    dataType: 'json',
+    data: data,
     success: success,
     beforeSend: (xhr) => xhr.setRequestHeader("Authorization", "Bearer " + authToken)
   })
