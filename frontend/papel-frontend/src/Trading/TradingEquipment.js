@@ -4,6 +4,8 @@ import $ from 'jquery';
 import './TradingEquipment.css';
 import {Card} from 'react-bootstrap'
 import CanvasJSReact from '../canvasjs/canvasjs.react';
+import {withCookies} from 'react-cookie'
+
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 class TradingEquipment extends React.Component {
@@ -72,4 +74,4 @@ class TradingEquipment extends React.Component {
 
 
 
-export default TradingEquipment;
+export default withCookies(TradingEquipment);

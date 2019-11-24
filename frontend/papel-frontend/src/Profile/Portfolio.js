@@ -3,11 +3,11 @@ import {Row, Col, Card, Modal, Button, Form, Table} from 'react-bootstrap';
 import $ from 'jquery';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faAngleDown, faAngleUp, faPlus} from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faAngleUp, faPlus, faTrash} from '@fortawesome/free-solid-svg-icons';
 import './Portfolio.css';
 
 
-function Portfolio({portfolio}){
+function Portfolio({portfolio, isMe}){
   const [stocksShown, showStocks] = useState(false);
   const [stockAddShown, showStockAdd] = useState(false);
   const [newStock, setNewStock] = useState({});
@@ -66,25 +66,45 @@ function Portfolio({portfolio}){
     var searchbarNewText = event.target.value.toLowerCase();
     setSearchbarText(searchbarNewText);
     var list = originalStockList.filter(stock => stock.stockName.toLowerCase().includes(searchbarNewText));
-    console.log(list);
     setStockList(list);
   }
+
+  var deleteStock = function(stock) {
+    alert("delete " + stock._id)
+  }
+
+  var portfolios = function(isMe) {
+    if (isMe) {
+      return portfolio.stocks.map(
+        stock =>
+        (<li key={stock._id}>
+          <a href={"../stock/" + stock._id}>{stock.stockSymbol.split(" - ")[0]}</a>
+          <a href="#" onClick={() => deleteStock(stock)}><FontAwesomeIcon style={{float:"right"}} icon={faTrash}/></a>
+        </li>)
+      )
+    }
+    else {
+      return portfolio.stocks.map(stock => (<a key={stock._id} href={"../stock/" + stock._id}><li>{stock.stockName.split(" - ")[0]}</li></a>))
+    }
+  }
+
   return (
     <Card className="portfolio">
       <Card.Body>
         <Card.Title>{portfolio.name}</Card.Title>
         <ul className="portfolio-stocks" hidden={!stocksShown}>
-        { portfolio.stocks.map(
-          stock =>
-          <a key={stock._id} href={"../stock/" + stock._id}><li>{stock.stockName.split(" - ")[0]}</li></a>
-          )
-        }
-          <li>
+        { portfolios(isMe) }
+        {
+          isMe ?
+          (<li>
             <div className="add-stock" onClick={addStockBtn} style={{width: "100%", textAlign: "center"}}>
               <FontAwesomeIcon icon={faPlus} />&nbsp;
               Add Stock
             </div>
-          </li>
+          </li>)
+          :
+          ""
+        }
         </ul>
         <Modal
           show={stockAddShown}

@@ -6,6 +6,7 @@ import Home from './Home/Home';
 import Login from './Login/Login';
 import Register from './Register/Register';
 import Profile from './Profile/Profile';
+import UserProfile from './Profile/UserProfile';
 import TradingEquipment from './Trading/TradingEquipment';
 import Article from './Article/Article';
 import Articles from './Article/Articles';
@@ -16,7 +17,7 @@ import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import { useCookies, CookiesProvider } from 'react-cookie';
 
 function NavBar(props) {
-  const [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken'])
+  const [cookies, setCookie, removeCookie] = useCookies(['name', 'user', 'userToken'])
   var profileBtn, logoutBtn, registerBtn, loginBtn;
   const [loggedIn, login] = useState(!!cookies.userToken);
 
@@ -24,6 +25,7 @@ function NavBar(props) {
     console.log(cookies);
     removeCookie('userToken');
     removeCookie('user');
+    removeCookie('name');
     login(false);
   }
   if(!!loggedIn) {
@@ -60,6 +62,7 @@ function NavBar(props) {
           <Route path="/validation"><Validation /></Route>
           <Route path="/articles"><Articles /></Route>
           <Route path="/events"><EconEvents /></Route>
+          <Route path="/user/:id" component={UserProfile} />
         </Switch>
       </div>
     </CookiesProvider>

@@ -1,0 +1,12 @@
+.my-articles {
+  background-color: #fff;
+  overflow-x: scroll;
+  scrollbar-width: thin;
+}
+.my-articles::-webkit-scrollbar {
+  width: 5px;
+  background-color: #f0f0f0;
+}
+.my-articles::-webkit-scrollbar-thumb {
+  background: #cdcdcd;
+}
