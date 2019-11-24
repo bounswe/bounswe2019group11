@@ -1,7 +1,7 @@
 const express = require('express');
 const currencyService = require('../services/currency');
 const errors = require('../helpers/errors');
-
+const isAuthenticated = require('../middlewares/isAuthenticated');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
