@@ -2,47 +2,31 @@ import React from 'react';
 import {Editor, EditorState, RichUtils} from 'draft-js';
 import 'draft-js/dist/Draft.css';
 import './Article.css';
+import {instanceOf} from 'prop-types'
+import {withCookies, Cookies} from 'react-cookie';
 import {useParams} from 'react-router-dom';
 import $ from 'jquery';
 import {Row, Col, Button, Card, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus,faThumbsUp,faThumbsDown, faUserCircle} from '@fortawesome/free-solid-svg-icons';
+import CommentPreview from './CommentPreview';
+import {authorizedPost} from '../helpers/request';
 
-/*class ArticleEditor extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {editorState: EditorState.createEmpty()};
-    this.onChange = (editorState) => this.setState({editorState});
-  }
-
-  onBoldClick() {
-    this.onChange(RichUtils.toggleInlineStyle(
-      this.state.editorState,
-      'BOLD'
-    ));
-  }
-
-  render() {
-    return (
-      <div id="content">
-        <h4>Edit Article:</h4>
-        <div className="editor">
-          <Editor editorState={this.state.editorState} onChange={this.onChange} />
-        </div>
-      </div>
-    );
-  }
-}
-*/
 class Article extends React.Component {
+  static propTypes = {cookies: instanceOf(Cookies).isRequired};
   constructor(props) {
     super(props);
-    this.state = {id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
+    const {cookies} = props;
+    const loggedIn = !!cookies.get('userToken');
+    this.state = {loggedIn: loggedIn, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
     this._article={};
     this._article_vote_type=0;
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCommentEditorChange = this.handleCommentEditorChange.bind(this);
+    this.handleCommentEditorSubmit = this.handleCommentEditorSubmit.bind(this);
   }
   componentDidMount() {
+    const {cookies} = this.props;
     const self = this;
     const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/" + this.state.id;
     this.setState({articleLoading: true});
@@ -54,10 +38,36 @@ class Article extends React.Component {
       }
     )
   }
-  printID(id) {
-    alert(id);
+
+  handleCommentEditorChange(event) {
+    this.setState({commentText: event.target.value});
   }
 
+  handleCommentEditorSubmit(event) {
+    const {cookies} = this.props;
+    if (!this.state.loggedIn) {
+      alert('A name was submitted: ' + this.state.commentText);
+    }
+    else{
+      event.preventDefault();
+      var comment = {body : this.state.commentText};
+      // $.ajax({
+      //   type: "POST",
+      //   url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment",
+      //   dataType: 'json',
+      //   async: true,
+      //   data: comment,
+      //   success: () => console.log("Wow! It's a response: "),
+      //   beforeSend: (xhr) => xhr.setRequestHeader("Authorization", "Bearer " + cookies.get('userToken'))
+      // })
+      authorizedPost({
+        url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment",
+        data: comment,
+        success: function() { console.log("Comment sent!") },
+        authToken: cookies.get('userToken')
+      })
+    }
+  }
   /*this.setState({article:{ voteCount:voteCount+1, title:article.title}})*/
   handleSubmit(event) {
     if(this._article_vote_type==1){
@@ -82,6 +92,7 @@ class Article extends React.Component {
     var author = this.state.author;
     var authorLine;
     var voteCount = this.state.article.voteCount;
+    var comments = this.state.article.comments;
     if (this.state.authorLoading)
       authorLine = <p style={{color: "gray"}}>author not found</p> ;
     else
@@ -125,68 +136,35 @@ class Article extends React.Component {
         </Col>
 
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
-          <label for="commentEditor">You can share your opinion</label>
-          <Form>
-            <textarea class="form-control" id="commentEditor" rows="4"></textarea>
+          <label htmlFor="commentEditor"></label>
 
-            <Col  md={{span: 2, offset: 10}}
-                style={{width: "20", marginTop: 5, marginBottom: 10 }}>
-                <Button size="sm" type="submit" onClick={() => {article="deneme"}}>
-                  <FontAwesomeIcon icon={faPlus} />&nbsp; Add
-                </Button>
-            </Col>
-          </Form>
+            <form className="span6" onSubmit={this.handleCommentEditorSubmit}>
+              <textarea id="commentBox" value={this.state.commentText} onChange={this.handleCommentEditorChange} className="form-control" id="commentEditor" placeholder="You can share your opinion by adding a comment." rows="4"></textarea>
+
+              <Col  md={{span: 2, offset: 10}}
+                  style={{width: "20", marginTop: 5, marginBottom: 10 }}>
+                  <Button size="sm" type="submit" >
+                    <FontAwesomeIcon icon={faPlus} />&nbsp; Add
+                  </Button>
+              </Col>
+            </form>
         </Col>
 
-
-
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
+
           <Card>
             <Card.Body>
               <Card.Title><h4>Comments</h4></Card.Title>
-
-                <hr />
-
-              <Card.Title >
-                <h6><FontAwesomeIcon name="Like" icon={faUserCircle} />&nbsp; Burak Yılmaz</h6>
-              </Card.Title>
-
-              <Card.Text >
-                This is a very nice place holder comment. Isn't it? :)
-              </Card.Text>
-
-              <Row className="">
-
-                <Col sm={{span: 2, offset: 0}} xs={{span: 12}}>
-
-                  <Button size="sm"  onClick={() => alert("impelement et")}>
-
-                    <FontAwesomeIcon name="Like" icon={faThumbsUp} />&nbsp;
-                    !15!
-                  </Button>
-
-                </Col>
-
-                <Col sm={{span: 2, offset: 0}} xs={{span: 12}}>
-
-                  <Button size="sm"  onClick={() => alert("implement et")}>
-                    <FontAwesomeIcon name="Dislike" icon={faThumbsDown} />&nbsp;
-                    !5!
-                  </Button>
-
-
-                </Col>
-
-              </Row>
-
-
+              <hr/>
+              { comments ? (comments.map(comment => (
+                <CommentPreview key={comment._id} id={comment._id} author={comment.author[0].name +" "+comment.author[0].surname } body={comment.body} date={comment.date} lastEditDate={comment.lastEditDate}  />
+              ))) : "Comments are loading" }
 
             </Card.Body>
           </Card>
         </Col>
-
       </Row >
     );
   }
 }
-export default Article;
+export default withCookies(Article);

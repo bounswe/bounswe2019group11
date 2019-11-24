@@ -2,7 +2,6 @@ import React from 'react';
 import './Profile.css';
 import ProfileCard from './ProfileCard';
 import Portfolio from './Portfolio';
-import logo from "./logo.jpg";
 import {instanceOf} from 'prop-types'
 import {withCookies, Cookies} from 'react-cookie';
 import {Row, Col, Card, Button, Modal, Form} from 'react-bootstrap';
@@ -70,7 +69,7 @@ class Profile extends React.Component {
             <Col md={{span: 6}}>
               <h3>Portfolios: </h3>
               <Row>
-                <Col md={{span: 8, offset: 2}}>
+                <Col md={{span: 10, offset: 1}}>
 
                 {
                   this.state.portfolios.map (

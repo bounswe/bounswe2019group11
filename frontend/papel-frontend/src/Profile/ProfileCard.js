@@ -1,11 +1,25 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './Profile.css';
 import logo from "./logo.jpg";
 import {useCookies} from 'react-cookie';
+import { getFormattedAddress } from '../helpers/geocoder';
 
 function ProfileCard() {
   const [cookies] = useCookies(['user']);
+  const [formattedAddress, setFormattedAddress] = useState("");
+
   var user = cookies.user;
+  var geocodeLocation = async function() {
+    var response = await getFormattedAddress(user.location)
+    if (response.status !== 'error') {
+      setFormattedAddress(response.result)
+      console.log(response.result)
+    }
+    else {
+      setFormattedAddress("")
+      console.log("Error: " + response.message)
+    }
+  }()
 
   return (
     <>
@@ -18,7 +32,7 @@ function ProfileCard() {
             {user.name} {user.surname}
           </div>
           <div className="row">
-            📌 Lat: {user.location.latitude.toString().slice(0,5)} Lng: {user.location.longitude.toString().slice(0, 5)}
+            {formattedAddress === "" ? "" : "📌 " +formattedAddress}
           </div>
           <div className="row">
             {user.email}

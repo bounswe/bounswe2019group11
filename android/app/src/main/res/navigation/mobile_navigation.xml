@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_articles" />
 
     <fragment
+        android:id="@+id/nav_trading_equipments"
+        android:name="com.papel.ui.tradingequipments.TradingEquipmentsFragment"
+        android:label="@string/menu_trading_eq"
+        tools:layout="@layout/fragment_trading_equipments" />
+
+    <fragment
         android:id="@+id/nav_portfolio"
         android:name="com.papel.ui.portfolio.PortfolioFragment"
         android:label="@string/menu_portfolio"
@@ -27,12 +33,6 @@
             app:argType="string"
             android:defaultValue="5"/>
     </fragment>
-
-    <fragment
-        android:id="@+id/nav_tools"
-        android:name="com.papel.ui.tools.ToolsFragment"
-        android:label="@string/menu_tools"
-        tools:layout="@layout/fragment_tools" />
 
     <fragment
         android:id="@+id/nav_share"

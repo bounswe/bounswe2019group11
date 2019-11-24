@@ -41,11 +41,11 @@ const STAGES = {
             },
             pipeline: [
                 {
-                  $match: {
-                      $expr: {
-                          $eq: ['$$articleId', '$articleId']
-                      }
-                  }
+                    $match: {
+                        $expr: {
+                            $eq: ['$$articleId', '$articleId']
+                        }
+                    }
                 },
                 {
                     $lookup: {
@@ -159,22 +159,71 @@ const STAGES = {
             }
         }
     },
+    GET_USER_VOTE: (userId) => {
+        return {
+            $lookup: {
+                from: 'articlevotes',
+                let: {
+                    articleId: '$_id',
+                    userId: userId,
+                },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$articleId', '$$articleId']
+                                    },
+                                    {
+                                        $eq: ['$userId', { $toObjectId: '$$userId' }]
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            value: 1,
+                            _id: 0,
+                        }
+                    }
+                ],
+                as: 'userVote'
+            }
+        }
+    },
+    UNWIND_USER_VOTE: {
+        $unwind: {
+            path: '$userVote',
+            preserveNullAndEmptyArrays: true,
+        }
+    },
+    SET_USER_VOTE: {
+        $addFields: {
+            userVote: {
+                $ifNull: ["$userVote.value", 0]
+            }
+        }
+    },
 };
 
-module.exports.getAll = async () => {
+module.exports.getAll = async (userId) => {
     return await Article.aggregate([
         STAGES.GET_AUTHOR, STAGES.UNWIND_AUTHOR,
-        STAGES.SUM_VOTES, STAGES.UNWIND_VOTES, STAGES.SET_VOTES
+        STAGES.SUM_VOTES, STAGES.UNWIND_VOTES, STAGES.SET_VOTES,
+        STAGES.GET_USER_VOTE(userId), STAGES.UNWIND_USER_VOTE, STAGES.SET_USER_VOTE
     ]).then();
 };
 
-module.exports.getById = async (_id) => {
+module.exports.getById = async (_id, userId) => {
     if (!(mongoose.Types.ObjectId.isValid(_id))) {
         throw errors.ARTICLE_NOT_FOUND();
     }
     const article = await Article.aggregate([
         STAGES.MATCH_ID(_id), STAGES.GET_AUTHOR, STAGES.UNWIND_AUTHOR, STAGES.GET_COMMENTS,
-        STAGES.SUM_VOTES, STAGES.UNWIND_VOTES, STAGES.SET_VOTES
+        STAGES.SUM_VOTES, STAGES.UNWIND_VOTES, STAGES.SET_VOTES,
+        STAGES.GET_USER_VOTE(userId), STAGES.UNWIND_USER_VOTE, STAGES.SET_USER_VOTE
     ]).then();
     if (!article) {
         throw errors.ARTICLE_NOT_FOUND();
@@ -188,7 +237,8 @@ module.exports.getByUserId = async (_userId) => {
     }
     return await Article.aggregate([
         STAGES.MATCH_USER_ID(_userId), STAGES.GET_AUTHOR, STAGES.UNWIND_AUTHOR,
-        STAGES.SUM_VOTES, STAGES.UNWIND_VOTES, STAGES.SET_VOTES
+        STAGES.SUM_VOTES, STAGES.UNWIND_VOTES, STAGES.SET_VOTES,
+        STAGES.GET_USER_VOTE(_userId), STAGES.UNWIND_USER_VOTE, STAGES.SET_USER_VOTE
     ]).then();
 };
 
@@ -287,7 +337,6 @@ module.exports.clearVote = async (articleId, userId) => {
     }
 
     const res = await ArticleVote.deleteOne({articleId, userId});
-    console.log(articleId, userId, res);
     if (res.n !== 1) {
         throw errors.VOTE_NOT_FOUND();
     }
