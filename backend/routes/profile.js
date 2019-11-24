@@ -164,6 +164,26 @@ router.post('/:id/follow',isAuthenticated, async (req, res) => {
     } catch (err) {
         if (err.name === 'UserNotFound') {
             res.status(400).send(err);
+        }else if(err.name === 'FollowedAlready'){
+            res.status(400).send(errors.ALREADY_FOLLOWED(err));
+        }
+        else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
+router.post('/:id/unfollow',isAuthenticated, async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userId =  req.token && req.token.data && req.token.data._id;
+        const user = await userService.getById(userId);
+        const userToBeAccepted = await userService.getById(id);
+        res.status(200).json({msg:await user.unfollow(userToBeAccepted)});
+
+    } catch (err) {
+        if (err.name === 'UserNotFound') {
+            res.status(400).send(err);
         } else {
             res.status(500).send(errors.INTERNAL_ERROR(err));
         }

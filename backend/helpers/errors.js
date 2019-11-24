@@ -94,4 +94,7 @@ module.exports = {
     INVALID_CURRENCY_CODE: (cause) => {
         return PapelError('InvalidCurrencyCode', 'Given currency code is not valid.', cause);
     },
+    ALREADY_FOLLOWED: (cause) => {
+        return PapelError('FollowedAlready', 'You are already following this user.', cause);
+    }
 };

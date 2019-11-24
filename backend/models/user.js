@@ -5,6 +5,7 @@ const authHelper = require('../helpers/auth');
 const VerificationToken = require('./verificationToken');
 const crypto = require('crypto');
 const LostPasswordToken = require('./lostPasswordToken');
+const errors = require('../helpers/errors');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -135,7 +136,8 @@ userSchema.methods.generateLostPasswordToken = async function () {
 };
 userSchema.methods.follow =async function(userToBeFollowed){
     const userIdToBeFollowed = userToBeFollowed._id;
-    if(this.following.findIndex(elm => elm.userId.toString() === userIdToBeFollowed.toString()) !== -1){
+    console.log(this.following.findIndex(elm => elm.userId.toString() === userIdToBeFollowed.toString()));
+    if(this.following.findIndex(elm => elm.userId.toString() === userIdToBeFollowed.toString()) === -1){
         if(userToBeFollowed.privacy === 'public'){
             this.following.push({userId:userIdToBeFollowed, isAccepted:true});
             userToBeFollowed.followers.push({userId:this._id,isAccepted:true});
@@ -151,20 +153,41 @@ userSchema.methods.follow =async function(userToBeFollowed){
         }
 
     }else{
-        return "You are already following this user";
+        throw errors.ALREADY_FOLLOWED();
     }
 
 };
 
+userSchema.methods.unfollow = async function (userToBeUnfollowed) {
+
+    const userIdToBeUnfollowed = userToBeUnfollowed._id;
+    if(this.following.findIndex(elm => elm.userId.toString() === userIdToBeUnfollowed.toString()) !== -1) {
+        const index = this.following.findIndex(elm => elm.userId.toString() === userIdToBeUnfollowed.toString());
+        this.following.splice(index, 1);
+        const index2 = userToBeUnfollowed.followers.findIndex(elm => elm.userId.toString() === this._id.toString());
+        userToBeUnfollowed.followers.splice(index2, 1);
+        await this.save();
+        await userToBeUnfollowed.save();
+        return "User has been successfully unfollowed";
+    }else{
+        throw errors.USER_NOT_FOUND();
+    }
+};
+
 userSchema.methods.accept = async function (userToBeAccepted) {
     const userIdToBeAccepted = userToBeAccepted._id;
-    const index = this.followers.findIndex(elm => elm.userId.toString() === userIdToBeAccepted.toString());
-    this.followers[index]['isAccepted'] = true;
-    const index2 = userToBeAccepted.following.findIndex(elm => elm.userId.toString() === this._id.toString());
-    userToBeAccepted.following[index2]['isAccepted'] = true;
-    await this.save();
-    await userToBeAccepted.save();
-    return "Follow request accepted";
+    if(this.followers.findIndex(elm => elm.userId.toString() === userIdToBeAccepted.toString()) !== -1){
+        const index = this.followers.findIndex(elm => elm.userId.toString() === userIdToBeAccepted.toString());
+        this.followers[index]['isAccepted'] = true;
+        const index2 = userToBeAccepted.following.findIndex(elm => elm.userId.toString() === this._id.toString());
+        userToBeAccepted.following[index2]['isAccepted'] = true;
+        await this.save();
+        await userToBeAccepted.save();
+        return "Follow request accepted";
+    }else{
+        throw errors.USER_NOT_FOUND();
+    }
+
 };
 
 const User = mongoose.model('User', userSchema);
