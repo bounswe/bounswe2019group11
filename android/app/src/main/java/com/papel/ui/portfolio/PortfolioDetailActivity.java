@@ -51,6 +51,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
     private ArrayList<TradingEquipment> tradingEquipmentOptions = new ArrayList<>();
 
     private Portfolio portfolio;
+    private boolean isMe;
 
     private FloatingActionButton addTradingEquipmentButton;
 
@@ -69,10 +70,15 @@ public class PortfolioDetailActivity extends AppCompatActivity {
 
         final Intent intent = getIntent();
         portfolio = intent.getParcelableExtra("Portfolio");
+        isMe = intent.getBooleanExtra("isMe", false);
 
         tradingEquipmentListView = findViewById(R.id.trading_equipment_list);
         addTradingEquipmentButton = findViewById(R.id.add_trading_equipment);
         progressBar = findViewById(R.id.progressBar);
+
+        if(!isMe){
+            addTradingEquipmentButton.setVisibility(View.INVISIBLE);
+        }
 
         CustomHurlStack customHurlStack = new CustomHurlStack();
         deleteRequestQueue = Volley.newRequestQueue(PortfolioDetailActivity.this,customHurlStack);
