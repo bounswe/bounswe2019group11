@@ -70,10 +70,10 @@ class Home extends React.Component {
     return (
       <Row >
 
-        <Col md={{span: 5 ,offset:0}}  style ={{marginTop:10,
-  marginBottom: 100,
+        <Col md={{span: 6 ,offset:0}}  style ={{marginTop:0,
+  marginBottom: 0,
   marginRight: 0,
-  marginLeft: -150}}>
+  marginLeft: 0}}>
           <div name="v1" class="card text-center">
             <div class="card-header">
               <ul class="nav nav-tabs card-header-tabs">
@@ -114,9 +114,9 @@ class Home extends React.Component {
           </div>
         </Col>
         
-        <Col md={{span: 9 ,offset:0}}style ={{marginTop:10,
-  marginBottom: 100,
-  marginRight: -180,
+        <Col md={{span: 6 ,offset:0}}style ={{marginTop:0,
+  marginBottom: 0,
+  marginRight: 0,
   marginLeft: 0}}>
           <div name="v2" class="card text-center">
             <div class="card-header">

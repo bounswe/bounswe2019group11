@@ -15,13 +15,15 @@ import EconEvents from './EconEvent/EconEvents';
 import Validation from './Register/Validation';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import { useCookies, CookiesProvider } from 'react-cookie';
-import { faPlus,faThumbsUp,faThumbsDown,faSignInAlt, faSignOutAlt, faUser, faNewspaper, faCalendarWeek, faHome} from '@fortawesome/free-solid-svg-icons';
+import { faBell,faExclamation, faPlus,faThumbsUp,faThumbsDown,faSignInAlt, faSignOutAlt, faUser, faNewspaper, faCalendarWeek, faHome} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+
+import {Dropdown, Badge, Row, Col} from 'react-bootstrap';
 
 
 function NavBar(props) {
-  const [cookies, setCookie, removeCookie] = useCookies(['name', 'user', 'userToken'])
-  var profileBtn, logoutBtn, registerBtn, loginBtn;
+  const [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken'])
+  var profileBtn, logoutBtn,notificationBtn, registerBtn, loginBtn;
   const [loggedIn, login] = useState(!!cookies.userToken);
 
   const logout = function () {
@@ -34,28 +36,57 @@ function NavBar(props) {
   if(!!loggedIn) {
   profileBtn = <li><Link to="/profile"> <FontAwesomeIcon name="User Icon" icon={faUser} />&nbsp;
   Profile</Link></li>
-    logoutBtn = <li><Link to="/" onClick={() => logout()}><FontAwesomeIcon name="Login Icon" icon={faSignOutAlt} />&nbsp;Logout</Link></li>;
+    logoutBtn = <li><Link to="/" onClick={() => logout()}><FontAwesomeIcon name="Log Out Icon" icon={faSignOutAlt} />&nbsp;Log Out</Link></li>;
+  
+  notificationBtn = <li><Link to="/profile"> 
+    
+  <Dropdown >
+    <Dropdown.Toggle id="dropDown" style={{color:"black" ,fontWeight:"bold"}}>
+    <FontAwesomeIcon name="Bell Icon" icon={faBell} />&nbsp;<Badge >9</Badge>
+    <span className="sr-only">unread messages</span>
+    </Dropdown.Toggle>
+
+    <Dropdown.Menu>
+      <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+      <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+      <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
+
+  
+  </Link></li>
+  
+
+
   }
+  
   else {
     loginBtn = <li><Link to="/login" style={{paddingLeft:0}}><FontAwesomeIcon name="Login Icon" icon={faSignInAlt} />&nbsp;Login</Link></li>;
     
   }
   return (
   <Router>
+    
     <ul id="menu">
+      <Row>
+      <Col md={{span:7, offset:1}}>
       <Link to="/">
         <img id="logo-green-small" className="menu-logo" src={Logo} style = { { borderright: "2px solid rgba(0, 0, 0, 0.151)", width: 390/3, height: 135/3}} />
       </Link>
       <li><Link to="/#"><FontAwesomeIcon name="Article Icon" icon={faHome} />&nbsp;Home</Link></li>
       {loginBtn}
       {registerBtn}
-      {profileBtn}
+
       <li><Link to="/articles"><FontAwesomeIcon name="Article Icon" icon={faNewspaper} />&nbsp;Articles</Link></li>
       <li><Link to="/events"><FontAwesomeIcon name="Events Icon" icon={faCalendarWeek} />&nbsp;Events</Link></li>
-
+      </Col><Col md={{span:4}}>
+      {notificationBtn}
+      {profileBtn}
       {logoutBtn}
-
+      </Col>
+      </Row>
     </ul>
+    
     <CookiesProvider>
       <div className="container">
         <Switch>

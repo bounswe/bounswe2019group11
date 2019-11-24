@@ -19,8 +19,31 @@ background-attachment: fixed;
 #menu {
   margin: 0;
   margin-bottom: 20px;
-  background-color: #3DA544;
+  background-color: #3DA544; 
+}
+
+#dropDown {
+  margin: 0;
+  background-color: #3DA544; 
+  border: 0px;
+}
+#dropDown a{
+
+  font-weight: bold;
+  color: #000;
+}
+#dropDown:active{
+
+  margin: 0;
+  background-color: #3DA544; 
+  border: 0px;
+}
+
+#dropDown:hover{
   
+  margin: 0;
+  background-color: #3DA544; 
+  border: 0px;
 }
 ion-icon {
   font-size: 24px;
