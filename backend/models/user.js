@@ -154,6 +154,17 @@ userSchema.methods.follow =async function(userToBeFollowed){
 
 };
 
+userSchema.methods.accept = async function (userToBeAccepted) {
+    const userIdToBeAccepted = userToBeAccepted._id;
+    const index = this.followers.findIndex(elm => elm.userId.toString() === userIdToBeAccepted.toString());
+    this.followers[index]['isAccepted'] = true;
+    const index2 = userToBeAccepted.following.findIndex(elm => elm.userId.toString() === this._id.toString());
+    userToBeAccepted.following[index2]['isAccepted'] = true;
+    await this.save();
+    await userToBeAccepted.save();
+    return "Follow request accepted";
+};
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

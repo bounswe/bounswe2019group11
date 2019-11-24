@@ -72,19 +72,6 @@ const publicProfileDataTransferObject = (user,articles,portfolios,inInMyNetwork)
     };
 };
 
-const myProfileDataTransferObject = (user,articles,portfolios,investments,inInMyNetwork) => {
-    return {
-        privacy: 'public',
-        name:user.name,
-        surname:user.surname,
-        location: user.location,
-        articles: articles,
-        portfolios: portfolios,
-        investments: investments,
-        isInMyNetwork: inInMyNetwork
-    };
-};
-
 router.get('/other/:id', async (req, res) => {
     try {
         const token = getTokenFromHeader(req);
@@ -107,14 +94,11 @@ router.get('/other/:id', async (req, res) => {
             const user = await userService.getById(id);
             const articles = await articleService.getByUserId(id);
             const portfolios = await portfolioService.getByUserId(id);
-            const investments = await investmentsService.getByUserId(id);
-
-            if(req.params.id == userId){
-                res.status(200).send(myProfileDataTransferObject(user,articles,portfolios,investments,isInMyNetwork(mainUser,user)));
-            }else if(user.privacy === 'public'){
-                res.status(200).send(publicProfileDataTransferObject(user,articles,portfolios,isInMyNetwork(mainUser,user)));
+            const _isInMyNetwork = isInMyNetwork(mainUser,user);
+            if(user.privacy === 'public' || _isInMyNetwork === "true"){
+                res.status(200).send(publicProfileDataTransferObject(user,articles,portfolios,_isInMyNetwork));
             }else{
-                res.status(200).send(privateProfileDataTransferObject(user,articles,isInMyNetwork(mainUser,user)));
+                res.status(200).send(privateProfileDataTransferObject(user,articles,_isInMyNetwork));
             }
         }else{
             const id = req.params.id;
@@ -178,6 +162,22 @@ router.post('/:id/follow',isAuthenticated, async (req, res) => {
     }
 });
 
+router.post('/:id/accept',isAuthenticated, async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userId =  req.token && req.token.data && req.token.data._id;
+        const user = await userService.getById(userId);
+        const userToBeAccepted = await userService.getById(id);
+        res.status(200).json({msg:await user.accept(userToBeAccepted)});
+
+    } catch (err) {
+        if (err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
 
 
 module.exports = router;
