@@ -165,8 +165,6 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
 
         if (stock != null) {
             fetchStockChartData(stock.getId());
-        } else if (currency != null) {
-            fetchCurrencyChartData(currency.getCode());
         }
 
     }
@@ -211,9 +209,10 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                     }
 
                     int index = 0;
+                    Log.d("Info","Key Size: " + keys.size());
                     for (int i = keys.size() - 1; i >= 0; i--) {
                         String key = keys.get(i);
-                        Log.d("Response", "Key: " + key);
+                        //Log.d("Response", "Key: " + key);
                         JSONObject object = rates.getJSONObject(key);
 
                         double high = object.getDouble("2. high");
@@ -263,12 +262,14 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                         value.setVisibility(View.VISIBLE);
                         dropdown.setVisibility(View.VISIBLE);
                         chart.setVisibility(View.VISIBLE);
+                        commentList.setVisibility(View.VISIBLE);
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                     DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this, "Error", "We couldn't get detail of the trading equipment.Please try again.", null);
                     progressBar.setVisibility(View.INVISIBLE);
+                    commentList.setVisibility(View.VISIBLE);
                 }
             }
         }, new Response.ErrorListener() {
@@ -276,6 +277,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this, "Error", "We couldn't get detail of the trading equipment.Please try again.", null);
                 progressBar.setVisibility(View.INVISIBLE);
+                commentList.setVisibility(View.VISIBLE);
             }
         });
 
@@ -332,6 +334,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                             e.printStackTrace();
                             DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this, "Error", "We couldn't get detail of the trading equipment.Please try again.", null);
                             progressBar.setVisibility(View.INVISIBLE);
+                            commentList.setVisibility(View.VISIBLE);
                         }
                     }
 
@@ -357,6 +360,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                             e.printStackTrace();
                             DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this, "Error", "We couldn't get detail of the trading equipment.Please try again.", null);
                             progressBar.setVisibility(View.INVISIBLE);
+                            commentList.setVisibility(View.VISIBLE);
                         }
                     }
 
@@ -366,11 +370,14 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                     value.setVisibility(View.VISIBLE);
                     dropdown.setVisibility(View.VISIBLE);
                     chart.setVisibility(View.VISIBLE);
+                    commentList.setVisibility(View.VISIBLE);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                     DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this, "Error", "We couldn't get detail of the trading equipment.Please try again.", null);
                     progressBar.setVisibility(View.INVISIBLE);
+                    commentList.setVisibility(View.VISIBLE);
+
                 }
             }
         }, new Response.ErrorListener() {
@@ -378,6 +385,8 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 DialogHelper.showBasicDialog(TradingEquipmentDetailActivity.this, "Error", "We couldn't get detail of the trading equipment.Please try again.", null);
                 progressBar.setVisibility(View.INVISIBLE);
+                commentList.setVisibility(View.VISIBLE);
+
             }
         });
 
