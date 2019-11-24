@@ -38,36 +38,33 @@ function NavBar(props) {
   profileBtn = <li><Link to="/profile"> <FontAwesomeIcon name="User Icon" icon={faUser} />&nbsp;
   Profile</Link></li>
     logoutBtn = <li><Link to="/" onClick={() => logout()}><FontAwesomeIcon name="Log Out Icon" icon={faSignOutAlt} />&nbsp;Log Out</Link></li>;
-  
-  notificationBtn = <li><Link to="/profile"> 
-    
-  <Dropdown >
-    <Dropdown.Toggle id="dropDown" style={{color:"black" ,fontWeight:"bold"}}>
-    <FontAwesomeIcon name="Bell Icon" icon={faBell} />&nbsp;<Badge >9</Badge>
-    <span className="sr-only">unread messages</span>
-    </Dropdown.Toggle>
 
-    <Dropdown.Menu>
-      <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-      <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-      <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-    </Dropdown.Menu>
-  </Dropdown>
+  notificationBtn =
+  (<li>
+    <Dropdown >
+      <Dropdown.Toggle id="dropDown" style={{color:"black" ,fontWeight:"bold"}}>
+      <FontAwesomeIcon name="Bell Icon" icon={faBell} />&nbsp;<Badge >9</Badge>
+      <span className="sr-only">unread messages</span>
+      </Dropdown.Toggle>
 
-  
-  </Link></li>
-  
+      <Dropdown.Menu>
+        <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+        <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+        <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  </li>)
+
 
 
   }
-  
+
   else {
     loginBtn = <li><Link to="/login" style={{paddingLeft:0}}><FontAwesomeIcon name="Login Icon" icon={faSignInAlt} />&nbsp;Login</Link></li>;
-    
+
   }
   return (
   <Router>
-    
     <ul id="menu">
       <Row>
       <Col md={{span:7, offset:1}}>
@@ -87,7 +84,7 @@ function NavBar(props) {
       </Col>
       </Row>
     </ul>
-    
+
     <CookiesProvider>
       <div className="container">
         <Switch>

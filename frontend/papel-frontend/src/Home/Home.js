@@ -19,7 +19,7 @@ class Home extends React.Component {
     this.handleEventClick=this.handleEventClick.bind(this);
     this.handleUSDClick=this.handleUSDClick.bind(this);
     this.handleEURClick=this.handleEURClick.bind(this);
-    
+
   }
   componentDidMount() {
     const self = this;
@@ -28,128 +28,113 @@ class Home extends React.Component {
       self.setState({articles: [data[0],data[1],data[2  ]], loading: false});
     });
   }
-  
+
   handleEventClick(event) {
     this.setState({previewer1article:""});
     this.setState({previewer1event:"active"});
-    Array.from(document.getElementsByClassName("ArticleSection")).forEach((item) => { 
+    Array.from(document.getElementsByClassName("ArticleSection")).forEach((item) => {
       item.setAttribute('hidden', null);
        });
     Array.from(document.getElementsByClassName("EventSection")).forEach((item) => { item.removeAttribute('hidden'); });
-    
+
   }
   handleArticleClick(event) {
     this.setState({previewer1event:""});
     this.setState({previewer1article:"active"});
     Array.from(document.getElementsByClassName("ArticleSection")).forEach((item) => { item.removeAttribute('hidden'); });
-    Array.from(document.getElementsByClassName("EventSection")).forEach((item) => { 
+    Array.from(document.getElementsByClassName("EventSection")).forEach((item) => {
       item.setAttribute('hidden', null);
-       });    
+       });
   }
 
- 
+
 
   handleUSDClick(event) {
     this.setState({previewer2EUR:""});
     this.setState({previewer2USD:"active"});
     Array.from(document.getElementsByClassName("USDSection")).forEach((item) => { item.removeAttribute('hidden'); });
-    Array.from(document.getElementsByClassName("EURSection")).forEach((item) => { 
+    Array.from(document.getElementsByClassName("EURSection")).forEach((item) => {
       item.setAttribute('hidden', null);
-       });    
+       });
   }
   handleEURClick(event) {
     this.setState({previewer2EUR:"active"});
     this.setState({previewer2USD:""});
     Array.from(document.getElementsByClassName("EURSection")).forEach((item) => { item.removeAttribute('hidden'); });
-    Array.from(document.getElementsByClassName("USDSection")).forEach((item) => { 
+    Array.from(document.getElementsByClassName("USDSection")).forEach((item) => {
       item.setAttribute('hidden', null);
-      });    
+      });
   }
   render() {
-  
+
     return (
       <Row >
 
-        <Col md={{span: 6 ,offset:0}}  style ={{marginTop:0,
-  marginBottom: 0,
-  marginRight: 0,
-  marginLeft: 0}}>
-          <div name="v1" class="card text-center">
-            <div class="card-header">
-              <ul class="nav nav-tabs card-header-tabs">
-                <li class="nav-item" >
-                  <a class={"nav-link "+this.state.previewer1article} onClick={this.handleArticleClick} href="#">Articles</a>
+        <Col md={{span: 6}}>
+          <div name="v1" className="card text-center">
+            <div className="card-header">
+              <ul className="nav nav-tabs card-header-tabs">
+                <li className="nav-item" >
+                  <a className={"nav-link "+this.state.previewer1article} onClick={this.handleArticleClick} href="#">Articles</a>
                 </li>
-                <li class="nav-item">
-                  <a class={"nav-link "+this.state.previewer1event}  onClick={this.handleEventClick} href="#">Events</a>
+                <li className="nav-item">
+                  <a className={"nav-link "+this.state.previewer1event}  onClick={this.handleEventClick} href="#">Events</a>
                 </li>
               </ul>
             </div>
-        
-            <div  class="card-body">
+
+            <div  className="card-body">
             <div  className="ArticleSection">
-                <h5 class="card-title">3 Newest Articles</h5>
+                <h5 className="card-title">3 Newest Articles</h5>
                 <hr/>
-                <p class="card-text">
+                <div className="card-text">
                   {
-                    
+
                     this.state.articles ? this.state.articles.map(article => (
                       <ArticleListPreview key={article._id} articleId={article._id} title={article.title} text={article.body}  />
                     )) : "loading..."
                   }
-                </p>
+                </div>
               </div>
               <div  hidden className="EventSection">
-                <h5 class="card-title">3 Newest Events</h5>
+                <h5 className="card-title">3 Newest Events</h5>
                 <hr/>
-                <p class="card-text">
+                <div className="card-text">
                   {
                     this.state.articles.map(article => (
                       <ArticleListPreview key={article._id} articleId={article._id} title={article.title} text={article.body}  />
                     ))
                   }
-                </p>
+                </div>
               </div>
             </div>
           </div>
         </Col>
-        
-        <Col md={{span: 6 ,offset:0}}style ={{marginTop:0,
-  marginBottom: 0,
-  marginRight: 0,
-  marginLeft: 0}}>
-          <div name="v2" class="card text-center">
-            <div class="card-header">
-              <ul class="nav nav-tabs card-header-tabs">
-                <li class="nav-item" >
-                  <a class={"nav-link "+this.state.previewer2USD} onClick={this.handleUSDClick} href="#">USD</a>
+        <Col md={{span: 6}}>
+          <div name="v2" className="card text-center">
+            <div className="card-header">
+              <ul className="nav nav-tabs card-header-tabs">
+                <li className="nav-item" >
+                  <a className={"nav-link "+this.state.previewer2USD} onClick={this.handleUSDClick} href="#">USD</a>
                 </li>
-                <li class="nav-item">
-                  <a class={"nav-link "+this.state.previewer2EUR}  onClick={this.handleEURClick} href="#">EUR</a>
+                <li className="nav-item">
+                  <a className={"nav-link "+this.state.previewer2EUR}  onClick={this.handleEURClick} href="#">EUR</a>
                 </li>
               </ul>
             </div>
-        
-            <div  class="card-body">
+            <div  className="card-body">
               <div  className="USDSection">
-                
                 <USD currency={"USD"}></USD >
               </div>
               <div  hidden className="EURSection">
-                
-                <p class="card-text">
+                <div className="card-text">
                 <CurencyChart currency={"EUR"}></CurencyChart >
-                </p>
+                </div>
               </div>
             </div>
           </div>
         </Col>
-
-        
-        
-        
       </Row>
-      
     );
   }
 }

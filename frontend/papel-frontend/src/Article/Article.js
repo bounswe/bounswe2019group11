@@ -22,7 +22,7 @@ class Article extends React.Component {
     if(loggedIn) {console.log(cookies.get("userToken"));
      userId = cookies.get('user')._id?cookies.get('user')._id:"check get user id";
     }
-    else {console.log("not logged");} 
+    else {console.log("not logged");}
     this.state = {loggedIn: loggedIn, userId:userId, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
     this._article={};
     this._article_vote_type=0;
@@ -101,7 +101,7 @@ class Article extends React.Component {
     var userId = this.state.userId;
     console.log(userId);
     var loggedIn = this.state.loggedIn;
-    
+
     if (this.state.authorLoading)
       authorLine = <p style={{color: "gray"}}>author not found</p> ;
     else
@@ -112,7 +112,7 @@ class Article extends React.Component {
           <Card>
             <Card.Body>
               <Card.Title><h1>{article.title}</h1></Card.Title>
-                <a href="http://localhost:3000">{authorLine}</a>
+              {authorLine}
               <hr />
               <Card.Text>{article.body}</Card.Text>
               <hr/>

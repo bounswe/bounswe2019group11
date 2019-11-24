@@ -7,7 +7,8 @@ import {getRequest as get, postRequest as post} from '../helpers/request'
 import ArticlePreview from '../Article/ArticlePreview'
 import './UserProfile.css'
 import Portfolio from './Portfolio'
-import { getFormattedAddress } from '../helpers/geocoder';
+import { getFormattedAddress } from '../helpers/geocoder'
+import {Redirect} from 'react-router-dom'
 
 class UserProfile extends React.Component {
   // const [cookies, setCookie, removeCookie] = useCookies('user', 'userToken')
@@ -23,9 +24,11 @@ class UserProfile extends React.Component {
       formattedAddress: "",
       privacy: "public",
       inMyNetwork: false,
+      isMe: false,
       loading: false
     }
     this.geocodeLocation = this.geocodeLocation.bind(this)
+    this.follow = this.follow.bind(this)
   }
 
   async geocodeLocation(loc) {
@@ -47,16 +50,20 @@ class UserProfile extends React.Component {
     get({
       url: requestUrl,
       success: (data) => {
-        console.log(data)
-        this.setState({
-          user: data,
-          articles: data.articles,
-          portfolios: data.portfolios,
-          privacy: data.privacy,
-          inMyNetwork: data.isInMyNetwork
-        })
-        this.setState({loading: false})
-        this.geocodeLocation(data.location)
+        if (data.isMe) {
+          this.setState({isMe: true})
+        }
+        else {
+          this.setState({
+            user: data,
+            articles: data.articles,
+            portfolios: data.portfolios,
+            privacy: data.privacy,
+            inMyNetwork: data.isInMyNetwork
+          })
+          this.setState({loading: false})
+          this.geocodeLocation(data.location)
+        }
       },
       authToken: userToken
     })
@@ -66,7 +73,7 @@ class UserProfile extends React.Component {
     const {cookies} = this.props
     const userToken = cookies.get('userToken')
     const user = cookies.get('user')
-    if (!!userToken) {
+    if (!userToken) {
       alert("You must be logged in to follow other users");
     }
     else {
@@ -83,12 +90,16 @@ class UserProfile extends React.Component {
   }
 
   render() {
-    return (
+    if (this.state.isMe) {
+      return <Redirect to="/profile"/>
+    }
+    else
+      return (
     <>
       <Row>
         <Col md={{span: 6}}>
           <ProfileCard isMe={false} user={this.state.user} address={this.state.formattedAddress}/>
-          <Button style={{marginLeft: 10, width: 120}}>Follow</Button>
+          <Button style={{marginLeft: 10, width: 120}} onClick={() => this.follow()}>Follow</Button>
         </Col>
         <Col md={{span: 6}}>
           {
