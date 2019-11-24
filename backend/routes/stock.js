@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const stockService = require('../services/stock');
 const errors = require('../helpers/errors');
-
+const isAuthenticated = require('../middlewares/isAuthenticated');
 router.get('/', async (req, res) => {
     try {
         const response = await stockService.getAll();
