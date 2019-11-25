@@ -1,22 +1,33 @@
 package com.papel.ui.portfolio;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -31,11 +42,16 @@ import com.github.mikephil.charting.data.CandleData;
 import com.github.mikephil.charting.data.CandleDataSet;
 import com.github.mikephil.charting.data.CandleEntry;
 import com.papel.Constants;
+import com.papel.ListViewAdapter;
 import com.papel.R;
+import com.papel.data.Comment;
 import com.papel.data.Currency;
 import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
+import com.papel.data.User;
+import com.papel.ui.profile.ProfileActivity;
 import com.papel.ui.utils.DialogHelper;
+import com.papel.ui.utils.ResponseParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,8 +61,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
 public class TradingEquipmentDetailActivity extends AppCompatActivity {
 
@@ -64,11 +82,15 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private TextView value;
     private ListView commentList;
+    private EditText commentEditText;
+    private ImageButton addCommentButton;
 
     private Stock stock;
     private Currency currency;
 
     private String[] chartItems;
+    private ArrayList<Object> comments;
+    private ListViewAdapter adapter;
 
     final SimpleDateFormat dailyDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     final SimpleDateFormat monthlyDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -90,12 +112,17 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             setTitle(currency.getName());
         }
 
+        commentEditText = (EditText) header.findViewById(R.id.te_comment_edittext);
+        addCommentButton = (ImageButton) header.findViewById(R.id.te_add_comment_button);
         commentList = findViewById(R.id.trading_equipment_comments);
         commentList.addHeaderView(header);
-        ArrayList<String> list = new ArrayList<>();
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
-        commentList.setAdapter(adapter);
+        if (stock != null) {
+            comments = new ArrayList<Object>();
+            adapter = new ListViewAdapter(getApplicationContext(), comments);
+            commentList.setAdapter(adapter);
+        } else {
+            getTradingEqCommentsFromEndpoint(getApplicationContext());
+        }
 
         value = header.findViewById(R.id.value);
         String valueText = "";
@@ -167,6 +194,27 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             fetchStockChartData(stock.getId());
         }
 
+        commentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                final Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                Comment clickedComment = (Comment) adapter.getItem(i - 1);
+                profileIntent.putExtra("UserId", clickedComment.getAuthorId());
+                startActivity(profileIntent);
+            }
+        });
+
+        addCommentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (commentEditText.getText() != null) {
+                    String content = commentEditText.getText().toString().trim();
+                    addTradingEqComment(getApplicationContext(), content);
+                }
+
+            }
+        });
+        registerForContextMenu(commentList);
     }
 
     private void fetchCurrencyChartData(String code) {
@@ -181,7 +229,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             url = Constants.LOCALHOST + Constants.CURRENCY + code + "/" + Constants.LAST_WEEK;
             weeklyPoints.clear();
             weeklyDates.clear();
-        } else if (chartType == Constants.MONTHLY_CHART){
+        } else if (chartType == Constants.MONTHLY_CHART) {
             url = Constants.LOCALHOST + Constants.CURRENCY + code + "/" + Constants.LAST_MONTH;
             monthlyPoints.clear();
             monthlyDates.clear();
@@ -193,9 +241,9 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                 try {
                     JSONObject responseJSON = new JSONObject(response);
                     JSONObject rates = new JSONObject();
-                    if(chartType == Constants.DAILY_CHART) {
+                    if (chartType == Constants.DAILY_CHART) {
                         rates = responseJSON.getJSONObject("intradayRates");
-                    } else if(chartType == Constants.WEEKLY_CHART) {
+                    } else if (chartType == Constants.WEEKLY_CHART) {
                         rates = responseJSON.getJSONObject("lastWeek");
                     } else if (chartType == Constants.MONTHLY_CHART) {
                         rates = responseJSON.getJSONObject("lastMonth");
@@ -209,7 +257,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                     }
 
                     int index = 0;
-                    Log.d("Info","Key Size: " + keys.size());
+                    Log.d("Info", "Key Size: " + keys.size());
                     for (int i = keys.size() - 1; i >= 0; i--) {
                         String key = keys.get(i);
                         //Log.d("Response", "Key: " + key);
@@ -242,7 +290,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
-                        } else if (chartType == Constants.MONTHLY_CHART)  {
+                        } else if (chartType == Constants.MONTHLY_CHART) {
                             monthlyPoints.add(new CandleEntry(index, (float) high, (float) low, (float) open, (float) close));
 
                             try {
@@ -452,5 +500,243 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
 
         Legend l = chart.getLegend();
         l.setEnabled(false);
+    }
+
+    private void getTradingEqCommentsFromEndpoint(final Context context) {
+        if (currency != null) {
+            final String currencyUrl = Constants.LOCALHOST + Constants.CURRENCY + currency.getCode();
+            RequestQueue requestQueue = Volley.newRequestQueue(context);
+            StringRequest currencyRequest = new StringRequest(Request.Method.GET, currencyUrl, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject object = new JSONObject(response);
+                        Currency c = ResponseParser.parseCurrency(object);
+                        currency.setComments(c.getComments());
+                        setComments(currency.getComments());
+                    } catch (JSONException exp) {
+                        exp.printStackTrace();
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            });
+
+            requestQueue.add(currencyRequest);
+        }
+
+    }
+
+    private void setComments(ArrayList<Comment> comments_list) {
+        comments = new ArrayList<>();
+        comments.addAll(comments_list);
+        adapter = new ListViewAdapter(getApplicationContext(), comments);
+        commentList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void addTradingEqComment(final Context context, final String content) {
+        if (currency != null) {
+            RequestQueue requestQueue = Volley.newRequestQueue(context);
+            String url = Constants.LOCALHOST + Constants.CURRENCY + currency.getCode() + "/" + Constants.COMMENT;
+            final JSONObject jsonBody = new JSONObject();
+            try {
+                jsonBody.put("body", content);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    getTradingEqCommentsFromEndpoint(context);
+                    commentEditText.setText("");
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    NetworkResponse networkResponse = error.networkResponse;
+                    if (networkResponse != null) {
+                        String data = new String(networkResponse.data);
+                        try {
+                            JSONObject errorObject = new JSONObject(data);
+                            String message = errorObject.getString("message");
+                            Toast.makeText(context, "There was an error when posting your comment: " + message, Toast.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }) {
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    return jsonBody.toString().getBytes();
+                }
+
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<String, String>();
+                    headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                    return headers;
+                }
+            };
+            requestQueue.add(request);
+        }
+
+    }
+
+    private void editTradingEqComment(final Context context, final String commentId, final String content) {
+        if (currency != null) {
+            RequestQueue requestQueue = Volley.newRequestQueue(context);
+            String url = Constants.LOCALHOST + Constants.CURRENCY + currency.getCode() + "/" + Constants.COMMENT + commentId;
+            final JSONObject jsonBody = new JSONObject();
+            try {
+                jsonBody.put("body", content);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    getTradingEqCommentsFromEndpoint(context);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    NetworkResponse networkResponse = error.networkResponse;
+                    if (networkResponse != null) {
+                        String data = new String(networkResponse.data);
+                        try {
+                            JSONObject errorObject = new JSONObject(data);
+                            String message = errorObject.getString("message");
+                            Toast.makeText(context, "There was an error when editing your comment: " + message, Toast.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }) {
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    return jsonBody.toString().getBytes();
+                }
+
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<String, String>();
+                    headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                    return headers;
+                }
+            };
+            requestQueue.add(request);
+        }
+    }
+
+    private void deleteTradingEqComment(final Context context, final String commentId) {
+        if (currency != null) {
+            RequestQueue requestQueue = Volley.newRequestQueue(context);
+            String url = Constants.LOCALHOST + Constants.CURRENCY + currency.getCode() + "/" + Constants.COMMENT + commentId;
+            StringRequest request = new StringRequest(
+                    Request.Method.DELETE, url,
+                    new Response.Listener<String>() {
+
+                        @Override
+                        public void onResponse(String response) {
+                            Toast.makeText(context, "Comment deleted.", Toast.LENGTH_SHORT).show();
+                            getTradingEqCommentsFromEndpoint(context);
+                        }
+                    }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    NetworkResponse response = error.networkResponse;
+                    if (response != null && response.data != null) {
+                        JSONObject jsonObject = null;
+                        String errorMessage = null;
+
+                        switch (response.statusCode) {
+                            case 400:
+                                errorMessage = new String(response.data);
+                                try {
+                                    jsonObject = new JSONObject(errorMessage);
+                                    String serverResponseMessage = (String) jsonObject.get("message");
+                                    Toast.makeText(getApplicationContext(), "" + serverResponseMessage, Toast.LENGTH_LONG).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                        }
+                    }
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<String, String>();
+                    headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                    return headers;
+                }
+            };
+            requestQueue.add(request);
+        }
+
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        if (v.getId() == R.id.trading_equipment_comments && ((Comment) comments.get(info.position - 1)).getAuthorId().equals(User.getInstance().getId())) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.article_comments_menu, menu);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final Comment c = (Comment) comments.get(info.position - 1);
+        if (item.getItemId() == R.id.edit) {
+            LayoutInflater li = LayoutInflater.from(getApplicationContext());
+            View promptsView = li.inflate(R.layout.edit_comment_prompt, null);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setView(promptsView);
+            final EditText userInput = promptsView.findViewById(R.id.editTextDialogUserInput);
+            userInput.setText(c.getContent());
+            alertDialogBuilder
+                    .setCancelable(true)
+                    .setPositiveButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    editTradingEqComment(getApplicationContext(),
+                                            c.getCommentId(), userInput.getText().toString().trim());
+                                }
+                            })
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+            return true;
+        } else if (item.getItemId() == R.id.delete) {
+            deleteTradingEqComment(getApplicationContext(), c.getCommentId());
+            return true;
+        }
+        return false;
     }
 }

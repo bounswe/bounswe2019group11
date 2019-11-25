@@ -2,11 +2,14 @@ package com.papel.data;
 
 import android.os.Parcel;
 
+import java.util.ArrayList;
+
 public class Stock extends TradingEquipment {
     private String id;
     private String name;
     private double price;
     private String symbol;
+    private ArrayList<Comment> comments;
 
     public Stock(String id, String name, double price, String symbol) {
         this.id = id;
@@ -88,6 +91,12 @@ public class Stock extends TradingEquipment {
         this.symbol = symbol;
     }
 
+    public ArrayList<Comment> getComments() {
+        return comments;
+    }
 
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
+    }
 }
 
