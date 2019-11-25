@@ -10,13 +10,13 @@ const STAGES = {
         $lookup: {
             from: 'currencycomments',
             let: {
-                currencyId: '$_id'
+                code: '$code'
             },
             pipeline: [
                 {
                     $match: {
                         $expr: {
-                            $eq: ['$$currencyId', '$currencyId']
+                            $eq: ['$$code', '$currencyCode']
                         }
                     }
                 },
@@ -47,20 +47,18 @@ const STAGES = {
                 },
                 {
                     $project: {
-                        currencyId: 0
+                        code: 0
                     }
                 }
             ],
             as: 'comments'
         }
     },
-    MATCH_ID: (id) => {
+    MATCH_CODE: (code) => {
         return {
             $match: {
                 $expr: {
-                    $eq: ['$_id', {
-                        $toObjectId: id,
-                    }]
+                    $eq: ['$code', code]
                 }
             }
         }
@@ -76,7 +74,14 @@ const STAGES = {
             }
         }
     },
-
+    PROJECT_MINIMAL: {
+        $project: {
+            code: 1,
+            name: 1,
+            rate: 1,
+            _id: 0
+        }
+    },
 };
 
 const SUPPORTED_CURRENCIES = new Set([
@@ -99,10 +104,11 @@ module.exports.get = async (code) => {
     if (!SUPPORTED_CURRENCIES.has(code)) {
         throw errors.INVALID_CURRENCY_CODE();
     }
-    return await Currency
-        .findOne({code})
-        .select('code name rate -_id')
-        .exec();
+    const currency = await Currency.aggregate([
+        STAGES.MATCH_CODE(code), STAGES.PROJECT_MINIMAL, STAGES.GET_COMMENTS
+    ]).then();
+
+    return currency[0];
 };
 
 module.exports.getIntraday = async (code) => {
@@ -206,24 +212,25 @@ module.exports.clearPrediction = async (code, userId) => {
     await Prediction.deleteOne({userId, currencyCode: code, equipmentType: predictionHelper.EQUIPMENT_TYPE.CURRENCY});
 };
 
-/*
-module.exports.postComment = async (currencyId, authorId, body) => {
-    if (!(mongoose.Types.ObjectId.isValid(currencyId))) {
-        throw errors.CURRENCY_NOT_FOUND();
+module.exports.postComment = async (currencyCode, authorId, body) => {
+    currencyCode = currencyCode.toUpperCase();
+    if (!SUPPORTED_CURRENCIES.has(currencyCode)) {
+        throw errors.INVALID_CURRENCY_CODE();
     }
     if (!(mongoose.Types.ObjectId.isValid(authorId))) {
         throw errors.USER_NOT_FOUND();
     }
     await CurrencyComment.create({
-        currencyId,
+        currencyCode,
         authorId,
         body,
     });
 };
 
-module.exports.getComment = async (currencyId, commentId) => {
-    if (!(mongoose.Types.ObjectId.isValid(currencyId))) {
-        throw errors.CURRENCY_NOT_FOUND();
+module.exports.getComment = async (currencyCode, commentId) => {
+    currencyCode = currencyCode.toUpperCase();
+    if (!SUPPORTED_CURRENCIES.has(currencyCode)) {
+        throw errors.INVALID_CURRENCY_CODE();
     }
     if (!(mongoose.Types.ObjectId.isValid(commentId))) {
         throw errors.COMMENT_NOT_FOUND();
@@ -237,9 +244,10 @@ module.exports.getComment = async (currencyId, commentId) => {
     return comment[0];
 };
 
-module.exports.editComment = async (currencykId, authorId, commentId, newBody) => {
-    if (!(mongoose.Types.ObjectId.isValid(currencyId))) {
-        throw errors.CURRENCY_NOT_FOUND();
+module.exports.editComment = async (currencyCode, authorId, commentId, newBody) => {
+    currencyCode = currencyCode.toUpperCase();
+    if (!SUPPORTED_CURRENCIES.has(currencyCode)) {
+        throw errors.INVALID_CURRENCY_CODE();
     }
     if (!(mongoose.Types.ObjectId.isValid(commentId))) {
         throw errors.COMMENT_NOT_FOUND();
@@ -247,16 +255,17 @@ module.exports.editComment = async (currencykId, authorId, commentId, newBody) =
     if (!(mongoose.Types.ObjectId.isValid(authorId))) {
         throw errors.USER_NOT_FOUND();
     }
-    const oldComment = await CurrencyComment.findOneAndUpdate({_id: commentId, currencyId, authorId},
+    const oldComment = await CurrencyComment.findOneAndUpdate({_id: commentId, currencyCode, authorId},
         {body: newBody, edited: true, lastEditDate: Date.now()});
     if (!oldComment) {
         throw errors.COMMENT_NOT_FOUND();
     }
 };
 
-module.exports.deleteComment = async (currencyId, commentId, authorId) => {
-    if (!(mongoose.Types.ObjectId.isValid(currencyId))) {
-        throw errors.CURRENCY_NOT_FOUND();
+module.exports.deleteComment = async (currencyCode, commentId, authorId) => {
+    currencyCode = currencyCode.toUpperCase();
+    if (!SUPPORTED_CURRENCIES.has(currencyCode)) {
+        throw errors.INVALID_CURRENCY_CODE();
     }
     if (!(mongoose.Types.ObjectId.isValid(commentId))) {
         throw errors.COMMENT_NOT_FOUND();
@@ -264,9 +273,8 @@ module.exports.deleteComment = async (currencyId, commentId, authorId) => {
     if (!(mongoose.Types.ObjectId.isValid(authorId))) {
         throw errors.USER_NOT_FOUND();
     }
-    const comment = await CurrencyComment.findOneAndDelete({_id: commentId, currencyId, authorId});
+    const comment = await CurrencyComment.findOneAndDelete({_id: commentId, currencyCode, authorId});
     if (!comment) {
         throw errors.COMMENT_NOT_FOUND();
     }
 };
-*/

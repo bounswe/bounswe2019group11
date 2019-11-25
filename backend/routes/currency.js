@@ -143,16 +143,16 @@ router.get('/:code/full', async (req, res) => {
     }
 });
 
-/*
-router.post('/:id/comment', isAuthenticated, async (req, res) => {
+
+router.post('/:code/comment', isAuthenticated, async (req, res) => {
     try {
-        const currencyId = req.params.id;
+        const code = req.params.code;
         const userId = req.token && req.token.data && req.token.data._id;
         const body = req.body.body;
-        await currencyService.postComment(currencyId, userId, body);
+        await currencyService.postComment(code, userId, body);
         res.sendStatus(200);
     } catch (err) {
-        if (err.name === 'CurrencyNotFound') {
+        if (err.name === 'InvalidCurrencyCode') {
             res.status(400).send(err);
         } else if (err.name === 'UserNotFound') {
             res.status(400).send(err);
@@ -172,16 +172,16 @@ router.post('/:id/comment', isAuthenticated, async (req, res) => {
     }
 });
 
-router.get('/:id/comment/:commentId', async (req, res) => {
+router.get('/:code/comment/:commentId', async (req, res) => {
     try {
-        const currencyId = req.params.id;
+        const code = req.params.id;
         const commentId = req.params.commentId;
-        const comment = await currencykService.getComment(currencyId, commentId);
+        const comment = await currencyService.getComment(code, commentId);
         res.status(200).send(comment);
     } catch (err) {
         if (err.name === 'CommentNotFound') {
             res.status(400).send(err);
-        } else if (err.name === 'CurrencyNotFound') {
+        } else if (err.name === 'InvalidCurrencyCode') {
             res.status(400).send(err);
         } else {
             res.status(500).send(errors.INTERNAL_ERROR(err));
@@ -189,16 +189,16 @@ router.get('/:id/comment/:commentId', async (req, res) => {
     }
 });
 
-router.post('/:id/comment/:commentId', isAuthenticated, async (req, res) => {
+router.post('/:code/comment/:commentId', isAuthenticated, async (req, res) => {
     try {
-        const currencyId = req.params.id;
+        const code = req.params.id;
         const authorId = req.token && req.token.data && req.token.data._id;
         const commentId = req.params.commentId;
         const newBody = req.body.body;
-        await currencyService.editComment(currencyId, authorId, commentId, newBody);
+        await currencyService.editComment(code, authorId, commentId, newBody);
         res.sendStatus(200);
     } catch (err) {
-        if (err.name === 'CurrencyNotFound') {
+        if (err.name === 'InvalidCurrencyCode') {
             res.status(400).send(err);
         } else if (err.name === 'CommentNotFound') {
             res.status(400).send(err);
@@ -220,15 +220,15 @@ router.post('/:id/comment/:commentId', isAuthenticated, async (req, res) => {
     }
 });
 
-router.delete('/:id/comment/:commentId', isAuthenticated, async (req, res) => {
+router.delete('/:code/comment/:commentId', isAuthenticated, async (req, res) => {
     try {
-        const currencyId = req.params.id;
+        const code = req.params.id;
         const commentId = req.params.commentId;
         const userId = req.token && req.token.data && req.token.data._id;
-        await currencyService.deleteComment(currencyId, commentId, userId);
+        await currencyService.deleteComment(code, commentId, userId);
         res.sendStatus(200);
     } catch (err) {
-        if (err.name === 'CurrencykNotFound') {
+        if (err.name === 'InvalidCurrencyCode') {
             res.status(400).send(err);
         } else if (err.name === 'CommentNotFound') {
             res.status(400).send(err);
@@ -239,6 +239,5 @@ router.delete('/:id/comment/:commentId', isAuthenticated, async (req, res) => {
         }
     }
 });
-*/
 
 module.exports = router;
