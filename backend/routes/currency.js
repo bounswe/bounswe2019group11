@@ -42,6 +42,21 @@ router.post('/:code/predict-increase', isAuthenticated, async (req, res) => {
     }
 });
 
+router.post('/:code/predict-decrease', isAuthenticated, async (req, res) => {
+    try {
+        const code = req.params.code;
+        const userId = req.token && req.token.data && req.token.data._id;
+        await currencyService.predict(code, userId, -1);
+        res.sendStatus(200);
+    } catch (err) {
+        if (err.name === 'InvalidCurrencyCode') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
 router.get('/:code/intraday', async (req, res) => {
     try {
         const code = req.params.code;
