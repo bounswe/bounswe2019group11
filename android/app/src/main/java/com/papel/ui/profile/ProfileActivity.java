@@ -95,10 +95,10 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
             public void onClick(View view) {
                 if (isInMyNetwork.equals("true")) {
                     // I am following this user
-                    sendFollowRequest(true);
+                    sendFollowRequest(false);
                 } else if (isInMyNetwork.equals("false")) {
                     // I am not following this user
-                    sendFollowRequest(false);
+                    sendFollowRequest(true);
                 } else if (isInMyNetwork.equals("pending")) {
                     // I send request to the user and I am waiting
                 }
@@ -106,7 +106,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
         });
     }
 
-    private void sendFollowRequest(boolean follow) {
+    private void sendFollowRequest(final boolean follow) {
         // Send follow request if follow is true, and send unfollow request if follow is false
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         String url = "";
@@ -122,7 +122,13 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                     JSONObject responseObject = new JSONObject(response);
                     String msg = responseObject.getString("msg");
                     Toast.makeText(ProfileActivity.this,msg,Toast.LENGTH_LONG).show();
-                    // TODO change to following button or follow button
+                    if(follow) {
+                        // Follow ettim
+                        // TODO check here!
+                        showFollowingButton();
+                    } else {
+                        showFollowButton();
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -181,10 +187,27 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                     for (int i = 0; i < portfolioArray.length(); i++) {
                         portfolios.add(ResponseParser.parsePortfolio(portfolioArray.getJSONObject(i)));
                     }
-                    isInMyNetwork = responseJSON.getString("isInMyNetwork");
+                    if (responseJSON.has("isInMyNetwork")) {
+                        isInMyNetwork = responseJSON.getString("isInMyNetwork");
+                    }
                     isMe = responseJSON.getBoolean("isMe");
                     if (isMe) {
                         // Get request list
+                        JSONArray followingPendingArray = responseJSON.getJSONArray("followingPending");
+                        for (int i = 0; i < followingPendingArray.length(); i++) {
+                            User user = ResponseParser.parseFollowUser(followingPendingArray.getJSONObject(i));
+                            if (user != null) {
+                                followingPending.add(user);
+                            }
+                        }
+                        JSONArray followersPendingArray = responseJSON.getJSONArray("followerPending");
+                        for (int i = 0; i < followersPendingArray.length(); i++) {
+                            User user = ResponseParser.parseFollowUser(followersPendingArray.getJSONObject(i));
+                            if (user != null) {
+                                followersPending.add(user);
+                            }
+                        }
+
                     }
                     JSONArray followingArray = responseJSON.getJSONArray("following");
                     for (int i = 0; i < followingArray.length(); i++) {

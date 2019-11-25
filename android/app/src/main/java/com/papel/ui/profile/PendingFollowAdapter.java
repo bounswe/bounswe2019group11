@@ -68,22 +68,22 @@ public class PendingFollowAdapter extends BaseAdapter {
         TextView fullName = view.findViewById(R.id.follow_user_full_name);
         fullName.setText(user.getName() + " " + user.getSurname());
 
-        Button acceptButton = view.findViewById(R.id.accept_button);
-        Button declineButton = view.findViewById(R.id.decline_button);
+        final Button acceptButton = view.findViewById(R.id.accept_button);
+        final Button declineButton = view.findViewById(R.id.decline_button);
 
         if (isFollowerPending) {
            acceptButton.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View view) {
                    Log.d("Info","Accept Button");
-                   sendRequest(user.getId(),true);
+                   sendRequest(user.getId(),true,acceptButton,declineButton);
                }
            });
            declineButton.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View view) {
                    Log.d("Info","Decline Button");
-                   sendRequest(user.getId(),false);
+                   sendRequest(user.getId(),false,acceptButton,declineButton);
                }
            });
         } else {
@@ -93,7 +93,7 @@ public class PendingFollowAdapter extends BaseAdapter {
         return view;
     }
 
-    private void sendRequest(String userId, boolean accept) {
+    private void sendRequest(String userId, boolean accept, final Button acceptButton, final Button declineButton) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url = "";
         if (accept) {
@@ -109,6 +109,8 @@ public class PendingFollowAdapter extends BaseAdapter {
                     String msg = responseObject.getString("msg");
                     Toast.makeText(context,msg,Toast.LENGTH_LONG).show();
                     // TODO change the button
+                    acceptButton.setVisibility(View.INVISIBLE);
+                    declineButton.setVisibility(View.INVISIBLE);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
