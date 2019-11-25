@@ -162,7 +162,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                         selectedTradingEquipments.add(i);
                         initialSelectedTradingEquipments.add(i);
                     }
-                }else if (tradingEquipment2 instanceof Currency && tradingEquipment2 instanceof Currency) {
+                }else if (tradingEquipment1 instanceof Currency && tradingEquipment2 instanceof Currency) {
                     if (((Currency)tradingEquipment1).getCode().equals(((Currency)tradingEquipment2).getCode())) {
                         selectedTradingEquipments.add(i);
                         initialSelectedTradingEquipments.add(i);
