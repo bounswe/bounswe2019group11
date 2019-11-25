@@ -4,6 +4,7 @@ const errors = require('../helpers/errors');
 const isAuthenticated = require('../middlewares/isAuthenticated');
 const router = express.Router();
 const predictionHelper = require('../helpers/prediction');
+const authHelper = require('../helpers/auth');
 
 router.get('/', async (req, res) => {
     try {
@@ -17,7 +18,8 @@ router.get('/', async (req, res) => {
 router.get('/:code', async (req, res) => {
     try {
         const code = req.params.code;
-        const response = await currencyService.get(code);
+        const userId = authHelper.getUserIdOrNull(req);
+        const response = await currencyService.get(code, userId);
         res.status(200).send(response);
     } catch (err) {
         if (err.name === 'InvalidCurrencyCode') {

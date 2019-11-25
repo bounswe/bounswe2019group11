@@ -124,7 +124,57 @@ const STAGES = {
             ],
             as: 'predictions'
         }
-    }
+    },
+    GET_USER_PREDICTION: (userId) => {
+        return {
+            $lookup: {
+                from: 'predictions',
+                let: {
+                    code: '$code',
+                    userId: userId,
+                },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$$code', '$currencyCode']
+                                    },
+                                    {
+                                        $eq: [predictionHelper.EQUIPMENT_TYPE.CURRENCY, '$equipmentType']
+                                    },
+                                    {
+                                        $eq: ['$userId', { $toObjectId: '$$userId' }]
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            prediction: 1,
+                            _id: 0,
+                        }
+                    }
+                ],
+                as: 'userPrediction'
+            }
+        }
+    },
+    UNWIND_USER_PREDICTION: {
+        $unwind: {
+            path: '$userPrediction',
+            preserveNullAndEmptyArrays: true,
+        }
+    },
+    SET_USER_PREDICTION: {
+        $addFields: {
+            userPrediction: {
+                $ifNull: ["$userPrediction.prediction", 0]
+            }
+        }
+    },
 };
 
 const SUPPORTED_CURRENCIES = new Set([
@@ -142,13 +192,14 @@ module.exports.getAll = async () => {
         .exec();
 };
 
-module.exports.get = async (code) => {
+module.exports.get = async (code, userId) => {
     code = code.toUpperCase();
     if (!SUPPORTED_CURRENCIES.has(code)) {
         throw errors.INVALID_CURRENCY_CODE();
     }
     const currency = await Currency.aggregate([
-        STAGES.MATCH_CODE(code), STAGES.PROJECT_MINIMAL, STAGES.GET_COMMENTS, STAGES.GET_PREDICTIONS
+        STAGES.MATCH_CODE(code), STAGES.PROJECT_MINIMAL, STAGES.GET_COMMENTS, STAGES.GET_PREDICTIONS,
+        STAGES.GET_USER_PREDICTION(userId), STAGES.UNWIND_USER_PREDICTION, STAGES.SET_USER_PREDICTION
     ]).then();
 
     return currency[0];
