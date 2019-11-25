@@ -721,7 +721,94 @@
         ],
         "responses": {
           "200": {
-            "description": "OK. The portfolio deleted successfully, Actually it should be No Content but for updating the portfolio immediately the endpoint sends the updated portfolio ",
+            "description": "OK. The stock in portfolio deleted successfully, Actually it should be No Content but for updating the portfolio immediately the endpoint sends the updated portfolio ",
+            "schema": {
+              "$ref": "#/definitions/Portfolio"
+            }
+          },
+          "503": {
+            "description": "Internal error occurred."
+          }
+        }
+      }
+    },
+    "/portfolio/{_id}/currency": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Add the currency to addressed portfolio /portfolio/:id describes the portfolio and /stock describes that request body should be a stock ",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "currency",
+            "description": "Add a currency to specific portfolio",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyMinimal"
+            }
+          },
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "Portfolio ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The portfolio created successfully",
+            "schema": {
+              "$ref": "#/definitions/Portfolio"
+            }
+          },
+          "503": {
+            "description": "Internal error occurred."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Delete the currency to addressed portfolio /portfolio/:id describes the portfolio and /currency describes that request body should be a currency ",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "currency",
+            "description": "Delete the specific currency from specific portfolio Note: _id field should be provided it is required",
+            "schema": {
+              "type": "object",
+              "required": [
+                "_id"
+              ],
+              "$ref": "#/definitions/CurrencyMinimal"
+            }
+          },
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "Portfolio ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The currency in portfolio deleted successfully, Actually it should be No Content but for updating the portfolio immediately the endpoint sends the updated portfolio ",
             "schema": {
               "$ref": "#/definitions/Portfolio"
             }
