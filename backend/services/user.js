@@ -83,3 +83,14 @@ module.exports.getSocialNetworkById= async (_id) => {
          })
         .exec();
 };
+module.exports.updatePrivacy = async (userId, privacy) => {
+    if (!(mongoose.Types.ObjectId.isValid(userId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    let userUpdate = await User.findOne({_id:userId});
+    if (!userUpdate) {
+        throw errors.USER_NOT_FOUND();
+    }
+    userUpdate.privacy = privacy;
+    return await userUpdate.save();
+};
