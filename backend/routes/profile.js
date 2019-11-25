@@ -19,7 +19,7 @@ function getTokenFromHeader(req) {
 };
 
 const isInMyNetwork = (user,userToBeChecked) =>{
-    const index = user.following.findIndex(elm => elm.userId.toString() === userToBeChecked._id.toString());
+    const index = user.following.findIndex(elm => elm.userId._id.toString() === userToBeChecked._id.toString());
     const following = user.following[index];
     if(following){
         if(following.isAccepted){
