@@ -125,7 +125,7 @@ const predictionJob = new CronJob('00 00 00 * * *', async () => {
                     currentRate = currentRate.rate;
                     currencyCache.set(currencyCode, currentRate);
                 }
-                if (prediction.snapshot <= currentRate && prediction.prediction === 1) {
+                if (prediction.snapshot <= currentRate && prediction.prediction === predictionHelper.PREDICTION.INCREASE) {
                     await User.findOneAndUpdate({_id: prediction.userId}, {
                         $inc: {
                             totalPredictionCount: 1,

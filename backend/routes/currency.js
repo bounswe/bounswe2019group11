@@ -3,6 +3,7 @@ const currencyService = require('../services/currency');
 const errors = require('../helpers/errors');
 const isAuthenticated = require('../middlewares/isAuthenticated');
 const router = express.Router();
+const predictionHelper = require('../helpers/prediction');
 
 router.get('/', async (req, res) => {
     try {
@@ -31,7 +32,7 @@ router.post('/:code/predict-increase', isAuthenticated, async (req, res) => {
     try {
         const code = req.params.code;
         const userId = req.token && req.token.data && req.token.data._id;
-        await currencyService.predict(code, userId, 1);
+        await currencyService.predict(code, userId, predictionHelper.PREDICTION.INCREASE);
         res.sendStatus(200);
     } catch (err) {
         if (err.name === 'InvalidCurrencyCode') {
@@ -46,7 +47,7 @@ router.post('/:code/predict-decrease', isAuthenticated, async (req, res) => {
     try {
         const code = req.params.code;
         const userId = req.token && req.token.data && req.token.data._id;
-        await currencyService.predict(code, userId, -1);
+        await currencyService.predict(code, userId, predictionHelper.PREDICTION.DECREASE);
         res.sendStatus(200);
     } catch (err) {
         if (err.name === 'InvalidCurrencyCode') {

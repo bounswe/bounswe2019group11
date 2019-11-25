@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const EQUIPMENT_TYPE = require('../helpers/prediction').EQUIPMENT_TYPE;
+const PREDICTION = require('../helpers/prediction').PREDICTION;
 
 const predictionSchema = new mongoose.Schema({
     userId: {
@@ -26,7 +27,7 @@ const predictionSchema = new mongoose.Schema({
     prediction: {
         type: Number,
         required: true,
-        enum: [-1, 1]
+        enum: [PREDICTION.DECREASE, PREDICTION.DECREASE],
     }
 });
 
