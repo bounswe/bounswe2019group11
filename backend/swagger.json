@@ -2524,7 +2524,7 @@
         },
         "isMe": {
           "type": "boolean",
-          "description": "True if the user try to see his own profile false otherwise (If isMe == True then there will be no other fields in the response body)"
+          "description": "True if the user try to see his own profile false otherwise (If isMe == True then myProfile Response will be sent)"
         },
         "following": {
           "type": "array",
@@ -2604,6 +2604,10 @@
           "type": "array",
           "description": "Users who has sent follow request but not accepted yet by the user him/herself",
           "example": "[{\"_id\": \"5dd7d54b58ec764434728fea\",\"name\": \"Eleman\",\"surname\": \"Takip\",\"email\": \"stel@24repporter.ru\"}]"
+        },
+        "isMe": {
+          "type": "boolean",
+          "description": "True. In myProfile response isMe is always True"
         }
       }
     },
