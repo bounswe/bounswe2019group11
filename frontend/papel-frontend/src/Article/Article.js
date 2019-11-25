@@ -56,15 +56,7 @@ class Article extends React.Component {
     else{
       event.preventDefault();
       var comment = {body : this.state.commentText};
-      // $.ajax({
-      //   type: "POST",
-      //   url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment",
-      //   dataType: 'json',
-      //   async: true,
-      //   data: comment,
-      //   success: () => console.log("Wow! It's a response: "),
-      //   beforeSend: (xhr) => xhr.setRequestHeader("Authorization", "Bearer " + cookies.get('userToken'))
-      // })
+
       postRequest({
         url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment",
         data: comment,

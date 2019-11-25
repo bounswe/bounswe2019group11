@@ -26,14 +26,53 @@ class Home extends React.Component {
     this.handleStock2Click=this.handleStock2Click.bind(this);
 
   }
+  
   componentDidMount() {
+    var emptyEvent = {
+      "title": "No Title Found",
+      "body": " No event to show :(",
+      "comment": [
+        "No comment"
+      ],
+      "date": "No date",
+      "rank": 0,
+      "country": "No country"
+    };
+    var emptyArticle = {
+      "_id": "",
+      "title": "No article to show",
+      "body": "No article",
+      "authorId": "",
+      "voteCount": "",
+      "date": "",
+      "author": {
+        "name": "",
+        "surname": ""
+      },
+      "userVote": 0,
+      "comments": []
+    }
     const self = this;
     this.setState({loading: true});
     $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article", (data) => {
-      self.setState({articles: [data[0],data[1],data[2  ]], loading: false});
+      data.reverse();
+      self.setState({articles: [
+        data[0]?data[0]:emptyArticle,
+        data[1]?data[1]:emptyArticle,
+        data[2]?data[2]:emptyArticle,
+        data[3]?data[3]:emptyArticle,
+        data[4]?data[4]:emptyArticle],
+         loading: false});
     });
     $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/event", (data) => {
-      self.setState({events: [data[0],data[1],data[2  ]], loading: false});
+      data.reverse();
+      self.setState({events: [
+        data[0]?data[0]:emptyEvent,
+        data[1]?data[1]:emptyEvent,
+        data[2]?data[2]:emptyEvent,
+        data[3]?data[3]:emptyEvent,
+        data[4]?data[4]:emptyEvent],
+         loading: false});
     });
   }
 
@@ -108,7 +147,7 @@ class Home extends React.Component {
 
             <div id="a" class="card-body">
             <div  className="ArticleSection">
-                <h5 class="card-title">3 Newest Articles</h5>
+                <h5 class="card-title">The Newest {this.state.articles.length} Articles</h5>
                 <hr/>
                 <p class="card-text">
                   {
@@ -119,7 +158,7 @@ class Home extends React.Component {
                 </p>
               </div>
               <div  hidden className="EventSection">
-                <h5 class="card-title">3 Newest Events</h5>
+                <h5 class="card-title">The Newest {this.state.events.length} Events</h5>
                 <hr/>
                 <p class="card-text">
                   {

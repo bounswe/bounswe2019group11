@@ -6,7 +6,7 @@ import {instanceOf} from 'prop-types'
 import {withCookies, Cookies} from 'react-cookie';
 import {useParams} from 'react-router-dom';
 import $ from 'jquery';
-import {Row, Col, Button, Card, Form} from 'react-bootstrap';
+import {Row, Col, Button, Card, Form, FormGroup} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus,faThumbsUp,faThumbsDown, faUserCircle} from '@fortawesome/free-solid-svg-icons';
 import CommentPreview from './CommentPreview';
@@ -19,37 +19,46 @@ class AddArticle extends React.Component {
     const {cookies} = props;
     const loggedIn = !!cookies.get('userToken');
     var userId ="";
-    if(loggedIn) {console.log(cookies.get("userToken"));
+    if(loggedIn) {
      userId = cookies.get('user')._id?cookies.get('user')._id:"check get user id";
     }
     else {console.log("not logged");} 
-    this.state = {loggedIn: loggedIn, userId:userId, article:{title:"", body:""}};
+    this.state = {loggedIn: loggedIn, userId:userId, title:"", body:""};
     
     
-    this.handleArticleTitleChange = this.handleArticleTitleChange.bind(this);
-    this.handleArticleBodyChange = this.handleArticleBodyChange.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   componentDidMount() {
+    const {cookies} = this.props;
+      
+  }
+
+  handleChange(event) {
+    this.setState({[event.target.name]: event.target.value});
+    console.log(this.state.title);
+    console.log(this.state.body);
     
   }
 
-  handleArticleTitleChange(event) {
-    this.setState({article:{title: event.target.value}});
-  }
-
-  handleArticleBodyChange(event) {
-    this.setState({article: {body: event.target.value}});
-  }
-
   handleSubmit(event) {
-      const {cookies} = this.props;
-      if (!this.state.loggedIn) {
-        alert("To add an comment please log in.");
-      }
-      else{
-        event.preventDefault();
-        alert("henüz yazılmadı post atma");
+    console.log(this.state.title)
+    console.log(this.state.body)
+    
+   const {cookies} = this.props;
+    console.log(cookies.get('userToken'));
+    var article = {title:this.state.title, body : this.state.body};
+    console.log(article)
+    if(!this.state.loggedIn){
+      alert("please log in")
+    }else{
+      event.preventDefault();
+      postRequest({
+        url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/",
+        data: article,
+        success: function() { window.location.replace("./profile")},
+        authToken: cookies.get('userToken')
+      })
     }
   }
  
@@ -57,45 +66,46 @@ class AddArticle extends React.Component {
     
     return (
       <Row className="article">
+
       
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
-          <label htmlFor="ArticleEditor"></label>
+        <Form onSubmit={()=>this.handleSubmit}>
+          <Form.Group controlId="exampleForm.ControlTextarea1">
+            <Form.Label>Add a title for your article :</Form.Label>
+            <Form.Control as="textarea" rows="3" 
+                        name="title"
+                        placeholder="Title..."
+                        onChange={this.handleChange} 
+                        rows="1"
+                        style={{
+                          height:45,
+                          maxHeight:90,
+                          fontSize:20,
+                          fontWeight:"bold"
+                        }}>
+            </Form.Control>
+          </Form.Group>
+          
+          <Form.Group controlId="exampleForm.ControlTextarea1">
+            <Form.Label>You can write your article :</Form.Label>
+            <Form.Control as="textarea" rows="3"
+                          name="body"
+                          placeholder="Text..."
+                          onChange={this.handleChange}
+                          style={{
+                            height:400,
+                            maxHeight:800,
+                            fontSize:18
+                          }}>
 
-            <form className="span6" onSubmit={this.handleSubmit}>
+            </Form.Control>
+          </Form.Group>
+          
+          <Button variant="primary"  onClick={this.handleSubmit}>
+            Submit
+          </Button>
+        </Form>
 
-              <textarea id="articleEditor title" 
-                value={this.state.article.title} 
-                onChange={this.handleArticleTitleChange} 
-                className="form-control"  
-                placeholder="Select a title for your article" 
-                rows="1"
-                style={{marginBottom:10,
-                        height:45,
-                        minHeight:45,
-                        maxHeight:90,
-                        fontWeight :  "bold",
-                        fontSize: 20  }}>
-              </textarea>
-  
-              <textarea id="articleEditor body" 
-                value={this.state.article.body} 
-                onChange={this.handleArticleBodyChange} 
-                className="form-control"   
-                placeholder="Text..." 
-                rows="20"
-                style={{
-                  fontSize:18
-                }}>
-              </textarea>
-
-              <Col  md={{span: 2, offset: 10}}style={{width: "20", marginTop: 5, marginBottom: 10 }}>
-              
-                  <Button size="sm" type="submit" >
-                     Submit
-                  </Button>
-              </Col>
-
-            </form>
         </Col>
 
       </Row >
