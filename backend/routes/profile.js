@@ -33,6 +33,23 @@ const isInMyNetwork = (user,userToBeChecked) =>{
 
 };
 
+const myProfileDataTransferObject = (user,articles,portfolios,investments,following,followingPending,followers,followerPending) => {
+    return {
+        privacy: 'private',
+        name:user.name,
+        surname:user.surname,
+        location: user.location,
+        articles: articles,
+        portfolios: portfolios,
+        investments: investments,
+        following:following,
+        followingPending:followingPending,
+        followers:followers,
+        followerPending:followerPending
+
+    };
+};
+
 const privateProfileDataTransferObject = (user,articles,inInMyNetwork) => {
     return {
         privacy: 'private',
@@ -40,7 +57,8 @@ const privateProfileDataTransferObject = (user,articles,inInMyNetwork) => {
         surname:user.surname,
         location: user.location,
         articles: articles,
-        isInMyNetwork: inInMyNetwork
+        isInMyNetwork: inInMyNetwork,
+        isMe:false
     };
 };
 
@@ -49,27 +67,17 @@ const publicProfileDataTransferObject = (user,articles,portfolios,inInMyNetwork)
         privacy: 'public',
         name:user.name,
         surname:user.surname,
+        following:user.following.filter(elm => elm.isAccepted === true).map(elm => elm.userId),
+        followers: user.followers.filter(elm => elm.isAccepted === true).map(elm => elm.userId),
         location: user.location,
         articles: articles,
         portfolios: portfolios,
-        isInMyNetwork: inInMyNetwork
+        isInMyNetwork: inInMyNetwork,
+        isMe:false
     };
 };
 
-const myProfileDataTransferObject = (user,articles,portfolios,investments,inInMyNetwork) => {
-    return {
-        privacy: 'public',
-        name:user.name,
-        surname:user.surname,
-        location: user.location,
-        articles: articles,
-        portfolios: portfolios,
-        investments: investments,
-        isInMyNetwork: inInMyNetwork
-    };
-};
-
-router.get('/:id', async (req, res) => {
+router.get('/other/:id', async (req, res) => {
     try {
         const token = getTokenFromHeader(req);
         if (token) {
@@ -88,18 +96,21 @@ router.get('/:id', async (req, res) => {
             const userId = req.token && req.token.data && req.token.data._id;
             const mainUser = await userService.getById(userId);
             const id = req.params.id;
-            const user = await userService.getById(id);
-            const articles = await articleService.getByUserId(id);
-            const portfolios = await portfolioService.getByUserId(id);
-            const investments = await investmentsService.getByUserId(id);
-
-            if(req.params.id == userId){
-                res.status(200).send(myProfileDataTransferObject(user,articles,portfolios,investments,isInMyNetwork(mainUser,user)));
-            }else if(user.privacy === 'public'){
-                res.status(200).send(publicProfileDataTransferObject(user,articles,portfolios,isInMyNetwork(mainUser,user)));
+            if(id.toString() === userId){
+                res.status(200).json({isMe:true});
             }else{
-                res.status(200).send(privateProfileDataTransferObject(user,articles,isInMyNetwork(mainUser,user)));
+                const user = await userService.getById(id);
+                const articles = await articleService.getByUserId(id);
+                const portfolios = await portfolioService.getByUserId(id);
+                const _isInMyNetwork = isInMyNetwork(mainUser,user);
+                if(user.privacy === 'public' || _isInMyNetwork === "true"){
+
+                    res.status(200).send(publicProfileDataTransferObject(user,articles,portfolios,_isInMyNetwork));
+                }else{
+                    res.status(200).send(privateProfileDataTransferObject(user,articles,_isInMyNetwork));
+                }
             }
+
         }else{
             const id = req.params.id;
             const user = await userService.getById(id);
@@ -121,13 +132,92 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/:id/follow',isAuthenticated, async (req, res) => {
+router.get('/myprofile',isAuthenticated, async (req, res) => {
+    try {
+        const userId =  req.token && req.token.data && req.token.data._id;
+        const articles = await articleService.getByUserId(userId);
+        const portfolios = await portfolioService.getByUserId(userId);
+        const investments = await investmentsService.getByUserId(userId);
+        userService.getSocialNetworkById(userId).then(user=>{
+            const followingPending = user.following.filter(elm => elm.isAccepted === false).map(elm => elm.userId);
+            const following = user.following.filter(elm => elm.isAccepted === true).map(elm => elm.userId);
+            const followerPending = user.followers.filter(elm => elm.isAccepted === false).map(elm => elm.userId);
+            const follower = user.followers.filter(elm => elm.isAccepted === true).map(elm => elm.userId);
+            res.status(200).json(myProfileDataTransferObject(user,articles,portfolios,investments,following,followingPending,follower,followerPending));
+        });
+
+    }catch (err) {
+        if (err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+
+
+});
+
+router.post('/other/:id/follow',isAuthenticated, async (req, res) => {
     try {
         const id = req.params.id;
         const userId =  req.token && req.token.data && req.token.data._id;
         const user = await userService.getById(userId);
         const userToBeFollowed = await userService.getById(id);
         res.status(200).json({msg:await user.follow(userToBeFollowed)});
+
+    } catch (err) {
+        if (err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        }else if(err.name === 'FollowedAlready'){
+            res.status(400).send(errors.ALREADY_FOLLOWED(err));
+        }
+        else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
+router.post('/other/:id/unfollow',isAuthenticated, async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userId =  req.token && req.token.data && req.token.data._id;
+        const user = await userService.getById(userId);
+        const userToBeAccepted = await userService.getById(id);
+        res.status(200).json({msg:await user.unfollow(userToBeAccepted)});
+
+    } catch (err) {
+        if (err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
+router.post('/other/:id/accept',isAuthenticated, async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userId =  req.token && req.token.data && req.token.data._id;
+        const user = await userService.getById(userId);
+        const userToBeAccepted = await userService.getById(id);
+        res.status(200).json({msg:await user.accept(userToBeAccepted)});
+
+    } catch (err) {
+        if (err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
+router.post('/other/:id/decline',isAuthenticated, async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userId =  req.token && req.token.data && req.token.data._id;
+        const user = await userService.getById(userId);
+        const userToBeDeclined = await userService.getById(id);
+        res.status(200).json({msg:await user.decline(userToBeDeclined)});
 
     } catch (err) {
         if (err.name === 'UserNotFound') {
