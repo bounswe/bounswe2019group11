@@ -146,7 +146,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                 portfolios = null;
             }
         }
-        adapter = new ProfileSubpageAdapter(getSupportFragmentManager(),articles,portfolios);
+        adapter = new ProfileSubpageAdapter(getSupportFragmentManager(),articles,portfolios,isMe);
         pager.setAdapter(adapter);
         tabLayout.setupWithViewPager(pager);
 

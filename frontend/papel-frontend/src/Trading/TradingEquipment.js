@@ -4,6 +4,8 @@ import $ from 'jquery';
 import './TradingEquipment.css';
 import {Card} from 'react-bootstrap'
 import CanvasJSReact from '../canvasjs/canvasjs.react';
+import {withCookies} from 'react-cookie'
+
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 class TradingEquipment extends React.Component {
@@ -30,7 +32,7 @@ class TradingEquipment extends React.Component {
     }
     var options = {
       animationEnabled: true,
-    	theme: "light2", // "light1", "light2", "dark1", "dark2"
+    	theme: "light1", // "light1", "light2", "dark1", "dark2"
     	exportEnabled: true,
     	axisY: {
     		includeZero: false,
@@ -72,4 +74,4 @@ class TradingEquipment extends React.Component {
 
 
 
-export default TradingEquipment;
+export default withCookies(TradingEquipment);

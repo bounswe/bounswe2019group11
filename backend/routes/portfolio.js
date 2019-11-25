@@ -108,7 +108,7 @@ router.post('/',async (req,res) => {
         const response = await portfolioService.create(thePortfolio);
         res.status(200).json(response);
     }catch (e) {
-        res.status(503).json(e)
+        res.status(503).json(e);
     }
 
 });
@@ -119,7 +119,7 @@ router.get('/user/:userId',async (req,res)=>{
         const response = await portfolioService.getByUserId(Id);
         res.status(200).json(response);
     }catch (e) {
-        res.sendStatus(503);
+        res.status(503);
     }
 });
 

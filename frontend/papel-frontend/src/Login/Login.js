@@ -59,12 +59,10 @@ class Login extends React.Component {
         </Modal>
 
         <div className="card container col-sm-4">
+            
           <div className="row">
-            <div className="container">
-              <img id="logo-white" src={Logo} style = { { margin: "auto", width: "100%", height:"80%"}} />
-            </div>
-          </div>
-          <div className="row">
+          <img id="logo-white" src={Logo} style = { { margin: "auto", width: "100%", height:"80%"}} />
+            
             <div className="col-sm-5">E-Mail: </div>
             <div className="col-sm-7"><input type="text" name="email" onChange={this.handleChange}/></div>
           </div>
@@ -75,6 +73,12 @@ class Login extends React.Component {
           <div className="row">
             <div className="col-sm-4 offset-sm-4"><button className="btn" onClick = {this.submit}>Login</button></div>
           </div>
+          <hr/>
+          <div className="row">
+            <div className="col-sm-12 offset-sm-1">Not registered yet? <a href="../register">Create an account.</a></div>
+          </div>
+          
+        
         </div>
       </div>
     );
