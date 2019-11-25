@@ -480,6 +480,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(PortfolioDetailActivity.this);
         String url = Constants.LOCALHOST + Constants.PORTFOLIO + portfolio.getId();
+        Log.d("Info","Portfolio id" + portfolio.getId());
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
