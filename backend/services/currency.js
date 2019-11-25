@@ -2,6 +2,8 @@ const Currency = require('../models/currency');
 const errors = require('../helpers/errors');
 const CurrencyComment = require('../models/currencyComment');
 const mongoose = require('mongoose');
+const Prediction = require('../models/prediction');
+const predictionHelper = require('../helpers/prediction');
 
 const STAGES = {
     GET_COMMENTS: {
@@ -176,6 +178,26 @@ module.exports.getLastFull = async (code) => {
         .findOne({code})
         .select('-__v -_id')
         .exec();
+};
+
+module.exports.predict = async (code, userId, prediction) => {
+    code = code.toUpperCase();
+    if (!SUPPORTED_CURRENCIES.has(code)) {
+        throw errors.INVALID_CURRENCY_CODE();
+    }
+
+    let currentRate = await Currency
+        .findOne({code})
+        .select('rate -_id')
+        .exec();
+    currentRate = currentRate.rate;
+    await Prediction.create({
+        userId,
+        currencyCode: code,
+        equipmentType: predictionHelper.EQUIPMENT_TYPE.CURRENCY,
+        snapshot: currentRate,
+        prediction
+    });
 };
 
 /*

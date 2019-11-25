@@ -122,6 +122,7 @@ const predictionJob = new CronJob('00 00 00 * * *', async () => {
                         .findOne({code: currencyCode})
                         .select('rate -_id')
                         .exec();
+                    currentRate = currentRate.rate;
                     currencyCache.set(currencyCode, currentRate);
                 }
                 if (prediction.snapshot <= currentRate && prediction.prediction === 1) {
