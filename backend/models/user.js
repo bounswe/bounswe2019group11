@@ -151,13 +151,13 @@ userSchema.methods.follow =async function(userToBeFollowed){
             userToBeFollowed.followers.push({userId:this._id,isAccepted:true});
             await userToBeFollowed.save();
             await this.save();
-            return  userToBeFollowed.name + " "+ userToBeFollowed.surname + " successfully followed";
+            return  {msg:userToBeFollowed.name + " "+ userToBeFollowed.surname + " successfully followed",status:"follow"};
         }else{
             this.following.push({userId:userIdToBeFollowed, isAccepted:false});
             userToBeFollowed.followers.push({userId:this._id,isAccepted:false});
             await userToBeFollowed.save();
             await this.save();
-            return "Follow request has been sent to " + userToBeFollowed.name + " "+ userToBeFollowed.surname;
+            return {msg:"Follow request has been sent to " + userToBeFollowed.name + " "+ userToBeFollowed.surname,status:"request"};
         }
 
     }else{
@@ -177,7 +177,7 @@ userSchema.methods.unfollow = async function (userToBeUnfollowed) {
         userToBeUnfollowed.followers.splice(index2, 1);
         await this.save();
         await userToBeUnfollowed.save();
-        return "User has been successfully unfollowed";
+        return {msg: userToBeUnfollowed.name +" "+ userToBeUnfollowed.surname +" has been successfully unfollowed",status:"unfollow"};
     }else{
         throw errors.USER_NOT_FOUND();
     }
@@ -192,7 +192,7 @@ userSchema.methods.accept = async function (userToBeAccepted) {
         userToBeAccepted.following[index2]['isAccepted'] = true;
         await this.save();
         await userToBeAccepted.save();
-        return "Follow request accepted";
+        return {msg:"Follow request from "+userToBeAccepted.name +" "+ userToBeAccepted.surname + " accepted",status:"accept"};
     }else{
         throw errors.USER_NOT_FOUND();
     }
@@ -209,7 +209,7 @@ userSchema.methods.decline = async function (userToBeDeclined) {
         userToBeDeclined.following.splice(index2,1);
         await this.save();
         await userToBeDeclined.save();
-        return "Follow request declined";
+        return {msg:"Follow request from "+userToBeDeclined.name +" "+ userToBeDeclined.surname + " declined",status:"decline"};
     }else{
         throw errors.USER_NOT_FOUND();
     }
