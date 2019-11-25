@@ -79,6 +79,22 @@ public class ResponseParser {
                 }
                 currency.setComments(currencyComments);
             }
+
+            if(response.has("predictions")){
+                JSONArray predictions = response.getJSONArray("predictions");
+                for(int i=0; i<predictions.length(); i++){
+                    JSONObject obj = predictions.getJSONObject(i);
+                    int pred = obj.getInt("prediction");
+                    if(pred == 1){
+                        currency.setIncreaseCount(obj.getInt("count"));
+                    }else if(pred == -1){
+                        currency.setDecreaseCount(obj.getInt("count"));
+                    }
+                }
+            }
+            if(response.has("userPrediction")){
+                currency.setUserVote(response.getInt("userPrediction"));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
