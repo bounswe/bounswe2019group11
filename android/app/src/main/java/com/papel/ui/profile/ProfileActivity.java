@@ -2,12 +2,15 @@ package com.papel.ui.profile;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -36,6 +39,8 @@ import java.util.ArrayList;
 
 public class ProfileActivity extends AppCompatActivity implements ProfileSubpageFragment.OnFragmentInteractionListener {
     private String userId;
+    private boolean isMe = true;
+    private boolean isPrivate;
 
     private ArrayList<Article> articles = new ArrayList<>();
     private ArrayList<Portfolio> portfolios = new ArrayList<>();
@@ -61,8 +66,6 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
 
         pager = findViewById(R.id.pager);
         tabLayout = findViewById(R.id.tabLayout);
-
-
 
         try {
             // TODO Test HERE
@@ -104,9 +107,13 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                 try {
                     JSONObject responseJSON = new JSONObject(response);
                     String privacy = responseJSON.getString("privacy");
+                    if (privacy.equals("private")) {
+                        isPrivate = true;
+                    } else {
+                        isPrivate = false;
+                    }
                     String name = responseJSON.getString("name");
                     String surname = responseJSON.getString("surname");
-                    boolean isMe = false; // TODO is must be come from the server
                     JSONArray articleArray = responseJSON.getJSONArray("articles");
                     for(int i = 0; i<articleArray.length(); i++) {
                         articles.add(ResponseParser.parseArticle(articleArray.getJSONObject(i)));
@@ -115,10 +122,11 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                     for(int i = 0;i<portfolioArray.length(); i++) {
                         portfolios.add(ResponseParser.parsePortfolio(portfolioArray.getJSONObject(i)));
                     }
+                    isMe = responseJSON.getBoolean("isMe");
 
                     Log.d("Info","Privacy: " + privacy);
 
-                    updateUI(privacy,isMe,name,surname);
+                    updateUI(privacy,name,surname);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -135,7 +143,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
     }
 
 
-    private void updateUI(String privacy, boolean isMe,String name, String surname) {
+    private void updateUI(String privacy,String name, String surname) {
         userName.setText(name + " " + surname);
         if (!isMe) {
             // Looking other's profile
@@ -159,11 +167,26 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == android.R.id.home) {
             //this.finish();
             onBackPressed();
             return true;
+        } else if (item.getItemId() == R.id.action_settings) {
+            // Show settings activity
+            if (isMe) {
+                Intent settingsIntent = new Intent(ProfileActivity.this, ProfileSettingsActivity.class);
+                settingsIntent.putExtra("UserId",userId);
+                settingsIntent.putExtra("IsPrivate",isPrivate);
+                startActivity(settingsIntent);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
