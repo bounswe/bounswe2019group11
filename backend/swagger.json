@@ -2610,6 +2610,11 @@
     "CurrencyMinimal": {
       "type": "object",
       "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Unique id of the currency.",
+          "example": "5dd93e4301df5b4513254756"
+        },
         "code": {
           "type": "string",
           "description": "Short code of the currency.",
@@ -2658,6 +2663,11 @@
               }
             }
           }
+        },
+        "userPrediction": {
+          "type": "number",
+          "description": "User's prediction. (-1 for decrease, 1 for increase, 0 for no prediction.)",
+          "example": 1
         }
       }
     },
