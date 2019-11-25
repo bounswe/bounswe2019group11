@@ -33,7 +33,7 @@ const isInMyNetwork = (user,userToBeChecked) =>{
 
 };
 
-const myProfileDataTransferObject = (user,articles,portfolios,following,followingPending,followers,followerPending) => {
+const myProfileDataTransferObject = (user,articles,portfolios,investments,following,followingPending,followers,followerPending) => {
     return {
         privacy: 'private',
         name:user.name,
@@ -41,6 +41,7 @@ const myProfileDataTransferObject = (user,articles,portfolios,following,followin
         location: user.location,
         articles: articles,
         portfolios: portfolios,
+        investments: investments,
         following:following,
         followingPending:followingPending,
         followers:followers,
@@ -136,12 +137,13 @@ router.get('/myprofile',isAuthenticated, async (req, res) => {
         const userId =  req.token && req.token.data && req.token.data._id;
         const articles = await articleService.getByUserId(userId);
         const portfolios = await portfolioService.getByUserId(userId);
+        const investments = await investmentsService.getByUserId(userId);
         userService.getSocialNetworkById(userId).then(user=>{
             const followingPending = user.following.filter(elm => elm.isAccepted === false).map(elm => elm.userId);
             const following = user.following.filter(elm => elm.isAccepted === true).map(elm => elm.userId);
             const followerPending = user.followers.filter(elm => elm.isAccepted === false).map(elm => elm.userId);
             const follower = user.followers.filter(elm => elm.isAccepted === true).map(elm => elm.userId);
-            res.status(200).json(myProfileDataTransferObject(user,articles,portfolios,following,followingPending,follower,followerPending));
+            res.status(200).json(myProfileDataTransferObject(user,articles,portfolios,investments,following,followingPending,follower,followerPending));
         });
 
     }catch (err) {
