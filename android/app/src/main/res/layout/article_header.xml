@@ -176,7 +176,7 @@
             android:layout_marginBottom="10dp"
             android:layout_centerHorizontal="true"
             android:textStyle="italic"
-            android:visibility="invisible"/>
+            android:visibility="gone"/>
 
 
     </LinearLayout>

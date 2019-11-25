@@ -223,6 +223,8 @@ public class ReadArticleActivity extends AppCompatActivity {
         commentListView.setAdapter(adapter);
         if(comments_list.size() == 0){
             noCommentTextView.setVisibility(View.VISIBLE);
+        }else{
+            noCommentTextView.setVisibility(View.GONE);
         }
         adapter.notifyDataSetChanged();
     }

@@ -115,6 +115,17 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         TradingEquipment tradingEquipment = intent.getParcelableExtra("TradingEquipment");
+
+        noCommentTextView = header.findViewById(R.id.no_comment_textview);
+        totalPredCountTextView = header.findViewById(R.id.prediction_vote_count_textview);
+        percentagePredTextView = header.findViewById(R.id.prediction_vote_textview);
+        predProgressBar = header.findViewById(R.id.prediction_progressbar);
+        predictionRadioGroup = header.findViewById(R.id.prediction_radio_group);
+        increaseRadioButton = header.findViewById(R.id.increase_radioButton);
+        decreaseRadioButton = header.findViewById(R.id.decrease_radioButton);
+        cl_green = ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary));
+        cl_red = ColorStateList.valueOf(getResources().getColor(android.R.color.holo_red_dark));
+
         if (tradingEquipment instanceof Stock) {
             stock = (Stock) tradingEquipment;
             setTitle(stock.getSymbol());
@@ -128,15 +139,6 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             setTitle(currency.getName());
         }
 
-        totalPredCountTextView = header.findViewById(R.id.prediction_vote_count_textview);
-        percentagePredTextView = header.findViewById(R.id.prediction_vote_textview);
-        predProgressBar = header.findViewById(R.id.prediction_progressbar);
-        predictionRadioGroup = header.findViewById(R.id.prediction_radio_group);
-        increaseRadioButton = header.findViewById(R.id.increase_radioButton);
-        decreaseRadioButton = header.findViewById(R.id.decrease_radioButton);
-        cl_green = ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary));
-        cl_red = ColorStateList.valueOf(getResources().getColor(android.R.color.holo_red_dark));
-
         predictionRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -148,7 +150,6 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             }
         });
 
-        noCommentTextView = header.findViewById(R.id.no_comment_textview);
         commentEditText = (EditText) header.findViewById(R.id.te_comment_edittext);
         addCommentButton = (ImageButton) header.findViewById(R.id.te_add_comment_button);
         commentList = findViewById(R.id.trading_equipment_comments);
@@ -586,6 +587,8 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
         commentList.setAdapter(adapter);
         if(currency.getComments().size() == 0){
             noCommentTextView.setVisibility(View.VISIBLE);
+        }else{
+            noCommentTextView.setVisibility(View.GONE);
         }
         adapter.notifyDataSetChanged();
     }
