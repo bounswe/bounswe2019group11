@@ -23,6 +23,7 @@ public class ProfileSubpageAdapter extends FragmentPagerAdapter {
     private ArrayList<User> followersPending;
     private ArrayList<User> followingPending;
     private boolean isMe;
+
     public ProfileSubpageAdapter(FragmentManager fragmentManager, ArrayList<Article> articles, ArrayList<Portfolio> portfolios, ArrayList<User> followers,ArrayList<User> following,ArrayList<User> followersPending,ArrayList<User> followingPending,boolean isMe) {
         super(fragmentManager);
         this.articles = articles;
@@ -51,8 +52,10 @@ public class ProfileSubpageAdapter extends FragmentPagerAdapter {
             args.putString(ProfileSubpageFragment.ARG_SUBPAGE_NAME,Constants.FOLLOWING_TITLE);
             args.putParcelableArrayList(ProfileSubpageFragment.ARG_FOLLOWING,following);
         } else if (position == 4) {
-            args.putString(ProfileSubpageFragment.ARG_SUBPAGE_NAME,Constants.REQUESTS_TITLE);
+            args.putString(ProfileSubpageFragment.ARG_SUBPAGE_NAME,Constants.FOLLOWER_PENDING_TITLE);
             args.putParcelableArrayList(ProfileSubpageFragment.ARG_FOLLOWER_PENDING,followersPending);
+        } else if (position == 5) {
+            args.putString(ProfileSubpageFragment.ARG_SUBPAGE_NAME,Constants.FOLLOWING_PENDING_TITLE);
             args.putParcelableArrayList(ProfileSubpageFragment.ARG_FOLLOWING_PENDING,followingPending);
         }
         args.putBoolean(ProfileSubpageFragment.ARG_ISME, this.isMe);
@@ -63,9 +66,9 @@ public class ProfileSubpageAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         if (this.isMe) {
-            return 5;
+            return 6;
         }
-        return 4;
+        return 6; // For test
     }
 
     @Nullable
@@ -80,7 +83,9 @@ public class ProfileSubpageAdapter extends FragmentPagerAdapter {
         } else if(position == 3) {
             return Constants.FOLLOWING_TITLE;
         } else if (position == 4) {
-            return Constants.REQUESTS_TITLE;
+            return Constants.FOLLOWER_PENDING_TITLE;
+        } else if (position == 5) {
+            return Constants.FOLLOWING_PENDING_TITLE;
         }
         return "PAGE TITLE";
     }

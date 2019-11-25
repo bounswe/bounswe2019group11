@@ -24,8 +24,6 @@ import com.papel.ui.articles.ReadArticleActivity;
 import com.papel.ui.portfolio.PortfolioDetailActivity;
 import com.papel.ui.portfolio.PortfolioListViewAdapter;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 /**
@@ -137,7 +135,7 @@ public class ProfileSubpageFragment extends Fragment {
                 PortfolioListViewAdapter adapter = new PortfolioListViewAdapter(getContext(), portfolios);
                 listView.setAdapter(adapter);
 
-                final Intent portfolioIntent = new Intent(getActivity().getApplicationContext(), PortfolioDetailActivity.class);
+                final Intent portfolioIntent = new Intent(getContext(), PortfolioDetailActivity.class);
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -162,7 +160,7 @@ public class ProfileSubpageFragment extends Fragment {
             if (followers != null) {
                 Log.d("Info","Here");
                 Log.d("Info","Context "  + getContext().toString());
-                FollowerAdapter adapter = new FollowerAdapter(getContext(),followers);
+                FollowAdapter adapter = new FollowAdapter(getContext(),followers);
                 listView.setAdapter(adapter);
 
                 if (followers.size() == 0) {
@@ -170,6 +168,16 @@ public class ProfileSubpageFragment extends Fragment {
                     message.setVisibility(View.VISIBLE);
                     listView.setVisibility(View.INVISIBLE);
                 }
+
+                final Intent profileIntent = new Intent(getContext(),ProfileActivity.class);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        User clickedUser = followers.get(i);
+                        profileIntent.putExtra("UserId",clickedUser.getId());
+                        startActivity(profileIntent);
+                    }
+                });
 
             } else {
                 message.setText(getString(R.string.private_profile_message));
@@ -179,7 +187,7 @@ public class ProfileSubpageFragment extends Fragment {
         } else if (subpageName.equals(Constants.FOLLOWING_TITLE)) {
             if (following != null) {
 
-                FollowerAdapter adapter = new FollowerAdapter(getContext(), following);
+                FollowAdapter adapter = new FollowAdapter(getContext(), following);
                 listView.setAdapter(adapter);
 
                 if (following.size() == 0) {
@@ -187,20 +195,44 @@ public class ProfileSubpageFragment extends Fragment {
                     message.setVisibility(View.VISIBLE);
                     listView.setVisibility(View.INVISIBLE);
                 }
+
+                final Intent profileIntent = new Intent(getContext(),ProfileActivity.class);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        User clickedUser = following.get(i);
+                        profileIntent.putExtra("UserId",clickedUser.getId());
+                        startActivity(profileIntent);
+                    }
+                });
             } else {
                 message.setText(getString(R.string.private_profile_message));
                 message.setVisibility(View.VISIBLE);
                 listView.setVisibility(View.INVISIBLE);
             }
-        } else if (subpageName.equals(Constants.REQUESTS_TITLE)) {
+        } else if (subpageName.equals(Constants.FOLLOWER_PENDING_TITLE)) {
+            if (followersPending.size() == 0) {
+                message.setText(getString(R.string.no_pending_follower_message));
+                message.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.INVISIBLE);
+            } else {
+                PendingFollowAdapter adapter = new PendingFollowAdapter(getContext(),followersPending,true);
+                listView.setAdapter(adapter);
+            }
 
+        } else if (subpageName.equals(Constants.FOLLOWING_PENDING_TITLE)) {
+            if (followingPending.size() == 0) {
+                message.setText(getString(R.string.no_pending_following_message));
+                message.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.INVISIBLE);
+            } else {
+                PendingFollowAdapter adapter = new PendingFollowAdapter(getContext(),followingPending,false);
+                listView.setAdapter(adapter);
+            }
         }
         return view;
     }
 
-    private void showPrivateError() {
-
-    }
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

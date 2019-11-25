@@ -12,12 +12,12 @@ import com.papel.data.User;
 
 import java.util.ArrayList;
 
-public class FollowerAdapter extends BaseAdapter {
+public class FollowAdapter extends BaseAdapter {
 
     private Context  context;
     private ArrayList<User> users;
 
-    public FollowerAdapter(Context context, ArrayList<User> users) {
+    public FollowAdapter(Context context, ArrayList<User> users) {
         this.context = context;
         this.users = users;
     }

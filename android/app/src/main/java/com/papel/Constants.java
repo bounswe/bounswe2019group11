@@ -24,6 +24,8 @@ public class Constants {
     public static final String LAST_MONTH = "last-month";
     public static final String FOLLOW = "follow";
     public static final String UNFOLLOW = "unfollow";
+    public static final String ACCEPT = "accept";
+    public static final String DECLINE = "decline";
 
     public static final int DAILY_CHART = 0;
     public static final int WEEKLY_CHART = 1;
@@ -39,5 +41,6 @@ public class Constants {
     public static final String PORTFOLIO_TITLE = "PORTFOLIO";
     public static final String FOLLOWING_TITLE = "FOLLOWING";
     public static final String FOLLOWERS_TITLE = "FOLLOWERS";
-    public static final String REQUESTS_TITLE = "REQUESTS";
+    public static final String FOLLOWER_PENDING_TITLE = "PENDING FOLLOWERS";
+    public static final String FOLLOWING_PENDING_TITLE = "PENDING FOLLOWING";
 }

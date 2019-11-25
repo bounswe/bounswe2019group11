@@ -64,6 +64,8 @@
     <string name="no_portfolio_message">This user has no portfolios added.</string>
     <string name="no_followers_message">This user has no followers.</string>
     <string name="no_following_message">This user has no following.</string>
+    <string name="no_pending_follower_message">You don\'t have pending follower request.</string>
+    <string name="no_pending_following_message">You don\'t have pending following request.</string>
 </resources>
 
 
