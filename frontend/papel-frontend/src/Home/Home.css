@@ -19,3 +19,11 @@
     text-decoration: none;
   }
   
+  .card-body::before{
+    display: block;
+    content: " ";
+    margin-top: -65px;
+    height: 65px;
+    visibility: hidden;
+  }
+    

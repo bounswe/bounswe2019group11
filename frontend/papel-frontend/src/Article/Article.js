@@ -10,7 +10,7 @@ import {Row, Col, Button, Card, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus,faThumbsUp,faThumbsDown, faUserCircle} from '@fortawesome/free-solid-svg-icons';
 import CommentPreview from './CommentPreview';
-import {authorizedPost} from '../helpers/request';
+import {postRequest} from '../helpers/request';
 
 class Article extends React.Component {
   static propTypes = {cookies: instanceOf(Cookies).isRequired};
@@ -18,7 +18,12 @@ class Article extends React.Component {
     super(props);
     const {cookies} = props;
     const loggedIn = !!cookies.get('userToken');
-    this.state = {loggedIn: loggedIn, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
+    var userId ="";
+    if(loggedIn) {console.log(cookies.get("userToken"));
+     userId = cookies.get('user')._id?cookies.get('user')._id:"check get user id";
+    }
+    else {console.log("not logged");} 
+    this.state = {loggedIn: loggedIn, userId:userId, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
     this._article={};
     this._article_vote_type=0;
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -31,10 +36,10 @@ class Article extends React.Component {
     const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/" + this.state.id;
     this.setState({articleLoading: true});
     $.get(request_url, data => {
-      this.setState({articleLoading: false, article: data, authorLoading: true});
+      self.setState({articleLoading: false, article: data, authorLoading: true});
       const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/user/" + data.authorId;
       $.get(request_url, user => {this.setState( {author: user, authorLoading: false} ) } );
-      this._article=this.state.article;
+      self._article=this.state.article;
       }
     )
   }
@@ -46,7 +51,7 @@ class Article extends React.Component {
   handleCommentEditorSubmit(event) {
     const {cookies} = this.props;
     if (!this.state.loggedIn) {
-      alert('A name was submitted: ' + this.state.commentText);
+      alert("To add a comment please log in.");
     }
     else{
       event.preventDefault();
@@ -60,7 +65,7 @@ class Article extends React.Component {
       //   success: () => console.log("Wow! It's a response: "),
       //   beforeSend: (xhr) => xhr.setRequestHeader("Authorization", "Bearer " + cookies.get('userToken'))
       // })
-      authorizedPost({
+      postRequest({
         url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment",
         data: comment,
         success: function() { console.log("Comment sent!") },
@@ -68,8 +73,12 @@ class Article extends React.Component {
       })
     }
   }
-  /*this.setState({article:{ voteCount:voteCount+1, title:article.title}})*/
   handleSubmit(event) {
+  const {cookies} = this.props;
+  if (!this.state.loggedIn) {
+    alert('not logged in');
+  }
+  else{
     if(this._article_vote_type==1){
       this.setState({
         article: {
@@ -77,26 +86,44 @@ class Article extends React.Component {
           voteCount: this.state.article ? this.state.article.voteCount + 1 : 0,
         }
       });
-    }
-    if(this._article_vote_type==2){
-      this.setState({
-        article: {
-          ...this.state.article,
-          voteCount: this.state.article ? this.state.article.voteCount - 1 : 0,
-        }
-      });
+      postRequest({
+        url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/up-vote",
+        success: function() { console.log("Vote sent!") },
+        authToken: cookies.get('userToken')
+      })
+      console.log(cookies.get('userToken'));
+      console.log("here");
+      console.log(this.state.id);
     }
   }
+  if(this._article_vote_type==2){
+    this.setState({
+      article: {
+        ...this.state.article,
+        voteCount: this.state.article ? this.state.article.voteCount - 1 : 0,
+      }
+    });
+    postRequest({
+      url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/down-vote",
+      success: function() { console.log("Vote sent!") },
+      authToken: cookies.get('userToken')
+    })
+  }
+}
   render() {
     var article = this.state.article;
     var author = this.state.author;
     var authorLine;
     var voteCount = this.state.article.voteCount;
     var comments = this.state.article.comments;
+    var userId = this.state.userId;
+    console.log(userId);
+    var loggedIn = this.state.loggedIn;
+
     if (this.state.authorLoading)
       authorLine = <p style={{color: "gray"}}>author not found</p> ;
     else
-      authorLine = <p style={{color: "gray"}}>by {author.name} {author.surname}</p> ;
+      authorLine = <a href={"../user/" + author._id} style={{color: "gray"}}>by {author.name} {author.surname}</a> ;
     return (
       <Row className="article">
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
@@ -106,8 +133,8 @@ class Article extends React.Component {
                 <a href="http://localhost:3000">{authorLine}</a>
               <hr />
               <Card.Text>{article.body}</Card.Text>
+              <hr/>
             </Card.Body>
-            <hr/>
             <Row className="" >
                 <Col sm={{span: 4, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
                  </Col>
@@ -157,7 +184,7 @@ class Article extends React.Component {
               <Card.Title><h4>Comments</h4></Card.Title>
               <hr/>
               { comments ? (comments.map(comment => (
-                <CommentPreview key={comment._id} id={comment._id} author={comment.author[0].name +" "+comment.author[0].surname } body={comment.body} date={comment.date} lastEditDate={comment.lastEditDate}  />
+                <CommentPreview key={comment._id} id={comment._id} articleId={this.state.id} authorId={comment.authorId} author={comment.author[0].name +" "+comment.author[0].surname } body={comment.body} date={comment.date} lastEditDate={comment.lastEditDate}  />
               ))) : "Comments are loading" }
 
             </Card.Body>

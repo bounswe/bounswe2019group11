@@ -9,7 +9,7 @@ router.get('/',async (req,res)=>{
 
 
     }catch (e) {
-        res.status(503)
+        res.sendStatus(503);
     }
 });
 
@@ -19,7 +19,7 @@ router.get('/:id',async (req,res)=>{
         const response = await portfolioService.getById(Id);
         res.status(200).json(response);
     }catch (e) {
-        res.status(503)
+        res.sendStatus(503);
     }
 });
 
@@ -31,7 +31,7 @@ router.post('/:id/stock',async (req,res) => {
         const response = await portfolioService.addStock(theStock,Id);
         res.status(200).json(response);
     }catch (e) {
-        res.status(503).json(e)
+        res.status(503).json(e);
     }
 
 });
@@ -44,7 +44,7 @@ router.delete('/:id/stock',async (req,res) => {
         const response = await portfolioService.removeStock(theStock,Id);
         res.status(200).json(response);
     }catch (e) {
-        res.status(503).json(e)
+        res.status(503).json(e);
     }
 
 });
@@ -56,7 +56,7 @@ router.post('/',async (req,res) => {
         const response = await portfolioService.create(thePortfolio);
         res.status(200).json(response);
     }catch (e) {
-        res.status(503).json(e)
+        res.status(503).json(e);
     }
 
 });
@@ -67,7 +67,7 @@ router.get('/user/:userId',async (req,res)=>{
         const response = await portfolioService.getByUserId(Id);
         res.status(200).json(response);
     }catch (e) {
-        res.status(503)
+        res.status(503);
     }
 });
 

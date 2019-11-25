@@ -21,7 +21,7 @@ class Articles extends React.Component {
   }
 
   render() {
-
+    
     return (
       <Col md={{span: 8, offset: 2}}>
         <Col md={{span: 3}}style={{width: "20",marginLeft: -16, marginBottom: 10}}>

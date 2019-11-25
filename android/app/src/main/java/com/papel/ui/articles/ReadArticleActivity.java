@@ -412,7 +412,8 @@ public class ReadArticleActivity extends AppCompatActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        if (v.getId() == R.id.article_comments_listview) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        if (v.getId() == R.id.article_comments_listview && ((Comment)comments.get(info.position-1)).getAuthorId().equals(User.getInstance().getId())) {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.article_comments_menu, menu);
         }

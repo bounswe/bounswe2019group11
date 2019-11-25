@@ -14,7 +14,7 @@ function getFormattedAddress({latitude, longitude}) {
         else
           resolve( { status: 'error', message: 'No results' })
       }
-      else resolve( { status: 'error', message: 'Geocoding failed' })
+      else resolve( { status: 'error', message: 'Geocoding failed '})
     })
   })
 }
