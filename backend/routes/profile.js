@@ -45,7 +45,8 @@ const myProfileDataTransferObject = (user,articles,portfolios,investments,follow
         following:following,
         followingPending:followingPending,
         followers:followers,
-        followerPending:followerPending
+        followerPending:followerPending,
+        isMe:true
 
     };
 };
@@ -97,7 +98,17 @@ router.get('/other/:id', async (req, res) => {
             const mainUser = await userService.getById(userId);
             const id = req.params.id;
             if(id.toString() === userId){
-                res.status(200).json({isMe:true});
+                const articles = await articleService.getByUserId(userId);
+                const portfolios = await portfolioService.getByUserId(userId);
+                const investments = await investmentsService.getByUserId(userId);
+                userService.getSocialNetworkById(userId).then(user=>{
+                    const followingPending = user.following.filter(elm => elm.isAccepted === false).map(elm => elm.userId);
+                    const following = user.following.filter(elm => elm.isAccepted === true).map(elm => elm.userId);
+                    const followerPending = user.followers.filter(elm => elm.isAccepted === false).map(elm => elm.userId);
+                    const follower = user.followers.filter(elm => elm.isAccepted === true).map(elm => elm.userId);
+                    res.status(200).json(myProfileDataTransferObject(user,articles,portfolios,investments,following,followingPending,follower,followerPending));
+                });
+
             }else{
                 const user = await userService.getById(id);
                 const articles = await articleService.getByUserId(id);
