@@ -61,12 +61,11 @@ const intradayRatesJob = new CronJob('0 */5 * * * *', async () => {
                 const rate = intradayRates[Object.keys(intradayRates)[0]]['4. close'];
                 await Currency.updateOne({code}, {intradayRates, rate});
                 console.log(new Date() + ' Intraday rates and rate are updated for ' + code);
-            }
-            else {
+            } else {
                 console.log(new Date() + ' Request to AlphaVantage failed.' + JSON.stringify(response));
             }
         } catch (err) {
-            console.log(new Date() + ' Intraday rates and rate could not be updated for ' + code + '. Err: '+  err);
+            console.log(new Date() + ' Intraday rates and rate could not be updated for ' + code + '. Err: ' + err);
         }
     }
 }, null, false, 'Europe/Istanbul', null, false);
@@ -98,11 +97,10 @@ const dailyRatesJob = new CronJob('00 00 00 * * *', async () => {
                 console.log(new Date() + ' Request to AlphaVantage failed. ' + JSON.stringify(response));
             }
         } catch (err) {
-            console.log(new Date() + ' Daily rates could not be updated for ' + code + '. Err: '+ err);
+            console.log(new Date() + ' Daily rates could not be updated for ' + code + '. Err: ' + err);
         }
     }
 }, null, false, 'Europe/Istanbul', null, false);
-
 
 
 const predictionJob = new CronJob('00 00 00 * * *', async () => {
@@ -125,22 +123,21 @@ const predictionJob = new CronJob('00 00 00 * * *', async () => {
                     currentRate = currentRate.rate;
                     currencyCache.set(currencyCode, currentRate);
                 }
-                if (prediction.snapshot <= currentRate && prediction.prediction === predictionHelper.PREDICTION.INCREASE) {
-                    await User.findOneAndUpdate({_id: prediction.userId}, {
-                        $inc: {
-                            totalPredictionCount: 1,
-                            successfulPredictionCount: 1,
-                        }
-                    });
-                } else {
-                    await User.findOneAndUpdate({_id: prediction.userId}, {
-                        $inc: {
-                            totalPredictionCount: 1,
-                        }
-                    })
+                const obj = {
+                    $inc: {
+                        totalPredictionCount: 1,
+                    }
+                };
+                if ((prediction.snapshot <= currentRate
+                        && prediction.prediction === predictionHelper.PREDICTION.INCREASE) ||
+                    (prediction.snapshot > currentRate
+                        && prediction.prediction === predictionHelper.PREDICTION.DECREASE)) {
+                    obj['$inc'].successfulPredictionCount = 1;
                 }
+                await User.updateOne({_id: prediction.userId}, obj);
             }
-            await Prediction.findOneAndDelete({_id: prediction._id});
+            await Prediction.deleteOne({_id: prediction._id});
+            console.log('Prediction successfully made for ' + prediction.userId);
         }
     } catch (err) {
         console.log(new Date() + ' Predictions cannot be processed. Err: ' + err);

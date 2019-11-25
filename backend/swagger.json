@@ -2241,6 +2241,16 @@
           "type": "string",
           "description": "Google user id.",
           "example": "117027522423426552111"
+        },
+        "totalPredictionCount": {
+          "type": "number",
+          "description": "Number of total predictions.",
+          "example": 100
+        },
+        "successfulPredictionCount": {
+          "type": "number",
+          "description": "Number of successful predictions.",
+          "example": 10
         }
       }
     },
