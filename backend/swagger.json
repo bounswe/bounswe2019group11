@@ -1405,7 +1405,7 @@
           }
         }
       }
-      },
+    },
     "/profile/other/{_id}/follow": {
       "post": {
         "tags": [
@@ -2172,6 +2172,67 @@
           }
         }
       }
+    },
+    "/investments": {
+      "get":{
+        "tags": [
+          "investments"
+        ],
+        "summary": "Returns the list of investments with trading equipments.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. All of the investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+
+      }
+    },
+    "/investments/{_id}": {
+      "get":{
+        "tags": [
+          "investments"
+        ],
+        "summary": "Returns information about the given \"investments\".",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+
+      }
     }
   },
   "definitions": {
@@ -2254,6 +2315,32 @@
         }
       }
     },
+    "Investments": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Unique id of the \"investments\" (it is created by database so when create \"investments\" this field should not be provided by the client side )"
+        },
+        "userId": {
+          "type": "string",
+          "description": "User ID of the investments' owner",
+          "example": "5ddbeb2296b198e2cf2da98a"
+        },
+        "stocks": {
+          "type": "array",
+          "items": {
+              "$ref": "#/definitions/StockAmount"
+          }
+        },
+        "currencies": {
+          "type": "array",
+          "items": {
+              "$ref": "#/definitions/CurrencyAmount"
+          }
+        }
+      }
+    },
     "Portfolio": {
       "type": "object",
       "properties": {
@@ -2276,6 +2363,32 @@
           "items": {
             "$ref": "#/definitions/Stock"
           }
+        }
+      }
+    },
+    "CurrencyAmount":{
+      "type": "object",
+      "properties":{
+        "stock": {
+          "$ref": "#/definitions/Currency"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount of currency",
+          "example": "53"
+        }
+      }
+    },
+    "StockAmount":{
+      "type": "object",
+      "properties":{
+        "stock": {
+          "$ref": "#/definitions/Stock"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount of stock",
+          "example": "32"
         }
       }
     },
