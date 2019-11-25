@@ -191,13 +191,19 @@ module.exports.predict = async (code, userId, prediction) => {
         .select('rate -_id')
         .exec();
     currentRate = currentRate.rate;
-    await Prediction.create({
-        userId,
-        currencyCode: code,
-        equipmentType: predictionHelper.EQUIPMENT_TYPE.CURRENCY,
-        snapshot: currentRate,
-        prediction
-    });
+    await Prediction.updateOne(
+        {userId, currencyCode: code, equipmentType: predictionHelper.EQUIPMENT_TYPE.CURRENCY},
+        {snapShot: currentRate, prediction},
+        {upsert: true});
+};
+
+module.exports.clearPrediction = async (code, userId) => {
+    code = code.toUpperCase();
+    if (!SUPPORTED_CURRENCIES.has(code)) {
+        throw errors.INVALID_CURRENCY_CODE();
+    }
+
+    await Prediction.deleteOne({userId, currencyCode: code, equipmentType: predictionHelper.EQUIPMENT_TYPE.CURRENCY});
 };
 
 /*
