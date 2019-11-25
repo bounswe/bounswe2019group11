@@ -49,7 +49,7 @@
                 android:layout_marginTop="112dp"
                 android:layout_marginEnd="4dp"
                 android:layout_marginBottom="12dp"
-                android:visibility="invisible" >
+                android:visibility="invisible">
 
             </com.github.mikephil.charting.charts.CandleStickChart>
 
@@ -67,10 +67,41 @@
                 android:id="@+id/prediction_question_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
                 android:text="@string/prediction_question"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/prediction_vote_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/test_title"
+                    android:textSize="18sp"
+                    android:layout_marginTop="10dp"/>
+
+                <ProgressBar
+                    android:id="@+id/prediction_progressbar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:progressTint="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/prediction_vote_count_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/test_title"
+                    android:layout_marginBottom="10dp"/>
+
+
+            </LinearLayout>
+
+
 
             <RadioButton
                 android:id="@+id/increase_radioButton"
@@ -85,6 +116,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/prediction_decreases"
                 android:textColor="@android:color/holo_red_dark" />
+
+
+
         </RadioGroup>
 
         <RelativeLayout

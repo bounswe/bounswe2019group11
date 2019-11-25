@@ -70,6 +70,10 @@
     <string name="stock">STOCK</string>
     <string name="currency">CURRENCY</string>
 
+    <string name="no_predictions">There are no predictions yet</string>
+    <string name="no_comments">There are no comments yet</string>
+
+
 </resources>
 
 
