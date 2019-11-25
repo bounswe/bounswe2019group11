@@ -76,6 +76,7 @@ const STAGES = {
     },
 
 };
+
 const SUPPORTED_CURRENCIES = new Set([
     'EUR',
     'JPY',
@@ -96,17 +97,10 @@ module.exports.get = async (code) => {
     if (!SUPPORTED_CURRENCIES.has(code)) {
         throw errors.INVALID_CURRENCY_CODE();
     }
-    const currency= await Currency.aggregate([
-        Currency.findOne({code})
+    return await Currency
+        .findOne({code})
         .select('code name rate -_id')
-        .exec(), STAGES.GET_COMMENTS
-     ]).then();
-     if (!currency) {
-        throw errors.CURRENCY_NOT_FOUND();
-    }
-
-    return currency;
-
+        .exec();
 };
 
 module.exports.getIntraday = async (code) => {
@@ -183,6 +177,8 @@ module.exports.getLastFull = async (code) => {
         .select('-__v -_id')
         .exec();
 };
+
+/*
 module.exports.postComment = async (currencyId, authorId, body) => {
     if (!(mongoose.Types.ObjectId.isValid(currencyId))) {
         throw errors.CURRENCY_NOT_FOUND();
@@ -245,3 +241,4 @@ module.exports.deleteComment = async (currencyId, commentId, authorId) => {
         throw errors.COMMENT_NOT_FOUND();
     }
 };
+*/
