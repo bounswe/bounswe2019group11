@@ -6,6 +6,9 @@ database.establishConnection().then(r => console.log(new Date() + ' Database con
 const CronJob = require('cron').CronJob;
 const request = require('request-promise');
 const Currency = require('../models/currency');
+const Prediction = require('../models/prediction');
+const predictionHelper = require('../helpers/prediction');
+const User = require('../models/user');
 
 const BASE_CURRENCY = 'USD';
 
@@ -66,7 +69,7 @@ const intradayRatesJob = new CronJob('0 */5 * * * *', async () => {
             console.log(new Date() + ' Intraday rates and rate could not be updated for ' + code + '. Err: '+  err);
         }
     }
-});
+}, null, false, 'Europe/Istanbul', null, false);
 
 
 const dailyRatesJob = new CronJob('00 00 00 * * *', async () => {
@@ -98,7 +101,53 @@ const dailyRatesJob = new CronJob('00 00 00 * * *', async () => {
             console.log(new Date() + ' Daily rates could not be updated for ' + code + '. Err: '+ err);
         }
     }
-});
+}, null, false, 'Europe/Istanbul', null, false);
 
+
+
+const predictionJob = new CronJob('00 00 00 * * *', async () => {
+    try {
+        const predictions = await Prediction.find();
+
+        const currencyCache = new Map();
+        for (let i = 0; i < predictions.length; i++) {
+            const prediction = predictions[i];
+            if (prediction.equipmentType === predictionHelper.EQUIPMENT_TYPE.CURRENCY) {
+                let currentRate;
+                const currencyCode = prediction.currencyCode.toUpperCase();
+                if (currencyCache.has(currencyCode)) {
+                    currentRate = currencyCache.get(currencyCode);
+                } else {
+                    currentRate = await Currency
+                        .findOne({code: currencyCode})
+                        .select('rate -_id')
+                        .exec();
+                    currencyCache.set(currencyCode, currentRate);
+                }
+                if (prediction.snapshot <= currentRate && prediction.prediction === 1) {
+                    await User.findOneAndUpdate({_id: prediction.userId}, {
+                        $inc: {
+                            totalPredictionCount: 1,
+                            successfulPredictionCount: 1,
+                        }
+                    });
+                } else {
+                    await User.findOneAndUpdate({_id: prediction.userId}, {
+                        $inc: {
+                            totalPredictionCount: 1,
+                        }
+                    })
+                }
+            }
+            await Prediction.findOneAndDelete({_id: prediction._id});
+        }
+    } catch (err) {
+        console.log(new Date() + ' Predictions cannot be processed. Err: ' + err);
+    }
+
+}, null, false, 'Europe/Istanbul', null, false);
+
+
+predictionJob.start();
 intradayRatesJob.start();
 dailyRatesJob.start();

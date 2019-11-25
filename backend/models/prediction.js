@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const EQUIPMENT_TYPE = require('../helpers/prediction').EQUIPMENT_TYPE;
 
 const predictionSchema = new mongoose.Schema({
     userId: {
@@ -6,9 +7,8 @@ const predictionSchema = new mongoose.Schema({
         required: true,
         ref: 'User'
     },
-    currencyId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Currency',
+    currencyCode: {
+        type: String,
     },
     stockId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -17,7 +17,7 @@ const predictionSchema = new mongoose.Schema({
     equipmentType: {
         type: Number,
         required: true,
-        enum: [0, 1], // 0 for currency, 1 for stock
+        enum: [EQUIPMENT_TYPE.CURRENCY, EQUIPMENT_TYPE.STOCK],
     },
     snapshot: {
         type: Number,
