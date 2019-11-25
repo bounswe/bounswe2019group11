@@ -1529,6 +1529,11 @@
                   "type": "string",
                   "description": "According to privacy of the user msg could be two different string ('${userToBeFollowed.name} ${userToBeFollowed.surname} successfully followed' or 'Follow request has been sent to ${userToBeFollowed.name}  ${userToBeFollowed.surname} )",
                   "example": "Follow request has been sent to İbrahim Kamacı"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Indicates follow status the value could be either 'follow' or 'request' ,",
+                  "example": "follow"
                 }
               }
             }
@@ -1583,6 +1588,11 @@
                   "type": "string",
                   "description": "Returns a success message",
                   "example": "User has been successfully unfollowed"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Indicates unfollow status the value could be only 'unfollow'",
+                  "example": "unfollow"
                 }
               }
             }
@@ -1637,6 +1647,11 @@
                   "type": "string",
                   "description": "Returns a success message",
                   "example": "Follow request accepted"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Indicates accept status the value could be only 'accept'",
+                  "example": "accept"
                 }
               }
             }
@@ -1691,6 +1706,11 @@
                   "type": "string",
                   "description": "Returns a success message",
                   "example": "Follow request declined"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Indicates decline status the value could be only 'decline'",
+                  "example": "decline"
                 }
               }
             }
