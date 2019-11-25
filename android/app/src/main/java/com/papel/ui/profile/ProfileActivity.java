@@ -257,6 +257,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
 
     private void updateUI(String privacy, String name, String surname) {
         userName.setText(name + " " + surname);
+        userName.setVisibility(View.VISIBLE);
         if (!isMe) {
             // Looking other's profile
             followButton.setVisibility(View.VISIBLE);
