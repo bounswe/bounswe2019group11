@@ -68,7 +68,7 @@ public class ProfileSubpageAdapter extends FragmentPagerAdapter {
         if (this.isMe) {
             return 6;
         }
-        return 6; // For test
+        return 4;
     }
 
     @Nullable

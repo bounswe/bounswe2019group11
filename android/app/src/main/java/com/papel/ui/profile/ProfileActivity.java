@@ -257,10 +257,6 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                 showPendingButton();
             }
         }
-        followersPending = new ArrayList<>();
-        followingPending = new ArrayList<>();
-        followersPending.add(new User("id","follower","pending","email"));
-        followingPending.add(new User("id","following","pending","email"));
         adapter = new ProfileSubpageAdapter(getSupportFragmentManager(), articles, portfolios, followers, following, followersPending, followingPending, isMe);
         pager.setAdapter(adapter);
         tabLayout.setupWithViewPager(pager);
