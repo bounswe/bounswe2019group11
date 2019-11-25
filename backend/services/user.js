@@ -19,7 +19,18 @@ module.exports.getById = async (_id) => {
     if (!mongoose.Types.ObjectId.isValid(_id)) {
         throw errors.USER_NOT_FOUND();
     }
-    const user = await User.findOne({_id});
+    const user = await User.findOne({_id})
+        .populate({
+            path:'following.userId',
+            model:'User',
+            select: 'id name surname email'
+        })
+        .populate({
+            path:'followers.userId',
+            model:'User',
+            select: 'id name surname email'
+        })
+        .exec();
     if (!user) {
         throw errors.USER_NOT_FOUND();
     }

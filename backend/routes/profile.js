@@ -66,6 +66,8 @@ const publicProfileDataTransferObject = (user,articles,portfolios,inInMyNetwork)
         privacy: 'public',
         name:user.name,
         surname:user.surname,
+        following:user.following.filter(elm => elm.isAccepted === true).map(elm => elm.userId),
+        followers: user.followers.filter(elm => elm.isAccepted === true).map(elm => elm.userId),
         location: user.location,
         articles: articles,
         portfolios: portfolios,
