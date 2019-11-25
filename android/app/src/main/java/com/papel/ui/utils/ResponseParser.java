@@ -66,10 +66,11 @@ public class ResponseParser {
     public static Currency parseCurrency(JSONObject response) {
         Currency currency = null;
         try {
+            String id = response.getString("_id");
             String code = response.getString("code");
             String name = response.getString("name");
             double rate = response.getDouble("rate");
-            currency = new Currency(code,name,rate);
+            currency = new Currency(id,code,name,rate);
             if(response.has("comments")) {
                 JSONArray comments = response.getJSONArray("comments");
                 ArrayList<Comment> currencyComments = new ArrayList<>();
