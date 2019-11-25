@@ -26,6 +26,11 @@ public class Currency extends TradingEquipment {
         this.code = in.readString();
         this.name = in.readString();
         this.rate = in.readDouble();
+        this.predictionVoteCount = in.readInt();
+        this.increaseCount = in.readInt();
+        this.decreaseCount = in.readInt();
+        this.comments = in.readArrayList(Comment.class.getClassLoader());
+        this.userVote = in.readInt();
     }
 
     public Currency() {
@@ -58,6 +63,11 @@ public class Currency extends TradingEquipment {
         parcel.writeString(this.code);
         parcel.writeString(this.name);
         parcel.writeDouble(this.rate);
+        parcel.writeInt(this.predictionVoteCount);
+        parcel.writeInt(this.increaseCount);
+        parcel.writeInt(this.decreaseCount);
+        parcel.writeList(this.comments);
+        parcel.writeInt(this.userVote);
     }
 
     public String getCode() {
