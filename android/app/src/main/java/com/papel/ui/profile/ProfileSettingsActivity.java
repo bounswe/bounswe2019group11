@@ -73,7 +73,7 @@ public class ProfileSettingsActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                DialogHelper.showBasicDialog(getApplicationContext(), "Error","We couldn't update your choices.Please try again!",null);
+                DialogHelper.showBasicDialog(ProfileSettingsActivity.this, "Error","We couldn't update your choices.Please try again!",null);
             }
         }){
             @Override

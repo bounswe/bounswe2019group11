@@ -38,8 +38,14 @@ import java.util.ArrayList;
 public class ProfileSubpageFragment extends Fragment {
 
     public static final String ARG_SUBPAGE_NAME = "subpage_name";
+
     public static final String ARG_ARTICLES = "articles";
     public static final String ARG_PORTFOLIOS = "portfolios";
+    public static final String ARG_FOLLOWERS = "followers";
+    public static final String ARG_FOLLOWING = "following";
+    public static final String ARG_FOLLOWER_PENDING = "follower-pending";
+    public static final String ARG_FOLLOWING_PENDING = "following-pending";
+
     public static final String ARG_ISME = "isMe";
 
     private String subpageName;
