@@ -10,7 +10,8 @@ const portfolioSchema = new mongoose.Schema({
         required: true,
         ref: 'User'
     },
-    stocks: [{type: mongoose.Schema.Types.ObjectId,ref:'Stock',autopopulate: true}]
+    stocks: [{type: mongoose.Schema.Types.ObjectId,ref:'Stock',autopopulate: true}],
+    currencies: [{type: mongoose.Schema.Types.ObjectId,ref:'Currency',autopopulate: true}]
 
 });
 portfolioSchema.plugin(require('mongoose-autopopulate'));
