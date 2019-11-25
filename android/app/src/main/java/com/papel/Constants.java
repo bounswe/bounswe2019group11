@@ -18,9 +18,14 @@ public class Constants {
     public static final String USER = "user/";
     public static final String TEST_USER_ID = "5da076d955d9b93a7308f3d7";
     public static final String PROFILE = "profile/";
+    public static final String CURRENCY = "currency/";
+    public static final String INTRADAY = "intraday";
+    public static final String LAST_WEEK = "last-week";
+    public static final String LAST_MONTH = "last-month";
 
     public static final int DAILY_CHART = 0;
-    public static final int MONTHLY_CHART = 1;
+    public static final int WEEKLY_CHART = 1;
+    public static final int MONTHLY_CHART = 2;
 
     public static final String VALIDATION_ERROR = "ValidationError";
 

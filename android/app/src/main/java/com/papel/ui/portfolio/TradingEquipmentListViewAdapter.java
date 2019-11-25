@@ -9,6 +9,8 @@ import android.widget.Filter;
 import android.widget.TextView;
 
 import com.papel.R;
+import com.papel.data.Currency;
+import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
 
 import java.util.ArrayList;
@@ -18,10 +20,13 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<TradingEquipment> tradingEquipments;
     private ArrayList<TradingEquipment> filteredData;
-    public TradingEquipmentListViewAdapter(Context context, ArrayList<TradingEquipment> tradingEquipments) {
+    private boolean showFullname;
+
+    public TradingEquipmentListViewAdapter(Context context, ArrayList<TradingEquipment> tradingEquipments,boolean showFullname) {
         this.context = context;
         this.tradingEquipments = tradingEquipments;
         this.filteredData = tradingEquipments;
+        this.showFullname = showFullname;
     }
 
 
@@ -50,7 +55,19 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
 
         TextView name = view.findViewById(R.id.trading_equipment_name);
 
-        name.setText(item.getSymbol());
+        if (item instanceof Stock) {
+            if (showFullname) {
+                name.setText(((Stock)item).getName());
+            } else {
+                name.setText(((Stock)item).getSymbol());
+            }
+        } else if (item instanceof Currency) {
+            if (showFullname) {
+                name.setText(((Currency)item).getName());
+            } else {
+                name.setText(((Currency)item).getCode());
+            }
+        }
 
         return view;
     }
@@ -69,11 +86,18 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
                 suggestions.addAll(tradingEquipments);
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
-
-                for (TradingEquipment item : tradingEquipments) {
-                    if (item.getName().toLowerCase().contains(filterPattern)) {
-                        suggestions.add(item);
+                for (int i = 0; i<tradingEquipments.size(); i++) {
+                    TradingEquipment item = tradingEquipments.get(i);
+                    if (item instanceof Stock) {
+                        if(((Stock)item).getName().toLowerCase().contains(filterPattern)) {
+                            suggestions.add(item);
+                        }
+                    } else if (item instanceof Currency) {
+                        if(((Currency)item).getName().toLowerCase().contains(filterPattern)) {
+                            suggestions.add(item);
+                        }
                     }
+
                 }
             }
 
@@ -90,7 +114,7 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
 
         @Override
         public CharSequence convertResultToString(Object resultValue) {
-            return ((TradingEquipment) resultValue).getSymbol();
+            return ((Stock) resultValue).getSymbol();
         }
     };
 }
