@@ -121,11 +121,14 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                 try {
                     JSONObject responseObject = new JSONObject(response);
                     String msg = responseObject.getString("msg");
+                    String status = responseObject.getString("status");
                     Toast.makeText(ProfileActivity.this,msg,Toast.LENGTH_LONG).show();
                     if(follow) {
-                        // Follow ettim
-                        // TODO check here!
-                        showFollowingButton();
+                        if (status.equals("request")) {
+                            showPendingButton();
+                        } else if (status.equals("follow")) {
+                            showFollowingButton();
+                        }
                     } else {
                         showFollowButton();
                     }
