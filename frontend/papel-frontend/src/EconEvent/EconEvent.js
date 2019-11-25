@@ -8,13 +8,7 @@ class EconEvent extends React.Component{
   constructor(props){
     super(props);
     this.state = {id: this.props.match.params.id, loading: false, econevent:{}, star:{}};
-    let temp = Math.floor(Math.random() * 5)+1 ;
-    var ar = ["star-outline","star-outline","star-outline","star-outline","star-outline"];
-    for (let i = 0; i < temp; i++) {
-        ar[i] = "star";
-    }
-    this.state.star = ar;
-
+    
   }
   componentDidMount(){
     console.log(this.state.id)
@@ -26,7 +20,13 @@ class EconEvent extends React.Component{
       self.setState({loading: false, econevent: data})
     })
   }
-
+  createStars(){
+    let temp=0 ;
+    var ar = ["star-outline","star-outline","star-outline"];
+    for (let i = 0; i < temp; i++) {
+        ar[i] = "star";
+    }
+  }
     render(){
         var econevent = this.state.econevent;
         if (this.state.loading) {
@@ -59,8 +59,6 @@ class EconEvent extends React.Component{
                     <ion-icon name = {this.state.star[0]}></ion-icon>
                     <ion-icon name = {this.state.star[1]}></ion-icon>
                     <ion-icon name = {this.state.star[2]}></ion-icon>
-                    <ion-icon name = {this.state.star[3]}></ion-icon>
-                    <ion-icon name = {this.state.star[4]}></ion-icon>
                   </div>
                 </div>
               </div>

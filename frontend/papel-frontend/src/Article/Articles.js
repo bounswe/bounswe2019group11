@@ -16,8 +16,9 @@ class Articles extends React.Component {
     const self = this;
     this.setState({loading: true});
     $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article", (data) => {
-      self.setState({articles: data, loading: false});
+      self.setState({articles: data.reverse(), loading: false});
     });
+    
   }
   handleAddArticle(){
     window.location.replace("./AddArticle")

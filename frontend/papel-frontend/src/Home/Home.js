@@ -156,6 +156,8 @@ class Home extends React.Component {
                     )) : "loading..."
                   }
                 </p>
+                <a href={"../articles"}>See All...</a>
+              
               </div>
               <div  hidden className="EventSection">
                 <h5 class="card-title">The Newest {this.state.events.length} Events</h5>
@@ -163,10 +165,11 @@ class Home extends React.Component {
                 <p class="card-text">
                   {
                     this.state.events.map(event => (
-                      <EventListPreview key={event._id} articleId={event._id} title={event.title} text={event.body}  />
+                      <EventListPreview key={event._id} articleId={event._id} title={event.title} text={event.body} rank={event.rank} date={event.date} country={event.country}/>
                     ))
                   }
                 </p>
+                <a href={"../events"}>See All...</a>
               </div>
             </div>
           </div>
