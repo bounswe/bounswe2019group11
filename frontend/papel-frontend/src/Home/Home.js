@@ -137,10 +137,10 @@ class Home extends React.Component {
             <div class="card-header">
               <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item" >
-                  <a class={"nav-link "+this.state.previewer1article} onClick={this.handleArticleClick} href="#">Articles</a>
+                  <a class={"nav-link "+this.state.previewer1article} onClick={this.handleArticleClick} >Articles</a>
                 </li>
                 <li class="nav-item">
-                  <a class={"nav-link "+this.state.previewer1event}  onClick={this.handleEventClick} href="#">Events</a>
+                  <a class={"nav-link "+this.state.previewer1event}  onClick={this.handleEventClick} >Events</a>
                 </li>
               </ul>
             </div>
@@ -184,10 +184,10 @@ class Home extends React.Component {
             <div class="card-header">
               <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item" >
-                  <a class={"nav-link "+this.state.previewer2USD} onClick={this.handleUSDClick} href="#">USD</a>
+                  <a class={"nav-link "+this.state.previewer2USD} onClick={this.handleUSDClick} >USD</a>
                 </li>
                 <li class="nav-item">
-                  <a class={"nav-link "+this.state.previewer2EUR}  onClick={this.handleEURClick} href="#">EUR</a>
+                  <a class={"nav-link "+this.state.previewer2EUR}  onClick={this.handleEURClick} >EUR</a>
                 </li>
               </ul>
             </div>
@@ -215,10 +215,10 @@ class Home extends React.Component {
             <div class="card-header">
               <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item" >
-                  <a class={"nav-link "+this.state.previewer3stock1} onClick={this.handleStock1Click} href="#">EMB</a>
+                  <a class={"nav-link "+this.state.previewer3stock1} onClick={this.handleStock1Click} >EMB</a>
                 </li>
                 <li class="nav-item">
-                  <a class={"nav-link "+this.state.previewer3stock2}  onClick={this.handleStock2Click} href="#">DIS</a>
+                  <a class={"nav-link "+this.state.previewer3stock2}  onClick={this.handleStock2Click} >DIS</a>
                 </li>
               </ul>
             </div>

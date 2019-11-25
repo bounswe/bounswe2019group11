@@ -24,7 +24,7 @@ function EventListPreview({ eventId, title, text, rank, country, date}) {
           <Card.Text style={{fontSize:10}}>{date.slice(11, 16)+" "+date.slice(0, 10)+ " " + country}</Card.Text>
           
           <Card.Text>{text}</Card.Text>
-
+          <hr/>
         </Card.Body>
       
    
