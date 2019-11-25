@@ -26,7 +26,7 @@ class UserProfile extends React.Component {
   componentDidMount() {
     const {cookies} = this.props
     const userToken = cookies.get('userToken')
-    let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/" + this.state.userId
+    let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/other/" + this.state.userId
     this.setState({loading: true})
     get({
       url: requestUrl,

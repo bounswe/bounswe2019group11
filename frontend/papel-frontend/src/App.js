@@ -10,6 +10,7 @@ import UserProfile from './Profile/UserProfile';
 import TradingEquipment from './Trading/TradingEquipment';
 import Article from './Article/Article';
 import Articles from './Article/Articles';
+import AddArticle from './Article/AddArticle';
 import EconEvent from './EconEvent/EconEvent';
 import EconEvents from './EconEvent/EconEvents';
 import Validation from './Register/Validation';
@@ -39,7 +40,7 @@ function NavBar(props) {
   Profile</Link></li>
     logoutBtn = <li><Link to="/" onClick={() => logout()}><FontAwesomeIcon name="Log Out Icon" icon={faSignOutAlt} />&nbsp;Log Out</Link></li>;
   
-  notificationBtn = <li><Link to="/profile"> 
+  notificationBtn = <li><Link > 
     
   <Dropdown >
     <Dropdown.Toggle id="dropDown" style={{color:"black" ,fontWeight:"bold"}}>
@@ -100,6 +101,7 @@ function NavBar(props) {
           <Route path="/event/:id" component={EconEvent} />
           <Route path="/validation"><Validation /></Route>
           <Route path="/articles"><Articles /></Route>
+          <Route path="/addarticle"><AddArticle /></Route>
           <Route path="/events"><EconEvents /></Route>
           <Route path="/user/:id" component={UserProfile} />
         </Switch>

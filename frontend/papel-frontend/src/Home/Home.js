@@ -7,6 +7,7 @@ import {Editor, EditorState, RichUtils} from 'draft-js';
 import 'draft-js/dist/Draft.css';
 import './Home.css';
 import ArticleListPreview from "./ArticleListPreview"
+import EventListPreview from "./EventListPreview"
 import {useParams} from 'react-router-dom';
 import $ from 'jquery';
 import {Row, Col, Button, Card} from 'react-bootstrap';
@@ -16,7 +17,7 @@ import { faPlus,faThumbsUp,faThumbsDown } from '@fortawesome/free-solid-svg-icon
 class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {loading: false, redirect: false, articles: [], previewer1article:"active",previewer1event:"",previewer2USD:"active",previewer2EUR:"",previewer3stock1:"active",previewer3stock2:""};
+    this.state = {loading: false, redirect: false, articles: [], events: [], previewer1article:"active",previewer1event:"",previewer2USD:"active",previewer2EUR:"",previewer3stock1:"active",previewer3stock2:""};
     this.handleArticleClick=this.handleArticleClick.bind(this);
     this.handleEventClick=this.handleEventClick.bind(this);
     this.handleUSDClick=this.handleUSDClick.bind(this);
@@ -30,6 +31,9 @@ class Home extends React.Component {
     this.setState({loading: true});
     $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article", (data) => {
       self.setState({articles: [data[0],data[1],data[2  ]], loading: false});
+    });
+    $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/event", (data) => {
+      self.setState({events: [data[0],data[1],data[2  ]], loading: false});
     });
   }
 
@@ -86,9 +90,8 @@ class Home extends React.Component {
 
     return (
       <Row >
-
-        <Col md={{span: 6 ,offset:0}}  style ={{marginTop:0,
-  marginBottom: 0,
+<Col md={{span: 6 ,offset:0}}  style ={{marginTop:0,
+  marginBottom: 10,
   marginRight: 0,
   marginLeft: 0}}>
           <div name="v1" class="card text-center">
@@ -103,13 +106,12 @@ class Home extends React.Component {
               </ul>
             </div>
 
-            <div  class="card-body">
+            <div id="a" class="card-body">
             <div  className="ArticleSection">
                 <h5 class="card-title">3 Newest Articles</h5>
                 <hr/>
                 <p class="card-text">
                   {
-
                     this.state.articles ? this.state.articles.map(article => (
                       <ArticleListPreview key={article._id} articleId={article._id} title={article.title} text={article.body}  />
                     )) : "loading..."
@@ -121,8 +123,8 @@ class Home extends React.Component {
                 <hr/>
                 <p class="card-text">
                   {
-                    this.state.articles.map(article => (
-                      <ArticleListPreview key={article._id} articleId={article._id} title={article.title} text={article.body}  />
+                    this.state.events.map(event => (
+                      <EventListPreview key={event._id} articleId={event._id} title={event.title} text={event.body}  />
                     ))
                   }
                 </p>
@@ -130,8 +132,10 @@ class Home extends React.Component {
             </div>
           </div>
         </Col>
+
+
         <Col md={{span: 6 ,offset:0}}style ={{marginTop:0,
-  marginBottom: 0,
+  marginBottom: 10,
   marginRight: 0,
   marginLeft: 0}}>
           <div name="v2" class="card text-center">
@@ -159,7 +163,12 @@ class Home extends React.Component {
               </div>
             </div>
           </div>
-
+          </Col>
+          <Col md={{span: 6 ,offset:0}}style ={{marginTop:0,
+  marginBottom: 10,
+  marginRight: 0,
+  marginLeft: 0}}>
+      
           <div name="v3" class="card text-center">
             <div class="card-header">
               <ul class="nav nav-tabs card-header-tabs">
@@ -186,9 +195,9 @@ class Home extends React.Component {
             </div>
           </div>
         </Col>
-
-
-
+        
+        
+        
       </Row>
 
     );

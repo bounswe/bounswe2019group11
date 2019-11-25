@@ -27,3 +27,17 @@
     visibility: hidden;
   }
     
+  #a {
+    background-color: #fff;
+    overflow-x: scroll;
+    scrollbar-width: thin;
+    height: 442px;
+  }
+  #a::-webkit-scrollbar {
+    width: 5px;
+    background-color: #f0f0f0;
+  }
+  #a::-webkit-scrollbar-thumb {
+    background: #cdcdcd;
+  }
+  

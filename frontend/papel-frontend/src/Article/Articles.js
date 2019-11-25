@@ -19,6 +19,9 @@ class Articles extends React.Component {
       self.setState({articles: data, loading: false});
     });
   }
+  handleAddArticle(){
+    window.location.replace("./AddArticle")
+  }
 
   render() {
     
@@ -26,7 +29,7 @@ class Articles extends React.Component {
       <Col md={{span: 8, offset: 2}}>
         <Col md={{span: 3}}style={{width: "20",marginLeft: -16, marginBottom: 10}}>
           
-          <Button size="sm"  onClick={() => alert("Not implemented yet")}>
+          <Button size="sm"  onClick={this.handleAddArticle}>
             <FontAwesomeIcon icon={faPlus} />&nbsp;
             Add Article
           </Button>
