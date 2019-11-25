@@ -87,6 +87,9 @@ module.exports.updatePrivacy = async (userId, privacy) => {
     if (!(mongoose.Types.ObjectId.isValid(userId))) {
         throw errors.USER_NOT_FOUND();
     }
+    if (!(privacy === "public" || privacy === "private")) {
+        throw errors.INVALID_PRIVACY_OPTION();
+    }
     let userUpdate = await User.findOne({_id:userId});
     if (!userUpdate) {
         throw errors.USER_NOT_FOUND();

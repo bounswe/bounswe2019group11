@@ -63,9 +63,12 @@ router.put('/:id/privacy', async (req, res) => {
         const user = await userService.updatePrivacy(id,privacy);
         res.status(200).send(user);
     } catch (err) {
-        if (err.name === 'UserNotFound') {
+        if (err.name === 'InvalidPrivacyOption') {
             res.status(400).send(err);
-        } else {
+        }else if(err.name === 'UserNotFound'){
+            res.status(404).send(err);
+        }
+        else {
             console.log(err)
             res.status(500).send(errors.INTERNAL_ERROR(err));
         }

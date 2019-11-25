@@ -479,6 +479,61 @@
         }
       }
     },
+    "/user/{id}/privacy": {
+      "put": {
+        "tags": [
+          "user"
+        ],
+        "summary": "An endpoint that updates the user's privacy with the given request body",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the requested user.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "privacy option",
+            "description": "privacy option to update",
+            "schema": {
+              "type": "object",
+              "required": [
+                "body"
+              ],
+              "properties": {
+                "privacy": {
+                  "type": "string",
+                  "description": "privacy option itself",
+                  "example": "public"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Updated user information is returned for real time frontend experience.",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Invalid privacy option."
+          },
+          "404": {
+            "description": "There is no such user with the given id."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
     "/portfolio": {
       "get": {
         "tags": [
@@ -1843,6 +1898,11 @@
           "type": "string",
           "description": "IBAN number of the user.",
           "example": "TR33 0006 1005 1978 6457 8413 26"
+        },
+        "privacy": {
+          "type": "string",
+          "description": "Privacy option (public or private)",
+          "example": "private"
         },
         "location": {
           "type": "object",
