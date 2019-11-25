@@ -108,7 +108,14 @@ const userSchema = new mongoose.Schema({
         enum: ['public','private'],
         default: 'public'
     },
-
+    totalPredictionCount: {
+        type: Number,
+        default: 0,
+    },
+    successfulPredictionCount: {
+        type: Number,
+        default: 0,
+    }
 });
 
 userSchema.pre('save', async function (next) {

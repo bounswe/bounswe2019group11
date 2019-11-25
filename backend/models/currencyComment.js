@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 
 const currencyCommentSchema = new mongoose.Schema({
-    currencyId: {
-      type: mongoose.Schema.Types.ObjectId,
+    currencyCode: {
+      type: String,
       required: true,
-      ref: 'Currency',
     },
     authorId: {
         type: mongoose.Schema.Types.ObjectId,

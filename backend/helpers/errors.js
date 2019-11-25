@@ -64,9 +64,6 @@ module.exports = {
     STOCK_NOT_FOUND: (cause) => {
         return PapelError('StockNotFound', 'Stock not found.', cause);
     },
-    CURRENCY_NOT_FOUND: (cause) => {
-        return PapelError('CurrencyNotFound', 'Currency not found.', cause);
-    },
     ARTICLE_NOT_FOUND: (cause) => {
       return PapelError('ArticleNotFound', 'Article with the given id is not found.', cause);
     },

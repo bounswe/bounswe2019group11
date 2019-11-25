@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Papel Backend"
   },
-  "host": "ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000",
+  "host": "localhost:3000",
   "basePath": "/",
   "tags": [
     {
@@ -1650,7 +1650,7 @@
         "tags": [
           "currency"
         ],
-        "summary": "Returns the rate of the given currency.",
+        "summary": "Returns the rate and comments of the given currency.",
         "produces": [
           "application/json"
         ],
@@ -1665,10 +1665,10 @@
         ],
         "responses": {
           "200": {
-            "description": "OK. Given currency and its rate are returned.",
+            "description": "OK. Given currency, its rate and comments are returned.",
             "schema": {
               "type": "object",
-              "$ref": "#/definitions/CurrencyMinimal"
+              "$ref": "#/definitions/CurrencyGet"
             }
           },
           "400": {
@@ -1854,6 +1854,324 @@
           }
         }
       }
+    },
+    "/currency/{code}/comment": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "currency"
+        ],
+        "summary": "Endpoint to add a comment to a currency.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "comment",
+            "description": "Comment to be added.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "body"
+              ],
+              "properties": {
+                "body": {
+                  "type": "string",
+                  "description": "Body of the comment.",
+                  "example": "That's not even remotely funny."
+                }
+              }
+            }
+          },
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment successfully added."
+          },
+          "400": {
+            "description": "Validation error. The body of the comment may be missing or the currency with the given code not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/comment/{commentId}": {
+      "get": {
+        "tags": [
+          "currency"
+        ],
+        "summary": "Endpoint that returns the selected comment.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment returned.",
+            "schema": {
+              "$ref": "#/definitions/Comment"
+            }
+          },
+          "400": {
+            "description": "Validation error. Either the comment or the currency not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "currency"
+        ],
+        "summary": "Endpoint that updates the selected comment.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "commentBody",
+            "description": "New body of the comment.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "body"
+              ],
+              "properties": {
+                "body": {
+                  "type": "string",
+                  "description": "New body of the comment.",
+                  "example": "That's not even remotely funny."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment updated."
+          },
+          "400": {
+            "description": "Validation error. Either the comment or the currency not found or the body was empty."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "currency"
+        ],
+        "summary": "Endpoint that deletes the selected comment.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment deleted."
+          },
+          "400": {
+            "description": "Currency, user or the comment not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/predict-increase": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "currency"
+        ],
+        "summary": "Endpoint to predict an increase on a currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Prediction successfully made."
+          },
+          "400": {
+            "description": "Validation error. Either the currency with the given code or the user with the given token not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/predict-decrease": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "currency"
+        ],
+        "summary": "Endpoint to predict a decrease on a currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Prediction successfully made."
+          },
+          "400": {
+            "description": "Validation error. Either the currency with the given code or the user with the given token not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/clear-prediction": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "currency"
+        ],
+        "summary": "Endpoint to clear prediction on a currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Prediction for the currency successfully cleared."
+          },
+          "400": {
+            "description": "Validation error. Either the currency with the given code, the user with the given token or the vote not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1923,6 +2241,16 @@
           "type": "string",
           "description": "Google user id.",
           "example": "117027522423426552111"
+        },
+        "totalPredictionCount": {
+          "type": "number",
+          "description": "Number of total predictions.",
+          "example": 100
+        },
+        "successfulPredictionCount": {
+          "type": "number",
+          "description": "Number of successful predictions.",
+          "example": 10
         }
       }
     },
@@ -2098,11 +2426,6 @@
           "type": "string",
           "description": "Id of the comment.",
           "example": "5daedb5af05eb852753ac9c0"
-        },
-        "articleId": {
-          "type": "string",
-          "description": "Id of the article that the comment is posted.",
-          "example": "5daedb5af05eb852753ac9c1"
         },
         "authorId": {
           "type": "string",
@@ -2301,6 +2624,40 @@
           "type": "number",
           "description": "Rate of the currency to the USD",
           "example": 0.91
+        }
+      }
+    },
+    "CurrencyGet": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CurrencyMinimal"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Comment"
+          }
+        },
+        "predictions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "prediction": {
+                "type": "number",
+                "description": "Prediction type (-1 for decrease, 1 for increase)",
+                "example": 1
+              },
+              "count": {
+                "type": "number",
+                "description": "Count of predictions.",
+                "example": 10
+              }
+            }
+          }
         }
       }
     },
