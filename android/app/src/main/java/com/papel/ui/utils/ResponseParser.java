@@ -199,4 +199,18 @@ public class ResponseParser {
         return user;
     }
 
+    public static User parseFollowUser(JSONObject response) {
+        User user = null;
+        try {
+            String id = response.getString("_id");
+            String name = response.getString("name");
+            String surname = response.getString("surname");
+            String email = response.getString("email");
+            user = new User(id,name,surname,email);
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
 }
