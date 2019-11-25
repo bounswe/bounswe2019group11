@@ -11,7 +11,6 @@ const portfolioSchema = new mongoose.Schema({
         ref: 'User'
     },
     stocks: [{type: mongoose.Schema.Types.ObjectId,ref:'Stock',autopopulate: true}],
-    tradingEquipments: [{type: mongoose.Schema.Types.ObjectId,ref:'TradingEquipment',autopopulate: true}],
     currencies: [{type: mongoose.Schema.Types.ObjectId,ref:'Currency',autopopulate: true}]
 
 });

@@ -49,32 +49,6 @@ router.delete('/:id/stock',async (req,res) => {
 
 });
 
-router.post('/:id/tradingEquipment',async (req,res) => {
-
-    try{
-        const Id = req.params.id;
-        const theTradingEquipment = {...req.body};
-        const response = await portfolioService.addTradingEquipment(theTradingEquipment,Id);
-        res.status(200).json(response);
-    }catch (e) {
-        res.status(503).json(e);
-    }
-
-});
-
-router.delete('/:id/tradingEquipment',async (req,res) => {
-
-    try{
-        const Id = req.params.id;
-        const theTradingEquipment = {...req.body};
-        const response = await portfolioService.removeTradingEquipment(theTradingEquipment,Id);
-        res.status(200).json(response);
-    }catch (e) {
-        res.status(503).json(e);
-    }
-
-});
-
 router.post('/:id/currency',async (req,res) => {
 
     try{
@@ -119,7 +93,7 @@ router.get('/user/:userId',async (req,res)=>{
         const response = await portfolioService.getByUserId(Id);
         res.status(200).json(response);
     }catch (e) {
-        res.status(503);
+        res.sendStatus(503);
     }
 });
 
