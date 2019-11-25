@@ -86,6 +86,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
     private TextView value;
     private TextView totalPredCountTextView;
     private TextView percentagePredTextView;
+    private TextView noCommentTextView;
     private ProgressBar predProgressBar;
     private RadioGroup predictionRadioGroup;
     private RadioButton increaseRadioButton;
@@ -102,8 +103,6 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
     private ArrayList<Object> comments;
     private ListViewAdapter adapter;
 
-
-
     final SimpleDateFormat dailyDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     final SimpleDateFormat monthlyDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
@@ -119,6 +118,11 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
         if (tradingEquipment instanceof Stock) {
             stock = (Stock) tradingEquipment;
             setTitle(stock.getSymbol());
+            noCommentTextView.setVisibility(View.VISIBLE);
+            percentagePredTextView.setText(R.string.no_predictions);
+            predProgressBar.setProgress(0);
+            String text = "0 Voted";
+            totalPredCountTextView.setText(text);
         } else if (tradingEquipment instanceof Currency) {
             currency = (Currency) tradingEquipment;
             setTitle(currency.getName());
@@ -144,7 +148,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             }
         });
 
-
+        noCommentTextView = header.findViewById(R.id.no_comment_textview);
         commentEditText = (EditText) header.findViewById(R.id.te_comment_edittext);
         addCommentButton = (ImageButton) header.findViewById(R.id.te_add_comment_button);
         commentList = findViewById(R.id.trading_equipment_comments);
@@ -580,6 +584,9 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
         comments.addAll(comments_list);
         adapter = new ListViewAdapter(getApplicationContext(), comments);
         commentList.setAdapter(adapter);
+        if(currency.getComments().size() == 0){
+            noCommentTextView.setVisibility(View.VISIBLE);
+        }
         adapter.notifyDataSetChanged();
     }
 
@@ -830,37 +837,40 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
 
     }
     private void updatePrediction(int userVote){
-        if(userVote==1){
-            increaseRadioButton.setChecked(true);
-            decreaseRadioButton.setChecked(false);
-        }else if(userVote==-1){
-            decreaseRadioButton.setChecked(true);
-            increaseRadioButton.setChecked(false);
-        }else{
-            decreaseRadioButton.setChecked(false);
-            increaseRadioButton.setChecked(false);
-        }
-        String text = ""+currency.getPredictionVoteCount()+" Voted";
-        totalPredCountTextView.setText(text);
-        if(currency.getPredictionVoteCount() != 0) {
-            int percentageIncrease = 100 * currency.getIncreaseCount() / currency.getPredictionVoteCount();
-            int percentageDecrease = 100 * currency.getDecreaseCount() / currency.getPredictionVoteCount();
-            if (percentageIncrease >= percentageDecrease) {
-                text = "" + percentageIncrease + "% Increases";
-                percentagePredTextView.setTextColor(getResources().getColor(R.color.colorPrimary));
-                predProgressBar.setProgress(percentageIncrease);
-                predProgressBar.setProgressTintList(cl_green);
-            } else {
-                text = "" + percentageDecrease + "% Decreases";
-                percentagePredTextView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
-                predProgressBar.setProgress(percentageDecrease);
-                predProgressBar.setProgressTintList(cl_red);
+        if(currency!=null){
+            if(userVote==1){
+                increaseRadioButton.setChecked(true);
+                decreaseRadioButton.setChecked(false);
+            }else if(userVote==-1){
+                decreaseRadioButton.setChecked(true);
+                increaseRadioButton.setChecked(false);
+            }else{
+                decreaseRadioButton.setChecked(false);
+                increaseRadioButton.setChecked(false);
             }
-            percentagePredTextView.setText(text);
-        }else{
-            percentagePredTextView.setText(R.string.no_predictions);
-            predProgressBar.setProgress(0);
+            String text = ""+currency.getPredictionVoteCount()+" Voted";
+            totalPredCountTextView.setText(text);
+            if(currency.getPredictionVoteCount() != 0) {
+                int percentageIncrease = 100 * currency.getIncreaseCount() / currency.getPredictionVoteCount();
+                int percentageDecrease = 100 * currency.getDecreaseCount() / currency.getPredictionVoteCount();
+                if (percentageIncrease >= percentageDecrease) {
+                    text = "" + percentageIncrease + "% Increases";
+                    percentagePredTextView.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    predProgressBar.setProgress(percentageIncrease);
+                    predProgressBar.setProgressTintList(cl_green);
+                } else {
+                    text = "" + percentageDecrease + "% Decreases";
+                    percentagePredTextView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                    predProgressBar.setProgress(percentageDecrease);
+                    predProgressBar.setProgressTintList(cl_red);
+                }
+                percentagePredTextView.setText(text);
+            }else{
+                percentagePredTextView.setText(R.string.no_predictions);
+                predProgressBar.setProgress(0);
+            }
         }
+
 
     }
 }

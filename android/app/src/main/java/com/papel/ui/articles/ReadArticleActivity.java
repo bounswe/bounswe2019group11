@@ -53,6 +53,7 @@ public class ReadArticleActivity extends AppCompatActivity {
     private TextView author;
     private TextView date;
     private TextView voteCount;
+    private TextView noCommentTextView;
     private ImageView profile_pic;
     private ImageButton addCommentButton;
     private ImageButton likeButton;
@@ -92,6 +93,7 @@ public class ReadArticleActivity extends AppCompatActivity {
         cl_primary = ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary));
         cl_black = ColorStateList.valueOf(getResources().getColor(R.color.black));
         getArticleFromEndpoint(getApplicationContext(), articleId);
+        noCommentTextView = header.findViewById(R.id.article_no_comment_textview);
 
 
         final Intent profileIntent = new Intent(this, ProfileActivity.class);
@@ -219,6 +221,9 @@ public class ReadArticleActivity extends AppCompatActivity {
         comments.addAll(comments_list);
         adapter = new ListViewAdapter(getApplicationContext(), comments);
         commentListView.setAdapter(adapter);
+        if(comments_list.size() == 0){
+            noCommentTextView.setVisibility(View.VISIBLE);
+        }
         adapter.notifyDataSetChanged();
     }
 
