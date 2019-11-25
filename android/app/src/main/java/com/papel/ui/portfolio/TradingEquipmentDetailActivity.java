@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -22,6 +23,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -81,9 +84,16 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
     private Spinner dropdown;
     private ProgressBar progressBar;
     private TextView value;
-    private ListView commentList;
+    private TextView totalPredCountTextView;
+    private TextView percentagePredTextView;
+    private ProgressBar predProgressBar;
+    private RadioGroup predictionRadioGroup;
+    private RadioButton increaseRadioButton;
+    private RadioButton decreaseRadioButton; private ListView commentList;
     private EditText commentEditText;
     private ImageButton addCommentButton;
+    private ColorStateList cl_green;
+    private ColorStateList cl_red;
 
     private Stock stock;
     private Currency currency;
@@ -91,6 +101,8 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
     private String[] chartItems;
     private ArrayList<Object> comments;
     private ListViewAdapter adapter;
+
+
 
     final SimpleDateFormat dailyDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     final SimpleDateFormat monthlyDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -112,6 +124,27 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             setTitle(currency.getName());
         }
 
+        totalPredCountTextView = header.findViewById(R.id.prediction_vote_count_textview);
+        percentagePredTextView = header.findViewById(R.id.prediction_vote_textview);
+        predProgressBar = header.findViewById(R.id.prediction_progressbar);
+        predictionRadioGroup = header.findViewById(R.id.prediction_radio_group);
+        increaseRadioButton = header.findViewById(R.id.increase_radioButton);
+        decreaseRadioButton = header.findViewById(R.id.decrease_radioButton);
+        cl_green = ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary));
+        cl_red = ColorStateList.valueOf(getResources().getColor(android.R.color.holo_red_dark));
+
+        predictionRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.increase_radioButton) {
+                    makePrediction(getApplicationContext(), 1);
+                } else if (checkedId == R.id.decrease_radioButton) {
+                    makePrediction(getApplicationContext(), -1);
+                }
+            }
+        });
+
+
         commentEditText = (EditText) header.findViewById(R.id.te_comment_edittext);
         addCommentButton = (ImageButton) header.findViewById(R.id.te_add_comment_button);
         commentList = findViewById(R.id.trading_equipment_comments);
@@ -121,7 +154,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             adapter = new ListViewAdapter(getApplicationContext(), comments);
             commentList.setAdapter(adapter);
         } else {
-            getTradingEqCommentsFromEndpoint(getApplicationContext());
+            getTradingEqFromEndpoint(getApplicationContext());
         }
 
         value = header.findViewById(R.id.value);
@@ -502,7 +535,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
         l.setEnabled(false);
     }
 
-    private void getTradingEqCommentsFromEndpoint(final Context context) {
+    private void getTradingEqFromEndpoint(final Context context) {
         if (currency != null) {
             final String currencyUrl = Constants.LOCALHOST + Constants.CURRENCY + currency.getCode();
             RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -514,6 +547,10 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                         Currency c = ResponseParser.parseCurrency(object);
                         currency.setComments(c.getComments());
                         setComments(currency.getComments());
+                        currency.setIncreaseCount(c.getIncreaseCount());
+                        currency.setDecreaseCount(c.getDecreaseCount());
+                        currency.setUserVote(c.getUserVote());
+                        updatePrediction(c.getUserVote());
                     } catch (JSONException exp) {
                         exp.printStackTrace();
                     }
@@ -524,7 +561,14 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                 public void onErrorResponse(VolleyError error) {
 
                 }
-            });
+            }){
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<String, String>();
+                    headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                    return headers;
+                }
+            };
 
             requestQueue.add(currencyRequest);
         }
@@ -552,7 +596,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    getTradingEqCommentsFromEndpoint(context);
+                    getTradingEqFromEndpoint(context);
                     commentEditText.setText("");
                 }
             }, new Response.ErrorListener() {
@@ -606,7 +650,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    getTradingEqCommentsFromEndpoint(context);
+                    getTradingEqFromEndpoint(context);
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -656,7 +700,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(String response) {
                             Toast.makeText(context, "Comment deleted.", Toast.LENGTH_SHORT).show();
-                            getTradingEqCommentsFromEndpoint(context);
+                            getTradingEqFromEndpoint(context);
                         }
                     }, new Response.ErrorListener() {
 
@@ -738,5 +782,85 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    private void makePrediction(final Context context, final int prediction) {
+        String prediction_url;
+        if (prediction == 1) {
+            prediction_url = "/predict-increase";
+        } else if (prediction == -1) {
+            prediction_url = "/predict-decrease";
+        } else {
+            prediction_url = "/clear-prediction";
+        }
+        if (currency != null) {
+            RequestQueue requestQueue = Volley.newRequestQueue(context);
+            String url = Constants.LOCALHOST + Constants.CURRENCY + currency.getCode() + prediction_url;
+            StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    getTradingEqFromEndpoint(context);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    NetworkResponse networkResponse = error.networkResponse;
+                    if (networkResponse != null) {
+                        String data = new String(networkResponse.data);
+                        try {
+                            JSONObject errorObject = new JSONObject(data);
+                            String message = errorObject.getString("message");
+                            Toast.makeText(context, "There was an error when making prediction: " + message, Toast.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }) {
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<String, String>();
+                    headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                    return headers;
+                }
+            };
+            requestQueue.add(request);
+        }
+
+    }
+    private void updatePrediction(int userVote){
+        if(userVote==1){
+            increaseRadioButton.setChecked(true);
+            decreaseRadioButton.setChecked(false);
+        }else if(userVote==-1){
+            decreaseRadioButton.setChecked(true);
+            increaseRadioButton.setChecked(false);
+        }else{
+            decreaseRadioButton.setChecked(false);
+            increaseRadioButton.setChecked(false);
+        }
+        String text = ""+currency.getPredictionVoteCount()+" Voted";
+        totalPredCountTextView.setText(text);
+        if(currency.getPredictionVoteCount() != 0) {
+            int percentageIncrease = 100 * currency.getIncreaseCount() / currency.getPredictionVoteCount();
+            int percentageDecrease = 100 * currency.getDecreaseCount() / currency.getPredictionVoteCount();
+            if (percentageIncrease >= percentageDecrease) {
+                text = "" + percentageIncrease + "% Increases";
+                percentagePredTextView.setTextColor(getResources().getColor(R.color.colorPrimary));
+                predProgressBar.setProgress(percentageIncrease);
+                predProgressBar.setProgressTintList(cl_green);
+            } else {
+                text = "" + percentageDecrease + "% Decreases";
+                percentagePredTextView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                predProgressBar.setProgress(percentageDecrease);
+                predProgressBar.setProgressTintList(cl_red);
+            }
+            percentagePredTextView.setText(text);
+        }else{
+            percentagePredTextView.setText(R.string.no_predictions);
+            predProgressBar.setProgress(0);
+        }
+
     }
 }

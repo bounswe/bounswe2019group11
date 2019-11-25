@@ -8,7 +8,11 @@ public class Currency extends TradingEquipment {
     private String code;
     private String name;
     private double rate;
+    private int predictionVoteCount=0;
+    private int increaseCount=0;
+    private int decreaseCount=0;
     private ArrayList<Comment> comments;
+    private int userVote=0;
 
 
     public Currency(String code, String name, double rate) {
@@ -22,6 +26,11 @@ public class Currency extends TradingEquipment {
         this.code = in.readString();
         this.name = in.readString();
         this.rate = in.readDouble();
+        this.predictionVoteCount = in.readInt();
+        this.increaseCount = in.readInt();
+        this.decreaseCount = in.readInt();
+        this.comments = in.readArrayList(Comment.class.getClassLoader());
+        this.userVote = in.readInt();
     }
 
     public Currency() {
@@ -54,6 +63,11 @@ public class Currency extends TradingEquipment {
         parcel.writeString(this.code);
         parcel.writeString(this.name);
         parcel.writeDouble(this.rate);
+        parcel.writeInt(this.predictionVoteCount);
+        parcel.writeInt(this.increaseCount);
+        parcel.writeInt(this.decreaseCount);
+        parcel.writeList(this.comments);
+        parcel.writeInt(this.userVote);
     }
 
     public String getCode() {
@@ -86,5 +100,36 @@ public class Currency extends TradingEquipment {
 
     public void setComments(ArrayList<Comment> comments) {
         this.comments = comments;
+    }
+
+    public int getPredictionVoteCount() {
+        return predictionVoteCount;
+    }
+
+    public int getIncreaseCount() {
+        return increaseCount;
+    }
+
+    public void setIncreaseCount(int increaseCount) {
+        this.increaseCount = increaseCount;
+        this.predictionVoteCount = this.decreaseCount + this.increaseCount;
+    }
+
+    public int getDecreaseCount() {
+        return decreaseCount;
+    }
+
+    public void setDecreaseCount(int decreaseCount) {
+        this.decreaseCount = decreaseCount;
+        this.predictionVoteCount = this.decreaseCount + this.increaseCount;
+
+    }
+
+    public int getUserVote() {
+        return userVote;
+    }
+
+    public void setUserVote(int userVote) {
+        this.userVote = userVote;
     }
 }
