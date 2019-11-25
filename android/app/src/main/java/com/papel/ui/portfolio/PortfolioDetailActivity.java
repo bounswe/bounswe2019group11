@@ -223,10 +223,123 @@ public class PortfolioDetailActivity extends AppCompatActivity {
     }
 
     private void addCurrency(Currency currency) {
+        requestNumber += 1;
+        hideUI();
+        String url = Constants.LOCALHOST + Constants.PORTFOLIO + portfolio.getId() + "/"+ Constants.CURRENCY;
+        final JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("_id", currency.getId());
+            jsonBody.put("code",currency.getCode());
+            jsonBody.put("name",currency.getName());
+            jsonBody.put("rate",currency.getRate());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    Portfolio parsedPortfolio = ResponseParser.parsePortfolio(jsonResponse);
+                    if(parsedPortfolio != null) {
+                        portfolio = parsedPortfolio;
+                        tradingEquipments.clear();
+                        tradingEquipments.addAll(portfolio.getTradingEquipments());
+                        tradingEquipmentListViewAdapter.notifyDataSetChanged();
+                    }
+                    requestNumber -= 1;
+                    if (requestNumber == 0) {
+                        showUI();
+                    }
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't add trading equipment to your porfolio.Please try again.",null);
+                requestNumber -= 1;
+                if (requestNumber == 0) {
+                    showUI();
+                }
+            }
+        }){
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return jsonBody.toString().getBytes();
+            }
 
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+        addRequestQueue.add(request);
     }
 
     private void deleteCurrency(Currency currency) {
+        requestNumber += 1;
+        hideUI();
+        String url = Constants.LOCALHOST + Constants.PORTFOLIO + portfolio.getId() + "/"+ Constants.CURRENCY;
+        final JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("_id", currency.getId());
+            jsonBody.put("code",currency.getCode());
+            jsonBody.put("name",currency.getName());
+            jsonBody.put("rate",currency.getRate());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        StringRequest request = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    Portfolio parsedPortfolio = ResponseParser.parsePortfolio(jsonResponse);
+                    if(parsedPortfolio != null) {
+                        portfolio = parsedPortfolio;
+                        tradingEquipments.clear();
+                        tradingEquipments.addAll(portfolio.getTradingEquipments());
+                        tradingEquipmentListViewAdapter.notifyDataSetChanged();
+                    }
+                    requestNumber -= 1;
+                    if (requestNumber == 0) {
+                        showUI();
+                    }
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Delete","Error");
+                NetworkResponse networkResponse = error.networkResponse;
+                if (networkResponse != null) {
+                    Log.d("Network response","statusCode: " + networkResponse.statusCode);
+                    String errorData = new String(networkResponse.data);
+                    Log.d("Network response","data: " + errorData);
+                }
+                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't delete trading equipment from your porfolio.Please try again.",null);
+                requestNumber -= 1;
+                if (requestNumber == 0) {
+                    showUI();
+                }
+            }
+        }){
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return jsonBody.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+        };
+        deleteRequestQueue.add(request);
 
     }
 
@@ -367,6 +480,7 @@ public class PortfolioDetailActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(PortfolioDetailActivity.this);
         String url = Constants.LOCALHOST + Constants.PORTFOLIO + portfolio.getId();
+        Log.d("Info","Portfolio id" + portfolio.getId());
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -377,8 +491,6 @@ public class PortfolioDetailActivity extends AppCompatActivity {
                         portfolio = parsedPortfolio;
                         tradingEquipments.clear();
                         tradingEquipments.addAll(portfolio.getTradingEquipments());
-                        // TODO For test
-                        tradingEquipments.add(new Currency("EUR","European Euro",0.9073));
                         tradingEquipmentListViewAdapter.notifyDataSetChanged();
                     }
                    showUI();

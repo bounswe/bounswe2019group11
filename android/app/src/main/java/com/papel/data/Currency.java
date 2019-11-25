@@ -5,6 +5,7 @@ import android.os.Parcel;
 import java.util.ArrayList;
 
 public class Currency extends TradingEquipment {
+    private String id;
     private String code;
     private String name;
     private double rate;
@@ -14,8 +15,8 @@ public class Currency extends TradingEquipment {
     private ArrayList<Comment> comments;
     private int userVote=0;
 
-
-    public Currency(String code, String name, double rate) {
+    public Currency(String id,String code, String name, double rate) {
+        this.id = id;
         this.code = code;
         this.name = name;
         this.rate = rate;
@@ -23,6 +24,7 @@ public class Currency extends TradingEquipment {
 
     public Currency(Parcel in) {
         super(in);
+        this.id = in.readString();
         this.code = in.readString();
         this.name = in.readString();
         this.rate = in.readDouble();
@@ -60,6 +62,7 @@ public class Currency extends TradingEquipment {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(TradingEquipment.CLASS_TYPE_CURRENCY);
         super.writeToParcel(parcel, i);
+        parcel.writeString(this.id);
         parcel.writeString(this.code);
         parcel.writeString(this.name);
         parcel.writeDouble(this.rate);
@@ -68,6 +71,14 @@ public class Currency extends TradingEquipment {
         parcel.writeInt(this.decreaseCount);
         parcel.writeList(this.comments);
         parcel.writeInt(this.userVote);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getCode() {

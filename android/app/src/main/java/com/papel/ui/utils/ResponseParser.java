@@ -22,13 +22,21 @@ public class ResponseParser {
         try {
             String portfolioId = response.getString("_id");
             String portfolioName = response.getString("name");
-            JSONArray stocks = response.getJSONArray("stocks");
             ArrayList<TradingEquipment> tradingEquipments = new ArrayList<>();
+            JSONArray stocks = response.getJSONArray("stocks");
             for (int j = 0; j < stocks.length(); j++) {
                 JSONObject stockObject = stocks.getJSONObject(j);
                 Stock stock = parseStock(stockObject);
                 if(stock != null) {
                     tradingEquipments.add(stock);
+                }
+            }
+            JSONArray currencies = response.getJSONArray("currencies");
+            for (int j = 0;j<currencies.length(); j++) {
+                JSONObject currencyObject = currencies.getJSONObject(j);
+                Currency currency = parseCurrency(currencyObject);
+                if (currency != null) {
+                    tradingEquipments.add(currency);
                 }
             }
             portfolio = new Portfolio(portfolioId,portfolioName,tradingEquipments);
@@ -66,10 +74,11 @@ public class ResponseParser {
     public static Currency parseCurrency(JSONObject response) {
         Currency currency = null;
         try {
+            String id = response.getString("_id");
             String code = response.getString("code");
             String name = response.getString("name");
             double rate = response.getDouble("rate");
-            currency = new Currency(code,name,rate);
+            currency = new Currency(id,code,name,rate);
             if(response.has("comments")) {
                 JSONArray comments = response.getJSONArray("comments");
                 ArrayList<Comment> currencyComments = new ArrayList<>();
