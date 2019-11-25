@@ -155,7 +155,7 @@ router.get('/myprofile',isAuthenticated, async (req, res) => {
 
 });
 
-router.post('/:id/follow',isAuthenticated, async (req, res) => {
+router.post('/other/:id/follow',isAuthenticated, async (req, res) => {
     try {
         const id = req.params.id;
         const userId =  req.token && req.token.data && req.token.data._id;
@@ -175,7 +175,7 @@ router.post('/:id/follow',isAuthenticated, async (req, res) => {
     }
 });
 
-router.post('/:id/unfollow',isAuthenticated, async (req, res) => {
+router.post('/other/:id/unfollow',isAuthenticated, async (req, res) => {
     try {
         const id = req.params.id;
         const userId =  req.token && req.token.data && req.token.data._id;
@@ -192,7 +192,7 @@ router.post('/:id/unfollow',isAuthenticated, async (req, res) => {
     }
 });
 
-router.post('/:id/accept',isAuthenticated, async (req, res) => {
+router.post('/other/:id/accept',isAuthenticated, async (req, res) => {
     try {
         const id = req.params.id;
         const userId =  req.token && req.token.data && req.token.data._id;
@@ -209,7 +209,7 @@ router.post('/:id/accept',isAuthenticated, async (req, res) => {
     }
 });
 
-router.post('/:id/decline',isAuthenticated, async (req, res) => {
+router.post('/other/:id/decline',isAuthenticated, async (req, res) => {
     try {
         const id = req.params.id;
         const userId =  req.token && req.token.data && req.token.data._id;

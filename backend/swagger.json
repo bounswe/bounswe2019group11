@@ -1272,12 +1272,54 @@
         }
       }
     },
-    "/profile/{_id}": {
+    "/profile/myprofile": {
       "get": {
         "tags": [
           "profile"
         ],
-        "summary": "Returns requested user profile with his/her articles and portfolios",
+        "security": [
+          {
+            "Bearer": []
+          }
+
+        ],
+        "summary": "Returns user's own profile",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The user's profile is returned.",
+            "schema": {
+              "$ref": "#/definitions/MyProfile"
+            }
+          },
+          "400": {
+            "description": "User not found"
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/profile/other/{_id}": {
+      "get": {
+        "tags": [
+          "profile"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Returns requested user profile with his/her articles and portfolios (Bearer Token not required because guests may try to see a profile)",
         "consumes": [
           "application/json"
         ],
@@ -1309,12 +1351,17 @@
         }
       }
       },
-    "/profile/{_id}/follow": {
+    "/profile/other/{_id}/follow": {
       "post": {
         "tags": [
           "profile"
         ],
-        "summary": "Performs follow function on the user who is to followed",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Performs follow function on the user who is to follow",
         "consumes": [
           "application/json"
         ],
@@ -1343,6 +1390,171 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "The User had been already followed before"
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+
+      }
+
+    },
+    "/profile/other/{_id}/unfollow": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Performs unfollow function on the user who is to unfollow",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "user ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The user has ben unfollowed successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "msg": {
+                  "type": "string",
+                  "description": "Returns a success message",
+                  "example": "User has been successfully unfollowed"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User not found"
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+
+      }
+
+    },
+    "/profile/other/{_id}/accept": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Accepts the incoming follow request of user which has given ID ",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "user ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Follow request accepted successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "msg": {
+                  "type": "string",
+                  "description": "Returns a success message",
+                  "example": "Follow request accepted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User not found"
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+
+      }
+
+    },
+    "/profile/other/{_id}/decline": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Declines the incoming follow request",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "user ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Follow request has been declined successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "msg": {
+                  "type": "string",
+                  "description": "Returns a success message",
+                  "example": "Follow request declined"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User not found"
           },
           "401": {
             "description": "Authorization token was missing, invalid or expired."
@@ -1926,6 +2138,89 @@
           "type": "string",
           "description": "Declares if the user followed, not followed yet or follow request has been sent but not accepted yet (true,false,pending)",
           "example": "pending"
+        },
+        "isMe": {
+          "type": "boolean",
+          "description": "True if the user try to see his own profile false otherwise (If isMe == True then there will be no other fields in the response body)"
+        },
+        "following": {
+          "type": "array",
+          "description": "Following users of the user (Only the profile is public)",
+          "example": "[{\"_id\": \"5dd7d54b58ec764434728fea\",\"name\": \"Eleman\",\"surname\": \"Takip\",\"email\": \"stel@24repporter.ru\"}]"
+        },
+        "followers": {
+          "type": "array",
+          "description": "Followers of the user (Only the profile is public)",
+          "example": "[{\"_id\": \"5dd7d57758ec764434728fec\",\"name\": \"İbrahim\",\"surname\": \"Kamacı\",\"email\": \"stel@1000maketov.ru\"}]"
+        }
+      }
+    },
+    "MyProfile": {
+      "type": "object",
+      "properties": {
+        "privacy": {
+          "type": "string",
+          "description": "public or private profile setting",
+          "example": "private"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the user.",
+          "example": "John"
+        },
+        "surname": {
+          "type": "string",
+          "description": "Surname of the user.",
+          "example": "Doe"
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "latitude": {
+              "type": "number",
+              "description": "Latitude of the location.",
+              "example": 41.085987
+            },
+            "longitude": {
+              "type": "number",
+              "description": "Longitude of the location.",
+              "example": 29.044008
+            }
+          }
+        },
+        "articles": {
+          "type": "array",
+          "description": "Articles of the User",
+          "items": {
+            "$ref": "#/definitions/Article"
+          }
+        },
+        "portfolios": {
+          "type": "array",
+          "description": "portfolios of the User",
+          "items": {
+            "$ref": "#/definitions/Portfolio"
+          }
+        },
+        "following": {
+          "type": "array",
+          "description": "Following users of the user (Only the profile is public)",
+          "example": "[{\"_id\": \"5dd7d54b58ec764434728fea\",\"name\": \"Eleman\",\"surname\": \"Takip\",\"email\": \"mcrawfor@comcast.net\"}]"
+        },
+        "followingPending": {
+          "type": "array",
+          "description": "Users whom follow request has been sent to but not accepted yet",
+          "example": "[{\"_id\": \"5daedb59f05eb852753ac9bc\",\"name\": \"Kâni\",\"surname\": \"Hayal\",\"email\": \"stel@24repporter.ru\"}]"
+        },
+        "followers": {
+          "type": "array",
+          "description": "Followers of the user (Only the profile is public)",
+          "example": "[{\"_id\": \"5dd7d57758ec764434728fec\",\"name\": \"İbrahim\",\"surname\": \"Kamacı\",\"email\": \"stel@1000maketov.ru\"}]"
+        },
+        "followerPending": {
+          "type": "array",
+          "description": "Users who has sent follow request but not accepted yet by the user him/herself",
+          "example": "[{\"_id\": \"5dd7d54b58ec764434728fea\",\"name\": \"Eleman\",\"surname\": \"Takip\",\"email\": \"stel@24repporter.ru\"}]"
         }
       }
     },
