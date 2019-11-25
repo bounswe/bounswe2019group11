@@ -164,6 +164,20 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/no_comment_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_comments"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginEnd="@dimen/text_margin"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:textStyle="italic"
+            android:visibility="gone"
+            android:layout_marginBottom="10dp"/>
+
     </LinearLayout>
 
 

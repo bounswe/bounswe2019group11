@@ -66,13 +66,10 @@
     <string name="no_following_message">This user has no following.</string>
     <string name="no_pending_follower_message">You don\'t have pending follower request.</string>
     <string name="no_pending_following_message">You don\'t have pending following request.</string>
-
+    <string name="no_comments">There are no comments yet. Be the first one to comment!</string>
+    <string name="no_predictions">There are no predictions yet</string>
     <string name="stock">STOCK</string>
     <string name="currency">CURRENCY</string>
-
-    <string name="no_predictions">There are no predictions yet</string>
-    <string name="no_comments">There are no comments yet</string>
-
 
 </resources>
 
