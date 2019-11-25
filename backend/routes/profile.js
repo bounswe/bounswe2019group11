@@ -174,7 +174,7 @@ router.post('/other/:id/follow',isAuthenticated, async (req, res) => {
         const userId =  req.token && req.token.data && req.token.data._id;
         const user = await userService.getById(userId);
         const userToBeFollowed = await userService.getById(id);
-        res.status(200).json({msg:await user.follow(userToBeFollowed)});
+        res.status(200).json(await user.follow(userToBeFollowed));
 
     } catch (err) {
         if (err.name === 'UserNotFound') {
@@ -194,7 +194,7 @@ router.post('/other/:id/unfollow',isAuthenticated, async (req, res) => {
         const userId =  req.token && req.token.data && req.token.data._id;
         const user = await userService.getById(userId);
         const userToBeAccepted = await userService.getById(id);
-        res.status(200).json({msg:await user.unfollow(userToBeAccepted)});
+        res.status(200).json(await user.unfollow(userToBeAccepted));
 
     } catch (err) {
         if (err.name === 'UserNotFound') {
@@ -211,7 +211,7 @@ router.post('/other/:id/accept',isAuthenticated, async (req, res) => {
         const userId =  req.token && req.token.data && req.token.data._id;
         const user = await userService.getById(userId);
         const userToBeAccepted = await userService.getById(id);
-        res.status(200).json({msg:await user.accept(userToBeAccepted)});
+        res.status(200).json(await user.accept(userToBeAccepted));
 
     } catch (err) {
         if (err.name === 'UserNotFound') {
@@ -228,7 +228,7 @@ router.post('/other/:id/decline',isAuthenticated, async (req, res) => {
         const userId =  req.token && req.token.data && req.token.data._id;
         const user = await userService.getById(userId);
         const userToBeDeclined = await userService.getById(id);
-        res.status(200).json({msg:await user.decline(userToBeDeclined)});
+        res.status(200).json(await user.decline(userToBeDeclined));
 
     } catch (err) {
         if (err.name === 'UserNotFound') {
