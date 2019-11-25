@@ -1,7 +1,6 @@
 const express = require('express');
 const currencyService = require('../services/currency');
 const errors = require('../helpers/errors');
-const isAuthenticated = require('../middlewares/isAuthenticated');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
@@ -96,6 +95,8 @@ router.get('/:code/full', async (req, res) => {
         }
     }
 });
+
+/*
 router.post('/:id/comment', isAuthenticated, async (req, res) => {
     try {
         const currencyId = req.params.id;
@@ -191,5 +192,6 @@ router.delete('/:id/comment/:commentId', isAuthenticated, async (req, res) => {
         }
     }
 });
+*/
 
 module.exports = router;
