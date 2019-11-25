@@ -198,6 +198,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                     for (int i = 0; i < followersArray.length(); i++) {
                         User user = ResponseParser.parseFollowUser(followersArray.getJSONObject(i));
                         if (user != null) {
+                            Log.d("Info","Follower " + user.getName());
                             followers.add(user);
                         }
                     }
@@ -259,6 +260,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
         adapter = new ProfileSubpageAdapter(getSupportFragmentManager(), articles, portfolios, followers, following, followersPending, followingPending, isMe);
         pager.setAdapter(adapter);
         tabLayout.setupWithViewPager(pager);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
         //adapter.notifyDataSetChanged();
     }

@@ -62,6 +62,8 @@
     <string name="no_article_message">This user has no articles written.</string>
     <string name="private_profile_message">This user\'s profile is private.</string>
     <string name="no_portfolio_message">This user has no portfolios added.</string>
+    <string name="no_followers_message">This user has no followers.</string>
+    <string name="no_following_message">This user has no following.</string>
 </resources>
 
 

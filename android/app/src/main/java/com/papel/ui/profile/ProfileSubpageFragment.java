@@ -19,6 +19,7 @@ import com.papel.Constants;
 import com.papel.R;
 import com.papel.data.Article;
 import com.papel.data.Portfolio;
+import com.papel.data.User;
 import com.papel.ui.articles.ReadArticleActivity;
 import com.papel.ui.portfolio.PortfolioDetailActivity;
 import com.papel.ui.portfolio.PortfolioListViewAdapter;
@@ -51,6 +52,10 @@ public class ProfileSubpageFragment extends Fragment {
     private String subpageName;
     private ArrayList<Article> articles;
     private ArrayList<Portfolio> portfolios;
+    private ArrayList<User> followers;
+    private ArrayList<User> following;
+    private ArrayList<User> followersPending;
+    private ArrayList<User> followingPending;
     private boolean isMe;
 
     private OnFragmentInteractionListener mListener;
@@ -66,12 +71,16 @@ public class ProfileSubpageFragment extends Fragment {
      * @param subpageName Name of subpage
      * @return A new instance of fragment ProfileSubpageFragment.
      */
-    public static ProfileSubpageFragment newInstance(String subpageName, ArrayList<Article> articles,ArrayList<Portfolio> portfolios, boolean isMe) {
+    public static ProfileSubpageFragment newInstance(String subpageName, ArrayList<Article> articles, ArrayList<Portfolio> portfolios, ArrayList<User> followers, ArrayList<User> following, ArrayList<User> followersPending, ArrayList<User> followingPending, boolean isMe) {
         ProfileSubpageFragment fragment = new ProfileSubpageFragment();
         Bundle args = new Bundle();
         args.putString(ARG_SUBPAGE_NAME, subpageName);
-        args.putParcelableArrayList(ARG_ARTICLES,articles);
-        args.putParcelableArrayList(ARG_PORTFOLIOS,portfolios);
+        args.putParcelableArrayList(ARG_ARTICLES, articles);
+        args.putParcelableArrayList(ARG_PORTFOLIOS, portfolios);
+        args.putParcelableArrayList(ARG_FOLLOWERS, followers);
+        args.putParcelableArrayList(ARG_FOLLOWING,following);
+        args.putParcelableArrayList(ARG_FOLLOWER_PENDING,followersPending);
+        args.putParcelableArrayList(ARG_FOLLOWING_PENDING,followingPending);
         args.putBoolean(ARG_ISME, isMe);
         fragment.setArguments(args);
         return fragment;
@@ -84,6 +93,10 @@ public class ProfileSubpageFragment extends Fragment {
             subpageName = getArguments().getString(ARG_SUBPAGE_NAME);
             articles = getArguments().getParcelableArrayList(ARG_ARTICLES);
             portfolios = getArguments().getParcelableArrayList(ARG_PORTFOLIOS);
+            followers = getArguments().getParcelableArrayList(ARG_FOLLOWERS);
+            following = getArguments().getParcelableArrayList(ARG_FOLLOWING);
+            followersPending = getArguments().getParcelableArrayList(ARG_FOLLOWER_PENDING);
+            followingPending = getArguments().getParcelableArrayList(ARG_FOLLOWING_PENDING);
             isMe = getArguments().getBoolean(ARG_ISME);
         }
     }
@@ -94,11 +107,11 @@ public class ProfileSubpageFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile_subpage, container, false);
         ListView listView = view.findViewById(R.id.listView);
-        TextView message =  view.findViewById(R.id.message);
+        TextView message = view.findViewById(R.id.message);
 
         if (subpageName.equals(Constants.ARTICLE_TITLE)) {
 
-            ProfileListViewAdapter adapter = new ProfileListViewAdapter(getContext(),articles);
+            ProfileListViewAdapter adapter = new ProfileListViewAdapter(getContext(), articles);
             listView.setAdapter(adapter);
 
             final Intent articleIntent = new Intent(getActivity().getApplicationContext(), ReadArticleActivity.class);
@@ -112,7 +125,7 @@ public class ProfileSubpageFragment extends Fragment {
                 }
             });
 
-            if(articles.size() == 0){
+            if (articles.size() == 0) {
                 message.setText(getString(R.string.no_article_message));
                 message.setVisibility(View.VISIBLE);
                 listView.setVisibility(View.INVISIBLE);
@@ -121,7 +134,7 @@ public class ProfileSubpageFragment extends Fragment {
         } else if (subpageName.equals(Constants.PORTFOLIO_TITLE)) {
             if (portfolios != null) {
 
-                PortfolioListViewAdapter adapter = new PortfolioListViewAdapter(getContext(),portfolios);
+                PortfolioListViewAdapter adapter = new PortfolioListViewAdapter(getContext(), portfolios);
                 listView.setAdapter(adapter);
 
                 final Intent portfolioIntent = new Intent(getActivity().getApplicationContext(), PortfolioDetailActivity.class);
@@ -135,20 +148,58 @@ public class ProfileSubpageFragment extends Fragment {
                         startActivity(portfolioIntent);
                     }
                 });
-                if(portfolios.size() == 0){
+                if (portfolios.size() == 0) {
                     message.setText(getString(R.string.no_portfolio_message));
                     message.setVisibility(View.VISIBLE);
                     listView.setVisibility(View.INVISIBLE);
                 }
-            }
-            else{
+            } else {
                 message.setText(getString(R.string.private_profile_message));
                 message.setVisibility(View.VISIBLE);
                 listView.setVisibility(View.INVISIBLE);
             }
+        } else if (subpageName.equals(Constants.FOLLOWERS_TITLE)) {
+            if (followers != null) {
+                Log.d("Info","Here");
+                Log.d("Info","Context "  + getContext().toString());
+                FollowerAdapter adapter = new FollowerAdapter(getContext(),followers);
+                listView.setAdapter(adapter);
+
+                if (followers.size() == 0) {
+                    message.setText(getString(R.string.no_followers_message));
+                    message.setVisibility(View.VISIBLE);
+                    listView.setVisibility(View.INVISIBLE);
+                }
+
+            } else {
+                message.setText(getString(R.string.private_profile_message));
+                message.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.INVISIBLE);
+            }
+        } else if (subpageName.equals(Constants.FOLLOWING_TITLE)) {
+            if (following != null) {
+
+                FollowerAdapter adapter = new FollowerAdapter(getContext(), following);
+                listView.setAdapter(adapter);
+
+                if (following.size() == 0) {
+                    message.setText(getString(R.string.no_following_message));
+                    message.setVisibility(View.VISIBLE);
+                    listView.setVisibility(View.INVISIBLE);
+                }
+            } else {
+                message.setText(getString(R.string.private_profile_message));
+                message.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.INVISIBLE);
+            }
+        } else if (subpageName.equals(Constants.REQUESTS_TITLE)) {
 
         }
         return view;
+    }
+
+    private void showPrivateError() {
+
     }
 
     public void onButtonPressed(Uri uri) {
