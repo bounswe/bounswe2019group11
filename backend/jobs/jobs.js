@@ -60,7 +60,7 @@ const intradayRatesJob = new CronJob('0 */5 * * * *', async () => {
                 console.log(new Date() + ' Intraday rates and rate are updated for ' + code);
             }
             else {
-                console.log(new Date() + ' Request to AlphaVantage failed.' + response);
+                console.log(new Date() + ' Request to AlphaVantage failed.' + JSON.stringify(response));
             }
         } catch (err) {
             console.log(new Date() + ' Intraday rates and rate could not be updated for ' + code + '. Err: '+  err);
@@ -92,7 +92,7 @@ const dailyRatesJob = new CronJob('00 00 00 * * *', async () => {
                 await Currency.updateOne({code}, {dailyRates});
                 console.log(new Date() + ' Daily rates are updated for ' + code);
             } else {
-                console.log(new Date() + ' Request to AlphaVantage failed. ' + response);
+                console.log(new Date() + ' Request to AlphaVantage failed. ' + JSON.stringify(response));
             }
         } catch (err) {
             console.log(new Date() + ' Daily rates could not be updated for ' + code + '. Err: '+ err);

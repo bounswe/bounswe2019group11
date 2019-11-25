@@ -1,6 +1,81 @@
 const Currency = require('../models/currency');
 const errors = require('../helpers/errors');
+const CurrencyComment = require('../models/currencyComment');
+const mongoose = require('mongoose');
 
+const STAGES = {
+    GET_COMMENTS: {
+        $lookup: {
+            from: 'currencycomments',
+            let: {
+                currencyId: '$_id'
+            },
+            pipeline: [
+                {
+                    $match: {
+                        $expr: {
+                            $eq: ['$$currencyId', '$currencyId']
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        let: {
+                            authorId: '$authorId'
+                        },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: ['$$authorId', '$_id']
+                                    }
+                                }
+                            },
+                            {
+                                $project: {
+                                    name: 1,
+                                    surname: 1,
+                                    _id: 0,
+                                }
+                            }
+                        ],
+                        as: 'author'
+                    }
+                },
+                {
+                    $project: {
+                        currencyId: 0
+                    }
+                }
+            ],
+            as: 'comments'
+        }
+    },
+    MATCH_ID: (id) => {
+        return {
+            $match: {
+                $expr: {
+                    $eq: ['$_id', {
+                        $toObjectId: id,
+                    }]
+                }
+            }
+        }
+    },
+    MATCH_COMMENT: (id) => {
+        return {
+            $match: {
+                $expr: {
+                    $eq: ['$_id', {
+                        $toObjectId: id,
+                    }]
+                }
+            }
+        }
+    },
+
+};
 const SUPPORTED_CURRENCIES = new Set([
     'EUR',
     'JPY',
@@ -21,10 +96,17 @@ module.exports.get = async (code) => {
     if (!SUPPORTED_CURRENCIES.has(code)) {
         throw errors.INVALID_CURRENCY_CODE();
     }
-    return await Currency
-        .findOne({code})
+    const currency= await Currency.aggregate([
+        Currency.findOne({code})
         .select('code name rate -_id')
-        .exec();
+        .exec(), STAGES.GET_COMMENTS
+     ]).then();
+     if (!currency) {
+        throw errors.CURRENCY_NOT_FOUND();
+    }
+
+    return currency;
+
 };
 
 module.exports.getIntraday = async (code) => {
@@ -100,4 +182,66 @@ module.exports.getLastFull = async (code) => {
         .findOne({code})
         .select('-__v -_id')
         .exec();
+};
+module.exports.postComment = async (currencyId, authorId, body) => {
+    if (!(mongoose.Types.ObjectId.isValid(currencyId))) {
+        throw errors.CURRENCY_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(authorId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    await CurrencyComment.create({
+        currencyId,
+        authorId,
+        body,
+    });
+};
+
+module.exports.getComment = async (currencyId, commentId) => {
+    if (!(mongoose.Types.ObjectId.isValid(currencyId))) {
+        throw errors.CURRENCY_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(commentId))) {
+        throw errors.COMMENT_NOT_FOUND();
+    }
+    const comment = await CurrencyComment.aggregate([
+        STAGES.MATCH_COMMENT(commentId)
+    ]).then();
+    if (!comment) {
+        throw errors.COMMENT_NOT_FOUND();
+    }
+    return comment[0];
+};
+
+module.exports.editComment = async (currencykId, authorId, commentId, newBody) => {
+    if (!(mongoose.Types.ObjectId.isValid(currencyId))) {
+        throw errors.CURRENCY_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(commentId))) {
+        throw errors.COMMENT_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(authorId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    const oldComment = await CurrencyComment.findOneAndUpdate({_id: commentId, currencyId, authorId},
+        {body: newBody, edited: true, lastEditDate: Date.now()});
+    if (!oldComment) {
+        throw errors.COMMENT_NOT_FOUND();
+    }
+};
+
+module.exports.deleteComment = async (currencyId, commentId, authorId) => {
+    if (!(mongoose.Types.ObjectId.isValid(currencyId))) {
+        throw errors.CURRENCY_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(commentId))) {
+        throw errors.COMMENT_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(authorId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    const comment = await CurrencyComment.findOneAndDelete({_id: commentId, currencyId, authorId});
+    if (!comment) {
+        throw errors.COMMENT_NOT_FOUND();
+    }
 };
