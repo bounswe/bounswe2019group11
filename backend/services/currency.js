@@ -82,6 +82,49 @@ const STAGES = {
             _id: 0
         }
     },
+    GET_PREDICTIONS: {
+        $lookup: {
+            from: 'predictions',
+            let: {
+                code: '$code'
+            },
+            pipeline: [
+                {
+                    $match: {
+                        $expr: {
+                            $and: [
+                                {
+                                    $eq: ['$$code', '$currencyCode']
+                                },
+                                {
+                                    $eq: [predictionHelper.EQUIPMENT_TYPE.CURRENCY, '$equipmentType']
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$prediction',
+                        count: {
+                            $sum: 1
+                        }
+                    }
+                },
+                {
+                    $addFields: {
+                        'prediction': '$_id'
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0
+                    }
+                }
+            ],
+            as: 'predictions'
+        }
+    }
 };
 
 const SUPPORTED_CURRENCIES = new Set([
@@ -105,7 +148,7 @@ module.exports.get = async (code) => {
         throw errors.INVALID_CURRENCY_CODE();
     }
     const currency = await Currency.aggregate([
-        STAGES.MATCH_CODE(code), STAGES.PROJECT_MINIMAL, STAGES.GET_COMMENTS
+        STAGES.MATCH_CODE(code), STAGES.PROJECT_MINIMAL, STAGES.GET_COMMENTS, STAGES.GET_PREDICTIONS
     ]).then();
 
     return currency[0];

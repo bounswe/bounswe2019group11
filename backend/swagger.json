@@ -1668,7 +1668,7 @@
             "description": "OK. Given currency, its rate and comments are returned.",
             "schema": {
               "type": "object",
-              "$ref": "#/definitions/CurrencyWithComments"
+              "$ref": "#/definitions/CurrencyGet"
             }
           },
           "400": {
@@ -2617,7 +2617,7 @@
         }
       }
     },
-    "CurrencyWithComments": {
+    "CurrencyGet": {
       "allOf": [
         {
           "$ref": "#/definitions/CurrencyMinimal"
@@ -2629,6 +2629,24 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/Comment"
+          }
+        },
+        "predictions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "prediction": {
+                "type": "number",
+                "description": "Prediction type (-1 for decrease, 1 for increase)",
+                "example": 1
+              },
+              "count": {
+                "type": "number",
+                "description": "Count of predictions.",
+                "example": 10
+              }
+            }
           }
         }
       }
