@@ -47,7 +47,7 @@ const STAGES = {
                 },
                 {
                     $project: {
-                        code: 0
+                        currencyCode: 0
                     }
                 }
             ],

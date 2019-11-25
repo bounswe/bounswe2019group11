@@ -174,7 +174,7 @@ router.post('/:code/comment', isAuthenticated, async (req, res) => {
 
 router.get('/:code/comment/:commentId', async (req, res) => {
     try {
-        const code = req.params.id;
+        const code = req.params.code;
         const commentId = req.params.commentId;
         const comment = await currencyService.getComment(code, commentId);
         res.status(200).send(comment);
@@ -191,7 +191,7 @@ router.get('/:code/comment/:commentId', async (req, res) => {
 
 router.post('/:code/comment/:commentId', isAuthenticated, async (req, res) => {
     try {
-        const code = req.params.id;
+        const code = req.params.code;
         const authorId = req.token && req.token.data && req.token.data._id;
         const commentId = req.params.commentId;
         const newBody = req.body.body;
@@ -222,7 +222,7 @@ router.post('/:code/comment/:commentId', isAuthenticated, async (req, res) => {
 
 router.delete('/:code/comment/:commentId', isAuthenticated, async (req, res) => {
     try {
-        const code = req.params.id;
+        const code = req.params.code;
         const commentId = req.params.commentId;
         const userId = req.token && req.token.data && req.token.data._id;
         await currencyService.deleteComment(code, commentId, userId);
