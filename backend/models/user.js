@@ -136,8 +136,8 @@ userSchema.methods.generateLostPasswordToken = async function () {
 };
 userSchema.methods.follow =async function(userToBeFollowed){
     const userIdToBeFollowed = userToBeFollowed._id;
-    console.log(this.following.findIndex(elm => elm.userId.toString() === userIdToBeFollowed.toString()));
-    if(this.following.findIndex(elm => elm.userId.toString() === userIdToBeFollowed.toString()) === -1){
+    const index = this.following.findIndex(elm => elm.userId.toString() === userIdToBeFollowed.toString());
+    if(index === -1){
         if(userToBeFollowed.privacy === 'public'){
             this.following.push({userId:userIdToBeFollowed, isAccepted:true});
             userToBeFollowed.followers.push({userId:this._id,isAccepted:true});
@@ -159,10 +159,9 @@ userSchema.methods.follow =async function(userToBeFollowed){
 };
 
 userSchema.methods.unfollow = async function (userToBeUnfollowed) {
-
     const userIdToBeUnfollowed = userToBeUnfollowed._id;
-    if(this.following.findIndex(elm => elm.userId.toString() === userIdToBeUnfollowed.toString()) !== -1) {
-        const index = this.following.findIndex(elm => elm.userId.toString() === userIdToBeUnfollowed.toString());
+    const index = this.following.findIndex(elm => elm.userId.toString() === userIdToBeUnfollowed.toString());
+    if(index !== -1) {
         this.following.splice(index, 1);
         const index2 = userToBeUnfollowed.followers.findIndex(elm => elm.userId.toString() === this._id.toString());
         userToBeUnfollowed.followers.splice(index2, 1);
@@ -176,14 +175,31 @@ userSchema.methods.unfollow = async function (userToBeUnfollowed) {
 
 userSchema.methods.accept = async function (userToBeAccepted) {
     const userIdToBeAccepted = userToBeAccepted._id;
-    if(this.followers.findIndex(elm => elm.userId.toString() === userIdToBeAccepted.toString()) !== -1){
-        const index = this.followers.findIndex(elm => elm.userId.toString() === userIdToBeAccepted.toString());
+    const index = this.followers.findIndex(elm => elm.userId.toString() === userIdToBeAccepted.toString());
+    if(index !== -1){
         this.followers[index]['isAccepted'] = true;
         const index2 = userToBeAccepted.following.findIndex(elm => elm.userId.toString() === this._id.toString());
         userToBeAccepted.following[index2]['isAccepted'] = true;
         await this.save();
         await userToBeAccepted.save();
         return "Follow request accepted";
+    }else{
+        throw errors.USER_NOT_FOUND();
+    }
+
+};
+
+userSchema.methods.decline = async function (userToBeDeclined) {
+    const userIdToBeDeclined = userToBeDeclined._id;
+    const index = this.followers.findIndex(elm => elm.userId.toString() === userIdToBeDeclined.toString());
+    if(index !== -1){
+        this.followers.splice(index,1);
+        console.log(this.followers);
+        const index2 = userToBeDeclined.following.findIndex(elm => elm.userId.toString() === this._id.toString());
+        userToBeDeclined.following.splice(index2,1);
+        await this.save();
+        await userToBeDeclined.save();
+        return "Follow request declined";
     }else{
         throw errors.USER_NOT_FOUND();
     }

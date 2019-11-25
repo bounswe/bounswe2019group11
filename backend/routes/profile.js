@@ -207,5 +207,21 @@ router.post('/:id/accept',isAuthenticated, async (req, res) => {
     }
 });
 
+router.post('/:id/decline',isAuthenticated, async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userId =  req.token && req.token.data && req.token.data._id;
+        const user = await userService.getById(userId);
+        const userToBeDeclined = await userService.getById(id);
+        res.status(200).json({msg:await user.decline(userToBeDeclined)});
+
+    } catch (err) {
+        if (err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
 
 module.exports = router;
