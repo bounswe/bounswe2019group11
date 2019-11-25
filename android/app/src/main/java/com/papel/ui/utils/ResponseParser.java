@@ -41,12 +41,22 @@ public class ResponseParser {
     public static Stock parseStock(JSONObject response) {
         Stock stock = null;
         try {
+            String id = response.getString(("_id"));
             String stockId = response.getString("_id");
             String name = response.getString("name");
             //String stockName = response.getString("stockName");
             String stockSymbol = response.getString("stockSymbol");
             double stockPrice = response.getDouble("price");
             stock = new Stock(stockId,name,stockPrice,stockSymbol);
+            if(response.has("comments")) {
+                JSONArray comments = response.getJSONArray("comments");
+                ArrayList<Comment> stockComments = new ArrayList<>();
+                for (int i = 0; i < comments.length(); i++) {
+                    Comment comment = parseComment(comments.getJSONObject(i), id);
+                    stockComments.add(comment);
+                }
+                stock.setComments(stockComments);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -60,6 +70,15 @@ public class ResponseParser {
             String name = response.getString("name");
             double rate = response.getDouble("rate");
             currency = new Currency(code,name,rate);
+            if(response.has("comments")) {
+                JSONArray comments = response.getJSONArray("comments");
+                ArrayList<Comment> currencyComments = new ArrayList<>();
+                for (int i = 0; i < comments.length(); i++) {
+                    Comment comment = parseComment(comments.getJSONObject(i), code);
+                    currencyComments.add(comment);
+                }
+                currency.setComments(currencyComments);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -86,15 +105,11 @@ public class ResponseParser {
         return event;
     }
 
-    public static Comment parseComment(JSONObject response, String articleIdFromArticle) {
+    public static Comment parseComment(JSONObject response, String contextIdFromOuter) {
         Comment comment = null;
         try {
             String commentId = response.getString("_id");
             String authorId = response.getString("authorId");
-            String articleId = articleIdFromArticle;
-            if(response.has("articleId")){
-                articleId = response.getString("articleId");
-            }
             JSONArray author = response.getJSONArray("author");
             String authorName = author.getJSONObject(0).getString("name") + " " + author.getJSONObject(0).getString("surname");
             String body = response.getString("body");
@@ -106,7 +121,7 @@ public class ResponseParser {
             }else{
                 lastEditDate = date;
             }
-            comment = new Comment(commentId, articleId, authorId, authorName, body, date, edited, lastEditDate);
+            comment = new Comment(commentId, contextIdFromOuter, authorId, authorName, body, date, edited, lastEditDate);
         } catch (JSONException e) {
             e.printStackTrace();
         }

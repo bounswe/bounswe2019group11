@@ -2,10 +2,14 @@ package com.papel.data;
 
 import android.os.Parcel;
 
+import java.util.ArrayList;
+
 public class Currency extends TradingEquipment {
     private String code;
     private String name;
     private double rate;
+    private ArrayList<Comment> comments;
+
 
     public Currency(String code, String name, double rate) {
         this.code = code;
@@ -74,5 +78,13 @@ public class Currency extends TradingEquipment {
 
     public void setRate(double rate) {
         this.rate = rate;
+    }
+
+    public ArrayList<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
     }
 }
