@@ -2055,6 +2055,123 @@
           }
         }
       }
+    },
+    "/currency/{code}/predict-increase": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "currency"
+        ],
+        "summary": "Endpoint to predict an increase on a currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Prediction successfully made."
+          },
+          "400": {
+            "description": "Validation error. Either the currency with the given code or the user with the given token not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/predict-decrease": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "currency"
+        ],
+        "summary": "Endpoint to predict a decrease on a currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Prediction successfully made."
+          },
+          "400": {
+            "description": "Validation error. Either the currency with the given code or the user with the given token not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/clear-prediction": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "currency"
+        ],
+        "summary": "Endpoint to clear prediction on a currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Prediction for the currency successfully cleared."
+          },
+          "400": {
+            "description": "Validation error. Either the currency with the given code, the user with the given token or the vote not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
     }
   },
   "definitions": {

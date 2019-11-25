@@ -199,7 +199,7 @@ module.exports.predict = async (code, userId, prediction) => {
     currentRate = currentRate.rate;
     await Prediction.updateOne(
         {userId, currencyCode: code, equipmentType: predictionHelper.EQUIPMENT_TYPE.CURRENCY},
-        {snapShot: currentRate, prediction},
+        {snapshot: currentRate, prediction},
         {upsert: true});
 };
 
