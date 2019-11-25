@@ -2,6 +2,7 @@ const express = require('express');
 const userService = require('../services/user');
 const articleService = require('../services/article');
 const portfolioService = require('../services/portfolio');
+const investmentsService = require('../services/investments');
 const isAuthenticated = require('../middlewares/isAuthenticated');
 const errors = require('../helpers/errors');
 const jwt = require('jsonwebtoken');
@@ -55,6 +56,19 @@ const publicProfileDataTransferObject = (user,articles,portfolios,inInMyNetwork)
     };
 };
 
+const myProfileDataTransferObject = (user,articles,portfolios,investments,inInMyNetwork) => {
+    return {
+        privacy: 'public',
+        name:user.name,
+        surname:user.surname,
+        location: user.location,
+        articles: articles,
+        portfolios: portfolios,
+        investments: investments,
+        isInMyNetwork: inInMyNetwork
+    };
+};
+
 router.get('/:id', async (req, res) => {
     try {
         const token = getTokenFromHeader(req);
@@ -77,8 +91,11 @@ router.get('/:id', async (req, res) => {
             const user = await userService.getById(id);
             const articles = await articleService.getByUserId(id);
             const portfolios = await portfolioService.getByUserId(id);
+            const investments = await investmentsService.getByUserId(id);
 
-            if(user.privacy === 'public'){
+            if(req.params.id == userId){
+                res.status(200).send(myProfileDataTransferObject(user,articles,portfolios,investments,isInMyNetwork(mainUser,user)));
+            }else if(user.privacy === 'public'){
                 res.status(200).send(publicProfileDataTransferObject(user,articles,portfolios,isInMyNetwork(mainUser,user)));
             }else{
                 res.status(200).send(privateProfileDataTransferObject(user,articles,isInMyNetwork(mainUser,user)));
