@@ -94,7 +94,7 @@
             android:layout_marginEnd="@dimen/text_margin">
 
             <EditText
-                android:id="@+id/comment_edittext"
+                android:id="@+id/te_comment_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -104,12 +104,12 @@
                 android:inputType="textMultiLine" />
 
             <ImageButton
-                android:id="@+id/add_comment_button"
+                android:id="@+id/te_add_comment_button"
                 style="@android:style/Widget.Holo.Light.ImageButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_alignEnd="@id/comment_edittext"
-                android:layout_alignBottom="@id/comment_edittext"
+                android:layout_alignEnd="@id/te_comment_edittext"
+                android:layout_alignBottom="@id/te_comment_edittext"
                 android:layout_marginEnd="1dp"
                 android:layout_marginBottom="5dp"
                 android:background="@android:color/transparent"
@@ -119,7 +119,7 @@
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/comments_title_textview"
+            android:id="@+id/te_comments_title_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/text_margin"

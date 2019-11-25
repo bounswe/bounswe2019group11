@@ -66,6 +66,10 @@
     <string name="no_following_message">This user has no following.</string>
     <string name="no_pending_follower_message">You don\'t have pending follower request.</string>
     <string name="no_pending_following_message">You don\'t have pending following request.</string>
+
+    <string name="stock">STOCK</string>
+    <string name="currency">CURRENCY</string>
+
 </resources>
 
 

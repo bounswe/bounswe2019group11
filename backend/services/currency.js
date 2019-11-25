@@ -79,7 +79,6 @@ const STAGES = {
             code: 1,
             name: 1,
             rate: 1,
-            _id: 0
         }
     },
     GET_PREDICTIONS: {
@@ -188,7 +187,7 @@ const SUPPORTED_CURRENCIES = new Set([
 module.exports.getAll = async () => {
     return await Currency
         .find()
-        .select('code name rate -_id')
+        .select('code name rate')
         .exec();
 };
 
@@ -212,7 +211,7 @@ module.exports.getIntraday = async (code) => {
     }
     return await Currency
         .findOne({code})
-        .select('code name rate intradayRates -_id')
+        .select('code name rate intradayRates')
         .exec();
 };
 
@@ -223,7 +222,7 @@ module.exports.getLastWeek = async (code) => {
     }
     let currency = await Currency
         .findOne({code})
-        .select('code name rate dailyRates -_id')
+        .select('code name rate dailyRates')
         .exec();
     currency = currency.toObject();
     const dailyRateKeys = Object.keys(currency.dailyRates);
@@ -244,7 +243,7 @@ module.exports.getLastMonth = async (code) => {
     }
     let currency = await Currency
         .findOne({code})
-        .select('code name rate dailyRates -_id')
+        .select('code name rate dailyRates')
         .exec();
     currency = currency.toObject();
     const dailyRateKeys = Object.keys(currency.dailyRates);
@@ -265,7 +264,7 @@ module.exports.getLast100 = async (code) => {
     }
     return await Currency
         .findOne({code})
-        .select('code name rate dailyRates -_id')
+        .select('code name rate dailyRates')
         .exec();
 };
 
@@ -276,7 +275,7 @@ module.exports.getLastFull = async (code) => {
     }
     return await Currency
         .findOne({code})
-        .select('-__v -_id')
+        .select('-__v')
         .exec();
 };
 
