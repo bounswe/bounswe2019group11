@@ -3,10 +3,12 @@ import ProfileCard from './ProfileCard'
 import {Row, Col, Card, Button} from 'react-bootstrap'
 import {instanceOf} from 'prop-types'
 import {withCookies, Cookies} from 'react-cookie'
-import {getRequest as get} from '../helpers/request'
+import {getRequest as get, postRequest as post} from '../helpers/request'
 import ArticlePreview from '../Article/ArticlePreview'
 import './UserProfile.css'
 import Portfolio from './Portfolio'
+import { getFormattedAddress } from '../helpers/geocoder'
+import {Redirect} from 'react-router-dom'
 
 class UserProfile extends React.Component {
   // const [cookies, setCookie, removeCookie] = useCookies('user', 'userToken')
@@ -19,49 +21,116 @@ class UserProfile extends React.Component {
       user: {name: "", surname: "", location: {latitude: 0, longitude: 0}, email: ""},
       articles: [],
       portfolios: [],
+      formattedAddress: "",
+      privacy: "public",
+      inMyNetwork: false,
+      isMe: false,
       loading: false
+    }
+    this.geocodeLocation = this.geocodeLocation.bind(this)
+    this.follow = this.follow.bind(this)
+  }
+
+  async geocodeLocation(loc) {
+    var response = await getFormattedAddress(loc)
+    if (response.status !== 'error') {
+      this.setState({formattedAddress: response.result})
+    }
+    else {
+      this.setState({formattedAddress: ""})
+      console.log("Error: " + response.message)
     }
   }
 
   componentDidMount() {
     const {cookies} = this.props
     const userToken = cookies.get('userToken')
-    let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/" + this.state.userId
+    let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/other/" + this.state.userId
     this.setState({loading: true})
     get({
       url: requestUrl,
       success: (data) => {
-        console.log(data)
-        this.setState({user: data, articles: data.articles, portfolios: data.portfolios})
-        this.setState({loading: false})
+        if (data.isMe) {
+          this.setState({isMe: true})
+        }
+        else {
+          this.setState({
+            user: data,
+            articles: data.articles,
+            portfolios: data.portfolios,
+            privacy: data.privacy,
+            inMyNetwork: data.isInMyNetwork
+          })
+          this.setState({loading: false})
+          this.geocodeLocation(data.location)
+        }
       },
       authToken: userToken
     })
   }
+
+  follow() {
+    const {cookies} = this.props
+    const userToken = cookies.get('userToken')
+    const user = cookies.get('user')
+    if (!userToken) {
+      alert("You must be logged in to follow other users");
+    }
+    else {
+      let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/other/" + this.state.userId + "/follow"
+      post({
+        url: requestUrl,
+        success: (resp) => {
+          console.log(resp)
+          this.setState({inMyNetwork: true})
+        },
+        authToken: userToken
+      })
+    }
+  }
+
   render() {
-    return (
+    if (this.state.isMe) {
+      return <Redirect to="/profile"/>
+    }
+    else
+      return (
     <>
       <Row>
         <Col md={{span: 6}}>
-          <ProfileCard isMe={false} user={this.state.user}/>
-          <Button style={{marginLeft: 10, width: 120}}>Follow</Button>
+          <ProfileCard isMe={false} user={this.state.user} address={this.state.formattedAddress}/>
+          <Button style={{marginLeft: 10, width: 120}} onClick={() => this.follow()}>
+          {
+            this.state.inMyNetwork === true ? "Unfollow" : "Follow"
+          }
+          </Button>
         </Col>
         <Col md={{span: 6}}>
-          <h3>Porfolios:</h3>
-          <Row>
-            <Col>
-              {this.state.portfolios.map(portfolio => (
-                <Portfolio key={portfolio._id} portfolio={portfolio} />
-              ))}
-            </Col>
-          </Row>
+          {
+            this.state.privacy === "public" ?
+            <>
+            <h3>Porfolios:</h3>
+            <Row>
+              <Col>
+                {this.state.portfolios.map(portfolio => (
+                  <Portfolio key={portfolio._id} portfolio={portfolio} />
+                ))}
+              </Col>
+            </Row>
+            </>
+            :
+            <div>
+              <h3 style={{color: "blue"}}>User is Private</h3>
+              <p>Follow the user to see their full profile</p>
+            </div>
+          }
         </Col>
       </Row>
       <Row style={{marginTop: 10}}>
         <Col>
           <Card  >
             <Card.Title style={{textAlign: "center"}}>
-              <h3>My Articles</h3>
+              <h3>User Articles</h3>
               <hr/>
             </Card.Title>
             <Card.Body className="my-articles container-fluid">

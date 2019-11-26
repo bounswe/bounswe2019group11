@@ -6,6 +6,9 @@ database.establishConnection().then(r => console.log(new Date() + ' Database con
 const CronJob = require('cron').CronJob;
 const request = require('request-promise');
 const Currency = require('../models/currency');
+const Prediction = require('../models/prediction');
+const predictionHelper = require('../helpers/prediction');
+const User = require('../models/user');
 
 const BASE_CURRENCY = 'USD';
 
@@ -58,15 +61,14 @@ const intradayRatesJob = new CronJob('0 */5 * * * *', async () => {
                 const rate = intradayRates[Object.keys(intradayRates)[0]]['4. close'];
                 await Currency.updateOne({code}, {intradayRates, rate});
                 console.log(new Date() + ' Intraday rates and rate are updated for ' + code);
-            }
-            else {
-                console.log(new Date() + ' Request to AlphaVantage failed.' + response);
+            } else {
+                console.log(new Date() + ' Request to AlphaVantage failed.' + JSON.stringify(response));
             }
         } catch (err) {
-            console.log(new Date() + ' Intraday rates and rate could not be updated for ' + code + '. Err: '+  err);
+            console.log(new Date() + ' Intraday rates and rate could not be updated for ' + code + '. Err: ' + err);
         }
     }
-});
+}, null, false, 'Europe/Istanbul', null, false);
 
 
 const dailyRatesJob = new CronJob('00 00 00 * * *', async () => {
@@ -92,13 +94,58 @@ const dailyRatesJob = new CronJob('00 00 00 * * *', async () => {
                 await Currency.updateOne({code}, {dailyRates});
                 console.log(new Date() + ' Daily rates are updated for ' + code);
             } else {
-                console.log(new Date() + ' Request to AlphaVantage failed. ' + response);
+                console.log(new Date() + ' Request to AlphaVantage failed. ' + JSON.stringify(response));
             }
         } catch (err) {
-            console.log(new Date() + ' Daily rates could not be updated for ' + code + '. Err: '+ err);
+            console.log(new Date() + ' Daily rates could not be updated for ' + code + '. Err: ' + err);
         }
     }
-});
+}, null, false, 'Europe/Istanbul', null, false);
 
+
+const predictionJob = new CronJob('00 00 00 * * *', async () => {
+    try {
+        const predictions = await Prediction.find();
+
+        const currencyCache = new Map();
+        for (let i = 0; i < predictions.length; i++) {
+            const prediction = predictions[i];
+            if (prediction.equipmentType === predictionHelper.EQUIPMENT_TYPE.CURRENCY) {
+                let currentRate;
+                const currencyCode = prediction.currencyCode.toUpperCase();
+                if (currencyCache.has(currencyCode)) {
+                    currentRate = currencyCache.get(currencyCode);
+                } else {
+                    currentRate = await Currency
+                        .findOne({code: currencyCode})
+                        .select('rate -_id')
+                        .exec();
+                    currentRate = currentRate.rate;
+                    currencyCache.set(currencyCode, currentRate);
+                }
+                const obj = {
+                    $inc: {
+                        totalPredictionCount: 1,
+                    }
+                };
+                if ((prediction.snapshot <= currentRate
+                        && prediction.prediction === predictionHelper.PREDICTION.INCREASE) ||
+                    (prediction.snapshot > currentRate
+                        && prediction.prediction === predictionHelper.PREDICTION.DECREASE)) {
+                    obj['$inc'].successfulPredictionCount = 1;
+                }
+                await User.updateOne({_id: prediction.userId}, obj);
+            }
+            await Prediction.deleteOne({_id: prediction._id});
+            console.log('Prediction successfully made for ' + prediction.userId);
+        }
+    } catch (err) {
+        console.log(new Date() + ' Predictions cannot be processed. Err: ' + err);
+    }
+
+}, null, false, 'Europe/Istanbul', null, false);
+
+
+predictionJob.start();
 intradayRatesJob.start();
 dailyRatesJob.start();

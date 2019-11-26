@@ -8,4 +8,6 @@
     <color name="black_overlay">#66000000</color>
     <color name="chart_red">#fa3807</color>
     <color name="chart_green">#66ff78</color>
+    <color name="accept_green">#a9e879</color>
+    <color name="decline_red">#fa0025</color>
 </resources>

@@ -91,4 +91,11 @@ module.exports = {
     INVALID_CURRENCY_CODE: (cause) => {
         return PapelError('InvalidCurrencyCode', 'Given currency code is not valid.', cause);
     },
+    ALREADY_FOLLOWED: (cause) => {
+        return PapelError('FollowedAlready', 'You are already following this user.', cause);
+    },
+    INVALID_PRIVACY_OPTION: (cause) => {
+        return PapelError('InvalidPrivacyOption', 'Privacy options should be either \'public\' or \'private\'', cause);
+    },
+
 };

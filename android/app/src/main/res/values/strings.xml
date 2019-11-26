@@ -22,7 +22,8 @@
     <string name="test_usermail">hasan@gmail.com</string>
     <string name="test_userdescription">Evet kefenin cebi yoktur ama bütün elbiselerin cebi vardır.Mal da yalan mülk de yalan, var biraz da sen oyalan.</string>
     <string name="follow_button_text">Follow</string>
-    <string name="following_button_text">Following</string>
+    <string name="following_button_text">Stop Follow</string>
+    <string name="pending_follow_button_text">Pending</string>
     <string name="public_profile_text">Public Profile</string>
     <string name="private_profile_text">Private Profile</string>
     <string name="test_title">Title</string>
@@ -61,6 +62,15 @@
     <string name="no_article_message">This user has no articles written.</string>
     <string name="private_profile_message">This user\'s profile is private.</string>
     <string name="no_portfolio_message">This user has no portfolios added.</string>
+    <string name="no_followers_message">This user has no followers.</string>
+    <string name="no_following_message">This user has no following.</string>
+    <string name="no_pending_follower_message">You don\'t have pending follower request.</string>
+    <string name="no_pending_following_message">You don\'t have pending following request.</string>
+    <string name="no_comments">There are no comments yet. Be the first one to comment!</string>
+    <string name="no_predictions">There are no predictions yet</string>
+    <string name="stock">STOCK</string>
+    <string name="currency">CURRENCY</string>
+
 </resources>
 
 

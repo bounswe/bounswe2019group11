@@ -15,59 +15,78 @@ import EconEvents from './EconEvent/EconEvents';
 import Validation from './Register/Validation';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import { useCookies, CookiesProvider } from 'react-cookie';
-import { faBell,faExclamation, faPlus,faThumbsUp,faThumbsDown,faSignInAlt, faSignOutAlt, faUser, faNewspaper, faCalendarWeek, faHome} from '@fortawesome/free-solid-svg-icons';
+import { faBell,faExclamation, faPlus,faThumbsUp,faThumbsDown,faSignInAlt, faSignOutAlt, faUser, faNewspaper, faCalendarWeek, faHome, faCheck, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-
-import {Dropdown, Badge, Row, Col} from 'react-bootstrap';
+import {postRequest as post} from './helpers/request';
+import {Dropdown, Badge, Row, Col, Button} from 'react-bootstrap';
 
 
 function NavBar(props) {
-  const [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken'])
+  const [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken', 'pendingRequests'])
 
   var profileBtn, logoutBtn,notificationBtn, registerBtn, loginBtn;
 
   const [loggedIn, login] = useState(!!cookies.userToken);
+  const [notificationCount, setNotificationCount] = useState(0);
+
+  const {acceptFollowRequest, rejectFollowRequest} = props;
 
   const logout = function () {
     console.log(cookies);
     removeCookie('userToken');
     removeCookie('user');
+    removeCookie('pendingRequests');
     login(false);
   }
   if(!!loggedIn) {
   profileBtn = <li><Link to="/profile"> <FontAwesomeIcon name="User Icon" icon={faUser} />&nbsp;
   Profile</Link></li>
     logoutBtn = <li><Link to="/" onClick={() => logout()}><FontAwesomeIcon name="Log Out Icon" icon={faSignOutAlt} />&nbsp;Log Out</Link></li>;
-  
-  notificationBtn = <li><Link to="/profile"> 
-    
-  <Dropdown >
-    <Dropdown.Toggle id="dropDown" style={{color:"black" ,fontWeight:"bold"}}>
-    <FontAwesomeIcon name="Bell Icon" icon={faBell} />&nbsp;<Badge >9</Badge>
-    <span className="sr-only">unread messages</span>
-    </Dropdown.Toggle>
 
-    <Dropdown.Menu>
-      <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-      <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-      <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-    </Dropdown.Menu>
-  </Dropdown>
+    if (!cookies.pendingRequests) setCookie('pendingRequests', []);
 
-  
-  </Link></li>
-  
+  notificationBtn =
+  (<li>
+    <Dropdown >
+      <Dropdown.Toggle id="dropDown" style={{color:"black" ,fontWeight:"bold"}}>
+      <FontAwesomeIcon name="Bell Icon" icon={faBell} />&nbsp;<Badge >{cookies.pendingRequests?cookies.pendingRequests.length : 0}</Badge>
+      </Dropdown.Toggle>
+
+      <Dropdown.Menu>
+        {
+          cookies.pendingRequests? cookies.pendingRequests.map(user => (
+          <Dropdown.Item className="pending">
+            {user.name} {user.surname} wants to follow you
+            <br/>
+            <Row>
+              <Col xs={{span: 4}} onClick={() => acceptFollowRequest(user._id)}>
+                <FontAwesomeIcon icon={faCheck} className="clickable success" />
+                {" Accept"}
+              </Col>
+              <Col xs={{span: 4, offset: 2}} onClick={() => rejectFollowRequest(user._id)}>
+                <FontAwesomeIcon icon={faTimes} className="clickable danger" />
+                {" Reject"}
+              </Col>
+            </Row>
+          </Dropdown.Item>
+          ))
+          :
+          ""
+        }
+      </Dropdown.Menu>
+    </Dropdown>
+  </li>)
+
 
 
   }
-  
+
   else {
     loginBtn = <li><Link to="/login" style={{paddingLeft:0}}><FontAwesomeIcon name="Login Icon" icon={faSignInAlt} />&nbsp;Login</Link></li>;
-    
+
   }
   return (
   <Router>
-    
     <ul id="menu">
       <Row>
       <Col md={{span:7, offset:1}}>
@@ -87,7 +106,7 @@ function NavBar(props) {
       </Col>
       </Row>
     </ul>
-    
+
     <CookiesProvider>
       <div className="container">
         <Switch>
@@ -109,11 +128,41 @@ function NavBar(props) {
 }
 
 function App() {
-  let [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken']);
+  let [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken', 'pendingRequests']);
 
+  function acceptFollow(id) {
+    if(!!cookies.userToken) {
+      let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/other/" + id + "/accept"
+      post({
+        url: requestUrl,
+        success: (data) => {
+          setCookie('pendingRequests', data.followerPending)
+        },
+        authToken: cookies.userToken
+      })
+    }
+    else {
+      console.log("Cannot accept before logging in")
+    }
+  }
+  function rejectFollow(id) {
+    if(!!cookies.userToken) {
+      let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/other/" + id + "/decline"
+      post({
+        url: requestUrl,
+        success: (data) => {
+          setCookie('pendingRequests', data.followerPending)
+        },
+        authToken: cookies.userToken
+      })
+    }
+    else {
+      console.log("Cannot reject before logging in")
+    }
+  }
 
   return (
-    <NavBar />
+    <NavBar acceptFollowRequest={acceptFollow} rejectFollowRequest={rejectFollow}/>
   );
 }
 

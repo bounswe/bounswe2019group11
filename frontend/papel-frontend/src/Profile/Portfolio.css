@@ -31,3 +31,16 @@
 .portfolio .drawer {
   background-color: #cec;
 }
+
+.myScroller {
+  background-color: #fff;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+}
+.myScroller::-webkit-scrollbar {
+  width: 5px;
+  background-color: #f0f0f0;
+}
+.myScroller::-webkit-scrollbar-thumb {
+  background: #cdcdcd;
+}
