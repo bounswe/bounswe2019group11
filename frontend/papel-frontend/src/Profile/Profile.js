@@ -29,17 +29,20 @@ class Profile extends React.Component {
   componentDidMount() {
     const {cookies} = this.props
     const userToken = cookies.get('userToken')
-    const userId = cookies.get('user')._id
-    let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/" + userId
-    getRequest({
-      url: requestUrl,
-      success: (data) => {
-        console.log(data)
-        this.setState({articles: data.articles, portfolios: data.portfolios})
-      },
-      authToken: userToken
-    })
-    this.geocodeLocation(cookies.get('user').location)
+    if (!!userToken) {
+      const userId = cookies.get('user')._id
+      let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/myprofile"
+      getRequest({
+        url: requestUrl,
+        success: (data) => {
+          console.log(data)
+          this.setState({articles: data.articles, portfolios: data.portfolios})
+          cookies.set('pendingRequests', data.followerPending)
+        },
+        authToken: userToken
+      })
+      this.geocodeLocation(cookies.get('user').location)
+    }
   }
 
   async geocodeLocation(loc) {

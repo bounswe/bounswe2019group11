@@ -45,7 +45,7 @@ class UserProfile extends React.Component {
   componentDidMount() {
     const {cookies} = this.props
     const userToken = cookies.get('userToken')
-    let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/" + this.state.userId
+    let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/other/" + this.state.userId
     this.setState({loading: true})
     get({
       url: requestUrl,
@@ -77,12 +77,12 @@ class UserProfile extends React.Component {
       alert("You must be logged in to follow other users");
     }
     else {
-      let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/" + this.state.userId + "/follow"
+      let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/other/" + this.state.userId + "/follow"
       post({
         url: requestUrl,
         success: (resp) => {
           console.log(resp)
-          this.setState({isInMyNetwork: true})
+          this.setState({inMyNetwork: true})
         },
         authToken: userToken
       })
@@ -99,7 +99,11 @@ class UserProfile extends React.Component {
       <Row>
         <Col md={{span: 6}}>
           <ProfileCard isMe={false} user={this.state.user} address={this.state.formattedAddress}/>
-          <Button style={{marginLeft: 10, width: 120}} onClick={() => this.follow()}>Follow</Button>
+          <Button style={{marginLeft: 10, width: 120}} onClick={() => this.follow()}>
+          {
+            this.state.inMyNetwork === true ? "Unfollow" : "Follow"
+          }
+          </Button>
         </Col>
         <Col md={{span: 6}}>
           {

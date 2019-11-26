@@ -19,12 +19,12 @@ background-attachment: fixed;
 #menu {
   margin: 0;
   margin-bottom: 20px;
-  background-color: #3DA544; 
+  background-color: #3DA544;
 }
 
 #dropDown {
   margin: 0;
-  background-color: #3DA544; 
+  background-color: #3DA544;
   border: 0px;
 }
 #dropDown a{
@@ -35,14 +35,14 @@ background-attachment: fixed;
 #dropDown:active{
 
   margin: 0;
-  background-color: #3DA544; 
+  background-color: #3DA544;
   border: 0px;
 }
 
 #dropDown:hover{
-  
+
   margin: 0;
-  background-color: #3DA544; 
+  background-color: #3DA544;
   border: 0px;
 }
 ion-icon {
@@ -82,4 +82,18 @@ ion-icon {
 .btn:hover {
   background-color: #F6B36C;
   box-shadow: none;
+}
+
+.dropdown-item:hover {
+  background-color: #66bb6a;
+  color: black !important;
+  cursor: default;
+}
+.pending .clickable:hover {
+  cursor: pointer;
+}
+.pending .success:hover {
+  color: green;
+}.pending .danger:hover {
+  color: red;
 }
