@@ -101,7 +101,7 @@ class UserProfile extends React.Component {
           <ProfileCard isMe={false} user={this.state.user} address={this.state.formattedAddress}/>
           <Button style={{marginLeft: 10, width: 120}} onClick={() => this.follow()}>
           {
-            this.state.inMyNetwork === true ? "Unfollow" : "Follow"
+            this.state.inMyNetwork === "true" ? "Unfollow" : "Follow"
           }
           </Button>
         </Col>

@@ -136,7 +136,8 @@ function App() {
       post({
         url: requestUrl,
         success: (data) => {
-          setCookie('pendingRequests', data.followerPending)
+          var pending = cookies.user.followerPending || []
+          setCookie('pendingRequests', [])
         },
         authToken: cookies.userToken
       })
@@ -151,7 +152,7 @@ function App() {
       post({
         url: requestUrl,
         success: (data) => {
-          setCookie('pendingRequests', data.followerPending)
+          setCookie('pendingRequests', cookies.user.followerPending)
         },
         authToken: cookies.userToken
       })
