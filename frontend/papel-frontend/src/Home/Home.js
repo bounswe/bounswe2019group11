@@ -1,6 +1,8 @@
 import React from 'react';
 import USD from "./USD";
 import CurencyChart from "./CurencyChart"
+import StockChart1 from "./StockChart1";
+import StockChart2 from "./StockChart2";
 import {Editor, EditorState, RichUtils} from 'draft-js';
 import 'draft-js/dist/Draft.css';
 import './Home.css';
@@ -14,11 +16,15 @@ import { faPlus,faThumbsUp,faThumbsDown } from '@fortawesome/free-solid-svg-icon
 class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {loading: false, redirect: false, articles: [], previewer1article:"active",previewer1event:"",previewer2USD:"active",previewer2EUR:""};
+    this.state = {loading: false, redirect: false, articles: [], previewer1article:"active",previewer1event:"",previewer2USD:"active",previewer2EUR:"",previewer3stock1:"active",previewer3stock2:""};
     this.handleArticleClick=this.handleArticleClick.bind(this);
     this.handleEventClick=this.handleEventClick.bind(this);
     this.handleUSDClick=this.handleUSDClick.bind(this);
     this.handleEURClick=this.handleEURClick.bind(this);
+
+    this.handleStock1Click=this.handleStock1Click.bind(this);
+    this.handleStock2Click=this.handleStock2Click.bind(this);
+
 
   }
   componentDidMount() {
@@ -47,8 +53,6 @@ class Home extends React.Component {
        });
   }
 
-
-
   handleUSDClick(event) {
     this.setState({previewer2EUR:""});
     this.setState({previewer2USD:"active"});
@@ -62,6 +66,24 @@ class Home extends React.Component {
     this.setState({previewer2USD:""});
     Array.from(document.getElementsByClassName("EURSection")).forEach((item) => { item.removeAttribute('hidden'); });
     Array.from(document.getElementsByClassName("USDSection")).forEach((item) => {
+
+      item.setAttribute('hidden', null);
+      });
+  }
+  handleStock1Click(event) {
+    this.setState({previewer3stock1:"active"});
+    this.setState({previewer3stock2:""});
+    Array.from(document.getElementsByClassName("Stock1")).forEach((item) => { item.removeAttribute('hidden'); });
+    Array.from(document.getElementsByClassName("Stock2")).forEach((item) => {
+      item.setAttribute('hidden', null);
+      });
+  }
+  handleStock2Click(event) {
+    this.setState({previewer3stock1:""});
+    this.setState({previewer3stock2:"active"});
+    Array.from(document.getElementsByClassName("Stock2")).forEach((item) => { item.removeAttribute('hidden'); });
+    Array.from(document.getElementsByClassName("Stock1")).forEach((item) => {
+
       item.setAttribute('hidden', null);
       });
   }
@@ -83,7 +105,9 @@ class Home extends React.Component {
               </ul>
             </div>
 
+
             <div  className="card-body">
+
             <div  className="ArticleSection">
                 <h5 className="card-title">3 Newest Articles</h5>
                 <hr/>
@@ -110,31 +134,62 @@ class Home extends React.Component {
             </div>
           </div>
         </Col>
+
         <Col md={{span: 6}}>
           <div name="v2" className="card text-center">
             <div className="card-header">
               <ul className="nav nav-tabs card-header-tabs">
                 <li className="nav-item" >
                   <a className={"nav-link "+this.state.previewer2USD} onClick={this.handleUSDClick} href="#">USD</a>
+
                 </li>
                 <li className="nav-item">
                   <a className={"nav-link "+this.state.previewer2EUR}  onClick={this.handleEURClick} href="#">EUR</a>
                 </li>
               </ul>
             </div>
+
             <div  className="card-body">
               <div  className="USDSection">
                 <USD currency={"USD"}></USD >
               </div>
               <div  hidden className="EURSection">
                 <div className="card-text">
+
                 <CurencyChart currency={"EUR"}></CurencyChart >
                 </div>
               </div>
             </div>
           </div>
+
+          <div name="v3" class="card text-center">
+            <div class="card-header">
+              <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item" >
+                  <a class={"nav-link "+this.state.previewer3stock1} onClick={this.handleStock1Click} href="#">EMB</a>
+                </li>
+                <li class="nav-item">
+                  <a class={"nav-link "+this.state.previewer3stock2}  onClick={this.handleStock2Click} href="#">DIS</a>
+                </li>
+              </ul>
+            </div>
+
+            <div  class="card-body">
+              <div  className="Stock1">
+
+                <StockChart1 stock={"EMB"}></StockChart1 >
+              </div>
+              <div  hidden className="Stock2">
+
+                <p class="card-text">
+                <StockChart2 stock={"DIS"}></StockChart2 >
+                </p>
+              </div>
+            </div>
+          </div>
         </Col>
       </Row>
+
     );
   }
 }

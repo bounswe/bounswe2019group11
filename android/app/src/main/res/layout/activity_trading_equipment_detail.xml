@@ -19,5 +19,6 @@
         android:id="@+id/trading_equipment_comments"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listheader="@layout/trading_equipment_header" />
+        tools:listheader="@layout/trading_equipment_header"
+        android:visibility="invisible"/>
 </RelativeLayout>

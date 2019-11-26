@@ -9,10 +9,6 @@ const eventSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    comment: {
-        type: Array,
-        ref: 'Comment'
-    },
     StartDate: {
         type: Date,
         required: true

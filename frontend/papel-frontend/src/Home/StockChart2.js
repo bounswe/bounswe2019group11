@@ -5,14 +5,14 @@ import {Card} from 'react-bootstrap'
 import CanvasJSReact from '../canvasjs/canvasjs.react';
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-function CurencyChart({currency}) {
+function StockChart2({stock}) {
     const options = {
       animationEnabled: true,
       title:{
-        text: currency+"/TRY"
+        text: "Walt Disney Company (The) Common Stock"
       },
       axisY : {
-        title: currency,
+        title: stock+"/USD",
         includeZero: false
       },
       axisX : {
@@ -25,19 +25,19 @@ function CurencyChart({currency}) {
       data: [{
         type: "area",
         color : "#3DA544",
-        name: "TRY",
+        name: "Stock2",
         showInLegend: false,
         dataPoints: [
-          {x: new Date(2019,10,22),	y: 6.2983},
-          {x: new Date(2019,10,21),	y: 6.2992},
-          {x: new Date(2019,10,20),	y: 6.3116},
-          {x: new Date(2019,10,19),	y: 6.3139},
-          {x: new Date(2019,10,18),	y: 6.3519},
-          {x: new Date(2019,10,15),	y: 6.3498},
-          {x: new Date(2019,10,14),	y: 6.3356},
-          {x: new Date(2019,10,13),	y: 6.3183},
-          {x: new Date(2019,10,12),	y: 6.3605},
-          {x: new Date(2019,10,11),	y: 6.3697}
+          {x: new Date(2019,10,22),	y: 148.29},
+          {x: new Date(2019,10,21),	y: 146.9},
+          {x: new Date(2019,10,20),	y: 146.93},
+          {x: new Date(2019,10,19),	y: 148.38},
+          {x: new Date(2019,10,18),	y: 147.65},
+          {x: new Date(2019,10,15),	y: 144.67},
+          {x: new Date(2019,10,14),	y: 147.15},
+          {x: new Date(2019,10,13),	y: 148.72},
+          {x: new Date(2019,10,12),	y: 138.58},
+          {x: new Date(2019,10,11),	y: 136.74}
         ]
       }]
   };
@@ -55,4 +55,4 @@ function CurencyChart({currency}) {
 
 
 
-export default CurencyChart;
+export default StockChart2;

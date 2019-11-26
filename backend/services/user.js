@@ -19,7 +19,18 @@ module.exports.getById = async (_id) => {
     if (!mongoose.Types.ObjectId.isValid(_id)) {
         throw errors.USER_NOT_FOUND();
     }
-    const user = await User.findOne({_id});
+    const user = await User.findOne({_id})
+        .populate({
+            path:'following.userId',
+            model:'User',
+            select: 'id name surname email'
+        })
+        .populate({
+            path:'followers.userId',
+            model:'User',
+            select: 'id name surname email'
+        })
+        .exec();
     if (!user) {
         throw errors.USER_NOT_FOUND();
     }
@@ -53,4 +64,36 @@ module.exports.resetPassword = async (token, password) => {
     user.password = password;
     await user.save();
     await LostPasswordToken.deleteOne({token});
+};
+
+module.exports.getSocialNetworkById= async (_id) => {
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+        throw errors.USER_NOT_FOUND();
+    }
+     return  User.findOne({_id})
+        .populate({
+            path:'following.userId',
+            model:'User',
+            select: 'id name surname email'
+        })
+         .populate({
+             path:'followers.userId',
+             model:'User',
+             select: 'id name surname email'
+         })
+        .exec();
+};
+module.exports.updatePrivacy = async (userId, privacy) => {
+    if (!(mongoose.Types.ObjectId.isValid(userId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    if (!(privacy === "public" || privacy === "private")) {
+        throw errors.INVALID_PRIVACY_OPTION();
+    }
+    let userUpdate = await User.findOne({_id:userId});
+    if (!userUpdate) {
+        throw errors.USER_NOT_FOUND();
+    }
+    userUpdate.privacy = privacy;
+    return await userUpdate.save();
 };
