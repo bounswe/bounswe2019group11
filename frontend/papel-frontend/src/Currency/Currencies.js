@@ -155,19 +155,22 @@ class Currencies extends React.Component {
   </Card.Body>
   
   <Card.Body hidden id="2">
-    Table 2
+    <CurrencyTable code={c1.code} timeRange={"last-week"}></CurrencyTable>
   </Card.Body>
   
   <Card.Body hidden id="3">
-    Table 3
+    <CurrencyTable code={c2.code} timeRange={"last-week"}></CurrencyTable>
+  
   </Card.Body>
   
   <Card.Body hidden id="4">
-    Table 4
+    <CurrencyTable code={c3.code} timeRange={"last-week"}></CurrencyTable>
+  
   </Card.Body>
   
   <Card.Body hidden id="5">
-    Table 5
+    <CurrencyTable code={c4.code} timeRange={"last-week"}></CurrencyTable>
+  
   </Card.Body>
 </Card>
     </div>
