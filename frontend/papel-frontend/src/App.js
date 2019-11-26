@@ -10,13 +10,14 @@ import UserProfile from './Profile/UserProfile';
 import TradingEquipment from './Trading/TradingEquipment';
 import Article from './Article/Article';
 import Articles from './Article/Articles';
+import Currencies from "./Currency/Currencies";
 import AddArticle from './Article/AddArticle';
 import EconEvent from './EconEvent/EconEvent';
 import EconEvents from './EconEvent/EconEvents';
 import Validation from './Register/Validation';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import { useCookies, CookiesProvider } from 'react-cookie';
-import { faBell,faExclamation, faPlus,faThumbsUp,faThumbsDown,faSignInAlt, faSignOutAlt, faUser, faNewspaper, faCalendarWeek, faHome} from '@fortawesome/free-solid-svg-icons';
+import { faBell,faExclamation, faPlus,faThumbsUp,faThumbsDown,faSignInAlt, faSignOutAlt, faUser, faNewspaper, faCalendarWeek, faHome, faMoneyBill, faCoins, faMoneyBillWave} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import {Dropdown, Badge, Row, Col} from 'react-bootstrap';
@@ -81,6 +82,8 @@ function NavBar(props) {
 
       <li><Link to="/articles"><FontAwesomeIcon name="Article Icon" icon={faNewspaper} />&nbsp;Articles</Link></li>
       <li><Link to="/events"><FontAwesomeIcon name="Events Icon" icon={faCalendarWeek} />&nbsp;Events</Link></li>
+      <li><Link to="/currencies"><FontAwesomeIcon name="Money Icon" icon={faMoneyBillWave} />&nbsp;Currencies</Link></li>
+      
       </Col><Col md={{span:4}}>
       {notificationBtn}
       {profileBtn}
@@ -101,6 +104,7 @@ function NavBar(props) {
           <Route path="/event/:id" component={EconEvent} />
           <Route path="/validation"><Validation /></Route>
           <Route path="/articles"><Articles /></Route>
+          <Route path="/currencies"><Currencies /></Route>
           <Route path="/addarticle"><AddArticle /></Route>
           <Route path="/events"><EconEvents /></Route>
           <Route path="/user/:id" component={UserProfile} />

@@ -20,7 +20,6 @@ function CommentPreview({id, authorId, articleId, author,   body, date, lastEdit
    
     var path = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+articleId+"/comment/"+id;
     deleteRequest({url:path, success:()=>{}, authToken:cookies.userToken });
-    alert("Your comment is deleted");
     setCount(count+1);
   }
   if(loggedIn && (cookies.user._id == authorId)){
