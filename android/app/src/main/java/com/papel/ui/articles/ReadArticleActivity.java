@@ -2,22 +2,18 @@ package com.papel.ui.articles;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -57,6 +53,7 @@ public class ReadArticleActivity extends AppCompatActivity {
     private TextView author;
     private TextView date;
     private TextView voteCount;
+    private TextView noCommentTextView;
     private ImageView profile_pic;
     private ImageButton addCommentButton;
     private ImageButton likeButton;
@@ -96,6 +93,7 @@ public class ReadArticleActivity extends AppCompatActivity {
         cl_primary = ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary));
         cl_black = ColorStateList.valueOf(getResources().getColor(R.color.black));
         getArticleFromEndpoint(getApplicationContext(), articleId);
+        noCommentTextView = header.findViewById(R.id.article_no_comment_textview);
 
 
         final Intent profileIntent = new Intent(this, ProfileActivity.class);
@@ -223,6 +221,11 @@ public class ReadArticleActivity extends AppCompatActivity {
         comments.addAll(comments_list);
         adapter = new ListViewAdapter(getApplicationContext(), comments);
         commentListView.setAdapter(adapter);
+        if(comments_list.size() == 0){
+            noCommentTextView.setVisibility(View.VISIBLE);
+        }else{
+            noCommentTextView.setVisibility(View.GONE);
+        }
         adapter.notifyDataSetChanged();
     }
 
@@ -450,7 +453,7 @@ public class ReadArticleActivity extends AppCompatActivity {
             alertDialog.show();
             return true;
         } else if (item.getItemId() == R.id.delete) {
-            deleteArticleComment(getApplicationContext(), c.getArticleId(), c.getCommentId());
+            deleteArticleComment(getApplicationContext(), c.getContextId(), c.getCommentId());
             return true;
         }
         return false;

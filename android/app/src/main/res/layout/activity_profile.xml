@@ -8,7 +8,6 @@
     android:background="@color/white"
     tools:context=".ui.profile.ProfileActivity">
 
-
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/profileImageCard"
         android:layout_width="wrap_content"
@@ -37,6 +36,7 @@
         android:layout_marginBottom="-32dp"
         android:text="@string/test_username"
         android:textColor="@color/black"
+        android:visibility="invisible"
         android:textStyle="bold" />
 
     <!--<TextView
@@ -75,17 +75,8 @@
 
     </androidx.viewpager.widget.ViewPager>
 
-    <!-- <Switch
-        android:id="@+id/publicPrivateProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Public Profile"
-        android:textOff="@string/public_profile_text"
-        android:textOn="@string/private_profile_text"
-        android:layout_alignTop="@id/user_description"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="56dp"
-        android:visibility="invisible" /> -->
+
+
 
 
 </RelativeLayout>

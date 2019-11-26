@@ -22,8 +22,10 @@ class Home extends React.Component {
     this.handleEventClick=this.handleEventClick.bind(this);
     this.handleUSDClick=this.handleUSDClick.bind(this);
     this.handleEURClick=this.handleEURClick.bind(this);
+
     this.handleStock1Click=this.handleStock1Click.bind(this);
     this.handleStock2Click=this.handleStock2Click.bind(this);
+
 
   }
   
@@ -93,6 +95,7 @@ class Home extends React.Component {
       item.setAttribute('hidden', null);
        });
   }
+
   handleUSDClick(event) {
     this.setState({previewer2EUR:""});
     this.setState({previewer2USD:"active"});
@@ -106,6 +109,7 @@ class Home extends React.Component {
     this.setState({previewer2USD:""});
     Array.from(document.getElementsByClassName("EURSection")).forEach((item) => { item.removeAttribute('hidden'); });
     Array.from(document.getElementsByClassName("USDSection")).forEach((item) => {
+
       item.setAttribute('hidden', null);
       });
   }
@@ -122,6 +126,7 @@ class Home extends React.Component {
     this.setState({previewer3stock2:"active"});
     Array.from(document.getElementsByClassName("Stock2")).forEach((item) => { item.removeAttribute('hidden'); });
     Array.from(document.getElementsByClassName("Stock1")).forEach((item) => {
+
       item.setAttribute('hidden', null);
       });
   }
@@ -129,18 +134,17 @@ class Home extends React.Component {
 
     return (
       <Row >
-<Col md={{span: 6 ,offset:0}}  style ={{marginTop:0,
-  marginBottom: 10,
-  marginRight: 0,
-  marginLeft: 0}}>
-          <div name="v1" class="card text-center">
-            <div class="card-header">
-              <ul class="nav nav-tabs card-header-tabs">
-                <li class="nav-item" >
-                  <a class={"nav-link "+this.state.previewer1article} onClick={this.handleArticleClick} >Articles</a>
+
+        <Col md={{span: 6}}>
+          <div name="v1" className="card text-center">
+            <div className="card-header">
+              <ul className="nav nav-tabs card-header-tabs">
+                <li className="nav-item" >
+                  <a className={"nav-link "+this.state.previewer1article} onClick={this.handleArticleClick} href="#">Articles</a>
                 </li>
-                <li class="nav-item">
-                  <a class={"nav-link "+this.state.previewer1event}  onClick={this.handleEventClick} >Events</a>
+                <li className="nav-item">
+                  <a className={"nav-link "+this.state.previewer1event}  onClick={this.handleEventClick} href="#">Events</a>
+
                 </li>
               </ul>
             </div>
@@ -149,7 +153,7 @@ class Home extends React.Component {
             <div  className="ArticleSection">
                 <h5 class="card-title">The Newest {this.state.articles.length} Articles</h5>
                 <hr/>
-                <p class="card-text">
+                <p className="card-text">
                   {
                     this.state.articles ? this.state.articles.map(article => (
                       <ArticleListPreview key={article._id} articleId={article._id} title={article.title} text={article.body}  />
@@ -161,8 +165,9 @@ class Home extends React.Component {
               </div>
               <div  hidden className="EventSection">
                 <h5 class="card-title">The Newest {this.state.events.length} Events</h5>
+
                 <hr/>
-                <p class="card-text">
+                <p className="card-text">
                   {
                     this.state.events.map(event => (
                       <EventListPreview key={event._id} articleId={event._id} title={event.title} text={event.body} rank={event.rank} date={event.date} country={event.country}/>
@@ -170,11 +175,11 @@ class Home extends React.Component {
                   }
                 </p>
                 <a href={"../events"}>See All...</a>
+
               </div>
             </div>
           </div>
         </Col>
-
 
         <Col md={{span: 6 ,offset:0}}style ={{marginTop:0,
   marginBottom: 10,
@@ -188,20 +193,20 @@ class Home extends React.Component {
                 </li>
                 <li class="nav-item">
                   <a class={"nav-link "+this.state.previewer2EUR}  onClick={this.handleEURClick} >EUR</a>
+
                 </li>
               </ul>
             </div>
 
-            <div  class="card-body">
+            <div  className="card-body">
               <div  className="USDSection">
-
                 <USD currency={"USD"}></USD >
               </div>
               <div  hidden className="EURSection">
+                <div className="card-text">
 
-                <p class="card-text">
                 <CurencyChart currency={"EUR"}></CurencyChart >
-                </p>
+                </div>
               </div>
             </div>
           </div>
@@ -237,9 +242,6 @@ class Home extends React.Component {
             </div>
           </div>
         </Col>
-        
-        
-        
       </Row>
 
     );

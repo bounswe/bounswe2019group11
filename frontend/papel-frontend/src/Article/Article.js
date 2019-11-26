@@ -22,11 +22,10 @@ class Article extends React.Component {
     var userId ="";
     if(loggedIn) {
      userId = cookies.get('user')._id?cookies.get('user')._id:"check get user id";
-      }
-    else {
-      console.log("not logged");
-    } 
-    this.state = {commentsPreview:"", comments:"", loggedIn: loggedIn, userId:userId, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
+
+    }
+    else {console.log("not logged");}
+    this.state = {commentsPreview:"", comments:"",loggedIn: loggedIn, userId:userId, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
     this._article={};
     this._article_vote_type=0;
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -138,7 +137,7 @@ class Article extends React.Component {
           <Card>
             <Card.Body>
               <Card.Title><h1>{article.title}</h1></Card.Title>
-                <a href="http://localhost:3000">{authorLine}</a>
+              {authorLine}
               <hr />
               <Card.Text>{article.body}</Card.Text>
               <hr/>

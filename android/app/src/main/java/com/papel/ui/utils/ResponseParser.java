@@ -1,19 +1,11 @@
 package com.papel.ui.utils;
 
-import android.content.Context;
-import android.util.Log;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.papel.Constants;
 import com.papel.data.Article;
 import com.papel.data.Comment;
+import com.papel.data.Currency;
 import com.papel.data.Event;
 import com.papel.data.Portfolio;
+import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
 import com.papel.data.User;
 
@@ -21,7 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ResponseParser {
@@ -31,13 +22,21 @@ public class ResponseParser {
         try {
             String portfolioId = response.getString("_id");
             String portfolioName = response.getString("name");
-            JSONArray stocks = response.getJSONArray("stocks");
             ArrayList<TradingEquipment> tradingEquipments = new ArrayList<>();
+            JSONArray stocks = response.getJSONArray("stocks");
             for (int j = 0; j < stocks.length(); j++) {
                 JSONObject stockObject = stocks.getJSONObject(j);
-                TradingEquipment tradingEquipment = parseTradingEquipment(stockObject);
-                if(tradingEquipment != null) {
-                    tradingEquipments.add(tradingEquipment);
+                Stock stock = parseStock(stockObject);
+                if(stock != null) {
+                    tradingEquipments.add(stock);
+                }
+            }
+            JSONArray currencies = response.getJSONArray("currencies");
+            for (int j = 0;j<currencies.length(); j++) {
+                JSONObject currencyObject = currencies.getJSONObject(j);
+                Currency currency = parseCurrency(currencyObject);
+                if (currency != null) {
+                    tradingEquipments.add(currency);
                 }
             }
             portfolio = new Portfolio(portfolioId,portfolioName,tradingEquipments);
@@ -47,19 +46,68 @@ public class ResponseParser {
         return portfolio;
     }
 
-    public static TradingEquipment parseTradingEquipment(JSONObject response) {
-        TradingEquipment tradingEquipment = null;
+    public static Stock parseStock(JSONObject response) {
+        Stock stock = null;
         try {
+            String id = response.getString(("_id"));
             String stockId = response.getString("_id");
             String name = response.getString("name");
-            String stockName = response.getString("stockName");
+            //String stockName = response.getString("stockName");
             String stockSymbol = response.getString("stockSymbol");
             double stockPrice = response.getDouble("price");
-            tradingEquipment = new TradingEquipment(stockId,name,stockPrice,stockSymbol,stockName);
+            stock = new Stock(stockId,name,stockPrice,stockSymbol);
+            if(response.has("comments")) {
+                JSONArray comments = response.getJSONArray("comments");
+                ArrayList<Comment> stockComments = new ArrayList<>();
+                for (int i = 0; i < comments.length(); i++) {
+                    Comment comment = parseComment(comments.getJSONObject(i), id);
+                    stockComments.add(comment);
+                }
+                stock.setComments(stockComments);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return tradingEquipment;
+        return stock;
+    }
+
+    public static Currency parseCurrency(JSONObject response) {
+        Currency currency = null;
+        try {
+            String id = response.getString("_id");
+            String code = response.getString("code");
+            String name = response.getString("name");
+            double rate = response.getDouble("rate");
+            currency = new Currency(id,code,name,rate);
+            if(response.has("comments")) {
+                JSONArray comments = response.getJSONArray("comments");
+                ArrayList<Comment> currencyComments = new ArrayList<>();
+                for (int i = 0; i < comments.length(); i++) {
+                    Comment comment = parseComment(comments.getJSONObject(i), code);
+                    currencyComments.add(comment);
+                }
+                currency.setComments(currencyComments);
+            }
+
+            if(response.has("predictions")){
+                JSONArray predictions = response.getJSONArray("predictions");
+                for(int i=0; i<predictions.length(); i++){
+                    JSONObject obj = predictions.getJSONObject(i);
+                    int pred = obj.getInt("prediction");
+                    if(pred == 1){
+                        currency.setIncreaseCount(obj.getInt("count"));
+                    }else if(pred == -1){
+                        currency.setDecreaseCount(obj.getInt("count"));
+                    }
+                }
+            }
+            if(response.has("userPrediction")){
+                currency.setUserVote(response.getInt("userPrediction"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return currency;
     }
 
     public static Event parseEvent(JSONObject response) {
@@ -82,15 +130,11 @@ public class ResponseParser {
         return event;
     }
 
-    public static Comment parseComment(JSONObject response, String articleIdFromArticle) {
+    public static Comment parseComment(JSONObject response, String contextIdFromOuter) {
         Comment comment = null;
         try {
             String commentId = response.getString("_id");
             String authorId = response.getString("authorId");
-            String articleId = articleIdFromArticle;
-            if(response.has("articleId")){
-                articleId = response.getString("articleId");
-            }
             JSONArray author = response.getJSONArray("author");
             String authorName = author.getJSONObject(0).getString("name") + " " + author.getJSONObject(0).getString("surname");
             String body = response.getString("body");
@@ -102,7 +146,7 @@ public class ResponseParser {
             }else{
                 lastEditDate = date;
             }
-            comment = new Comment(commentId, articleId, authorId, authorName, body, date, edited, lastEditDate);
+            comment = new Comment(commentId, contextIdFromOuter, authorId, authorName, body, date, edited, lastEditDate);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -159,6 +203,20 @@ public class ResponseParser {
 
             user = new User(token, latitude, longitude, role, id, name, surname, email, idNumber, iban);
         } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    public static User parseFollowUser(JSONObject response) {
+        User user = null;
+        try {
+            String id = response.getString("_id");
+            String name = response.getString("name");
+            String surname = response.getString("surname");
+            String email = response.getString("email");
+            user = new User(id,name,surname,email);
+        }catch (JSONException e) {
             e.printStackTrace();
         }
         return user;
