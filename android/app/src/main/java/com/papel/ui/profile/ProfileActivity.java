@@ -121,11 +121,14 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                 try {
                     JSONObject responseObject = new JSONObject(response);
                     String msg = responseObject.getString("msg");
+                    String status = responseObject.getString("status");
                     Toast.makeText(ProfileActivity.this,msg,Toast.LENGTH_LONG).show();
                     if(follow) {
-                        // Follow ettim
-                        // TODO check here!
-                        showFollowingButton();
+                        if (status.equals("request")) {
+                            showPendingButton();
+                        } else if (status.equals("follow")) {
+                            showFollowingButton();
+                        }
                     } else {
                         showFollowButton();
                     }
@@ -254,6 +257,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
 
     private void updateUI(String privacy, String name, String surname) {
         userName.setText(name + " " + surname);
+        userName.setVisibility(View.VISIBLE);
         if (!isMe) {
             // Looking other's profile
             followButton.setVisibility(View.VISIBLE);
