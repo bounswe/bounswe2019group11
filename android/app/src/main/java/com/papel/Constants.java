@@ -17,10 +17,19 @@ public class Constants {
     public static final String GOOGLE_LOGIN = "auth/login/google";
     public static final String USER = "user/";
     public static final String TEST_USER_ID = "5da076d955d9b93a7308f3d7";
-    public static final String PROFILE = "profile/";
+    public static final String PROFILE = "profile/other/";
+    public static final String CURRENCY = "currency/";
+    public static final String INTRADAY = "intraday";
+    public static final String LAST_WEEK = "last-week";
+    public static final String LAST_MONTH = "last-month";
+    public static final String FOLLOW = "follow";
+    public static final String UNFOLLOW = "unfollow";
+    public static final String ACCEPT = "accept";
+    public static final String DECLINE = "decline";
 
     public static final int DAILY_CHART = 0;
-    public static final int MONTHLY_CHART = 1;
+    public static final int WEEKLY_CHART = 1;
+    public static final int MONTHLY_CHART = 2;
 
     public static final String VALIDATION_ERROR = "ValidationError";
 
@@ -30,4 +39,8 @@ public class Constants {
   
     public static final String ARTICLE_TITLE = "ARTICLE";
     public static final String PORTFOLIO_TITLE = "PORTFOLIO";
+    public static final String FOLLOWING_TITLE = "FOLLOWING";
+    public static final String FOLLOWERS_TITLE = "FOLLOWERS";
+    public static final String FOLLOWER_PENDING_TITLE = "PENDING FOLLOWERS";
+    public static final String FOLLOWING_PENDING_TITLE = "PENDING FOLLOWING";
 }

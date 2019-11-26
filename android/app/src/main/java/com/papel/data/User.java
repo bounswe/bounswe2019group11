@@ -24,6 +24,19 @@ public class User implements Parcelable {
         user = user1;
     }
 
+    public User(String id,String name, String surname, String email) {
+        this.token = "";
+        this.latitude = 0;
+        this.longitude = 0;
+        this.role = "";
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.idNumber = "";
+        this.iban = "";
+    }
+
     public User(String token, double latitude, double longitude, String role, String id, String name, String surname, String email, String idNumber, String iban) {
         this.token = token;
         this.latitude = latitude;

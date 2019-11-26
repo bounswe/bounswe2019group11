@@ -3,7 +3,6 @@ package com.papel.ui.tradingequipments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,10 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.papel.Constants;
 import com.papel.R;
+import com.papel.data.Currency;
+import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
+import com.papel.ui.portfolio.PortfolioDetailActivity;
 import com.papel.ui.portfolio.TradingEquipmentDetailActivity;
 import com.papel.ui.portfolio.TradingEquipmentListViewAdapter;
 import com.papel.ui.utils.DialogHelper;
@@ -36,10 +38,11 @@ import java.util.ArrayList;
 
 public class TradingEquipmentsFragment extends Fragment {
 
-    ListView tradingEquipmentListView;
-    ArrayList<TradingEquipment> tradingEquipmentArrayList = new ArrayList<>();
-    TradingEquipmentListViewAdapter adapter;
-    SearchView searchView;
+    private ListView tradingEquipmentListView;
+    private ArrayList<TradingEquipment> tradingEquipmentArrayList = new ArrayList<>();
+    private TradingEquipmentListViewAdapter adapter;
+    private SearchView searchView;
+    private int numberOfTradingEquipmentRequest = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -47,7 +50,7 @@ public class TradingEquipmentsFragment extends Fragment {
 
         searchView = root.findViewById(R.id.trading_eq_searchView);
         tradingEquipmentListView = root.findViewById(R.id.trading_eq_listview);
-        adapter = new TradingEquipmentListViewAdapter(getContext(), tradingEquipmentArrayList);
+        adapter = new TradingEquipmentListViewAdapter(getContext(), tradingEquipmentArrayList,true);
         tradingEquipmentListView.setAdapter(adapter);
         getTradingEquipmentsFromEndpoint(getContext());
 
@@ -55,9 +58,8 @@ public class TradingEquipmentsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 TradingEquipment clicked = adapter.getItem(i);
-                Log.d("Trading Equipement", "Trading equipment clicked: " + clicked.getName());
                 Intent intent = new Intent(getContext(), TradingEquipmentDetailActivity.class);
-                intent.putExtra("TradingEquipment",clicked);
+                intent.putExtra("TradingEquipment", clicked);
                 startActivity(intent);
             }
         });
@@ -79,22 +81,28 @@ public class TradingEquipmentsFragment extends Fragment {
     }
 
     private void getTradingEquipmentsFromEndpoint(final Context context) {
+        numberOfTradingEquipmentRequest = 2;
         RequestQueue requestQueue = Volley.newRequestQueue(context);
-        String url = Constants.LOCALHOST + Constants.STOCK;
-        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+
+        String stockUrl = Constants.LOCALHOST + Constants.STOCK;
+        String currencyUrl = Constants.LOCALHOST + Constants.CURRENCY;
+
+        StringRequest stockRequest = new StringRequest(Request.Method.GET, stockUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     JSONArray responseArray = new JSONArray(response);
                     for (int i = 0; i < responseArray.length(); i++) {
                         JSONObject object = responseArray.getJSONObject(i);
-                        TradingEquipment tradingEquipment = ResponseParser.parseTradingEquipment(object);
-
-                        if (tradingEquipment != null) {
-                            tradingEquipmentArrayList.add(tradingEquipment);
+                        Stock stock = ResponseParser.parseStock(object);
+                        if (stock != null) {
+                            tradingEquipmentArrayList.add(stock);
                         }
                     }
-                    adapter.notifyDataSetChanged();
+                    numberOfTradingEquipmentRequest -= 1;
+                    if (numberOfTradingEquipmentRequest == 0) {
+                        adapter.notifyDataSetChanged();
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -102,12 +110,43 @@ public class TradingEquipmentsFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                numberOfTradingEquipmentRequest -= 1;
                 DialogHelper.showBasicDialog(context, "Error", "We couldn't load the trading equipments. Please try again.", null);
             }
         });
 
-        requestQueue.add(request);
+        StringRequest currencyRequest = new StringRequest(Request.Method.GET, currencyUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray responseArray = new JSONArray(response);
+                    for (int i = 0; i < responseArray.length(); i++) {
+                        JSONObject object = responseArray.getJSONObject(i);
+                        Currency currency = ResponseParser.parseCurrency(object);
 
+                        if (currency != null) {
+                            tradingEquipmentArrayList.add(currency);
+                        }
+                    }
+                    numberOfTradingEquipmentRequest -= 1;
+                    if (numberOfTradingEquipmentRequest == 0) {
+                        adapter.notifyDataSetChanged();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                numberOfTradingEquipmentRequest -= 1;
+                DialogHelper.showBasicDialog(context, "Error", "We couldn't load the trading equipments. Please try again.", null);
+            }
+        });
+
+        requestQueue.add(stockRequest);
+        requestQueue.add(currencyRequest);
     }
 
 }

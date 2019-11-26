@@ -12,7 +12,7 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class Comment implements Parcelable {
     private String commentId;
-    private String articleId;
+    private String contextId;
     private String authorId;
     private String authorName;
     private String content;
@@ -20,9 +20,9 @@ public class Comment implements Parcelable {
     private boolean edited=false;
     private String lastEditDate;
 
-    public Comment(String commentId, String articleId, String authorId, String authorName, String content, String date, boolean edited, String lastEditDate) {
+    public Comment(String commentId, String contextId, String authorId, String authorName, String content, String date, boolean edited, String lastEditDate) {
         this.commentId = commentId;
-        this.articleId = articleId;
+        this.contextId = contextId;
         this.authorId = authorId;
         this.authorName = authorName;
         this.content = content;
@@ -47,9 +47,9 @@ public class Comment implements Parcelable {
         }
     }
 
-    public Comment(String commentId, String articleId, String authorId, String authorName, String content, String date) {
+    public Comment(String commentId, String contextId, String authorId, String authorName, String content, String date) {
         this.commentId = commentId;
-        this.articleId = articleId;
+        this.contextId = contextId;
         this.authorId = authorId;
         this.content = content;
         this.date = date;
@@ -72,7 +72,7 @@ public class Comment implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(this.commentId);
-        parcel.writeString(this.articleId);
+        parcel.writeString(this.contextId);
         parcel.writeString(this.authorId);
         parcel.writeString(this.authorName);
         parcel.writeString(this.content);
@@ -94,7 +94,7 @@ public class Comment implements Parcelable {
 
     private Comment(Parcel in) {
         this.commentId = in.readString();
-        this.articleId = in.readString();
+        this.contextId = in.readString();
         this.authorId = in.readString();
         this.authorName = in.readString();
         this.content = in.readString();
@@ -107,8 +107,8 @@ public class Comment implements Parcelable {
         return commentId;
     }
 
-    public String getArticleId() {
-        return articleId;
+    public String getContextId() {
+        return contextId;
     }
 
     public String getAuthorId() {

@@ -27,6 +27,7 @@ app.use('/event',require('./routes/event'));
 app.use('/user', require('./routes/user'));
 app.use('/profile',require('./routes/profile'));
 app.use('/currency', require('./routes/currency'));
+app.use('/investments', require('./routes/investments'));
 
 const port = process.env.PORT;
 app.listen(port, async () => {
