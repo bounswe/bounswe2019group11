@@ -85,7 +85,7 @@ function Portfolio({portfolio, isMe}){
       return portfolio.stocks.map(
         stock =>
         (<li key={stock._id}>
-          <a href={"../stock/" + stock._id}>{stock.stockSymbol.split(" - ")[0]}</a>
+          <a href={"../stock/" + stock._id}>{stock.stockName.split(" - ")[0]}</a>
           <a href="#" onClick={() => deleteStock(stock)}><FontAwesomeIcon style={{float:"right"}} icon={faTrash}/></a>
         </li>)
       )
@@ -120,12 +120,12 @@ function Portfolio({portfolio, isMe}){
           <Modal.Header closeButton>
             <Modal.Title>Add Stock</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
+          <Modal.Body style={{height: 500}} className="myScroller">
             <Form>
               <Form.Control type="text" placeholder="Search" onChange={handleSearchbarChange} />
               <Table>
                 <thead>
-                  <tr><th>Symbol</th><th>Stock Name</th></tr>
+                  <tr><th></th><th>Symbol</th><th>Stock Name</th></tr>
                 </thead>
                 <tbody>
                 {
@@ -133,26 +133,28 @@ function Portfolio({portfolio, isMe}){
                     .filter(s => portfolio.stocks.filter(o => o._id === s._id).length === 0)
                     .map(stock => (
                     <tr key={stock._id}>
-                      <td xs={{span: 2}}>
-                        {stock.stockSymbol}
-                      </td>
-                      <td xs={{span: 10}}>
+                      <td>
                         <Form.Check
                           onChange={handleCheckbox}
                           type='checkbox'
                           id={stock._id}
-                          label={stock.stockName.split(" - ")[0]}
                           value={stock}
                         />
+                      </td>
+                      <td xs={{span: 2}}>
+                        {stock.stockSymbol}
+                      </td>
+                      <td xs={{span: 10}}>
+                        {stock.stockName.split(" - ")[0]}
                       </td>
                     </tr>
                   ))
                 }
                 </tbody>
               </Table>
-              <div onClick={onAddSelected} style={{textAlign: "center"}} className="add-stock">Add Selected</div>
             </Form>
           </Modal.Body>
+          <div onClick={onAddSelected} style={{textAlign: "center"}} className="add-stock">Add Selected</div>
         </Modal>
 
         <div className="drawer" hidden={stocksShown} onClick={()=> showStocks(!stocksShown)} style={{width: "100%", textAlign: "center"}}><FontAwesomeIcon icon={faAngleDown} /></div>
