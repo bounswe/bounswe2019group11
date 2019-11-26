@@ -8,7 +8,8 @@ import {useParams} from 'react-router-dom';
 import $ from 'jquery';
 import {Row, Col, Button, Card, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faPlus,faThumbsUp,faThumbsDown, faUserCircle} from '@fortawesome/free-solid-svg-icons';
+import { faPlus,faThumbsUp,faThumbsDown, faUserCircle, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
+
 import CommentPreview from './CommentPreview';
 import {postRequest} from '../helpers/request';
 
@@ -19,11 +20,12 @@ class Article extends React.Component {
     const {cookies} = props;
     const loggedIn = !!cookies.get('userToken');
     var userId ="";
-    if(loggedIn) {console.log(cookies.get("userToken"));
+    if(loggedIn) {
      userId = cookies.get('user')._id?cookies.get('user')._id:"check get user id";
+
     }
     else {console.log("not logged");}
-    this.state = {loggedIn: loggedIn, userId:userId, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
+    this.state = {commentsPreview:"", comments:"",loggedIn: loggedIn, userId:userId, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
     this._article={};
     this._article_vote_type=0;
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -36,12 +38,15 @@ class Article extends React.Component {
     const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/" + this.state.id;
     this.setState({articleLoading: true});
     $.get(request_url, data => {
-      self.setState({articleLoading: false, article: data, authorLoading: true});
+      self.setState({articleLoading: false, article: data, authorLoading: true, comments:data.comments.reverse()});
       const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/user/" + data.authorId;
       $.get(request_url, user => {this.setState( {author: user, authorLoading: false} ) } );
       self._article=this.state.article;
       }
-    )
+    );
+    
+     
+  
   }
 
   handleCommentEditorChange(event) {
@@ -52,25 +57,28 @@ class Article extends React.Component {
     const {cookies} = this.props;
     if (!this.state.loggedIn) {
       alert("To add a comment please log in.");
+    }else if( this.state.commentText.length==0){
+      alert("Please write a message")
     }
     else{
       event.preventDefault();
-      var comment = {body : this.state.commentText};
-      // $.ajax({
-      //   type: "POST",
-      //   url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment",
-      //   dataType: 'json',
-      //   async: true,
-      //   data: comment,
-      //   success: () => console.log("Wow! It's a response: "),
-      //   beforeSend: (xhr) => xhr.setRequestHeader("Authorization", "Bearer " + cookies.get('userToken'))
-      // })
-      postRequest({
-        url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment",
-        data: comment,
-        success: function() { console.log("Comment sent!") },
-        authToken: cookies.get('userToken')
+      var data = {body : this.state.commentText};
+      var url= "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment";
+      var authToken = cookies.get('userToken');
+      var success;
+      
+       var a = $.ajax({
+        type: "POST",
+        url: url,
+        dataType: 'json',
+        async: true,
+        data: data,
+        success: function() {
+          this.setState({addCommentResp:true})
+        },
+        beforeSend: (xhr) => xhr.setRequestHeader("Authorization", "Bearer " + authToken)
       })
+      window.location.reload();
     }
   }
   handleSubmit(event) {
@@ -115,9 +123,8 @@ class Article extends React.Component {
     var author = this.state.author;
     var authorLine;
     var voteCount = this.state.article.voteCount;
-    var comments = this.state.article.comments;
+    var comments = this.state.comments;
     var userId = this.state.userId;
-    console.log(userId);
     var loggedIn = this.state.loggedIn;
 
     if (this.state.authorLoading)
@@ -176,6 +183,8 @@ class Article extends React.Component {
               </Col>
             </form>
         </Col>
+
+
 
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
 
