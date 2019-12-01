@@ -1774,7 +1774,6 @@
           "200": {
             "description": "OK. Given currency, its rate and comments are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyGet"
             }
           },
@@ -1809,7 +1808,6 @@
           "200": {
             "description": "OK. Given currency and its rate and intraday rates with 5 minutes intervals are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyIntraday"
             }
           },
@@ -1844,7 +1842,6 @@
           "200": {
             "description": "OK. Given currency and its rate and the last 7 daily rates are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyLastWeek"
             }
           },
@@ -1879,7 +1876,6 @@
           "200": {
             "description": "OK. Given currency and its rate and the last 30 daily rates are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyLastMonth"
             }
           },
@@ -1914,7 +1910,6 @@
           "200": {
             "description": "OK. Given currency and its rate and the last 100 daily rates are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyLast100"
             }
           },
@@ -1949,7 +1944,6 @@
           "200": {
             "description": "OK. Given currency and its rate, intraday rates with 5 minute intervals and the last 100 daily rates are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyFull"
             }
           },
@@ -2437,13 +2431,13 @@
         "stocks": {
           "type": "array",
           "items": {
-              "$ref": "#/definitions/StockAmount"
+            "$ref": "#/definitions/StockAmount"
           }
         },
         "currencies": {
           "type": "array",
           "items": {
-              "$ref": "#/definitions/CurrencyAmount"
+            "$ref": "#/definitions/CurrencyAmount"
           }
         }
       }
@@ -2477,7 +2471,7 @@
       "type": "object",
       "properties":{
         "stock": {
-          "$ref": "#/definitions/Currency"
+          "$ref": "#/definitions/CurrencyMinimal"
         },
         "amount": {
           "type": "number",
