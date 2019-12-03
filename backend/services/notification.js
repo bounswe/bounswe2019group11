@@ -1,4 +1,5 @@
 const FollowNotification = require('../models/followNotification');
+const errors = require('../helpers/errors');
 
 const STAGES = {
     MATCH_ID: (userId) => {
@@ -55,7 +56,6 @@ const STAGES = {
     }
 };
 
-
 module.exports.createFollowNotification = async (follower, following) => {
     await FollowNotification.create({follower, following});
 };
@@ -69,4 +69,16 @@ module.exports.getAll = async (userId) => {
         STAGES.MATCH_ID(userId), STAGES.GET_FOLLOWER, STAGES.UNWIND_FOLLOWER,
         STAGES.SET_TYPE('follow'), STAGES.PROJECT_FOLLOW
     ]).then();
+};
+
+module.exports.discardNotification = async (notificationId, userId) => {
+  const followNotification = await FollowNotification.findOneAndDelete({
+      _id: notificationId,
+      following: userId,
+  });
+  if (followNotification) {
+      return;
+  }
+
+  throw errors.NOTIFICATION_NOT_FOUND();
 };

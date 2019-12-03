@@ -216,7 +216,7 @@ router.post('/other/:id/accept',isAuthenticated, async (req, res) => {
         const user = await userService.getById(userId);
         const userToBeAccepted = await userService.getById(id);
         const response = await user.accept(userToBeAccepted);
-        await notificationService.deleteFollowNotification(userId, id);
+        await notificationService.deleteFollowNotification(id, userId);
         res.status(200).json(response);
     } catch (err) {
         if (err.name === 'UserNotFound') {
@@ -234,7 +234,7 @@ router.post('/other/:id/decline',isAuthenticated, async (req, res) => {
         const user = await userService.getById(userId);
         const userToBeDeclined = await userService.getById(id);
         const response = await user.decline(userToBeDeclined);
-        await notificationService.deleteFollowNotification(userId, id);
+        await notificationService.deleteFollowNotification(id, userId);
         res.status(200).json(response);
     } catch (err) {
         if (err.name === 'UserNotFound') {
