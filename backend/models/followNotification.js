@@ -13,5 +13,5 @@ const followNotificationSchema = new mongoose.Schema({
     }
 });
 
-const FollowNotification = mongoose.Model('FollowNotification', followNotificationSchema);
+const FollowNotification = mongoose.model('FollowNotification', followNotificationSchema);
 module.exports = FollowNotification;
