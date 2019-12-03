@@ -28,6 +28,7 @@ app.use('/user', require('./routes/user'));
 app.use('/profile',require('./routes/profile'));
 app.use('/currency', require('./routes/currency'));
 app.use('/investments', require('./routes/investments'));
+app.use('/notification', require('./routes/notification'));
 
 const port = process.env.PORT;
 app.listen(port, async () => {

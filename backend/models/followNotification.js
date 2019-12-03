@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 const followNotificationSchema = new mongoose.Schema({
-    userId: {
+    follower: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User',
     },
-    otherUserId: {
+    following: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User',
