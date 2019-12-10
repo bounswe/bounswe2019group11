@@ -99,5 +99,8 @@ module.exports = {
     },
     NOTIFICATION_NOT_FOUND: (cause) => {
         return PapelError('NotificationNotFound', 'Notification with the given id and user id is not found.', cause);
+    },
+    NOT_TRADER: (cause) => {
+        return PapelError('NotTrader', 'User is not a trader.', cause);
     }
 };
