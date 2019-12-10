@@ -4,10 +4,12 @@ import com.papel.data.Article;
 import com.papel.data.Comment;
 import com.papel.data.Currency;
 import com.papel.data.Event;
+import com.papel.data.Investment;
 import com.papel.data.Portfolio;
 import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
 import com.papel.data.User;
+import com.papel.data.UserInvestments;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -220,6 +222,38 @@ public class ResponseParser {
             e.printStackTrace();
         }
         return user;
+    }
+
+    public static UserInvestments parseInvestment(JSONObject response) {
+        UserInvestments userInv = null;
+        try {
+            String investmentId = response.getString("_id");
+            ArrayList<Investment> investments = new ArrayList<>();
+            JSONArray stocks = response.getJSONArray("stocks");
+            for (int j = 0; j < stocks.length(); j++) {
+                JSONObject stockObject = stocks.getJSONObject(j);
+                Stock stock = parseStock(stockObject.getJSONObject("stock"));
+                Double amount = stockObject.getDouble("amount");
+                if(stock != null) {
+                    Investment inv = new Investment(stock, amount);
+                    investments.add(inv);
+                }
+            }
+            JSONArray currencies = response.getJSONArray("currencies");
+            for (int j = 0;j<currencies.length(); j++) {
+                JSONObject currencyObject = currencies.getJSONObject(j);
+                Currency currency = parseCurrency(currencyObject.getJSONObject("currency"));
+                Double amount = currencyObject.getDouble("amount");
+                if (currency != null) {
+                    Investment inv = new Investment(currency, amount);
+                    investments.add(inv);
+                }
+            }
+            userInv = new UserInvestments(investmentId, investments);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return userInv;
     }
 
 }

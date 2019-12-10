@@ -26,6 +26,7 @@ public class Constants {
     public static final String UNFOLLOW = "unfollow";
     public static final String ACCEPT = "accept";
     public static final String DECLINE = "decline";
+    public static final String INVESTMENTS = "investments";
 
     public static final int DAILY_CHART = 0;
     public static final int WEEKLY_CHART = 1;

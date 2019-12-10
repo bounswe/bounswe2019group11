@@ -41,8 +41,9 @@
         tools:layout="@layout/fragment_share" />
 
     <fragment
-        android:id="@+id/nav_send"
-        android:name="com.papel.ui.send.SendFragment"
-        android:label="@string/menu_send"
-        tools:layout="@layout/fragment_send" />
+        android:id="@+id/nav_investments"
+        android:name="com.papel.ui.investments.InvestmentsFragment"
+        android:label="@string/investments"
+        tools:layout="@layout/fragment_investments" />
+
 </navigation>
