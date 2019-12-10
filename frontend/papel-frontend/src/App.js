@@ -10,12 +10,15 @@ import UserProfile from './Profile/UserProfile';
 import TradingEquipment from './Trading/TradingEquipment';
 import Article from './Article/Article';
 import Articles from './Article/Articles';
+import Currencies from "./Currency/Currencies";
+import AddArticle from './Article/AddArticle';
 import EconEvent from './EconEvent/EconEvent';
 import EconEvents from './EconEvent/EconEvents';
 import Validation from './Register/Validation';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import { useCookies, CookiesProvider } from 'react-cookie';
-import { faBell,faExclamation, faPlus,faThumbsUp,faThumbsDown,faSignInAlt, faSignOutAlt, faUser, faNewspaper, faCalendarWeek, faHome, faCheck, faTimes} from '@fortawesome/free-solid-svg-icons';
+import { faBell,faExclamation, faPlus,faThumbsUp,faThumbsDown,faSignInAlt, faSignOutAlt, faUser, faNewspaper, faCalendarWeek, faHome, faMoneyBill, faCoins, faMoneyBillWave, faCheck, faTimes} from '@fortawesome/free-solid-svg-icons';
+
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {postRequest as post} from './helpers/request';
 import {Dropdown, Badge, Row, Col, Button} from 'react-bootstrap';
@@ -42,6 +45,7 @@ function NavBar(props) {
   profileBtn = <li><Link to="/profile"> <FontAwesomeIcon name="User Icon" icon={faUser} />&nbsp;
   Profile</Link></li>
     logoutBtn = <li><Link to="/" onClick={() => logout()}><FontAwesomeIcon name="Log Out Icon" icon={faSignOutAlt} />&nbsp;Log Out</Link></li>;
+
 
     if (!cookies.pendingRequests) setCookie('pendingRequests', []);
 
@@ -78,7 +82,6 @@ function NavBar(props) {
   </li>)
 
 
-
   }
 
   else {
@@ -99,6 +102,8 @@ function NavBar(props) {
 
       <li><Link to="/articles"><FontAwesomeIcon name="Article Icon" icon={faNewspaper} />&nbsp;Articles</Link></li>
       <li><Link to="/events"><FontAwesomeIcon name="Events Icon" icon={faCalendarWeek} />&nbsp;Events</Link></li>
+      <li><Link to="/currencies"><FontAwesomeIcon name="Money Icon" icon={faMoneyBillWave} />&nbsp;Currencies</Link></li>
+      
       </Col><Col md={{span:4}}>
       {notificationBtn}
       {profileBtn}
@@ -119,6 +124,8 @@ function NavBar(props) {
           <Route path="/event/:id" component={EconEvent} />
           <Route path="/validation"><Validation /></Route>
           <Route path="/articles"><Articles /></Route>
+          <Route path="/currencies"><Currencies /></Route>
+          <Route path="/addarticle"><AddArticle /></Route>
           <Route path="/events"><EconEvents /></Route>
           <Route path="/user/:id" component={UserProfile} />
         </Switch>
@@ -136,7 +143,8 @@ function App() {
       post({
         url: requestUrl,
         success: (data) => {
-          setCookie('pendingRequests', data.followerPending)
+          var pending = cookies.user.followerPending || []
+          setCookie('pendingRequests', [])
         },
         authToken: cookies.userToken
       })
@@ -151,7 +159,7 @@ function App() {
       post({
         url: requestUrl,
         success: (data) => {
-          setCookie('pendingRequests', data.followerPending)
+          setCookie('pendingRequests', cookies.user.followerPending)
         },
         authToken: cookies.userToken
       })

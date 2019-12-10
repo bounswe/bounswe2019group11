@@ -97,5 +97,7 @@ module.exports = {
     INVALID_PRIVACY_OPTION: (cause) => {
         return PapelError('InvalidPrivacyOption', 'Privacy options should be either \'public\' or \'private\'', cause);
     },
-
+    NOTIFICATION_NOT_FOUND: (cause) => {
+        return PapelError('NotificationNotFound', 'Notification with the given id and user id is not found.', cause);
+    }
 };

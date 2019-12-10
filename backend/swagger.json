@@ -39,6 +39,10 @@
     {
       "name": "currency",
       "description": "Currency related endpoints."
+    },
+    {
+      "name": "notification",
+      "description": "Notification related endpoints."
     }
   ],
   "securityDefinitions": {
@@ -1423,7 +1427,6 @@
           {
             "Bearer": []
           }
-
         ],
         "summary": "Returns user's own profile",
         "consumes": [
@@ -1548,9 +1551,7 @@
             "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
-
       }
-
     },
     "/profile/other/{_id}/unfollow": {
       "post": {
@@ -1607,9 +1608,7 @@
             "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
-
       }
-
     },
     "/profile/other/{_id}/accept": {
       "post": {
@@ -1666,9 +1665,7 @@
             "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
-
       }
-
     },
     "/profile/other/{_id}/decline": {
       "post": {
@@ -1774,7 +1771,6 @@
           "200": {
             "description": "OK. Given currency, its rate and comments are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyGet"
             }
           },
@@ -1809,7 +1805,6 @@
           "200": {
             "description": "OK. Given currency and its rate and intraday rates with 5 minutes intervals are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyIntraday"
             }
           },
@@ -1844,7 +1839,6 @@
           "200": {
             "description": "OK. Given currency and its rate and the last 7 daily rates are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyLastWeek"
             }
           },
@@ -1879,7 +1873,6 @@
           "200": {
             "description": "OK. Given currency and its rate and the last 30 daily rates are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyLastMonth"
             }
           },
@@ -1914,7 +1907,6 @@
           "200": {
             "description": "OK. Given currency and its rate and the last 100 daily rates are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyLast100"
             }
           },
@@ -1949,7 +1941,6 @@
           "200": {
             "description": "OK. Given currency and its rate, intraday rates with 5 minute intervals and the last 100 daily rates are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyFull"
             }
           },
@@ -2281,7 +2272,7 @@
       }
     },
     "/investments": {
-      "get":{
+      "get": {
         "tags": [
           "investments"
         ],
@@ -2303,11 +2294,10 @@
             "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
-
       }
     },
     "/investments/{_id}": {
-      "get":{
+      "get": {
         "tags": [
           "investments"
         ],
@@ -2338,7 +2328,67 @@
             "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
-
+      }
+    },
+    "/notification": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "notification"
+        ],
+        "summary": "Endpoint to get all notifications for the user.",
+        "description": "The returned array contains all kinds of notifications of the given user. (follow, alert(not done yet) etc.) Each notification contains a type field. (follow, alert(not done yet) etc.) Other fields of array elements may differ depending on the type of the notification.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. All the notifications related to the user is returned.",
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/notification/{id}": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "notification"
+        ],
+        "summary": "Endpoint to discard the given notification.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the notification.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Notification successfully discarded."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
       }
     }
   },
@@ -2437,13 +2487,13 @@
         "stocks": {
           "type": "array",
           "items": {
-              "$ref": "#/definitions/StockAmount"
+            "$ref": "#/definitions/StockAmount"
           }
         },
         "currencies": {
           "type": "array",
           "items": {
-              "$ref": "#/definitions/CurrencyAmount"
+            "$ref": "#/definitions/CurrencyAmount"
           }
         }
       }
@@ -2473,11 +2523,11 @@
         }
       }
     },
-    "CurrencyAmount":{
+    "CurrencyAmount": {
       "type": "object",
-      "properties":{
+      "properties": {
         "stock": {
-          "$ref": "#/definitions/Currency"
+          "$ref": "#/definitions/CurrencyMinimal"
         },
         "amount": {
           "type": "number",
@@ -2486,9 +2536,9 @@
         }
       }
     },
-    "StockAmount":{
+    "StockAmount": {
       "type": "object",
-      "properties":{
+      "properties": {
         "stock": {
           "$ref": "#/definitions/Stock"
         },
@@ -3016,6 +3066,23 @@
           }
         }
       }
+    },
+    "Notification": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "example": [
+        {
+          "_id": "5de6c3e588aff72068fe72e8",
+          "follower": {
+            "_id": "5daeffa31b135672880aecb3",
+            "name": "John",
+            "surname": "Doe"
+          },
+          "type": "follow"
+        }
+      ]
     }
   }
 }
