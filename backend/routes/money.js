@@ -31,4 +31,19 @@ router.post('/deposit/:amount', isAuthenticated, isTrader, async (req, res) => {
     }
 });
 
+router.post('/withdraw/:amount', isAuthenticated, isTrader, async (req, res) => {
+    try {
+        const userId = req.token && req.token.data && req.token.data._id;
+        const amount = req.params.amount;
+        await moneyService.withdraw(userId, amount);
+        res.sendStatus(200);
+    } catch (err) {
+        if (err.name === 'InvalidAmount' || err.name === 'InsufficientFund') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
 module.exports = router;

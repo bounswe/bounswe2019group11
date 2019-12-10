@@ -106,4 +106,7 @@ module.exports = {
     INVALID_AMOUNT: (cause) => {
       return PapelError('InvalidAmount', 'Given amount is either not a number or not positive', cause);
     },
+    INSUFFICIENT_FUND: (cause) => {
+        return PapelError('InsufficientFund', 'User has insufficent funds to perform the given action', cause);
+    }
 };
