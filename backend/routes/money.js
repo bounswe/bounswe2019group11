@@ -2,10 +2,11 @@ const express = require('express');
 const isAuthenticated = require('../middlewares/isAuthenticated');
 const moneyService = require('../services/money');
 const errors = require('../helpers/errors');
+const isTrader = require('../middlewares/isTrader');
 
 const router = express.Router();
 
-router.get('/', isAuthenticated, async (req, res) => {
+router.get('/', isAuthenticated, isTrader, async (req, res) => {
     try {
         const userId = req.token && req.token.data && req.token.data._id;
         const response = await moneyService.get(userId);
@@ -15,5 +16,19 @@ router.get('/', isAuthenticated, async (req, res) => {
     }
 });
 
+router.post('/deposit/:amount', isAuthenticated, isTrader, async (req, res) => {
+    try {
+        const userId = req.token && req.token.data && req.token.data._id;
+        const amount = req.params.amount;
+        await moneyService.deposit(userId, amount);
+        res.sendStatus(200);
+    } catch (err) {
+        if (err.name === 'InvalidAmount') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
 
 module.exports = router;

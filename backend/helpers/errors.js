@@ -102,5 +102,8 @@ module.exports = {
     },
     NOT_TRADER: (cause) => {
         return PapelError('NotTrader', 'User is not a trader.', cause);
-    }
+    },
+    INVALID_AMOUNT: (cause) => {
+      return PapelError('InvalidAmount', 'Given amount is either not a number or not positive', cause);
+    },
 };
