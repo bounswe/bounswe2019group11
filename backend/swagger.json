@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Papel Backend"
   },
-  "host": "ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000",
+  "host": "localhost:3000",
   "basePath": "/",
   "tags": [
     {
@@ -43,6 +43,10 @@
     {
       "name": "notification",
       "description": "Notification related endpoints."
+    },
+    {
+      "name": "money",
+      "description": "Money related endpoints for trader users."
     }
   ],
   "securityDefinitions": {
@@ -2384,6 +2388,39 @@
         "responses": {
           "200": {
             "description": "OK. Notification successfully discarded."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/money": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "money"
+        ],
+        "summary": "Endpoint to get the amount of money of the authenticated user.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The amount of money in US dollars is returned.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "money": {
+                  "type": "number",
+                  "example": 1300
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error occurred. Check the cause field for the diagnostics."
