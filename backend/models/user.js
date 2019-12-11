@@ -115,6 +115,11 @@ const userSchema = new mongoose.Schema({
     successfulPredictionCount: {
         type: Number,
         default: 0,
+    },
+    money: {
+        type: Number,
+        default: 0,
+        select: false,
     }
 });
 
