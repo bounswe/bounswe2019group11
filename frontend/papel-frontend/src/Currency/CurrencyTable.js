@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Card } from 'react-bootstrap';
 import $ from 'jquery';
+import {app_config} from "../config";
 import CurencyCh from "./CurencyCh";
-const url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/";
+const url = app_config.api_url + "/";
 
 function CurrencyTable({code,timeRange }) {
   const [currency, setCurrency] = useState(0);

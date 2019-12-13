@@ -6,6 +6,7 @@ import {instanceOf} from 'prop-types'
 import {withCookies, Cookies} from 'react-cookie';
 import {useParams} from 'react-router-dom';
 import $ from 'jquery';
+import {app_config} from "../config";
 import {Row, Col, Button, Card, Form, FormGroup} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus,faThumbsUp,faThumbsDown, faUserCircle} from '@fortawesome/free-solid-svg-icons';
@@ -54,7 +55,7 @@ class AddArticle extends React.Component {
     }else{
       event.preventDefault();
       postRequest({
-        url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/",
+        url: app_config.api_url + "/article/",
         data: article,
         success: function() { window.location.replace("./profile")},
         authToken: cookies.get('userToken')

@@ -33,9 +33,9 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', isAuthenticated, async (req, res) => {
     try {
-        const {title, body} = req.body;
+        const {title,imgUri, body} = req.body;
         const authorId = req.token && req.token.data && req.token.data._id;
-        const response = await articleService.create(title, body, authorId);
+        const response = await articleService.create(title, imgUri,body, authorId);
         res.status(200).send(response);
     } catch (err) {
         if (err.name === 'ValidationError') {

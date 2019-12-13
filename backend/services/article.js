@@ -242,9 +242,10 @@ module.exports.getByUserId = async (_userId) => {
     ]).then();
 };
 
-module.exports.create = async (title, body, authorId) => {
+module.exports.create = async (title,imgUri, body, authorId) => {
     return await Article.create({
         title,
+        imgUri,
         body,
         authorId,
     });

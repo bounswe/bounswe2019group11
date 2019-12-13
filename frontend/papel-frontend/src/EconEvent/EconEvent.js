@@ -2,6 +2,7 @@ import React from "react";
 import "./EconEvent.css";
 import {useParams} from 'react-router-dom';
 import $ from 'jquery';
+import {app_config} from "../config";
 import {Row, Col, Card} from 'react-bootstrap'
 
 class EconEvent extends React.Component{
@@ -13,8 +14,8 @@ class EconEvent extends React.Component{
   componentDidMount(){
     console.log(this.state.id)
     const self = this
-    const url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/event/" + this.state.id
-    this.setState({loading: true})
+    const url = app_config.api_url + "/event/" + this.state.id;
+    this.setState({loading: true});
     $.get(url, data => {
       console.log(data)
       self.setState({loading: false, econevent: data})

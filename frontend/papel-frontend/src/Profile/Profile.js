@@ -10,6 +10,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import ArticlePreview from '../Article/ArticlePreview'
 import {getRequest, postRequest} from '../helpers/request'
 import {getFormattedAddress} from '../helpers/geocoder'
+import {app_config} from "../config";
 
 class Profile extends React.Component {
   static propTypes = {cookies: instanceOf(Cookies).isRequired};
@@ -31,7 +32,7 @@ class Profile extends React.Component {
     const userToken = cookies.get('userToken')
     if (!!userToken) {
       const userId = cookies.get('user')._id
-      let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/myprofile"
+      let requestUrl = app_config.api_url + "/profile/myprofile"
       getRequest({
         url: requestUrl,
         success: (data) => {
@@ -70,11 +71,11 @@ class Profile extends React.Component {
     portfolio.name = this.state.newPortfolio.name;
     portfolio.userId = cookies.get('user')._id;
     postRequest({
-      url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/portfolio",
+      url: app_config.api_url + "/portfolio",
       data: portfolio,
       success: (resp, data) => {
         this.setState({portfoliosLoaded: false});
-        const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/portfolio/user/" + cookies.get('user')._id;
+        const request_url = app_config + "/portfolio/user/" + cookies.get('user')._id;
         getRequest({
           url: request_url,
           success: portfolios => {

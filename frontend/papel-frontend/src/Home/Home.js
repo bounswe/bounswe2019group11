@@ -10,6 +10,7 @@ import ArticleListPreview from "./ArticleListPreview"
 import EventListPreview from "./EventListPreview"
 import {useParams} from 'react-router-dom';
 import $ from 'jquery';
+import {app_config} from "../config";
 import {Row, Col, Button, Card} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus,faThumbsUp,faThumbsDown } from '@fortawesome/free-solid-svg-icons';
@@ -56,7 +57,7 @@ class Home extends React.Component {
     }
     const self = this;
     this.setState({loading: true});
-    $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article", (data) => {
+    $.get(app_config.api_url + "/article", (data) => {
       data.reverse();
       self.setState({articles: [
         data[0]?data[0]:emptyArticle,
@@ -66,7 +67,7 @@ class Home extends React.Component {
         data[4]?data[4]:emptyArticle],
          loading: false});
     });
-    $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/event", (data) => {
+    $.get(app_config.api_url + "/event", (data) => {
       data.reverse();
       self.setState({events: [
         data[0]?data[0]:emptyEvent,

@@ -5,6 +5,7 @@ import './Article.css';
 import {instanceOf} from 'prop-types'
 import {withCookies, Cookies} from 'react-cookie';
 import {useParams} from 'react-router-dom';
+import {app_config} from "../config";
 import $ from 'jquery';
 import {Row, Col, Button, Card, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -35,11 +36,11 @@ class Article extends React.Component {
   componentDidMount() {
     const {cookies} = this.props;
     const self = this;
-    const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/" + this.state.id;
+    const request_url = app_config.api_url+"/article/" + this.state.id;
     this.setState({articleLoading: true});
     $.get(request_url, data => {
       self.setState({articleLoading: false, article: data, authorLoading: true, comments:data.comments.reverse()});
-      const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/user/" + data.authorId;
+      const request_url = app_config.api_url + "/user/" + data.authorId;
       $.get(request_url, user => {this.setState( {author: user, authorLoading: false} ) } );
       self._article=this.state.article;
       }
@@ -63,7 +64,7 @@ class Article extends React.Component {
     else{
       event.preventDefault();
       var data = {body : this.state.commentText};
-      var url= "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/comment";
+      var url= app_config.api_url+"/article/"+this.state.id+"/comment";
       var authToken = cookies.get('userToken');
       var success;
       
@@ -95,7 +96,7 @@ class Article extends React.Component {
         }
       });
       postRequest({
-        url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/up-vote",
+        url: app_config.api_url + "/article/"+this.state.id+"/up-vote",
         success: function() { console.log("Vote sent!") },
         authToken: cookies.get('userToken')
       })
@@ -112,7 +113,7 @@ class Article extends React.Component {
       }
     });
     postRequest({
-      url: "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/"+this.state.id+"/down-vote",
+      url: app_config.api_url + "/article/"+this.state.id+"/down-vote",
       success: function() { console.log("Vote sent!") },
       authToken: cookies.get('userToken')
     })
@@ -139,6 +140,7 @@ class Article extends React.Component {
               <Card.Title><h1>{article.title}</h1></Card.Title>
               {authorLine}
               <hr />
+              <Card.Img variant = "top" src= {article.imgUri} />
               <Card.Text>{article.body}</Card.Text>
               <hr/>
             </Card.Body>

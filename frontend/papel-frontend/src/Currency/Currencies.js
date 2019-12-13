@@ -1,10 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types"
 import $ from 'jquery';
+import {app_config} from "../config";
 import {Row, Col,Nav, Button, Card, Form, Tabs, Tab} from 'react-bootstrap';
 import CurrencyView from "./CurrencyView"
 import CurrencyTable from "./CurrencyTable"
-const url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/";
+const url = app_config.api_url + "/";
 var template =
 {
   "_id": "not loaded",
