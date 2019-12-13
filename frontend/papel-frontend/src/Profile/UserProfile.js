@@ -9,6 +9,7 @@ import './UserProfile.css'
 import Portfolio from './Portfolio'
 import { getFormattedAddress } from '../helpers/geocoder'
 import {Redirect} from 'react-router-dom'
+import {app_config} from "../config";
 
 class UserProfile extends React.Component {
   // const [cookies, setCookie, removeCookie] = useCookies('user', 'userToken')
@@ -45,7 +46,7 @@ class UserProfile extends React.Component {
   componentDidMount() {
     const {cookies} = this.props
     const userToken = cookies.get('userToken')
-    let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/other/" + this.state.userId
+    let requestUrl = app_config.api_url + "/profile/other/" + this.state.userId
     this.setState({loading: true})
     get({
       url: requestUrl,
@@ -77,7 +78,7 @@ class UserProfile extends React.Component {
       alert("You must be logged in to follow other users");
     }
     else {
-      let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/other/" + this.state.userId + "/follow"
+      let requestUrl = app_config.api_url + "/profile/other/" + this.state.userId + "/follow"
       post({
         url: requestUrl,
         success: (resp) => {
