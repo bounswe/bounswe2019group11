@@ -140,6 +140,7 @@ class Article extends React.Component {
               <Card.Title><h1>{article.title}</h1></Card.Title>
               {authorLine}
               <hr />
+              <Card.Img variant = "top" src= {article.imgUri} />
               <Card.Text>{article.body}</Card.Text>
               <hr/>
             </Card.Body>
