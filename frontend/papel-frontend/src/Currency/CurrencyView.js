@@ -1,4 +1,4 @@
-http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000import React from 'react';
+import React from 'react';
 import { Card } from 'react-bootstrap';
 
 function CurrencyView({code,name,rate,comments, predictions, userPredictions }) {
