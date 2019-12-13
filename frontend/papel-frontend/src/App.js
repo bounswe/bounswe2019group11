@@ -15,6 +15,7 @@ import AddArticle from './Article/AddArticle';
 import EconEvent from './EconEvent/EconEvent';
 import EconEvents from './EconEvent/EconEvents';
 import Validation from './Register/Validation';
+import {app_config} from "./config";
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import { useCookies, CookiesProvider } from 'react-cookie';
 import { faBell,faExclamation, faPlus,faThumbsUp,faThumbsDown,faSignInAlt, faSignOutAlt, faUser, faNewspaper, faCalendarWeek, faHome, faMoneyBill, faCoins, faMoneyBillWave, faCheck, faTimes} from '@fortawesome/free-solid-svg-icons';
@@ -139,7 +140,7 @@ function App() {
 
   function acceptFollow(id) {
     if(!!cookies.userToken) {
-      let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/other/" + id + "/accept"
+      let requestUrl = app_config.api_url + "/profile/other/" + id + "/accept";
       post({
         url: requestUrl,
         success: (data) => {
@@ -155,7 +156,7 @@ function App() {
   }
   function rejectFollow(id) {
     if(!!cookies.userToken) {
-      let requestUrl = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/profile/other/" + id + "/decline"
+      let requestUrl = app_config.api_url + "/profile/other/" + id + "/decline"
       post({
         url: requestUrl,
         success: (data) => {
