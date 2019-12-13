@@ -43,6 +43,10 @@
     {
       "name": "notification",
       "description": "Notification related endpoints."
+    },
+    {
+      "name": "money",
+      "description": "Money related endpoints for trader users."
     }
   ],
   "securityDefinitions": {
@@ -2384,6 +2388,111 @@
         "responses": {
           "200": {
             "description": "OK. Notification successfully discarded."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/money": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "money"
+        ],
+        "summary": "Endpoint to get the amount of money of the authenticated user.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The amount of money in US dollars is returned.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "money": {
+                  "type": "number",
+                  "example": 1300
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/money/deposit/{amount}": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "money"
+        ],
+        "summary": "Endpoint to deposit money to the authenticated user's account.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "amount",
+            "description": "Amount of money to deposit.",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The amount of money is deposited to the user's account."
+          },
+          "400": {
+            "description": "Given amount is either not a number or not positive."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/money/withdraw/{amount}": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "money"
+        ],
+        "summary": "Endpoint to withdraw money from the authenticated user's account.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "amount",
+            "description": "Amount of money to withdraw.",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The amount of money is withdrawn from the user's account."
+          },
+          "400": {
+            "description": "Given amount is either not a number or not positive. Or the user has insufficient funds to perform this action."
           },
           "500": {
             "description": "Internal error occurred. Check the cause field for the diagnostics."
