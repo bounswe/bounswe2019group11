@@ -2,6 +2,7 @@ import React from "react";
 import EconEvent from "./EconEvent";
 import {Row, Col, Card} from 'react-bootstrap';
 import $ from 'jquery';
+import {app_config} from "../config";
 import EconEventPreview from './EconEventPreview';
 
 class EconEvents extends React.Component{
@@ -12,7 +13,7 @@ class EconEvents extends React.Component{
   componentDidMount() {
     const self = this;
     this.setState({loading: true});
-    $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/event", (data) => {
+    $.get(app_config.api_url +  "/event", (data) => {
       
       self.setState({econevents: data.reverse(), loading: false})
     })

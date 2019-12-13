@@ -3,6 +3,7 @@ import {instanceOf} from 'prop-types';
 import './Login.css';
 import Logo from '../logo-white.png';
 import $ from 'jquery';
+import {app_config} from "../config";
 import {withCookies, Cookies } from 'react-cookie';
 import {Redirect} from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
@@ -24,7 +25,7 @@ class Login extends React.Component {
   async submit() {
     const {cookies} = this.props;
     var self = this;
-    $.post("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/auth/login", {email: this.state.email, password: this.state.password },
+    $.post(app_config.api_url + "/auth/login", {email: this.state.email, password: this.state.password },
     data => {
       cookies.set('userToken', data.token);
       cookies.set('user', data.user);

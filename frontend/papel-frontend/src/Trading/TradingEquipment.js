@@ -5,6 +5,7 @@ import './TradingEquipment.css';
 import {Card} from 'react-bootstrap'
 import CanvasJSReact from '../canvasjs/canvasjs.react';
 import {withCookies} from 'react-cookie'
+import {app_config} from "../config";
 
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -17,7 +18,7 @@ class TradingEquipment extends React.Component {
 
   componentDidMount() {
     var stockId;
-    $.get(`http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/stock/${this.state.id}`, (data) => {
+    $.get(app_config.api_url + `/stock/${this.state.id}`, (data) => {
       this.setState({stock: data, dailyPrice: data.dailyPrice, monthlyPrice: data.monthlyPrice});
     });
   }

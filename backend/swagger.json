@@ -918,6 +918,11 @@
                   "description": "Title of the article.",
                   "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
                 },
+                "imgUri": {
+                  "type": "string",
+                  "description": "image Url",
+                  "example": "https://static01.nyt.com/images/2019/09/19/business/03DC-FED-01/merlin_158705952_0a5bd2ca-6443-4c6d-bef7-9d0bff8096eb-superJumbo.jpg"
+                },
                 "body": {
                   "type": "string",
                   "description": "Body of the article",
@@ -2738,6 +2743,11 @@
           "type": "string",
           "description": "Title of the article",
           "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
+        },
+        "imgUri": {
+          "type": "string",
+          "description": "Image Url",
+          "example": "https://static01.nyt.com/images/2019/09/19/business/03DC-FED-01/merlin_158705952_0a5bd2ca-6443-4c6d-bef7-9d0bff8096eb-superJumbo.jpg"
         },
         "body": {
           "type": "string",

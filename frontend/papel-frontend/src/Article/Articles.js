@@ -1,6 +1,7 @@
 import React from 'react';
 import './Article.css';
 import $ from 'jquery';
+import {app_config} from "../config";
 import ArticlePreview from './ArticlePreview';
 import {Row, Col, Card, Person, ButtonToolbar, Button, Modal, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -15,7 +16,7 @@ class Articles extends React.Component {
   componentDidMount() {
     const self = this;
     this.setState({loading: true});
-    $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article", (data) => {
+    $.get(app_config.api_url + "/article", (data) => {
       self.setState({articles: data.reverse(), loading: false});
     });
     
