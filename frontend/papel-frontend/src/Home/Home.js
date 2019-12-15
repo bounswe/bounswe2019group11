@@ -7,8 +7,10 @@ import {Editor, EditorState, RichUtils} from 'draft-js';
 import 'draft-js/dist/Draft.css';
 import './Home.css';
 import ArticleListPreview from "./ArticleListPreview"
+import EventListPreview from "./EventListPreview"
 import {useParams} from 'react-router-dom';
 import $ from 'jquery';
+import {app_config} from "../config";
 import {Row, Col, Button, Card} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus,faThumbsUp,faThumbsDown } from '@fortawesome/free-solid-svg-icons';
@@ -16,7 +18,7 @@ import { faPlus,faThumbsUp,faThumbsDown } from '@fortawesome/free-solid-svg-icon
 class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {loading: false, redirect: false, articles: [], previewer1article:"active",previewer1event:"",previewer2USD:"active",previewer2EUR:"",previewer3stock1:"active",previewer3stock2:""};
+    this.state = {loading: false, redirect: false, articles: [], events: [], previewer1article:"active",previewer1event:"",previewer2USD:"active",previewer2EUR:"",previewer3stock1:"active",previewer3stock2:""};
     this.handleArticleClick=this.handleArticleClick.bind(this);
     this.handleEventClick=this.handleEventClick.bind(this);
     this.handleUSDClick=this.handleUSDClick.bind(this);
@@ -27,11 +29,53 @@ class Home extends React.Component {
 
 
   }
+  
   componentDidMount() {
+    var emptyEvent = {
+      "title": "No Title Found",
+      "body": " No event to show :(",
+      "comment": [
+        "No comment"
+      ],
+      "date": "No date",
+      "rank": 0,
+      "country": "No country"
+    };
+    var emptyArticle = {
+      "_id": "",
+      "title": "No article to show",
+      "body": "No article",
+      "authorId": "",
+      "voteCount": "",
+      "date": "",
+      "author": {
+        "name": "",
+        "surname": ""
+      },
+      "userVote": 0,
+      "comments": []
+    }
     const self = this;
     this.setState({loading: true});
-    $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article", (data) => {
-      self.setState({articles: [data[0],data[1],data[2  ]], loading: false});
+    $.get(app_config.api_url + "/article", (data) => {
+      data.reverse();
+      self.setState({articles: [
+        data[0]?data[0]:emptyArticle,
+        data[1]?data[1]:emptyArticle,
+        data[2]?data[2]:emptyArticle,
+        data[3]?data[3]:emptyArticle,
+        data[4]?data[4]:emptyArticle],
+         loading: false});
+    });
+    $.get(app_config.api_url + "/event", (data) => {
+      data.reverse();
+      self.setState({events: [
+        data[0]?data[0]:emptyEvent,
+        data[1]?data[1]:emptyEvent,
+        data[2]?data[2]:emptyEvent,
+        data[3]?data[3]:emptyEvent,
+        data[4]?data[4]:emptyEvent],
+         loading: false});
     });
   }
 
@@ -101,50 +145,56 @@ class Home extends React.Component {
                 </li>
                 <li className="nav-item">
                   <a className={"nav-link "+this.state.previewer1event}  onClick={this.handleEventClick} href="#">Events</a>
+
                 </li>
               </ul>
             </div>
 
-
-            <div  className="card-body">
-
+            <div id="a" class="card-body">
             <div  className="ArticleSection">
-                <h5 className="card-title">3 Newest Articles</h5>
+                <h5 class="card-title">The Newest {this.state.articles.length} Articles</h5>
                 <hr/>
-                <div className="card-text">
+                <p className="card-text">
                   {
-
                     this.state.articles ? this.state.articles.map(article => (
                       <ArticleListPreview key={article._id} articleId={article._id} title={article.title} text={article.body}  />
                     )) : "loading..."
                   }
-                </div>
+                </p>
+                <a href={"../articles"}>See All...</a>
+              
               </div>
               <div  hidden className="EventSection">
-                <h5 className="card-title">3 Newest Events</h5>
+                <h5 class="card-title">The Newest {this.state.events.length} Events</h5>
+
                 <hr/>
-                <div className="card-text">
+                <p className="card-text">
                   {
-                    this.state.articles.map(article => (
-                      <ArticleListPreview key={article._id} articleId={article._id} title={article.title} text={article.body}  />
+                    this.state.events.map(event => (
+                      <EventListPreview key={event._id} articleId={event._id} title={event.title} text={event.body} rank={event.rank} date={event.date} country={event.country}/>
                     ))
                   }
-                </div>
+                </p>
+                <a href={"../events"}>See All...</a>
+
               </div>
             </div>
           </div>
         </Col>
 
-        <Col md={{span: 6}}>
-          <div name="v2" className="card text-center">
-            <div className="card-header">
-              <ul className="nav nav-tabs card-header-tabs">
-                <li className="nav-item" >
-                  <a className={"nav-link "+this.state.previewer2USD} onClick={this.handleUSDClick} href="#">USD</a>
-
+        <Col md={{span: 6 ,offset:0}}style ={{marginTop:0,
+  marginBottom: 10,
+  marginRight: 0,
+  marginLeft: 0}}>
+          <div name="v2" class="card text-center">
+            <div class="card-header">
+              <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item" >
+                  <a class={"nav-link "+this.state.previewer2USD} onClick={this.handleUSDClick} >USD</a>
                 </li>
-                <li className="nav-item">
-                  <a className={"nav-link "+this.state.previewer2EUR}  onClick={this.handleEURClick} href="#">EUR</a>
+                <li class="nav-item">
+                  <a class={"nav-link "+this.state.previewer2EUR}  onClick={this.handleEURClick} >EUR</a>
+
                 </li>
               </ul>
             </div>
@@ -161,15 +211,20 @@ class Home extends React.Component {
               </div>
             </div>
           </div>
-
+          </Col>
+          <Col md={{span: 6 ,offset:0}}style ={{marginTop:0,
+  marginBottom: 10,
+  marginRight: 0,
+  marginLeft: 0}}>
+      
           <div name="v3" class="card text-center">
             <div class="card-header">
               <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item" >
-                  <a class={"nav-link "+this.state.previewer3stock1} onClick={this.handleStock1Click} href="#">EMB</a>
+                  <a class={"nav-link "+this.state.previewer3stock1} onClick={this.handleStock1Click} >EMB</a>
                 </li>
                 <li class="nav-item">
-                  <a class={"nav-link "+this.state.previewer3stock2}  onClick={this.handleStock2Click} href="#">DIS</a>
+                  <a class={"nav-link "+this.state.previewer3stock2}  onClick={this.handleStock2Click} >DIS</a>
                 </li>
               </ul>
             </div>

@@ -2,31 +2,32 @@ import React from "react";
 import "./EconEvent.css";
 import {useParams} from 'react-router-dom';
 import $ from 'jquery';
+import {app_config} from "../config";
 import {Row, Col, Card} from 'react-bootstrap'
 
 class EconEvent extends React.Component{
   constructor(props){
     super(props);
     this.state = {id: this.props.match.params.id, loading: false, econevent:{}, star:{}};
-    let temp = Math.floor(Math.random() * 5)+1 ;
-    var ar = ["star-outline","star-outline","star-outline","star-outline","star-outline"];
-    for (let i = 0; i < temp; i++) {
-        ar[i] = "star";
-    }
-    this.state.star = ar;
-
+    
   }
   componentDidMount(){
     console.log(this.state.id)
     const self = this
-    const url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/event/" + this.state.id
-    this.setState({loading: true})
+    const url = app_config.api_url + "/event/" + this.state.id;
+    this.setState({loading: true});
     $.get(url, data => {
       console.log(data)
       self.setState({loading: false, econevent: data})
     })
   }
-
+  createStars(){
+    let temp=0 ;
+    var ar = ["star-outline","star-outline","star-outline"];
+    for (let i = 0; i < temp; i++) {
+        ar[i] = "star";
+    }
+  }
     render(){
         var econevent = this.state.econevent;
         if (this.state.loading) {
@@ -59,8 +60,6 @@ class EconEvent extends React.Component{
                     <ion-icon name = {this.state.star[0]}></ion-icon>
                     <ion-icon name = {this.state.star[1]}></ion-icon>
                     <ion-icon name = {this.state.star[2]}></ion-icon>
-                    <ion-icon name = {this.state.star[3]}></ion-icon>
-                    <ion-icon name = {this.state.star[4]}></ion-icon>
                   </div>
                 </div>
               </div>

@@ -4,7 +4,7 @@ import './Register.css';
 import $ from 'jquery';
 import Modal from 'react-bootstrap/Modal';
 import {Redirect} from 'react-router-dom';
-
+import {app_config} from "../config";
 function RegisterSuccessfulModal(props) {
   /* console.log(props); */
   return (
@@ -107,7 +107,7 @@ class Register extends React.Component {
         location: {latitude: this.state.latitude, longitude: this.state.longitude}
       };
       console.log(user);
-      $.post("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/auth/sign-up", user, (resp, data) => {
+      $.post(app_config.api_url + "/auth/sign-up", user, (resp, data) => {
         console.log("Wow! It's a response: " + resp);
         if (resp == 'OK') {
           this.setState({registerSuccessful: true});
