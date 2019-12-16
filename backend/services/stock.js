@@ -80,7 +80,7 @@ const STAGES = {
 module.exports.getAll = async () => {
     return await Stock
         .find()
-        .select("-monthlyPrice -dailyPrice")
+        .select("-price -monthlyPrice -dailyPrice")
         .exec();
 };
 
@@ -88,11 +88,12 @@ module.exports.getById = async (_id) => {
     if (!mongoose.Types.ObjectId.isValid(_id)) {
         throw errors.STOCK_NOT_FOUND();
     }
-    // TODO enabled comments
-    return Stock.findOne({_id});
-};
+    const stock = await Stock.aggregate([
+        STAGES.MATCH_ID(_id), STAGES.GET_COMMENTS
+    ]);
 
-/*
+    return stock[0];
+};
 
 module.exports.postComment = async (stockId, authorId, body) => {
     if (!(mongoose.Types.ObjectId.isValid(stockId))) {
@@ -156,4 +157,3 @@ module.exports.deleteComment = async (stockId, commentId, authorId) => {
         throw errors.COMMENT_NOT_FOUND();
     }
 };
- */
