@@ -9,20 +9,20 @@ const stockSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-
     monthlyPrice: {
-        type: Object
+        type: Object,
+        _id: false,
+        default: {}
     },
     dailyPrice: {
-        type: Object
+        type: Object,
+        _id: false,
+        default: {}
     },
     stockSymbol: {
         type: String,
         required: true
     },
-    stockName: {
-        type: String
-    }
 });
 
 module.exports = mongoose.model('Stock', stockSchema);
