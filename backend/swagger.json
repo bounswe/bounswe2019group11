@@ -2282,6 +2282,11 @@
     },
     "/investments": {
       "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "tags": [
           "investments"
         ],
@@ -2305,6 +2310,11 @@
         }
       },
       "post":{
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "tags": [
           "investments"
         ],
@@ -2339,6 +2349,11 @@
     },
     "/investments/{_id}": {
       "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "tags": [
           "investments"
         ],
@@ -2373,6 +2388,11 @@
     },
     "/investments/{_id}/stock": {
       "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "tags": [
           "investments"
         ],
@@ -2416,6 +2436,11 @@
     },
     "/investments/{_id}/stock": {
       "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "tags": [
           "investments"
         ],
@@ -2459,6 +2484,11 @@
     },
     "/investments/user/{_userId}": {
       "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "tags": [
           "investments"
         ],
