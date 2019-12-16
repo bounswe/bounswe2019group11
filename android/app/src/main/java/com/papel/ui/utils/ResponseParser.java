@@ -166,7 +166,8 @@ public class ResponseParser {
             String authorName = author.getString("name") + " " + author.getString("surname");
             int voteCount = response.getInt("voteCount");
             String date = response.getString("date");
-            article = new Article(articleId, articleTitle, articleBody,authorId, authorName, voteCount, date);
+            String imageUrl = response.getString("imgUri");
+            article = new Article(articleId, articleTitle, articleBody,authorId, authorName, voteCount, date,imageUrl);
             if(response.has("comments")) {
                 JSONArray comments = response.getJSONArray("comments");
                 ArrayList<Comment> articleComments = new ArrayList<>();
