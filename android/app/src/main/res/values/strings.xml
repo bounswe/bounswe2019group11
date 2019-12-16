@@ -56,6 +56,7 @@
     <string name="like">Like</string>
     <string name="dislike">Dislike</string>
     <string name="search_trading_eq_hint">Search in Trading Equipments</string>
+    <string name="search_inv_hint">Search in Your Investments</string>
     <string name="prediction_question">What do you think will happen to the value of this trading equipment?</string>
     <string name="prediction_increase">Increases</string>
     <string name="prediction_decreases">Decreases</string>
@@ -70,6 +71,11 @@
     <string name="no_predictions">There are no predictions yet</string>
     <string name="stock">STOCK</string>
     <string name="currency">CURRENCY</string>
+    <string name="investments">Investments</string>
+    <string name="my_investments">My Investments</string>
+    <string name="title_activity_add_investment">AddInvestmentActivity</string>
+    <string name="amount">Amount</string>
+
 
 </resources>
 
