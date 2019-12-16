@@ -186,10 +186,13 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                     for (int i = 0; i < articleArray.length(); i++) {
                         articles.add(ResponseParser.parseArticle(articleArray.getJSONObject(i)));
                     }
-                    JSONArray portfolioArray = responseJSON.getJSONArray("portfolios");
-                    for (int i = 0; i < portfolioArray.length(); i++) {
-                        portfolios.add(ResponseParser.parsePortfolio(portfolioArray.getJSONObject(i)));
+                    if(responseJSON.has("portfolios")){
+                        JSONArray portfolioArray = responseJSON.getJSONArray("portfolios");
+                        for (int i = 0; i < portfolioArray.length(); i++) {
+                            portfolios.add(ResponseParser.parsePortfolio(portfolioArray.getJSONObject(i)));
+                        }
                     }
+
                     if (responseJSON.has("isInMyNetwork")) {
                         isInMyNetwork = responseJSON.getString("isInMyNetwork");
                     }
@@ -210,23 +213,26 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                                 followersPending.add(user);
                             }
                         }
-
                     }
-                    JSONArray followingArray = responseJSON.getJSONArray("following");
-                    for (int i = 0; i < followingArray.length(); i++) {
-                        User user = ResponseParser.parseFollowUser(followingArray.getJSONObject(i));
-                        if (user != null) {
-                            following.add(user);
+                    if (responseJSON.has("following")) {
+                        JSONArray followingArray = responseJSON.getJSONArray("following");
+                        for (int i = 0; i < followingArray.length(); i++) {
+                            User user = ResponseParser.parseFollowUser(followingArray.getJSONObject(i));
+                            if (user != null) {
+                                following.add(user);
+                            }
                         }
                     }
-
-                    JSONArray followersArray = responseJSON.getJSONArray("followers");
-                    for (int i = 0; i < followersArray.length(); i++) {
-                        User user = ResponseParser.parseFollowUser(followersArray.getJSONObject(i));
-                        if (user != null) {
-                            Log.d("Info","Follower " + user.getName());
-                            followers.add(user);
+                    if (responseJSON.has("followers")) {
+                        JSONArray followersArray = responseJSON.getJSONArray("followers");
+                        for (int i = 0; i < followersArray.length(); i++) {
+                            User user = ResponseParser.parseFollowUser(followersArray.getJSONObject(i));
+                            if (user != null) {
+                                Log.d("Info","Follower " + user.getName());
+                                followers.add(user);
+                            }
                         }
+
                     }
 
                     Log.d("Info", "Privacy: " + privacy);
