@@ -29,6 +29,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.papel.Constants;
 import com.papel.ListViewAdapter;
 import com.papel.R;
@@ -66,6 +67,7 @@ public class ReadArticleActivity extends AppCompatActivity {
     private ColorStateList cl_primary;
     private ColorStateList cl_black;
     private String articleId;
+    private ImageView articleImage;
 
 
     private String authorId;
@@ -94,6 +96,7 @@ public class ReadArticleActivity extends AppCompatActivity {
         cl_black = ColorStateList.valueOf(getResources().getColor(R.color.black));
         getArticleFromEndpoint(getApplicationContext(), articleId);
         noCommentTextView = header.findViewById(R.id.article_no_comment_textview);
+        articleImage = header.findViewById(R.id.read_article_image);
 
 
         final Intent profileIntent = new Intent(this, ProfileActivity.class);
@@ -179,6 +182,10 @@ public class ReadArticleActivity extends AppCompatActivity {
                 try {
                     JSONObject object = new JSONObject(response);
                     article = ResponseParser.parseArticle(object);
+                    Glide.with(context)
+                            .load(article.getImageUrl())
+                            .fitCenter()
+                            .into(articleImage);
                     title.setText(article.getTitle());
                     content.setText(article.getBody());
                     authorId = article.getAuthorId();

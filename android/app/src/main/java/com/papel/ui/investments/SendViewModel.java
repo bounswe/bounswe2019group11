@@ -1,4 +1,4 @@
-package com.papel.ui.send;
+package com.papel.ui.investments;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

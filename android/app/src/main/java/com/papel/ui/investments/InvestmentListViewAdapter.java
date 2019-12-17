@@ -1,4 +1,4 @@
-package com.papel.ui.portfolio;
+package com.papel.ui.investments;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,22 +10,23 @@ import android.widget.TextView;
 
 import com.papel.R;
 import com.papel.data.Currency;
+import com.papel.data.Investment;
 import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
 
 import java.util.ArrayList;
 
-public class TradingEquipmentListViewAdapter extends BaseAdapter {
+public class InvestmentListViewAdapter extends BaseAdapter {
 
     private Context context;
-    private ArrayList<TradingEquipment> tradingEquipments;
-    private ArrayList<TradingEquipment> filteredData;
+    private ArrayList<Investment> investments;
+    private ArrayList<Investment> filteredData;
     private boolean showFullname;
 
-    public TradingEquipmentListViewAdapter(Context context, ArrayList<TradingEquipment> tradingEquipments,boolean showFullname) {
+    public InvestmentListViewAdapter(Context context, ArrayList<Investment> investments, boolean showFullname) {
         this.context = context;
-        this.tradingEquipments = tradingEquipments;
-        this.filteredData = tradingEquipments;
+        this.investments = investments;
+        this.filteredData = investments;
         this.showFullname = showFullname;
     }
 
@@ -36,7 +37,7 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
     }
 
     @Override
-    public TradingEquipment getItem(int i) {
+    public Investment getItem(int i) {
         return filteredData.get(i);
     }
 
@@ -51,32 +52,28 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
             view = LayoutInflater.from(context).inflate(R.layout.trading_equipment_row,viewGroup,false);
         }
 
-        TradingEquipment item = filteredData.get(i);
+        Investment item = filteredData.get(i);
 
         TextView name = view.findViewById(R.id.trading_equipment_name);
-        TextView type = view.findViewById(R.id.trading_equipment_type_name);
+        TextView amount = view.findViewById(R.id.trading_equipment_type_name);
+        String text_amount = ""+item.getAmount();
 
-        if (item instanceof Stock) {
-            type.setText(R.string.stock);
-            String parity_name;
+
+        if (item.getEquipment() instanceof Stock) {
             if (showFullname) {
-                parity_name = ((Stock)item).getName() + "/ USD";
-                name.setText(parity_name);
+                name.setText(((Stock)item.getEquipment()).getName());
             } else {
-                parity_name = ((Stock)item).getSymbol() + "/ USD";
-                name.setText(parity_name);
+                name.setText(((Stock)item.getEquipment()).getSymbol());
             }
-        } else if (item instanceof Currency) {
-            type.setText(R.string.currency);
-            String parity_name;
+        } else if (item.getEquipment() instanceof Currency) {
+            text_amount = text_amount + "€";
             if (showFullname) {
-                parity_name = ((Currency)item).getName() + "/ USD";
-                name.setText(parity_name);
+                name.setText(((Currency)item.getEquipment()).getName());
             } else {
-                parity_name = ((Currency)item).getCode() + "/ USD";
-                name.setText(parity_name);
+                name.setText(((Currency)item.getEquipment()).getCode());
             }
         }
+        amount.setText(text_amount);
 
         return view;
     }
@@ -89,22 +86,22 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
-            ArrayList<TradingEquipment> suggestions = new ArrayList<>();
+            ArrayList<Investment> suggestions = new ArrayList<>();
 
             if (constraint == null || constraint.length() == 0) {
-                suggestions.addAll(tradingEquipments);
+                suggestions.addAll(investments);
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
-                for (int i = 0; i<tradingEquipments.size(); i++) {
-                    TradingEquipment item = tradingEquipments.get(i);
-                    if (item instanceof Stock) {
-                        if(((Stock)item).getName().toLowerCase().contains(filterPattern)
-                                || ((Stock)item).getSymbol().toLowerCase().contains(filterPattern)) {
+                for (int i = 0; i<investments.size(); i++) {
+                    Investment item = investments.get(i);
+                    if (item.getEquipment() instanceof Stock) {
+                        if(((Stock)item.getEquipment()).getName().toLowerCase().contains(filterPattern)
+                                || ((Stock)item.getEquipment()).getSymbol().toLowerCase().contains(filterPattern)) {
                             suggestions.add(item);
                         }
-                    } else if (item instanceof Currency) {
-                        if(((Currency)item).getName().toLowerCase().contains(filterPattern)
-                                || ((Currency)item).getCode().toLowerCase().contains(filterPattern)) {
+                    } else if (item.getEquipment() instanceof Currency) {
+                        if(((Currency)item.getEquipment()).getName().toLowerCase().contains(filterPattern)
+                                || ((Currency)item.getEquipment()).getCode().toLowerCase().contains(filterPattern)) {
                             suggestions.add(item);
                         }
                     }
@@ -119,7 +116,7 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredData = (ArrayList<TradingEquipment>) results.values;
+            filteredData = (ArrayList<Investment>) results.values;
             notifyDataSetChanged();
         }
 

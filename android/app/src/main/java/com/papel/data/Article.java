@@ -19,11 +19,12 @@ public class Article implements Parcelable {
     private int voteCount;
     private Date dateObj;
     private int userVote=0;
+    private String imageUrl;
 
     public Article() {
     }
 
-    public Article(String id, String title, String body, String authorId, String authorName, int voteCount, String date) {
+    public Article(String id, String title, String body, String authorId, String authorName, int voteCount, String date,String imageUrl) {
         this.id = id;
         this.title = title;
         this.body = body;
@@ -31,6 +32,7 @@ public class Article implements Parcelable {
         this.authorName = authorName;
         this.voteCount = voteCount;
         this.date = date;
+        this.imageUrl = imageUrl;
 
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
@@ -58,6 +60,7 @@ public class Article implements Parcelable {
         parcel.writeString(this.date);
         parcel.writeInt(this.voteCount);
         parcel.writeList(this.comments);
+        parcel.writeString(this.imageUrl);
     }
 
     public static final Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {
@@ -79,7 +82,17 @@ public class Article implements Parcelable {
         this.date = in.readString();
         this.voteCount = in.readInt();
         this.comments = in.readArrayList(null);
+        this.imageUrl = in.readString();
     }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public int getUserVote() {
         return userVote;
     }

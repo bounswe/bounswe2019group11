@@ -11,13 +11,22 @@
     android:scrollbars="vertical">
 
 
+    <ImageView
+        android:id="@+id/read_article_image"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
     <TextView
         android:id="@+id/read_article_title_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_marginStart="@dimen/text_margin"
-        android:layout_marginTop="@dimen/text_margin"
+        android:layout_marginTop="220dp"
         android:layout_marginEnd="@dimen/text_margin"
         android:layout_marginBottom="@dimen/text_margin"
         android:text="@string/test_title"
@@ -31,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/text_margin"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="264dp"
         android:layout_marginEnd="@dimen/text_margin"
         android:fadeScrollbars="true"
         android:isScrollContainer="true"
@@ -180,4 +189,6 @@
 
 
     </LinearLayout>
+
+
 </RelativeLayout>

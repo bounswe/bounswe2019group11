@@ -128,7 +128,8 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
 
         if (tradingEquipment instanceof Stock) {
             stock = (Stock) tradingEquipment;
-            setTitle(stock.getSymbol());
+            String title =  stock.getSymbol() + "/ USD";
+            setTitle(title);
             noCommentTextView.setVisibility(View.VISIBLE);
             percentagePredTextView.setText(R.string.no_predictions);
             predProgressBar.setProgress(0);
@@ -136,7 +137,8 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             totalPredCountTextView.setText(text);
         } else if (tradingEquipment instanceof Currency) {
             currency = (Currency) tradingEquipment;
-            setTitle(currency.getName());
+            String title = currency.getCode() + "/ USD";
+            setTitle(title);
         }
 
         predictionRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
