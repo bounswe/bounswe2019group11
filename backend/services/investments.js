@@ -1,4 +1,6 @@
 const Investments = require('../models/investments');
+const moneyService = require('../services/money');
+const User = require('../models/user');
 const errors = require('../helpers/errors');
 
 module.exports.getAll = async () => {
@@ -28,8 +30,12 @@ module.exports.addStock = async (theStock,theAmount,investmentsID) => {
     const investmentsToAdd = await Investments.findOne({
         _id: investmentsID
     });
-    console.log("finding index")
+    const user = await User.findOne({
+        _id: investmentsToAdd.userId
+    });
+    const dollarAmount = theAmount * stockToBeAdded.price
     const index = investmentsToAdd.stocks.findIndex(s => s.stock._id == stockToBeAdded._id);
+    await moneyService.withdraw(user._id,dollarAmount)
     if(index == -1){
         investmentsToAdd.stocks.push({stock: stockToBeAdded,amount: theAmount});
         await  investmentsToAdd.save();
@@ -46,10 +52,15 @@ module.exports.addCurrency = async (theCurrency,theAmount,investmentsID) => {
     const investmentsToAdd = await Investments.findOne({
         _id: investmentsID
     });
+    const user = await User.findOne({
+        _id: investmentsToAdd.userId
+    });
+    const dollarAmount = theAmount / currencyToBeAdded.rate
     const index = investmentsToAdd.currencies.findIndex(c => c.currency._id == currencyToBeAdded._id);
+    await moneyService.withdraw(user._id,dollarAmount)
     if(index == -1){
         investmentsToAdd.currencies.push({currency: currencyToBeAdded,amount: theAmount});
-        await  investmentsToAdd.save();
+        await investmentsToAdd.save();
         return await this.getById(investmentsID);
     } else{
         investmentsToAdd.currencies[index].amount += theAmount;
@@ -63,7 +74,12 @@ module.exports.removeStock = async (theStock,investmentsID) => {
     const investmentsToBeModified = await Investments.findOne({
         _id: investmentsID
     });
+    const user = await User.findOne({
+        _id: investmentsToAdd.userId
+    });
+    const dollarAmount = theAmount * stockToBeAdded.price
     const index = investmentsToBeModified.stocks.findIndex(s => s.stock._id == stockToBeDeleted._id);
+    await moneyService.deposit(user._id,dollarAmount);
     if(index == -1){
         throw errors.STOCK_NOT_FOUND();
     }else{
@@ -78,7 +94,12 @@ module.exports.removeCurrency = async (theCurrency,investmentsID) => {
     const investmentsToBeModified = await Investments.findOne({
         _id: investmentsID
     });
+    const user = await User.findOne({
+        _id: investmentsToAdd.userId
+    });
+    const dollarAmount = theAmount / currencyToBeAdded.rate
     const index = investmentsToBeModified.currencies.findIndex(c => c.currency._id == currencyToBeDeleted._id);
+    await moneyService.deposit(user._id,dollarAmount);
     if(index == -1){
         throw errors.TRADING_EQUIPMENT_NOT_FOUND();
     }else{
