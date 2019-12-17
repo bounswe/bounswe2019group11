@@ -24,6 +24,10 @@
             android:id="@+id/nav_investments"
             android:icon="@drawable/ic_menu_send"
             android:title="@string/my_investments" />
+        <item
+            android:id="@+id/nav_money"
+            android:icon="@drawable/ic_menu_portfolio"
+            android:title="@string/menu_money" />
     </group>
 
     <!-- <item android:title="Communicate">

@@ -15,6 +15,7 @@
     <string name="menu_articles">Articles</string>
     <string name="menu_portfolio">Portfolios</string>
     <string name="menu_trading_eq">Trading Equipments</string>
+    <string name="menu_money">Money</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
     <string name="profile_image_description">Profile image.</string>
