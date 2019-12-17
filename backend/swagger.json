@@ -2434,7 +2434,7 @@
         }
       }
     },
-    "/investments/{_id}/stock": {
+    "/investments/{_id}/currency": {
       "post": {
         "security": [
           {
@@ -2463,6 +2463,102 @@
             "schema": {
               "type": "object",
               "$ref": "#/definitions/CurrencyAmount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/investments/{_id}/exchangeCC": {
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Exchanges the desired amount of currency with another currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "fromCurrency, toCurrency",
+            "description": "Exchange the given \"amount\" of fromCurrency with the toCurrency ",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/fromCurrencyToCurrency"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },    
+    "/investments/{_id}/exchangeSS": {
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Exchanges the desired amount of stock with another stock.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "fromStock, toStock",
+            "description": "Exchange the given \"amount\" of fromStock with the toStock ",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/fromStockToStock"
             }
           }
         ],
@@ -2832,6 +2928,22 @@
         }
       }
     },
+    "fromCurrencyToCurrency": {
+      "type": "object",
+      "properties": {
+        "fromCurrency": {
+          "$ref": "#/definitions/Currency"
+        },
+        "toCurrency": {
+          "$ref": "#/definitions/Currency"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount of currency",
+          "example": "32"
+        }
+      }
+    },
     "StockAmount": {
       "type": "object",
       "properties": {
@@ -2910,6 +3022,22 @@
           "type": "string",
           "description": "Name of the Stock without abbr",
           "example": "Adobe Inc. - Common Stock"
+        }
+      }
+    },
+    "fromStockToStock": {
+      "type": "object",
+      "properties": {
+        "fromStock": {
+          "$ref": "#/definitions/Stock"
+        },
+        "toStock": {
+          "$ref": "#/definitions/Stock"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount of stock",
+          "example": "32"
         }
       }
     },
