@@ -36,12 +36,12 @@ router.post('/:id/stock',isAuthenticated, async (req,res) => {
 
 });
 
-router.delete('/:id/stock',isAuthenticated,async (req,res) => {
+router.put('/:id/stock',isAuthenticated,async (req,res) => {
 
     try{
         const Id = req.params.id;
-        const theStock = {...req.body};
-        const response = await investmentsService.removeStock(theStock,Id);
+        const {stock, amount} = req.body;
+        const response = await investmentsService.removeStock(stock, amount,Id);
         res.status(200).json(response);
     }catch (e) {
         res.status(503).json(e);
@@ -62,12 +62,12 @@ router.post('/:id/currency',isAuthenticated,async (req,res) => {
 
 });
 
-router.delete('/:id/currency',isAuthenticated,async (req,res) => {
+router.put('/:id/currency',isAuthenticated,async (req,res) => {
 
     try{
         const Id = req.params.id;
-        const theCurrency = {...req.body};
-        const response = await investmentsService.removeCurrency(theCurrency,Id);
+        const {currency, amount} = req.body;
+        const response = await investmentsService.removeCurrency(currency, amount,Id);
         res.status(200).json(response);
     }catch (e) {
         res.status(503).json(e);

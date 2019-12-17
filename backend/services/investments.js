@@ -69,42 +69,50 @@ module.exports.addCurrency = async (theCurrency,theAmount,investmentsID) => {
     }
 };
 
-module.exports.removeStock = async (theStock,investmentsID) => {
+module.exports.removeStock = async (theStock, theAmount, investmentsID) => {
     const stockToBeDeleted= {...theStock};
     const investmentsToBeModified = await Investments.findOne({
         _id: investmentsID
     });
-    const user = await User.findOne({
-        _id: investmentsToAdd.userId
-    });
     const dollarAmount = theAmount * stockToBeAdded.price
     const index = investmentsToBeModified.stocks.findIndex(s => s.stock._id == stockToBeDeleted._id);
-    await moneyService.deposit(user._id,dollarAmount);
     if(index == -1){
         throw errors.STOCK_NOT_FOUND();
     }else{
-        investmentsToBeModified.stocks.splice(index,1); //Deletes the given id from stock array
+        if (investmentsToBeModified.stocks[index].amount < theAmount){
+            throw errors.INSUFFICIENT_STOCK();
+        } else if(investmentsToBeModified.stocks[index].amount == theAmount){
+            investmentsToBeModified.stocks.splice(index,1); //Deletes the given id from currency array
+        } else {
+            investmentsToBeModified.stocks[index].amount -= theAmount;            
+        }
+        await moneyService.deposit(investmentsToBeModified.userId,dollarAmount);
         await  investmentsToBeModified.save();
         return await this.getById(investmentsID);
     }
 };
 
-module.exports.removeCurrency = async (theCurrency,investmentsID) => {
+module.exports.removeCurrency = async (theCurrency,theAmount,investmentsID) => {
     const currencyToBeDeleted= {...theCurrency};
     const investmentsToBeModified = await Investments.findOne({
         _id: investmentsID
-    });
-    const user = await User.findOne({
-        _id: investmentsToAdd.userId
     });
     const dollarAmount = theAmount / currencyToBeAdded.rate
     const index = investmentsToBeModified.currencies.findIndex(c => c.currency._id == currencyToBeDeleted._id);
     await moneyService.deposit(user._id,dollarAmount);
     if(index == -1){
-        throw errors.TRADING_EQUIPMENT_NOT_FOUND();
+        throw errors.STOCK_NOT_FOUND();
     }else{
-        investmentsToBeModified.currencies.splice(index,1); //Deletes the given id from currency array
-        return  await  investmentsToBeModified.save();
+        if (investmentsToBeModified.currencies[index].amount < theAmount){
+            throw errors.INSUFFICIENT_CURRENCY();
+        } else if(investmentsToBeModified.currencies[index].amount == theAmount){
+            investmentsToBeModified.currencies.splice(index,1); //Deletes the given id from currency array
+        } else {
+            investmentsToBeModified.currencies[index].amount -= theAmount;            
+        }
+        await moneyService.deposit(investmentsToBeModified.userId,dollarAmount);
+        await  investmentsToBeModified.save();
+        return await this.getById(investmentsID);
     }
 };
 

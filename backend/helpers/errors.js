@@ -108,5 +108,11 @@ module.exports = {
     },
     INSUFFICIENT_FUND: (cause) => {
         return PapelError('InsufficientFund', 'User has insufficent funds to perform the given action', cause);
+    },
+    INSUFFICIENT_STOCK: (cause) => {
+        return PapelError('InsufficientStock', 'User has insufficent stocks to perform the given action', cause);
+    },
+    INSUFFICIENT_CURRENCY: (cause) => {
+        return PapelError('InsufficientCurrency', 'User has insufficent currency to perform the given action', cause);
     }
 };
