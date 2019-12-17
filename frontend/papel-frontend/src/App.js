@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Home from './Home/Home';
 import Login from './Login/Login';
+import Annotation from './Annotator/Annotation';
 import Register from './Register/Register';
 import Profile from './Profile/Profile';
 import UserProfile from './Profile/UserProfile';
@@ -128,6 +129,7 @@ function NavBar(props) {
           <Route path="/currencies"><Currencies /></Route>
           <Route path="/addarticle"><AddArticle /></Route>
           <Route path="/events"><EconEvents /></Route>
+          <Route path="/annotation"><Annotation /></Route>
           <Route path="/user/:id" component={UserProfile} />
         </Switch>
       </div>

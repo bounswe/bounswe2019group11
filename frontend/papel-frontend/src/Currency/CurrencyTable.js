@@ -46,10 +46,8 @@ function CurrencyTable({code,timeRange }) {
   
 
  return (
- /*
- <div>       </div>
-*/<div><CurencyCh currency={code} year={years} month={months} day={days} value={closeDayValues}></CurencyCh >
-             </div>
+ <CurencyCh currency={code} year={years} month={months} day={days} value={closeDayValues}></CurencyCh >
+             
   );
 }
 

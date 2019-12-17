@@ -24,7 +24,7 @@ class AddArticle extends React.Component {
      userId = cookies.get('user')._id?cookies.get('user')._id:"check get user id";
     }
     else {console.log("not logged");} 
-    this.state = {loggedIn: loggedIn, userId:userId, title:"", body:""};
+    this.state = {loggedIn: loggedIn, userId:userId, title:"", body:"", imgURL:""};
     
     
     this.handleChange = this.handleChange.bind(this);
@@ -38,17 +38,19 @@ class AddArticle extends React.Component {
   handleChange(event) {
     this.setState({[event.target.name]: event.target.value});
     console.log(this.state.title);
+    console.log(this.state.imgURL);
     console.log(this.state.body);
     
   }
 
   handleSubmit(event) {
     console.log(this.state.title)
+    console.log(this.state.imgURL)
     console.log(this.state.body)
     
    const {cookies} = this.props;
     console.log(cookies.get('userToken'));
-    var article = {title:this.state.title, body : this.state.body};
+    var article = {title:this.state.title,imgUri:this.state.imgURL, body : this.state.body};
     console.log(article)
     if(!this.state.loggedIn){
       alert("please log in")
@@ -71,7 +73,7 @@ class AddArticle extends React.Component {
       
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
         <Form onSubmit={()=>this.handleSubmit}>
-          <Form.Group controlId="exampleForm.ControlTextarea1">
+        <Form.Group controlId="exampleForm.ControlTextarea1">
             <Form.Label>Add a title for your article :</Form.Label>
             <Form.Control as="textarea" rows="3" 
                         name="title"
@@ -87,6 +89,22 @@ class AddArticle extends React.Component {
             </Form.Control>
           </Form.Group>
           
+          <Form.Group controlId="exampleForm.ControlTextarea1">
+            <Form.Label>You can add image URL :</Form.Label>
+            <Form.Control as="textarea" rows="3" 
+                        name="imgURL"
+                        placeholder="URL..."
+                        onChange={this.handleChange} 
+                        rows="1"
+                        style={{
+                          height:45,
+                          maxHeight:90,
+                          fontSize:20
+                        }}>
+            </Form.Control>
+          </Form.Group>
+          
+
           <Form.Group controlId="exampleForm.ControlTextarea1">
             <Form.Label>You can write your article :</Form.Label>
             <Form.Control as="textarea" rows="3"

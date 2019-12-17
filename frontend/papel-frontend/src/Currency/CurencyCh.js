@@ -41,12 +41,8 @@ function CurencyCh({currency, year,month,day, value}) {
       }]
   };
     return (
-      <Card>
-        <div className="row">
             <CanvasJSChart options={options}/>
 
-        </div>
-      </Card>
     );
 
 }
