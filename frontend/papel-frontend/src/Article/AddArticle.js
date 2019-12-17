@@ -50,7 +50,7 @@ class AddArticle extends React.Component {
     
    const {cookies} = this.props;
     console.log(cookies.get('userToken'));
-    var article = {title:this.state.title,imgUri:this.state.imgURL, body : this.state.body};
+    var article = {title:this.state.title, imgUri:this.state.imgURL, body : this.state.body};
     console.log(article)
     if(!this.state.loggedIn){
       alert("please log in")
