@@ -74,7 +74,32 @@ router.delete('/:id/currency',isAuthenticated,async (req,res) => {
     }
 
 });
+ 
+router.put('/:id/exchangeCC',isAuthenticated,async (req,res) => {
 
+    try{
+        const Id = req.params.id;
+        const {fromCurrency, toCurrency, amount} = req.body;
+        const response = await investmentsService.exchangeCurrency(fromCurrency, toCurrency, amount,Id);
+        res.status(200).json(response);
+    }catch (e) {
+        res.status(503).json(e);
+    }
+
+});
+
+router.put('/:id/exchangeSS',isAuthenticated,async (req,res) => {
+
+    try{
+        const Id = req.params.id;
+        const {fromStock, toStock, amount} = req.body;
+        const response = await investmentsService.exchangeStock(fromStock, toStock, amount,Id);
+        res.status(200).json(response);
+    }catch (e) {
+        res.status(503).json(e);
+    }
+
+});
 
 router.post('/',isAuthenticated,async (req,res) => {
 

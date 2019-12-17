@@ -28,9 +28,17 @@ module.exports.addStock = async (theStock,theAmount,investmentsID) => {
     const investmentsToAdd = await Investments.findOne({
         _id: investmentsID
     });
-    investmentsToAdd.stocks.push({stock: stockToBeAdded,amount: theAmount});
-    await  investmentsToAdd.save();
-    return await this.getById(investmentsID);
+    console.log("finding index")
+    const index = investmentsToAdd.stocks.findIndex(s => s.stock._id == stockToBeAdded._id);
+    if(index == -1){
+        investmentsToAdd.stocks.push({stock: stockToBeAdded,amount: theAmount});
+        await  investmentsToAdd.save();
+        return await this.getById(investmentsID);
+    } else{   
+        investmentsToAdd.stocks[index].amount += theAmount;
+        await  investmentsToAdd.save();
+        return await this.getById(investmentsID);
+    }
 };
 
 module.exports.addCurrency = async (theCurrency,theAmount,investmentsID) => {
@@ -38,9 +46,16 @@ module.exports.addCurrency = async (theCurrency,theAmount,investmentsID) => {
     const investmentsToAdd = await Investments.findOne({
         _id: investmentsID
     });
-    investmentsToAdd.currencies.push({currency: currencyToBeAdded,amount: theAmount});
-    await  investmentsToAdd.save();
-    return await this.getById(investmentsID);
+    const index = investmentsToAdd.currencies.findIndex(c => c.currency._id == currencyToBeAdded._id);
+    if(index == -1){
+        investmentsToAdd.currencies.push({currency: currencyToBeAdded,amount: theAmount});
+        await  investmentsToAdd.save();
+        return await this.getById(investmentsID);
+    } else{
+        investmentsToAdd.currencies[index].amount += theAmount;
+        await  investmentsToAdd.save();
+        return await this.getById(investmentsID);
+    }
 };
 
 module.exports.removeStock = async (theStock,investmentsID) => {
@@ -48,12 +63,13 @@ module.exports.removeStock = async (theStock,investmentsID) => {
     const investmentsToBeModified = await Investments.findOne({
         _id: investmentsID
     });
-    const index = investmentsToBeModified.stocks.findIndex(s => s.stock._id.toString() == stockToBeDeleted._id.toString());
+    const index = investmentsToBeModified.stocks.findIndex(s => s.stock._id == stockToBeDeleted._id);
     if(index == -1){
         throw errors.STOCK_NOT_FOUND();
     }else{
         investmentsToBeModified.stocks.splice(index,1); //Deletes the given id from stock array
-        return  await  investmentsToBeModified.save();
+        await  investmentsToBeModified.save();
+        return await this.getById(investmentsID);
     }
 };
 
@@ -62,7 +78,7 @@ module.exports.removeCurrency = async (theCurrency,investmentsID) => {
     const investmentsToBeModified = await Investments.findOne({
         _id: investmentsID
     });
-    const index = investmentsToBeModified.currencies.findIndex(c => c.currency._id.toString() == currencyToBeDeleted._id.toString());
+    const index = investmentsToBeModified.currencies.findIndex(c => c.currency._id == currencyToBeDeleted._id);
     if(index == -1){
         throw errors.TRADING_EQUIPMENT_NOT_FOUND();
     }else{
@@ -71,4 +87,45 @@ module.exports.removeCurrency = async (theCurrency,investmentsID) => {
     }
 };
 
+module.exports.exchangeCurrency = async (fromCurrency, toCurrency, fromAmount,investmentsID) => {
+    const fromCurr= {...fromCurrency};
+    const toCurr= {...toCurrency};
+    const investmentsToBeModified = await Investments.findOne({
+        _id: investmentsID
+    });
+    const index = investmentsToBeModified.currencies.findIndex(c => c.currency._id == fromCurr._id);
+    if(index == -1){
+        throw errors.TRADING_EQUIPMENT_NOT_FOUND();
+    }else{
+        if(investmentsToBeModified.currencies[index].amount < fromAmount){
+            throw errors.INSUFFICIENT_FUND();
+        } else {
+            investmentsToBeModified.currencies[index].amount -= fromAmount;
+            toAmount = fromAmount * toCurr.rate / fromCurr.rate;
+            await this.addCurrency(toCurr, toAmount, investmentsID)
+            return  await  investmentsToBeModified.save();
+        }
+    }
+};
+
+module.exports.exchangeStock = async (fromStock, toStock, fromAmount,investmentsID) => {
+    const fromStck= {...fromStock};
+    const toStck= {...toStock};
+    const investmentsToBeModified = await Investments.findOne({
+        _id: investmentsID
+    });
+    const index = investmentsToBeModified.stocks.findIndex(c => c.stock._id == fromStck._id);
+    if(index == -1){
+        throw errors.TRADING_EQUIPMENT_NOT_FOUND();
+    }else{
+        if(investmentsToBeModified.stocks[index].amount < fromAmount){
+            throw errors.INSUFFICIENT_FUND();
+        } else {
+            investmentsToBeModified.stocks[index].amount -= fromAmount;
+            toAmount = fromAmount * fromStck.price / toStck.price;
+            await this.addStock(toStck, toAmount, investmentsID)
+            return  await  investmentsToBeModified.save();
+        }
+    }
+};
 
