@@ -45,5 +45,10 @@
         android:name="com.papel.ui.investments.InvestmentsFragment"
         android:label="@string/investments"
         tools:layout="@layout/fragment_investments" />
+    <fragment
+        android:id="@+id/nav_money"
+        android:name="com.papel.ui.money.MoneyFragment"
+        android:label="@string/menu_money"
+        tools:layout="@layout/fragment_money" />
 
 </navigation>
