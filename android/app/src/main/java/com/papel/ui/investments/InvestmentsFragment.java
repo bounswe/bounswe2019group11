@@ -85,16 +85,6 @@ public class InvestmentsFragment extends Fragment {
         investmentsListView.setAdapter(investmentsListViewAdapter);
         investmentsListViewAdapter.notifyDataSetChanged();
 
-        investmentsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Investment clicked = investmentsListViewAdapter.getItem(i);
-                Intent intent = new Intent(getContext(), TradingEquipmentDetailActivity.class);
-                intent.putExtra("TradingEquipment", clicked.getEquipment());
-                startActivity(intent);
-            }
-        });
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -111,122 +101,13 @@ public class InvestmentsFragment extends Fragment {
         addInvestment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("Portfolio", "Add portfolio");
-                fetchTradingEquipments(getContext());
+                Intent intent = new Intent(getContext(), AddInvestmentActivity.class);
+                startActivity(intent);
             }
         });
 
         return root;
     }
-
-    private void fetchTradingEquipments(final Context context) {
-        numberOfTradingEquipmentRequest = 2;
-
-        progressBar.setVisibility(View.VISIBLE);
-
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-
-        String stockUrl = Constants.LOCALHOST + Constants.STOCK;
-        String currencyUrl = Constants.LOCALHOST + Constants.CURRENCY;
-
-        tradingEquipmentOptions.clear();
-
-        StringRequest stockRequest = new StringRequest(Request.Method.GET, stockUrl, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray responseArray = new JSONArray(response);
-                    for(int i = 0; i<responseArray.length(); i++) {
-                        JSONObject object = responseArray.getJSONObject(i);
-                        tradingEquipmentOptions.add(ResponseParser.parseStock(object));
-                    }
-
-                    numberOfTradingEquipmentRequest -= 1;
-                    if (numberOfTradingEquipmentRequest == 0) {
-                        progressBar.setVisibility(View.INVISIBLE);
-                        showListDialog(context);
-                    }
-                } catch (JSONException exp) {
-                    exp.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                numberOfTradingEquipmentRequest -= 1;
-                if (numberOfTradingEquipmentRequest == 0) {
-                    DialogHelper.showBasicDialog(context,"Error","We couldn't get trading equipments.Please try again.",null);
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-
-
-        StringRequest currencyRequest = new StringRequest(Request.Method.GET, currencyUrl, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray responseArray = new JSONArray(response);
-                    for(int i = 0; i<responseArray.length(); i++) {
-                        JSONObject object = responseArray.getJSONObject(i);
-                        tradingEquipmentOptions.add(ResponseParser.parseCurrency(object));
-                    }
-                    numberOfTradingEquipmentRequest -= 1;
-                    if (numberOfTradingEquipmentRequest == 0) {
-                        progressBar.setVisibility(View.INVISIBLE);
-                        showListDialog(context);
-                    }
-                } catch (JSONException exp) {
-                    exp.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                numberOfTradingEquipmentRequest -= 1;
-                if (numberOfTradingEquipmentRequest == 0) {
-                    DialogHelper.showBasicDialog(context,"Error","We couldn't get trading equipments.Please try again.",null);
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-
-        requestQueue.add(stockRequest);
-        requestQueue.add(currencyRequest);
-
-    }
-
-    private void showListDialog(final Context context){
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
-        View mView = getLayoutInflater().inflate(R.layout.add_investment_dialog, null);
-        mBuilder.setTitle("Add Investment");
-        final Spinner spinner = mView.findViewById(R.id.inv_spinner);
-        final EditText edtText = mView.findViewById(R.id.amount_editText);
-        TradingEquipmentListViewAdapter adapter = new TradingEquipmentListViewAdapter(context, tradingEquipmentOptions, true);
-        spinner.setAdapter(adapter);
-        mBuilder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String text = edtText.getText().toString();
-                double amount;
-                if(!text.equals("")){
-                    amount =  Double.parseDouble(text);
-                    addInvestments(context, (TradingEquipment) spinner.getSelectedItem(), amount);
-                    dialogInterface.dismiss();
-                }else{
-                    Toast.makeText(context, "Please specify the amount", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        mBuilder.setView(mView);
-        AlertDialog dialog = mBuilder.create();
-        dialog.show();
-    }
-
-    private void addInvestments(final Context context,TradingEquipment te, Double amount) {}
 
     private void getInvestmentsFromEndpoint(final Context context) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);

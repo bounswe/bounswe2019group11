@@ -76,7 +76,8 @@
     <string name="my_investments">My Investments</string>
     <string name="title_activity_add_investment">AddInvestmentActivity</string>
     <string name="amount">Amount</string>
-
+    <string name="sell">SELL</string>
+    <string name="remove">REMOVE</string>
 
 </resources>
 
