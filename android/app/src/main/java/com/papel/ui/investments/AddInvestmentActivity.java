@@ -1,35 +1,35 @@
 package com.papel.ui.investments;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.papel.Constants;
 import com.papel.R;
 import com.papel.data.Currency;
-import com.papel.data.Investment;
+import com.papel.data.Portfolio;
 import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
-import com.papel.ui.portfolio.TradingEquipmentDetailActivity;
+import com.papel.ui.portfolio.PortfolioDetailActivity;
 import com.papel.ui.portfolio.TradingEquipmentListViewAdapter;
 import com.papel.ui.utils.DialogHelper;
 import com.papel.ui.utils.ResponseParser;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +44,8 @@ public class AddInvestmentActivity extends AppCompatActivity {
     private ListView tradingEquipmentListView;
     private SearchView searchView;
     private int numberOfTradingEquipmentRequest = 0;
+    private RequestQueue addRequestQueue;
+    private int requestNumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +61,7 @@ public class AddInvestmentActivity extends AppCompatActivity {
         tradingEquipmentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // TODO: dialog to put amount
-                Toast.makeText(AddInvestmentActivity.this, "Amount", Toast.LENGTH_SHORT).show();
+                showListDialog(tradingEquipmentArrayList.get(i));
             }
         });
 
@@ -78,7 +79,39 @@ public class AddInvestmentActivity extends AppCompatActivity {
             }
         });
 
+    }
 
+    private void showListDialog(final TradingEquipment tradingEq){
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        View mView = getLayoutInflater().inflate(R.layout.add_investment_dialog, null);
+
+        String title = "Buy ";
+        if(tradingEq instanceof Stock){
+            title += ((Stock) tradingEq).getSymbol();
+        }else if(tradingEq instanceof Currency){
+            title += ((Currency) tradingEq).getCode();
+        }
+
+        mBuilder.setTitle(title);
+        final EditText edtText = mView.findViewById(R.id.amount_editText);
+        mBuilder.setPositiveButton("BUY", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String text = edtText.getText().toString();
+                double amount;
+                if(!text.equals("")){
+                    amount =  Double.parseDouble(text);
+                    buyTradingEquipment(tradingEq, amount);
+                    dialogInterface.dismiss();
+                }else{
+                    Toast.makeText(AddInvestmentActivity.this, "Please specify the amount", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        mBuilder.setView(mView);
+        AlertDialog dialog = mBuilder.create();
+        dialog.show();
     }
 
     private void getTradingEquipmentsFromEndpoint(final Context context) {
@@ -151,5 +184,12 @@ public class AddInvestmentActivity extends AppCompatActivity {
         requestQueue.add(currencyRequest);
     }
 
+    private void buyTradingEquipment(final TradingEquipment tradingEq, final double amount){
+       /* if(tradingEq instanceof Stock){
+            buyStock((Stock) tradingEq, amount);
+        }else if(tradingEq instanceof Currency){
+            buyCurrency((Currency) tradingEq, amount);
+        }*/
+    }
 
 }
