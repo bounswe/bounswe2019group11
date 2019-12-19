@@ -13,6 +13,7 @@ import com.papel.data.Currency;
 import com.papel.data.Portfolio;
 import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
+import com.papel.data.User;
 import com.papel.ui.portfolio.PortfolioDetailActivity;
 import com.papel.ui.portfolio.TradingEquipmentListViewAdapter;
 import com.papel.ui.utils.DialogHelper;
@@ -46,6 +47,7 @@ public class AddInvestmentActivity extends AppCompatActivity {
     private int numberOfTradingEquipmentRequest = 0;
     private RequestQueue addRequestQueue;
     private int requestNumber = 0;
+    private User user = User.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +87,16 @@ public class AddInvestmentActivity extends AppCompatActivity {
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         View mView = getLayoutInflater().inflate(R.layout.add_investment_dialog, null);
 
-        String title = "Buy ";
+        String title, positiveButtonTitle;
+
+        if(user.getRole().toLowerCase().equals("trader")){
+            title = "Buy ";
+            positiveButtonTitle = "BUY";
+        }else{
+            title = "Add ";
+            positiveButtonTitle = "ADD";
+        }
+
         if(tradingEq instanceof Stock){
             title += ((Stock) tradingEq).getSymbol();
         }else if(tradingEq instanceof Currency){
@@ -94,7 +105,7 @@ public class AddInvestmentActivity extends AppCompatActivity {
 
         mBuilder.setTitle(title);
         final EditText edtText = mView.findViewById(R.id.amount_editText);
-        mBuilder.setPositiveButton("BUY", new DialogInterface.OnClickListener() {
+        mBuilder.setPositiveButton(positiveButtonTitle, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String text = edtText.getText().toString();
