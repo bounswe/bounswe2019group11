@@ -1,6 +1,5 @@
 import React from 'react';
-import {Editor, EditorState, RichUtils} from 'draft-js';
-import 'draft-js/dist/Draft.css';
+import Highlightable from 'highlightable';
 import './Article.css';
 import {instanceOf} from 'prop-types'
 import {withCookies, Cookies} from 'react-cookie';
@@ -134,6 +133,7 @@ class Article extends React.Component {
       authorLine = <a href={"../user/" + author._id} style={{color: "gray"}}>by {author.name} {author.surname}</a> ;
     return (
       <Row className="article">
+       
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
           <Card>
             <Card.Body>

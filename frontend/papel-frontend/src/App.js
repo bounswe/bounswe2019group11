@@ -74,7 +74,7 @@ function NavBar(props) {
                       {" Reject"}
                     </Col>
                   </Row>
-                </Dropdown.Item>
+                </Dropdown.Item>  
               ))
                 :
                 ""
@@ -96,7 +96,6 @@ function NavBar(props) {
 
         <Row style={{paddingLeft:20}}>
           <Col md={{ span: 2, offset: 0 }} style={{ marginTop: 4 }}>
-
             <Link to="/">
               <img id="logo-green-small" className="menu-logo" src={Logo} style={{ borderright: "2px solid rgba(0, 0, 0, 0.151)", width: 390 / 3, height: 135 / 3 }} />
             </Link>
@@ -105,7 +104,7 @@ function NavBar(props) {
             <InputGroup className="mb-3">
               <FormControl placeholder="Search" />
               <InputGroup.Append>
-                <Button variant="outline-secondary"><FontAwesomeIcon name="Search-Icon" icon={faSearch} /></Button>
+                <Button variant="outline-secondary"><FontAwesomeIcon name="Search-Icon" icon={faSearch} onClick={() => alert("implement search")} /></Button>
               </InputGroup.Append>
             </InputGroup>
           </Col>

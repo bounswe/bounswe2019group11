@@ -5,7 +5,7 @@ import {Card} from 'react-bootstrap'
 import CanvasJSReact from '../canvasjs/canvasjs.react';
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-function CurencyCh({currency, year,month,day, value}) {
+function CurrencyCh2({currency, year,month,day, value}) {
     
   const options = {
       animationEnabled: true,
@@ -46,8 +46,5 @@ function CurencyCh({currency, year,month,day, value}) {
     );
 
 }
-
-
-
-
-export default CurencyCh;
+ 
+export default CurrencyCh2;
