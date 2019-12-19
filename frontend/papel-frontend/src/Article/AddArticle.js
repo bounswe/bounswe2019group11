@@ -1,16 +1,10 @@
 import React from 'react';
-import {Editor, EditorState, RichUtils} from 'draft-js';
-import 'draft-js/dist/Draft.css';
 import './Article.css';
 import {instanceOf} from 'prop-types'
 import {withCookies, Cookies} from 'react-cookie';
-import {useParams} from 'react-router-dom';
-import $ from 'jquery';
 import {app_config} from "../config";
 import {Row, Col, Button, Card, Form, FormGroup} from 'react-bootstrap';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faPlus,faThumbsUp,faThumbsDown, faUserCircle} from '@fortawesome/free-solid-svg-icons';
-import CommentPreview from './CommentPreview';
+
 import {postRequest} from '../helpers/request';
 
 class AddArticle extends React.Component {
@@ -37,17 +31,9 @@ class AddArticle extends React.Component {
 
   handleChange(event) {
     this.setState({[event.target.name]: event.target.value});
-    console.log(this.state.title);
-    console.log(this.state.imgURL);
-    console.log(this.state.body);
-    
   }
 
-  handleSubmit(event) {
-    console.log(this.state.title)
-    console.log(this.state.imgURL)
-    console.log(this.state.body)
-    
+  handleSubmit(event) { 
    const {cookies} = this.props;
     console.log(cookies.get('userToken'));
     var article = {title:this.state.title, imgUri:this.state.imgURL, body : this.state.body};

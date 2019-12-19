@@ -29,7 +29,7 @@ function CurrencyCh({currency, year,month,day, value}) {
     }]
   }
     return (
-            <CanvasJSChart options={options}/>
+            <CanvasJSChart options={options} style={{width:"100%"}}/>
 
     );
 
