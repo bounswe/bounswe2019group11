@@ -15,6 +15,7 @@
     <string name="menu_articles">Articles</string>
     <string name="menu_portfolio">Portfolios</string>
     <string name="menu_trading_eq">Trading Equipments</string>
+    <string name="menu_money">Money</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
     <string name="profile_image_description">Profile image.</string>
@@ -75,7 +76,8 @@
     <string name="my_investments">My Investments</string>
     <string name="title_activity_add_investment">AddInvestmentActivity</string>
     <string name="amount">Amount</string>
-
+    <string name="sell">SELL</string>
+    <string name="remove">REMOVE</string>
 
 </resources>
 

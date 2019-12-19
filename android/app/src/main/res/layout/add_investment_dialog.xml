@@ -4,11 +4,6 @@
     android:layout_height="match_parent"
     android:padding="20dp">
 
-    <Spinner
-        android:id="@+id/inv_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <EditText
         android:id="@+id/amount_editText"
         android:layout_width="match_parent"

@@ -5,27 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <SearchView
-            android:id="@+id/inv_searchView"
-            style="@android:style/Widget.Material.SearchView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textAutoCorrect|textAutoComplete"
-            android:queryHint="@string/search_inv_hint">
 
-        </SearchView>
-
-        <ListView
-            android:id="@+id/investment_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </ListView>
-    </LinearLayout>
+    <include
+        layout="@layout/trading_eq_list_template"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_investment"

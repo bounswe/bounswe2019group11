@@ -27,7 +27,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-/*
 router.post('/:id/comment', isAuthenticated, async (req, res) => {
     try {
         const stockId = req.params.id;
@@ -123,6 +122,5 @@ router.delete('/:id/comment/:commentId', isAuthenticated, async (req, res) => {
         }
     }
 });
-*/
 
 module.exports = router;
