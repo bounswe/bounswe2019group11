@@ -60,20 +60,20 @@ public class TradingEquipmentListViewAdapter extends BaseAdapter {
             type.setText(R.string.stock);
             String parity_name;
             if (showFullname) {
-                parity_name = ((Stock)item).getName() + "/ USD";
+                parity_name = ((Stock)item).getName() + " / US Dollar";
                 name.setText(parity_name);
             } else {
-                parity_name = ((Stock)item).getSymbol() + "/ USD";
+                parity_name = ((Stock)item).getSymbol() + " / USD";
                 name.setText(parity_name);
             }
         } else if (item instanceof Currency) {
             type.setText(R.string.currency);
             String parity_name;
             if (showFullname) {
-                parity_name = ((Currency)item).getName() + "/ USD";
+                parity_name = ((Currency)item).getName() + " / US Dollar";
                 name.setText(parity_name);
             } else {
-                parity_name = ((Currency)item).getCode() + "/ USD";
+                parity_name = ((Currency)item).getCode() + " / USD";
                 name.setText(parity_name);
             }
         }
