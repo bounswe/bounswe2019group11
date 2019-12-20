@@ -3,9 +3,73 @@ import {useParams} from 'react-router-dom';
 import $ from 'jquery';
 import {Card} from 'react-bootstrap'
 import CanvasJSReact from '../canvasjs/canvasjs.react';
+
+import { useState } from 'react';
+import {getRequest, postRequest} from '../helpers/request'
+import {app_config} from "../config";
+
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
+const url = app_config.api_url + "/";
+
 function StockChart2({stock}) {
+  const [currency, setCurrency] = useState(0);
+  if(!currency){$.get(url+"currency/EUR/last-month", (data) => {
+    setCurrency( data)  });
+  }
+  console.log(currency);
+  var currencyLastValues = {};
+  currencyLastValues = currency.lastMonth;
+  var key;
+  var days = [], months=[], years=[];
+  var values = [];
+  var closeDayValues = [];
+  for (key in currencyLastValues) {
+    if (currencyLastValues.hasOwnProperty(key)) {
+      var date = key;
+      var day = date.split("-")[2],
+      month =  date.split("-")[1],
+      year =  date.split("-")[0];
+      days.push(day);
+      months.push(month);
+      years.push(year);
+      values.push(currencyLastValues[key]);
+    }
+  }
+  console.log(days)
+  console.log(months)
+  console.log(years)
+  console.log(currencyLastValues)
+  var i;
+  for (i = 0; i < values.length; i++) {
+    for(key in values[i] ){
+      if(key.includes("4")){closeDayValues.push(parseFloat(values[i][key]) ); console.log(closeDayValues);}
+    } ;
+  }
+  //<CurencyCh currency={code} year={years} month={months} day={days} value={closeDayValues}></CurencyCh >
+  var data = [];
+  for (let index = 0; index < years.length; index++) {
+    data[index] = {x: new Date(years[index],months[index]-1,days[index]),	y: closeDayValues[index]}
+    console.log(data[index]);
+  }
+
+  const options = {
+    theme: "light1", // "light1", "dark1", "dark2"
+    animationEnabled: true,
+    zoomEnabled: true,
+    title: {
+      text:"USD/EUR"
+    },
+    axisY: {
+      includeZero: false
+    },
+    data: [{
+      type: "area",
+      color : "#3DA544",
+      dataPoints: data
+    }]
+  }
+  /*
     const options = {
       animationEnabled: true,
       title:{
@@ -40,18 +104,16 @@ function StockChart2({stock}) {
           {x: new Date(2019,10,11),	y: 136.74}
         ]
       }]
-  };
+    };
+    */
     return (
       <Card>
         <div className="row">
             <CanvasJSChart options={options}/>
-
         </div>
       </Card>
     );
-
 }
-
 
 
 
