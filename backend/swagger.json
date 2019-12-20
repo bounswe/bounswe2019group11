@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Papel Backend"
   },
-  "host": "ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000",
+  "host": "localhost:3000",
   "basePath": "/",
   "tags": [
     {
@@ -526,6 +526,69 @@
           },
           "400": {
             "description": "Stock, user or the comment not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/stock/{_id}/alert": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "stock"
+        ],
+        "summary": "Adds an alert for the stock.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Stock id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "alertInfo",
+            "description": "Direction and rate for the alert",
+            "schema": {
+              "type": "object",
+              "required": [
+                "direction",
+                "rate"
+              ],
+              "properties": {
+                "direction": {
+                  "type": "number",
+                  "description": "Direction for the alerts. 1 means that the alerts will be generated when the current rate is equals or above the rate given by the user, -1 means that alerts will be generated when the current rate is below the given rate by the user.",
+                  "example": 1
+                },
+                "rate": {
+                  "type": "number",
+                  "description": "Rate that the alerts will be created for.",
+                  "example": 155
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Alert is saved."
+          },
+          "400": {
+            "description": "Either the stock id or the user not found."
           },
           "500": {
             "description": "Internal error occurred. Check the cause field for the diagnostics."
@@ -2474,6 +2537,69 @@
           },
           "401": {
             "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/alert": {
+      "post": {
+        "tags": [
+          "currency"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Adds an alert for the currency.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "alertInfo",
+            "description": "Direction and rate for the alert",
+            "schema": {
+              "type": "object",
+              "required": [
+                "direction",
+                "rate"
+              ],
+              "properties": {
+                "direction": {
+                  "type": "number",
+                  "description": "Direction for the alerts. 1 means that the alerts will be generated when the current rate is equals or above the rate given by the user, -1 means that alerts will be generated when the current rate is below the given rate by the user.",
+                  "example": 1
+                },
+                "rate": {
+                  "type": "number",
+                  "description": "Rate that the alerts will be created for.",
+                  "example": 6.3
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Alert is saved."
+          },
+          "400": {
+            "description": "Either the currency code or the user not found."
           },
           "500": {
             "description": "Internal error occurred. Check the cause field for the diagnostics."
