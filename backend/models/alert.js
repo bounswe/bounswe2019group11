@@ -24,11 +24,13 @@ const alertSchema = new mongoose.Schema({
     stockId: {
         type: mongoose.Schema.Types.ObjectId,
         required: false,
+        default: null,
         ref: 'Stock'
     },
     currencyCode: {
         type: String,
-        required: false
+        required: false,
+        default: ""
     }
 });
 

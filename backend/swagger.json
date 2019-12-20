@@ -3313,6 +3313,13 @@
             "$ref": "#/definitions/Portfolio"
           }
         },
+        "alerts": {
+          "type": "array",
+          "description": "Alerts of the user",
+          "items": {
+            "$ref": "#/definitions/Alert"
+          }
+        },
         "following": {
           "type": "array",
           "description": "Following users of the user (Only the profile is public)",
@@ -3541,6 +3548,41 @@
           "type": "follow"
         }
       ]
+    },
+    "Alert": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of the alert",
+          "example": "5da07611e407903a5d01b265"
+        },
+        "type": {
+          "type": "number",
+          "description": "1 for stock alerts, 0 for currency alerts",
+          "example": 0
+        },
+        "direction": {
+          "type": "number",
+          "description": "1 to generate alerts when the current rate is above the given rate, -1 for below",
+          "example": -1
+        },
+        "rate": {
+          "type": "number",
+          "description": "Rate to generate alerts for.",
+          "example": 5.9
+        },
+        "currencyCode": {
+          "type": "string",
+          "description": "Currency code if this is an currency alert, empty string otherwise",
+          "example": "EUR"
+        },
+        "stockId": {
+          "type": "string",
+          "description": "Stock id if this is an stock alert, null otherwise",
+          "example": null
+        }
+      }
     }
   }
 }
