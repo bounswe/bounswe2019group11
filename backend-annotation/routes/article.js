@@ -3,6 +3,17 @@ const router = express.Router();
 const isAuthenticated = require('../middlewares/isAuthenticated');
 const annotationService = require('../services/annotations');
 
+router.get('/:articleId',async (req,res)=>{
+   try{
+       const articleId = req.params.articleId;
+        const annotations =await annotationService.getAnnotationsByArticleId(articleId);
+        res.status(200).json(annotations);
+   }catch (e) {
+       console.log(e);
+       res.sendStatus(503);
+   }
+});
+
 router.post('/',isAuthenticated,async (req,res)=>{
     try{
         console.log(req.body);
