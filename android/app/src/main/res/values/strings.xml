@@ -79,6 +79,7 @@
     <string name="sell">SELL</string>
     <string name="remove">REMOVE</string>
     <string name="image_hint">Image URL</string>
+    <string name="search">Search</string>
 
 </resources>
 

@@ -222,6 +222,11 @@ public class ResponseParser {
             String surname = response.getString("surname");
             String email = response.getString("email");
             user = new User(id,name,surname,email);
+            if(response.has("role")){
+                String role = response.getString("role");
+                user.setRole(role);
+            }
+
         }catch (JSONException e) {
             e.printStackTrace();
         }
