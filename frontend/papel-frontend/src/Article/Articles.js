@@ -1,6 +1,7 @@
 import React from 'react';
 import './Article.css';
 import $ from 'jquery';
+import {app_config} from "../config";
 import ArticlePreview from './ArticlePreview';
 import {Row, Col, Card, Person, ButtonToolbar, Button, Modal, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -15,9 +16,13 @@ class Articles extends React.Component {
   componentDidMount() {
     const self = this;
     this.setState({loading: true});
-    $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article", (data) => {
-      self.setState({articles: data, loading: false});
+    $.get(app_config.api_url + "/article", (data) => {
+      self.setState({articles: data.reverse(), loading: false});
     });
+    
+  }
+  handleAddArticle(){
+    window.location.replace("./AddArticle")
   }
 
   render() {
@@ -26,7 +31,7 @@ class Articles extends React.Component {
       <Col md={{span: 8, offset: 2}}>
         <Col md={{span: 3}}style={{width: "20",marginLeft: -16, marginBottom: 10}}>
           
-          <Button size="sm"  onClick={() => alert("Not implemented yet")}>
+          <Button size="sm"  onClick={this.handleAddArticle}>
             <FontAwesomeIcon icon={faPlus} />&nbsp;
             Add Article
           </Button>

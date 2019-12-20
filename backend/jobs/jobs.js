@@ -9,6 +9,7 @@ const Currency = require('../models/currency');
 const Prediction = require('../models/prediction');
 const predictionHelper = require('../helpers/prediction');
 const User = require('../models/user');
+const Stock = require('../models/stock');
 
 const BASE_CURRENCY = 'USD';
 
@@ -20,17 +21,32 @@ const CURRENCIES = [
     'TRY',
 ];
 
+const STOCKS = [
+    'AAPL',
+    'AMZN',
+    'BA',
+    'FB',
+    'GOOGL',
+    'MSFT',
+    'NKE',
+    'TKC',
+];
+
+const randomInt = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
 class RoundRobinKeyPicker {
     constructor(keys) {
         this.keys = keys;
         this.length = keys.length;
-        this.currIndex = 0;
+        this.currIndex = randomInt(0, this.length - 1);
     }
 
     next() {
-        const item = this.keys[this.currIndex];
+        const key = this.keys[this.currIndex];
         this.currIndex = (this.currIndex + 1) % this.length;
-        return item;
+        return key;
     }
 }
 
@@ -70,7 +86,6 @@ const intradayRatesJob = new CronJob('0 */5 * * * *', async () => {
     }
 }, null, false, 'Europe/Istanbul', null, false);
 
-
 const dailyRatesJob = new CronJob('00 00 00 * * *', async () => {
     const params = {
         function: 'FX_DAILY',
@@ -102,6 +117,67 @@ const dailyRatesJob = new CronJob('00 00 00 * * *', async () => {
     }
 }, null, false, 'Europe/Istanbul', null, false);
 
+const intradayPriceJob = new CronJob('0 */5 * * * *', async () => {
+    const params = {
+        function: 'TIME_SERIES_INTRADAY',
+        interval: '5min',
+    };
+
+    const options = {
+        url: apiUrl,
+        qs: params,
+    };
+
+    for (let i = 0; i < STOCKS.length; i++) {
+        const symbol = STOCKS[i];
+        params.symbol = symbol;
+        params.apikey = apiKeyPicker.next();
+        try {
+            let response = await request.get(options);
+            response = JSON.parse(response);
+            if (response['Meta Data']) {
+                const intradayPrices = response['Time Series (5min)'];
+                const price = intradayPrices[Object.keys(intradayPrices)[0]]['4. close'];
+                await Stock.updateOne({stockSymbol: symbol}, {dailyPrice: intradayPrices, price});
+                console.log(new Date() + ' Intraday prices and price are updated for ' + symbol);
+            } else {
+                console.log(new Date() + ' Request to AlphaVantage failed.' + JSON.stringify(response));
+            }
+        } catch (err) {
+            console.log(new Date() + ' Intraday prices and price could not be updated for ' + symbol + '. Err: ' + err);
+        }
+    }
+}, null, false, 'Europe/Istanbul', null, false);
+
+const dailyPricesJob = new CronJob('00 00 00 * * *', async () => {
+    const params = {
+        function: 'TIME_SERIES_DAILY',
+    };
+
+    const options = {
+        url: apiUrl,
+        qs: params,
+    };
+
+    for (let i = 0; i < STOCKS.length; i++) {
+        const symbol = STOCKS[i];
+        params.symbol = symbol;
+        params.apikey = apiKeyPicker.next();
+        try {
+            let response = await request.get(options);
+            response = JSON.parse(response);
+            if (response['Meta Data']) {
+                const dailyPrices = response['Time Series (Daily)'];
+                await Stock.updateOne({stockSymbol: symbol}, {monthlyPrice: dailyPrices});
+                console.log(new Date() + ' Daily prices are updated for ' + symbol);
+            } else {
+                console.log(new Date() + ' Request to AlphaVantage failed. ' + JSON.stringify(response));
+            }
+        } catch (err) {
+            console.log(new Date() + ' Daily prices could not be updated for ' + symbol + '. Err: ' + err);
+        }
+    }
+}, null, false, 'Europe/Istanbul', null, false);
 
 const predictionJob = new CronJob('00 00 00 * * *', async () => {
     try {
@@ -129,7 +205,7 @@ const predictionJob = new CronJob('00 00 00 * * *', async () => {
                     }
                 };
                 if ((prediction.snapshot <= currentRate
-                        && prediction.prediction === predictionHelper.PREDICTION.INCREASE) ||
+                    && prediction.prediction === predictionHelper.PREDICTION.INCREASE) ||
                     (prediction.snapshot > currentRate
                         && prediction.prediction === predictionHelper.PREDICTION.DECREASE)) {
                     obj['$inc'].successfulPredictionCount = 1;
@@ -145,7 +221,8 @@ const predictionJob = new CronJob('00 00 00 * * *', async () => {
 
 }, null, false, 'Europe/Istanbul', null, false);
 
-
 predictionJob.start();
 intradayRatesJob.start();
 dailyRatesJob.start();
+intradayPriceJob.start();
+dailyPricesJob.start();

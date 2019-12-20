@@ -9,6 +9,9 @@ public class Constants {
     public static final String DOWNVOTE   = "down-vote/";
     public static final String CLEARVOTE   = "clear-vote/";
     public static final String EVENT = "event/";
+    public static final String MONEY= "money/";
+    public static final String DEPOSIT= "deposit/";
+    public static final String WITHDRAW= "withdraw/";
     public static final String STOCK = "stock/";
     public static final String PORTFOLIO = "portfolio/";
     public static final String PORTFOLIO_USER = "portfolio/user/";
@@ -26,6 +29,7 @@ public class Constants {
     public static final String UNFOLLOW = "unfollow";
     public static final String ACCEPT = "accept";
     public static final String DECLINE = "decline";
+    public static final String INVESTMENTS = "investments";
 
     public static final int DAILY_CHART = 0;
     public static final int WEEKLY_CHART = 1;

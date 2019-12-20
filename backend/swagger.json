@@ -39,6 +39,14 @@
     {
       "name": "currency",
       "description": "Currency related endpoints."
+    },
+    {
+      "name": "notification",
+      "description": "Notification related endpoints."
+    },
+    {
+      "name": "money",
+      "description": "Money related endpoints for trader users."
     }
   ],
   "securityDefinitions": {
@@ -320,6 +328,207 @@
           },
           "503": {
             "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/stock/{_id}/comment": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "stock"
+        ],
+        "summary": "Endpoint to add a comment to a stock.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "comment",
+            "description": "Comment to be added.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "body"
+              ],
+              "properties": {
+                "body": {
+                  "type": "string",
+                  "description": "Body of the comment.",
+                  "example": "That's not even remotely funny."
+                }
+              }
+            }
+          },
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Id of the stock.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment successfully added."
+          },
+          "400": {
+            "description": "Validation error. The body of the comment may be missing or the stock with the given id not found. Check causes field for diagnostics."
+          },
+          "401": {
+            "description": "Authorization token was missing, invalid or expired."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/stock/{_id}/comment/{commentId}": {
+      "get": {
+        "tags": [
+          "stock"
+        ],
+        "summary": "Endpoint that returns the selected comment.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Id of the stock",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment returned.",
+            "schema": {
+              "$ref": "#/definitions/Comment"
+            }
+          },
+          "400": {
+            "description": "Validation error. Either the comment or the stock not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "stock"
+        ],
+        "summary": "Endpoint that updates the selected comment.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Id of the stock",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "commentBody",
+            "description": "New body of the comment.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "body"
+              ],
+              "properties": {
+                "body": {
+                  "type": "string",
+                  "description": "New body of the comment.",
+                  "example": "That's not even remotely funny."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment updated."
+          },
+          "400": {
+            "description": "Validation error. Either the comment or the currency not found or the body was empty."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "stock"
+        ],
+        "summary": "Endpoint that deletes the selected comment.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Id of the stock",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "Id of the comment",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Comment deleted."
+          },
+          "400": {
+            "description": "Stock, user or the comment not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
       }
@@ -910,6 +1119,11 @@
                   "description": "Title of the article.",
                   "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
                 },
+                "imgUri": {
+                  "type": "string",
+                  "description": "image Url",
+                  "example": "https://static01.nyt.com/images/2019/09/19/business/03DC-FED-01/merlin_158705952_0a5bd2ca-6443-4c6d-bef7-9d0bff8096eb-superJumbo.jpg"
+                },
                 "body": {
                   "type": "string",
                   "description": "Body of the article",
@@ -1423,7 +1637,6 @@
           {
             "Bearer": []
           }
-
         ],
         "summary": "Returns user's own profile",
         "consumes": [
@@ -1548,9 +1761,7 @@
             "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
-
       }
-
     },
     "/profile/other/{_id}/unfollow": {
       "post": {
@@ -1607,9 +1818,7 @@
             "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
-
       }
-
     },
     "/profile/other/{_id}/accept": {
       "post": {
@@ -1666,9 +1875,7 @@
             "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
-
       }
-
     },
     "/profile/other/{_id}/decline": {
       "post": {
@@ -1774,7 +1981,6 @@
           "200": {
             "description": "OK. Given currency, its rate and comments are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyGet"
             }
           },
@@ -1809,7 +2015,6 @@
           "200": {
             "description": "OK. Given currency and its rate and intraday rates with 5 minutes intervals are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyIntraday"
             }
           },
@@ -1844,7 +2049,6 @@
           "200": {
             "description": "OK. Given currency and its rate and the last 7 daily rates are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyLastWeek"
             }
           },
@@ -1879,7 +2083,6 @@
           "200": {
             "description": "OK. Given currency and its rate and the last 30 daily rates are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyLastMonth"
             }
           },
@@ -1914,7 +2117,6 @@
           "200": {
             "description": "OK. Given currency and its rate and the last 100 daily rates are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyLast100"
             }
           },
@@ -1949,7 +2151,6 @@
           "200": {
             "description": "OK. Given currency and its rate, intraday rates with 5 minute intervals and the last 100 daily rates are returned.",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/CurrencyFull"
             }
           },
@@ -2281,7 +2482,7 @@
       }
     },
     "/investments": {
-      "get":{
+      "get": {
         "tags": [
           "investments"
         ],
@@ -2303,11 +2504,10 @@
             "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
-
       }
     },
     "/investments/{_id}": {
-      "get":{
+      "get": {
         "tags": [
           "investments"
         ],
@@ -2338,7 +2538,172 @@
             "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
-
+      }
+    },
+    "/notification": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "notification"
+        ],
+        "summary": "Endpoint to get all notifications for the user.",
+        "description": "The returned array contains all kinds of notifications of the given user. (follow, alert(not done yet) etc.) Each notification contains a type field. (follow, alert(not done yet) etc.) Other fields of array elements may differ depending on the type of the notification.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. All the notifications related to the user is returned.",
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/notification/{id}": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "notification"
+        ],
+        "summary": "Endpoint to discard the given notification.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id of the notification.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Notification successfully discarded."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/money": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "money"
+        ],
+        "summary": "Endpoint to get the amount of money of the authenticated user.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The amount of money in US dollars is returned.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "money": {
+                  "type": "number",
+                  "example": 1300
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/money/deposit/{amount}": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "money"
+        ],
+        "summary": "Endpoint to deposit money to the authenticated user's account.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "amount",
+            "description": "Amount of money to deposit.",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The amount of money is deposited to the user's account."
+          },
+          "400": {
+            "description": "Given amount is either not a number or not positive."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/money/withdraw/{amount}": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "money"
+        ],
+        "summary": "Endpoint to withdraw money from the authenticated user's account.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "amount",
+            "description": "Amount of money to withdraw.",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The amount of money is withdrawn from the user's account."
+          },
+          "400": {
+            "description": "Given amount is either not a number or not positive. Or the user has insufficient funds to perform this action."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
       }
     }
   },
@@ -2437,13 +2802,13 @@
         "stocks": {
           "type": "array",
           "items": {
-              "$ref": "#/definitions/StockAmount"
+            "$ref": "#/definitions/StockAmount"
           }
         },
         "currencies": {
           "type": "array",
           "items": {
-              "$ref": "#/definitions/CurrencyAmount"
+            "$ref": "#/definitions/CurrencyAmount"
           }
         }
       }
@@ -2473,11 +2838,11 @@
         }
       }
     },
-    "CurrencyAmount":{
+    "CurrencyAmount": {
       "type": "object",
-      "properties":{
+      "properties": {
         "stock": {
-          "$ref": "#/definitions/Currency"
+          "$ref": "#/definitions/CurrencyMinimal"
         },
         "amount": {
           "type": "number",
@@ -2486,9 +2851,9 @@
         }
       }
     },
-    "StockAmount":{
+    "StockAmount": {
       "type": "object",
-      "properties":{
+      "properties": {
         "stock": {
           "$ref": "#/definitions/Stock"
         },
@@ -2504,12 +2869,7 @@
       "properties": {
         "_id": {
           "type": "string",
-          "description": "Unique id of the stock (it is created by database so when create a stock this field should not provided by the client side )"
-        },
-        "name": {
-          "type": "string",
-          "description": "Include both symbol and name of the stock (useful for searching)",
-          "example": "ADBE - Adobe Inc. - Common Stock"
+          "description": "Unique id of the stock"
         },
         "price": {
           "type": "number",
@@ -2521,7 +2881,7 @@
           "description": "Official Symbol of the Stock",
           "example": "ADBE"
         },
-        "stockName": {
+        "name": {
           "type": "string",
           "description": "Name of the Stock without abbr",
           "example": "Adobe Inc. - Common Stock"
@@ -2537,33 +2897,50 @@
         },
         "name": {
           "type": "string",
-          "description": "Include both symbol and name of the stock (useful for searching)",
-          "example": "ADBE - Adobe Inc. - Common Stock"
-        },
-        "price": {
-          "type": "number",
-          "description": "Current price of the stock",
-          "example": 272.7
-        },
-        "monthlyPrice": {
-          "type": "object",
-          "description": "Historical data day by day ",
-          "example": "\"2019-10-16\": {\n            \"1. open\": \"270.2300\",\n            \"2. high\": \"272.8100\",\n            \"3. low\": \"267.5200\",\n            \"4. close\": \"272.7000\",\n            \"5. volume\": \"3860465\"\n        },\n        \"2019-10-15\": {\n            \"1. open\": \"278.1700\",\n            \"2. high\": \"281.5100\",\n            \"3. low\": \"278.0200\",\n            \"4. close\": \"279.3900\",\n            \"5. volume\": \"1964000\"\n        },\n        \"2019-10-14\": {\n            \"1. open\": \"278.1100\",\n            \"2. high\": \"279.4200\",\n            \"3. low\": \"277.1500\",\n            \"4. close\": \"277.7800\",\n            \"5. volume\": \"1372600\"\n        }"
-        },
-        "dailyPrice": {
-          "type": "object",
-          "description": "Historical data in a day with 5 mins interval",
-          "example": "\"2019-10-16 16:00:00\": {\n            \"1. open\": \"272.7000\",\n            \"2. high\": \"272.8300\",\n            \"3. low\": \"272.4600\",\n            \"4. close\": \"272.7900\",\n            \"5. volume\": \"161462\"\n        },\n        \"2019-10-16 15:55:00\": {\n            \"1. open\": \"272.6888\",\n            \"2. high\": \"273.0154\",\n            \"3. low\": \"272.6650\",\n            \"4. close\": \"272.6688\",\n            \"5. volume\": \"70732\"\n        },\n        \"2019-10-16 15:50:00\": {\n            \"1. open\": \"272.3350\",\n            \"2. high\": \"272.7500\",\n            \"3. low\": \"272.2300\",\n            \"4. close\": \"272.7000\",\n            \"5. volume\": \"65368\"\n        },\n        \"2019-10-16 15:45:00\": {\n            \"1. open\": \"272.6100\",\n            \"2. high\": \"272.6950\",\n            \"3. low\": \"272.3100\",\n            \"4. close\": \"272.3400\",\n            \"5. volume\": \"63315\"\n        }"
+          "description": "Name of the Stock without abbr.",
+          "example": "Adobe Inc. - Common Stock"
         },
         "stockSymbol": {
           "type": "string",
           "description": "Official Symbol of the Stock",
           "example": "ADBE"
         },
-        "stockName": {
-          "type": "string",
-          "description": "Name of the Stock without abbr",
-          "example": "Adobe Inc. - Common Stock"
+        "price": {
+          "type": "number",
+          "description": "Current price of the stock",
+          "example": 280.3332
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Comment"
+          }
+        },
+        "dailyPrice": {
+          "type": "object",
+          "description": "Last 100 intraday prices with 5 minute intervals.",
+          "example": {
+            "2019-12-16 11:50:00": {
+              "1. open": "280.3332",
+              "2. high": "280.4100",
+              "3. low": "280.2600",
+              "4. close": "280.3232",
+              "5. volume": "175666"
+            }
+          }
+        },
+        "monthlyPrice": {
+          "type": "object",
+          "description": "Last 100 daily prices.",
+          "example": {
+            "2019-12-16": {
+              "1. open": "280.3332",
+              "2. high": "280.4100",
+              "3. low": "280.2600",
+              "4. close": "280.3232",
+              "5. volume": "175666"
+            }
+          }
         }
       }
     },
@@ -2579,6 +2956,11 @@
           "type": "string",
           "description": "Title of the article",
           "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
+        },
+        "imgUri": {
+          "type": "string",
+          "description": "Image Url",
+          "example": "https://static01.nyt.com/images/2019/09/19/business/03DC-FED-01/merlin_158705952_0a5bd2ca-6443-4c6d-bef7-9d0bff8096eb-superJumbo.jpg"
         },
         "body": {
           "type": "string",
@@ -3016,6 +3398,23 @@
           }
         }
       }
+    },
+    "Notification": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "example": [
+        {
+          "_id": "5de6c3e588aff72068fe72e8",
+          "follower": {
+            "_id": "5daeffa31b135672880aecb3",
+            "name": "John",
+            "surname": "Doe"
+          },
+          "type": "follow"
+        }
+      ]
     }
   }
 }

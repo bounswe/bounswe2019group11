@@ -97,5 +97,16 @@ module.exports = {
     INVALID_PRIVACY_OPTION: (cause) => {
         return PapelError('InvalidPrivacyOption', 'Privacy options should be either \'public\' or \'private\'', cause);
     },
-
+    NOTIFICATION_NOT_FOUND: (cause) => {
+        return PapelError('NotificationNotFound', 'Notification with the given id and user id is not found.', cause);
+    },
+    NOT_TRADER: (cause) => {
+        return PapelError('NotTrader', 'User is not a trader.', cause);
+    },
+    INVALID_AMOUNT: (cause) => {
+      return PapelError('InvalidAmount', 'Given amount is either not a number or not positive', cause);
+    },
+    INSUFFICIENT_FUND: (cause) => {
+        return PapelError('InsufficientFund', 'User has insufficent funds to perform the given action', cause);
+    }
 };

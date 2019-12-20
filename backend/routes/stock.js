@@ -3,6 +3,7 @@ const router = express.Router();
 const stockService = require('../services/stock');
 const errors = require('../helpers/errors');
 const isAuthenticated = require('../middlewares/isAuthenticated');
+
 router.get('/', async (req, res) => {
     try {
         const response = await stockService.getAll();
@@ -26,15 +27,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
-    try {
-        const theStock = {...req.body};
-        const response = await stockService.create(theStock);
-        res.status(200).json(response);
-    } catch (e) {
-        res.status(503).json(e)
-    }
-});
 router.post('/:id/comment', isAuthenticated, async (req, res) => {
     try {
         const stockId = req.params.id;

@@ -20,6 +20,14 @@
             android:id="@+id/nav_trading_equipments"
             android:icon="@drawable/ic_menu_trading"
             android:title="@string/menu_trading_eq" />
+        <item
+            android:id="@+id/nav_investments"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/my_investments" />
+        <item
+            android:id="@+id/nav_money"
+            android:icon="@drawable/ic_menu_portfolio"
+            android:title="@string/menu_money" />
     </group>
 
     <!-- <item android:title="Communicate">
@@ -28,10 +36,7 @@
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
                 android:title="@string/menu_share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/menu_send" />
+
         </menu>
     </item> -->
 

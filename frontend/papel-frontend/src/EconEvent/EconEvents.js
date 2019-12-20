@@ -2,6 +2,7 @@ import React from "react";
 import EconEvent from "./EconEvent";
 import {Row, Col, Card} from 'react-bootstrap';
 import $ from 'jquery';
+import {app_config} from "../config";
 import EconEventPreview from './EconEventPreview';
 
 class EconEvents extends React.Component{
@@ -12,9 +13,9 @@ class EconEvents extends React.Component{
   componentDidMount() {
     const self = this;
     this.setState({loading: true});
-    $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/event", (data) => {
-      console.log(data);
-      self.setState({econevents: data, loading: false})
+    $.get(app_config.api_url +  "/event", (data) => {
+      
+      self.setState({econevents: data.reverse(), loading: false})
     })
   }
   render(){
@@ -24,7 +25,7 @@ class EconEvents extends React.Component{
         <Col md={{span: 8, offset: 2}}>
           {
             this.state.econevents.map(econevent => (
-              <EconEventPreview key={econevent._id} title={econevent.title} text={econevent.body} eventId={econevent._id} />
+              <EconEventPreview key={econevent._id} title={econevent.title} text={econevent.body} eventId={econevent._id} rank={econevent.rank} />
             ))
           }
         </Col>

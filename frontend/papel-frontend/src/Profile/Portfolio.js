@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Row, Col, Card, Modal, Button, Form, Table} from 'react-bootstrap';
 import $ from 'jquery';
+import {app_config} from "../config";
 import {deleteRequest} from '../helpers/request';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faAngleDown, faAngleUp, faPlus, faTrash} from '@fortawesome/free-solid-svg-icons';
@@ -22,7 +23,7 @@ function Portfolio({portfolio, isMe}){
   };
   var onAddSelected = function() {
     addStockList.map(stock => {
-      const request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/portfolio/" + portfolio._id + "/stock";
+      const request_url = app_config.api_url + "/portfolio/" + portfolio._id + "/stock";
       var index = -1;
       for (var i = 0; i < stockList.length; i++) {
         if (stockList[i]._id == stock) {
@@ -40,7 +41,7 @@ function Portfolio({portfolio, isMe}){
     });
   };
   var addStockBtn = function() {
-    $.get("http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/stock", data => {
+    $.get(app_config.api_url + "/stock", data => {
       setStockList(data);
       setOriginalStockList(data);
       setSearchbarText("");
@@ -71,7 +72,7 @@ function Portfolio({portfolio, isMe}){
   }
 
   var deleteStock = function(stock) {
-    var request_url = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/portfolio/" + portfolio._id + "/stock"
+    var request_url = app_config.api_url + "/portfolio/" + portfolio._id + "/stock"
     deleteRequest({
       url: request_url,
       data: stock,
