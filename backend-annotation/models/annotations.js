@@ -92,4 +92,4 @@ const annotationSchema = new mongoose.Schema({
 
 const Annotation = mongoose.model('Annotation', annotationSchema);
 
-module.exports = Article;
+module.exports = Annotation;
