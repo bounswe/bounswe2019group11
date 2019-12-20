@@ -16,7 +16,6 @@ router.get('/:articleId',async (req,res)=>{
 
 router.post('/',isAuthenticated,async (req,res)=>{
     try{
-        console.log(req.body);
         const {type,body,target} = req.body;
         const authorId = req.token && req.token.data && req.token.data._id;
         const annotation = await annotationService.createAnnotation(type,authorId,Date.now(),body,target);
