@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
-//const database = require('./helpers/database');
+const database = require('./helpers/database');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -22,6 +22,6 @@ app.use('/', require('./routes/index'));
 
 const port = process.env.PORT;
 app.listen(port, async () => {
-    //await database.establishConnection();
+    await database.establishConnection();
     console.log(`Backend app listening on port ${port}`);
 });
