@@ -596,6 +596,52 @@
         }
       }
     },
+    "/stock/{_id}/alert/delete/{alertId}": {
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "stock"
+        ],
+        "summary": "Endpoint to delete stock alert.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Stock id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "alertId",
+            "description": "Alert id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Alert is deleted."
+          },
+          "400": {
+            "description": "Alert, stock or the user not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
     "/user/lost-password": {
       "post": {
         "tags": [
@@ -2600,6 +2646,52 @@
           },
           "400": {
             "description": "Either the currency code or the user not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/alert/delete/{alertId}": {
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "currency"
+        ],
+        "summary": "Endpoint to delete currency alert.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Currency code",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "alertId",
+            "description": "Alert id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Alert is deleted."
+          },
+          "400": {
+            "description": "Alert, currency or the user not found."
           },
           "500": {
             "description": "Internal error occurred. Check the cause field for the diagnostics."

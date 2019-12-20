@@ -390,3 +390,20 @@ module.exports.saveAlert = async (currencyCode, userId, direction, rate) => {
         currencyCode
     });
 };
+
+module.exports.deleteAlert = async (currencyCode, userId, alertId) => {
+    currencyCode = currencyCode.toUpperCase();
+    if (!SUPPORTED_CURRENCIES.has(currencyCode)) {
+        throw errors.INVALID_CURRENCY_CODE();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(userId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(alertId))) {
+        throw errors.ALERT_NOT_FOUND();
+    }
+    const alert = await Alert.findOneAndDelete({_id: alertId, type: alertHelper.TYPE.CURRENCY, currencyCode, userId});
+    if (!alert) {
+        throw errors.ALERT_NOT_FOUND();
+    }
+};

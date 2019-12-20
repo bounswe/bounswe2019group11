@@ -140,4 +140,20 @@ router.post('/:id/alert', isAuthenticated, async (req, res) => {
     }
 });
 
+router.delete('/:id/alert/delete/:alertId', isAuthenticated, async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userId = req.token && req.token.data && req.token.data._id;
+        const alertId = req.params.alertId;
+        await stockService.deleteAlert(id, userId, alertId);
+        res.sendStatus(200);
+    } catch (err) {
+        if (err.name === 'StockNotFound' || err.name === 'UserNotFound' || err.name === 'AlertNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
 module.exports = router;

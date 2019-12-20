@@ -259,4 +259,20 @@ router.post('/:code/alert', isAuthenticated, async (req, res) => {
     }
 });
 
+router.delete('/:code/alert/delete/:id', isAuthenticated, async (req, res) => {
+    try {
+        const code = req.params.code;
+        const userId = req.token && req.token.data && req.token.data._id;
+        const alertId = req.params.id;
+        await currencyService.deleteAlert(code, userId, alertId);
+        res.sendStatus(200);
+    } catch (err) {
+        if (err.name === 'InvalidCurrencyCode' || err.name === 'UserNotFound' || err.name === 'AlertNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
 module.exports = router;

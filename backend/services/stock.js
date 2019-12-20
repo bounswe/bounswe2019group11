@@ -175,3 +175,19 @@ module.exports.saveAlert = async (id, userId, direction, rate) => {
         stockId: id
     });
 };
+
+module.exports.deleteAlert = async (stockId, userId, alertId) => {
+    if (!(mongoose.Types.ObjectId.isValid(stockId))) {
+        throw errors.INVALID_CURRENCY_CODE();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(userId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(alertId))) {
+        throw errors.ALERT_NOT_FOUND();
+    }
+    const alert = await Alert.findOneAndDelete({_id: alertId, type: alertHelper.TYPE.STOCK, stockId, userId});
+    if (!alert) {
+        throw errors.ALERT_NOT_FOUND();
+    }
+};
