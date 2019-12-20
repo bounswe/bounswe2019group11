@@ -1,6 +1,5 @@
 import React from 'react';
-import {Editor, EditorState, RichUtils} from 'draft-js';
-import 'draft-js/dist/Draft.css';
+import Highlightable from 'highlightable';
 import './Article.css';
 import {instanceOf} from 'prop-types'
 import {withCookies, Cookies} from 'react-cookie';
@@ -15,8 +14,10 @@ import CommentPreview from './CommentPreview';
 import {postRequest} from '../helpers/request';
 
 class Article extends React.Component {
+
   static propTypes = {cookies: instanceOf(Cookies).isRequired};
   constructor(props) {
+
     super(props);
     const {cookies} = props;
     const loggedIn = !!cookies.get('userToken');
@@ -134,6 +135,7 @@ class Article extends React.Component {
       authorLine = <a href={"../user/" + author._id} style={{color: "gray"}}>by {author.name} {author.surname}</a> ;
     return (
       <Row className="article">
+       
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
           <Card>
             <Card.Body>
@@ -141,7 +143,12 @@ class Article extends React.Component {
               {authorLine}
               <hr />
               <Card.Img variant = "top" src= {article.imgUri} />
-              <Card.Text>{article.body}</Card.Text>
+              <Card.Text>{
+              
+              article.body? article.body.split(""):"loading..."}</Card.Text>
+              
+              
+              {console.log(article.body? article.body.split(""):"henüz gelmedi")}
               <hr/>
             </Card.Body>
             <Row className="" >
