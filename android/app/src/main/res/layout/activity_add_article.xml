@@ -23,17 +23,36 @@
 
     <EditText
         android:id="@+id/article_content_edittext"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="373dp"
+        android:layout_height="563dp"
         android:layout_above="@+id/article_add_button"
+        android:layout_alignParentTop="true"
         android:layout_marginStart="@dimen/text_margin"
         android:layout_marginTop="65dp"
         android:layout_marginEnd="@dimen/text_margin"
+        android:layout_marginBottom="55dp"
         android:autoLink="all"
         android:ems="10"
         android:gravity="start|top"
         android:hint="@string/test_content"
         android:inputType="textAutoCorrect|textMultiLine|textAutoComplete" />
+
+
+    <EditText
+        android:id="@+id/article_image_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/article_add_button"
+        android:layout_marginStart="@dimen/text_margin"
+        android:layout_marginEnd="@dimen/text_margin"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="false"
+        android:layout_marginTop="-54dp"
+        android:autoLink="all"
+        android:ems="10"
+        android:hint="@string/image_hint"
+        android:inputType="textAutoCorrect|textPersonName|textAutoComplete"
+        tools:layout_marginBottom="50dp" />
 
     <Button
         android:id="@+id/article_add_button"

@@ -89,6 +89,7 @@ public class ArticlesFragment extends Fragment {
                         if (article != null) {
                             articles.add(article);
                         }
+
                     }
                     adapter.notifyDataSetChanged();
                 } catch (JSONException e) {

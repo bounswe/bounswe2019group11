@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import org.json.JSONObject;
 public class AddArticleActivity extends AppCompatActivity {
     private EditText titleEditText;
     private EditText contentEditText;
+    private EditText imageEditText;
     private Button addArticleButton;
 
     @Override
@@ -44,6 +46,7 @@ public class AddArticleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_article);
         titleEditText = findViewById(R.id.article_title_edittext);
         contentEditText = findViewById(R.id.article_content_edittext);
+        imageEditText = findViewById(R.id.article_image_edittext);
         addArticleButton = findViewById(R.id.article_add_button);
 
         addArticleButton.setOnClickListener(new View.OnClickListener() {
@@ -52,15 +55,17 @@ public class AddArticleActivity extends AppCompatActivity {
 
                 String title = titleEditText.getText().toString().trim();
                 String content = contentEditText.getText().toString().trim();
+                String image = imageEditText.getText().toString().trim();
 
-                if(title.isEmpty()){
+
+                if (title.isEmpty()) {
                     Toast.makeText(getApplicationContext(), R.string.title_empty_error, Toast.LENGTH_SHORT).show();
                     return;
-                }else if(content.isEmpty()){
+                } else if (content.isEmpty()) {
                     Toast.makeText(getApplicationContext(), R.string.content_empty_error, Toast.LENGTH_SHORT).show();
                     return;
-                }else{
-                    addArticle(getApplicationContext(), title.trim(), content.trim());
+                } else {
+                    addArticle(getApplicationContext(), title.trim(), content.trim(), image);
                 }
 
 
@@ -68,12 +73,13 @@ public class AddArticleActivity extends AppCompatActivity {
         });
     }
 
-    public void addArticle(final Context context, String title, String body) {
+    public void addArticle(final Context context, String title, String body, String image_url) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url = Constants.LOCALHOST + Constants.ARTICLE;
         final JSONObject jsonBody = new JSONObject();
         try {
             jsonBody.put("title", title);
+            jsonBody.put("imgUri", image_url);
             jsonBody.put("body", body);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -81,8 +87,7 @@ public class AddArticleActivity extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                final Intent intent = new Intent(context, ArticlesFragment.class);
-                startActivity(intent);
+                Toast.makeText(context, "Article successfully posted.", Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -109,6 +114,7 @@ public class AddArticleActivity extends AppCompatActivity {
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<String, String>();
