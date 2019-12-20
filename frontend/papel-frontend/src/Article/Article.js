@@ -14,8 +14,10 @@ import CommentPreview from './CommentPreview';
 import {postRequest} from '../helpers/request';
 
 class Article extends React.Component {
+
   static propTypes = {cookies: instanceOf(Cookies).isRequired};
   constructor(props) {
+
     super(props);
     const {cookies} = props;
     const loggedIn = !!cookies.get('userToken');
@@ -141,7 +143,12 @@ class Article extends React.Component {
               {authorLine}
               <hr />
               <Card.Img variant = "top" src= {article.imgUri} />
-              <Card.Text>{article.body}</Card.Text>
+              <Card.Text>{
+              
+              article.body? article.body.split(""):"loading..."}</Card.Text>
+              
+              
+              {console.log(article.body? article.body.split(""):"henüz gelmedi")}
               <hr/>
             </Card.Body>
             <Row className="" >
