@@ -2,6 +2,8 @@ const Stock = require('../models/stock');
 const errors = require('../helpers/errors');
 const StockComment = require('../models/stockComment');
 const mongoose = require('mongoose');
+const Alert = require('../models/alert');
+const alertHelper = require('../helpers/alert');
 
 const STAGES = {
     GET_COMMENTS: {
@@ -156,4 +158,20 @@ module.exports.deleteComment = async (stockId, commentId, authorId) => {
     if (!comment) {
         throw errors.COMMENT_NOT_FOUND();
     }
+};
+
+module.exports.saveAlert = async (id, userId, direction, rate) => {
+    if (!(mongoose.Types.ObjectId.isValid(id))) {
+        throw errors.STOCK_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(userId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    await Alert.create({
+        type: alertHelper.TYPE.STOCK,
+        userId,
+        direction,
+        rate,
+        stockId: id
+    });
 };
