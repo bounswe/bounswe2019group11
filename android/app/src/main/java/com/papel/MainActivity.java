@@ -16,6 +16,8 @@ import android.view.View;
 
 
 import androidx.core.view.MenuItemCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -142,8 +144,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("UserId", ((User) adapter.getItem(i)).getId());
                     startActivity(intent);
                 } else if(searchList.get(i) instanceof Event){
-                    Intent intent = new Intent(getApplicationContext(), EventsFragment.class);
-                    startActivity(intent);
+                    // TODO: Go to that activity
                 }
             }
         });
