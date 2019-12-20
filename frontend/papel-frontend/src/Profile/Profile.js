@@ -1,12 +1,13 @@
 import React from 'react';
 import './Profile.css';
 import ProfileCard from './ProfileCard';
+import BalanceCard from './BalanceCard';
 import Portfolio from './Portfolio';
 import {instanceOf} from 'prop-types'
 import {withCookies, Cookies} from 'react-cookie';
 import {Row, Col, Card, Button, Modal, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import ArticlePreview from '../Article/ArticlePreview'
 import {getRequest, postRequest} from '../helpers/request'
 import {getFormattedAddress} from '../helpers/geocoder'
@@ -18,12 +19,14 @@ class Profile extends React.Component {
     super(props);
     const {cookies} = props;
     const loggedIn = !!cookies.get('userToken');
-    this.state = {loggedIn: loggedIn, portfoliosLoaded: false, portfolios: [], showNewPortfolioDialog: false, newPortfolio: {}, articles: [], formattedAddress: ""};
+    this.state = {loggedIn: loggedIn, balance:0, portfoliosLoaded: false, portfolios: [], showNewPortfolioDialog: false, newPortfolio: {}, articles: [], formattedAddress: ""};
 
     this.createPortfolio = this.createPortfolio.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.onCreate = this.onCreate.bind(this);
     this.geocodeLocation = this.geocodeLocation.bind(this);
+    this.depositMoney = this.depositMoney.bind(this);
+    this.withdrawMoney = this.withdrawMoney.bind(this);
   }
 
 
@@ -42,6 +45,15 @@ class Profile extends React.Component {
         },
         authToken: userToken
       })
+      getRequest({
+        url: app_config.api_url + "/money",
+        success: (data) => {
+          this.setState({balance:data})
+          console.log(data)
+          console.log(this.state.balance)
+        },
+        authToken: userToken
+        })
       this.geocodeLocation(cookies.get('user').location)
     }
   }
@@ -86,6 +98,26 @@ class Profile extends React.Component {
       authToken: cookies.get("userToken")
     });
   }
+  depositMoney() {
+    const {cookies} = this.props;
+    postRequest({
+      url: app_config.api_url + "/money/deposit/1",
+      success: function() {console.log("dgn");
+      },
+      authToken: cookies.get("userToken")
+    });
+    //window.location.reload();
+  }
+  withdrawMoney() {
+    const {cookies} = this.props;
+    postRequest({
+      url: app_config.api_url + "/money/withdraw/1",
+      success: function() {console.log("dgn");
+      },
+      authToken: cookies.get("userToken")
+    });
+    //window.location.reload();
+  }
 
   render () {
     if (this.state.loggedIn) {
@@ -126,6 +158,35 @@ class Profile extends React.Component {
 
             </Col>
           </Row>
+          <Row style={{marginTop: 10}} m={{span:5}}>
+            <Col>
+              <h3>My Balance: {this.state.balance.money} &#36;
+              </h3>
+            </Col>
+          </Row>
+          <br></br>
+          <Row className="justify-content-md-center">
+            <Col xs={4}>
+              <Button onClick={this.depositMoney}>
+                <FontAwesomeIcon icon={faPlus} />&nbsp;
+                Deposit Money
+                </Button>
+            </Col>
+            <Col xs={3}>
+              <form>
+                <input type="number" name="amount"/> &emsp; &#36;
+              </form>
+            </Col>
+            <Col xs={4}>
+              <Button onClick={this.withdrawMoney}>
+                <FontAwesomeIcon icon={faMinus} />&nbsp;
+                Withdraw Money
+              </Button>
+            </Col>
+          </Row>
+              <br></br>
+              <center><i>To see the change, please refresh the page after deposit/withraw of money.</i></center>
+              <br></br>
           <Row style={{marginTop: 10}}>
             <Col>
               <Card  >
