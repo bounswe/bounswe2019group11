@@ -19,7 +19,7 @@ class Profile extends React.Component {
     super(props);
     const {cookies} = props;
     const loggedIn = !!cookies.get('userToken');
-    this.state = {loggedIn: loggedIn, balance:0, portfoliosLoaded: false, portfolios: [], showNewPortfolioDialog: false, newPortfolio: {}, articles: [], formattedAddress: ""};
+    this.state = {loggedIn: loggedIn, balance:0, amount:0, portfoliosLoaded: false, portfolios: [], showNewPortfolioDialog: false, newPortfolio: {}, articles: [], formattedAddress: ""};
 
     this.createPortfolio = this.createPortfolio.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -27,8 +27,8 @@ class Profile extends React.Component {
     this.geocodeLocation = this.geocodeLocation.bind(this);
     this.depositMoney = this.depositMoney.bind(this);
     this.withdrawMoney = this.withdrawMoney.bind(this);
+    this.getAmount = this.getAmount.bind(this);
   }
-
 
   componentDidMount() {
     const {cookies} = this.props
@@ -98,10 +98,11 @@ class Profile extends React.Component {
       authToken: cookies.get("userToken")
     });
   }
+
   depositMoney() {
     const {cookies} = this.props;
     postRequest({
-      url: app_config.api_url + "/money/deposit/1",
+      url: app_config.api_url + "/money/deposit/"  + this.state.amount,
       success: function() {console.log("dgn");
       },
       authToken: cookies.get("userToken")
@@ -111,12 +112,16 @@ class Profile extends React.Component {
   withdrawMoney() {
     const {cookies} = this.props;
     postRequest({
-      url: app_config.api_url + "/money/withdraw/1",
+      url: app_config.api_url + "/money/withdraw/" + this.state.amount,
       success: function() {console.log("dgn");
       },
       authToken: cookies.get("userToken")
     });
     //window.location.reload();
+  }
+  getAmount(event){
+    this.setState({amount:event.target.value});
+    console.log(event.target.value);
   }
 
   render () {
@@ -174,7 +179,7 @@ class Profile extends React.Component {
             </Col>
             <Col xs={3}>
               <form>
-                <input type="number" name="amount"/> &emsp; &#36;
+                <input type="number" name="amount" onChange={this.getAmount} /> &emsp; &#36;
               </form>
             </Col>
             <Col xs={4}>
