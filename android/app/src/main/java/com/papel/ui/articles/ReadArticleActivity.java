@@ -182,10 +182,14 @@ public class ReadArticleActivity extends AppCompatActivity {
                 try {
                     JSONObject object = new JSONObject(response);
                     article = ResponseParser.parseArticle(object);
-                    Glide.with(context)
-                            .load(article.getImageUrl())
-                            .fitCenter()
-                            .into(articleImage);
+                    if(!article.getImageUrl().isEmpty()){
+                        Glide.with(context)
+                                .load(article.getImageUrl())
+                                .fitCenter()
+                                .into(articleImage);
+                    }else{
+                        articleImage.setVisibility(View.GONE);
+                    }
                     title.setText(article.getTitle());
                     content.setText(article.getBody());
                     authorId = article.getAuthorId();

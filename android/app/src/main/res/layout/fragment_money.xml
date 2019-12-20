@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.money.MoneyFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:textSize="24sp"
+        android:text="Your Total Money"
+        android:textColor="@color/black"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="84dp"
+        android:text="300 $"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:id="@+id/money_amount"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="170dp"
+        android:inputType="number"
+        android:hint="Amount in USD"
+        android:id="@+id/deposit_amount"
+        android:gravity="center_horizontal"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Deposit"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="220dp"
+        android:id="@+id/deposit_button"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="280dp"
+        android:inputType="number"
+        android:hint="Amount in USD"
+        android:id="@+id/withdraw_amount"
+        android:gravity="center_horizontal"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Withdraw"
+        android:id="@+id/withdraw_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="330dp"
+        />
+
+
+</RelativeLayout>
