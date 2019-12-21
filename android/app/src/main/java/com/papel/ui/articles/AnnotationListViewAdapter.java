@@ -10,7 +10,11 @@ import android.widget.TextView;
 import com.papel.R;
 import com.papel.data.AnnotationBody;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class AnnotationListViewAdapter extends BaseAdapter {
 
@@ -44,8 +48,20 @@ public class AnnotationListViewAdapter extends BaseAdapter {
         }
 
         TextView commentBody = view.findViewById(R.id.commentBody);
+        TextView commentTime = view.findViewById(R.id.commentTime);
         AnnotationBody currentAnnotationBody = this.body.get(i);
         commentBody.setText(currentAnnotationBody.getValue());
+
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+            Date formattedDate = formatter.parse(currentAnnotationBody.getCreateTime().replaceAll("Z$", "+0000"));
+            SimpleDateFormat prettyFormatter = new SimpleDateFormat("dd MMM yy • HH:mm a", Locale.US);
+            String formattedTime = prettyFormatter.format(formattedDate);
+            commentTime.setText(formattedTime);
+        } catch (ParseException e ) {
+            e.printStackTrace();
+        }
+
 
         return view;
     }
