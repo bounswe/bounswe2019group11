@@ -14,53 +14,53 @@ function CommentPreview({id, authorId, articleId, author,   body, date, lastEdit
   const loggedIn = !!cookies.userToken;
   useEffect(() => {
     // Update the document title using the browser API
-    if(count>0) window.location.reload();
+    //if(count>0) window.location.reload();
   });
-  
+
   function handleDelete(){
-   
+
     var path = app_config.api_url+"/article/"+articleId+"/comment/"+id;
-    deleteRequest({url:path, success:()=>{}, authToken:cookies.userToken });
+    deleteRequest({url:path, success:()=>{}, authToken:cookies.userToken })
     setCount(count+1);
   }
   if(loggedIn && (cookies.user._id == authorId)){
     deleteBtn = <Col sm={{span: 2, offset: 5}} xs={{span: 12}}>
-      <FontAwesomeIcon id="interactive" name="Delete" onClick={handleDelete} 
-      
-         icon={faTrashAlt} 
+      <FontAwesomeIcon id="interactive" name="Delete" onClick={handleDelete}
+
+         icon={faTrashAlt}
       />
     </Col>
   }
   return (
 
-    
+
       <Card.Body>
-    
+
         <Card.Title id="interactive" >
           <h6><FontAwesomeIcon  name="UserCircle" icon={faUserCircle} />&nbsp; {author}</h6>
         </Card.Title>
         <Card.Text >
           {body ? body : "Comments are loading..."}
         </Card.Text>
-        
+
         <Row className="">
 
           <Col sm={{span: 2, offset: 0}} xs={{span: 12}}>
-              
-              
+
+
           </Col>
 
           <Col sm={{span: 2, offset: 0}} xs={{span: 12}}>
-            
+
 
           </Col>
-          
+
           {deleteBtn}
 
-        </Row>    
+        </Row>
         <hr/>
       </Card.Body>
-    
+
   );
 }
 export default CommentPreview;
