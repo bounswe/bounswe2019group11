@@ -73,6 +73,10 @@ const userSchema = new mongoose.Schema({
             type: Number,
             required: 'InvalidLongitude',
         },
+        displayName: {
+            type: String,
+            default: ''
+        }
     },
     googleUserId: {
         type: String,
@@ -123,7 +127,7 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-userSchema.index({name: 'text', surname: 'text'});
+userSchema.index({name: 'text', surname: 'text', 'location.displayName': 'text'});
 
 userSchema.pre('save', async function (next) {
     if (this.isModified('password')) {

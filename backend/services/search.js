@@ -29,7 +29,7 @@ module.exports.search = async (term) => {
         .exec();
     response['users'] = await User
         .find(searchCondition)
-        .select({name: 1, surname: 1})
+        .select({name: 1, surname: 1, 'location.displayName': 1})
         .exec();
 
     return response;
