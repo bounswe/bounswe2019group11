@@ -11,23 +11,23 @@ module.exports.search = async (term) => {
     const searchCondition = {$text: {$search: searchText}};
     const response = {};
 
-    response.articles = await Article
+    response['articles'] = await Article
         .find(searchCondition)
         .select({title: 1})
         .exec();
-    response.currencies = await Currency
+    response['currencies'] = await Currency
         .find(searchCondition)
         .select({code: 1})
         .exec();
-    response.events = await Event
+    response['events'] = await Event
         .find(searchCondition)
         .select({title: 1, country: 1})
         .exec();
-    response.stocks = await Stock
+    response['stocks'] = await Stock
         .find(searchCondition)
         .select({stockSymbol: 1})
         .exec();
-    response.users = await User
+    response['users'] = await User
         .find(searchCondition)
         .select({name: 1, surname: 1})
         .exec();
@@ -38,7 +38,7 @@ module.exports.search = async (term) => {
 function prepareSearchText(similarTerms) {
     let searchText = '';
     for (let i = 0; i < similarTerms.length; i++) {
-        searchText += `"${similarTerms[i]}" `
+        searchText += `${similarTerms[i]} `
     }
     return searchText.trim();
 }

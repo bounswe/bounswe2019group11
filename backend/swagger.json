@@ -47,6 +47,10 @@
     {
       "name": "money",
       "description": "Money related endpoints for trader users."
+    },
+    {
+      "name": "search",
+      "description": "Search related endpoints."
     }
   ],
   "securityDefinitions": {
@@ -2923,6 +2927,37 @@
           }
         }
       }
+    },
+    "/search/{term}": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Endpoint to get all the articles, events, currencies, users and stocks semantically related to search term.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "term",
+            "description": "Search term",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Search results are returned.",
+            "schema": {
+              "$ref": "#/definitions/SearchResult"
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -3697,6 +3732,111 @@
           "type": "string",
           "description": "Stock id if this is an stock alert, null otherwise",
           "example": null
+        }
+      }
+    },
+    "SearchResult": {
+      "type": "object",
+      "properties": {
+        "articles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Id of the article",
+                "example": "5da07611e407903a5d01b265"
+              },
+              "title": {
+                "type": "string",
+                "description": "Title of the article",
+                "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
+              }
+            }
+          }
+        },
+        "currencies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Id of the currency",
+                "example": "5da07611e407903a5d01b265"
+              },
+              "code": {
+                "type": "string",
+                "description": "Code of the currency",
+                "example": "EUR"
+              }
+            }
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Id of the event",
+                "example": "5da07611e407903a5d01b265"
+              },
+              "title": {
+                "type": "string",
+                "description": "Title of the event",
+                "example": "Spanish Trade Balance"
+              },
+              "country": {
+                "type": "string",
+                "description": "Country of the event",
+                "example": "Spain"
+              }
+            }
+          }
+        },
+        "stocks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Id of the stock",
+                "example": "5da07611e407903a5d01b265"
+              },
+              "stockSymbol": {
+                "type": "string",
+                "description": "Symbol of the stock",
+                "example": "AAPL"
+              }
+            }
+          }
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Id of the user",
+                "example": "5da07611e407903a5d01b265"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the user",
+                "example": "John"
+              },
+              "surname": {
+                "type": "string",
+                "description": "Surname of the user",
+                "example": "Doe"
+              }
+            }
+          }
         }
       }
     }
