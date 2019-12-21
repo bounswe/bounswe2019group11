@@ -15,8 +15,8 @@ app.use(bodyParser.urlencoded({
     extended: true,
 }));
 
-//const swaggerDocument = require('./swagger.json');
-//app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+const swaggerDocument = require('./swagger.json');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/', require('./routes/index'));
 app.use('/annotation',require('./routes/article'));

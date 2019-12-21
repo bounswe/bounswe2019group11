@@ -29,9 +29,9 @@
     "/annotation/article/{articleId}": {
       "get": {
         "tags": [
-          "auth"
+          "annotation"
         ],
-        "summary": "Email verification endpoint.",
+        "summary": "Get annotations with related to the article endpoint.",
         "produces": [
           "application/text",
           "application/json"
@@ -83,7 +83,7 @@
           {
             "in": "body",
             "name": "annotation",
-            "description": "The annotation to be created.(In the body non of creator and created info will be sent. Only:  type, motivation, body->type,body->value,body->purpose,target->id,target->selector->type,target->selector->start,target->selector->end )",
+            "description": "The annotation to be created.(In the body non of creator and created info will be sent. Only:  type, motivation, body->type,body->value,body->purpose,target->id,target->selector->type,target->selector->start,target->selector->end need to be sent)",
             "schema": {
               "$ref": "#/definitions/Annotation"
             }
@@ -113,7 +113,7 @@
         "tags": [
           "annotation"
         ],
-        "summary": "Create annotation endpoint ",
+        "summary": "Add body to an existing annotation endpoint ",
         "description": "Creates annotation and returns created annotation as response. This endpoint will be called when a user highlight a text from an article",
         "consumes": [
           "application/json"
