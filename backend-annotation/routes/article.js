@@ -16,8 +16,9 @@ router.get('/article/:articleId',async (req,res)=>{
 
 router.post('/',isAuthenticated,async (req,res)=>{
     try{
-        const {type,body,target} = req.body;
         const authorId = req.token && req.token.data && req.token.data._id;
+        const {type,body,target} = req.body;
+        body['creator'] = authorId;
         const annotation = await annotationService.createAnnotation(type,authorId,Date.now(),body,target);
         res.status(200).json(annotation);
     }catch (e) {
@@ -25,4 +26,20 @@ router.post('/',isAuthenticated,async (req,res)=>{
         res.sendStatus(503);
     }
 });
+
+router.post('/:annotationId',isAuthenticated,async (req,res)=>{
+    try{
+        const authorId = req.token && req.token.data && req.token.data._id;
+        const body = req.body;
+        body['created'] = Date.now();
+        body['creator'] = authorId;
+        const annotationId = req.params.annotationId;
+        const annotation = await annotationService.addBody(annotationId,body);
+        res.status(200).json(annotation);
+    }catch (e) {
+        console.log(e);
+        res.sendStatus(503);
+    }
+});
+
 module.exports = router;
