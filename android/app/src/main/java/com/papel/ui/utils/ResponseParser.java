@@ -1,5 +1,6 @@
 package com.papel.ui.utils;
 
+import com.papel.data.Annotation;
 import com.papel.data.Article;
 import com.papel.data.Comment;
 import com.papel.data.Currency;
@@ -263,6 +264,10 @@ public class ResponseParser {
             e.printStackTrace();
         }
         return userInv;
+    }
+
+    public static Annotation parseAnnotation(JSONArray response) {
+        Annotation annotation =
     }
 
 }
