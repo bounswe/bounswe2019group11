@@ -38,6 +38,7 @@ public class ShowAnnotationActivity extends AppCompatActivity {
 
     private Annotation annotation;
     private AnnotationListViewAdapter adapter;
+    private ListView bodyListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class ShowAnnotationActivity extends AppCompatActivity {
 
         adapter = new AnnotationListViewAdapter(this,annotation.getBody());
 
-        ListView bodyListView = findViewById(R.id.body);
+        bodyListView = findViewById(R.id.body);
         bodyListView.setAdapter(adapter);
 
         final EditText comment = findViewById(R.id.annotationCommentEditText);
@@ -87,9 +88,8 @@ public class ShowAnnotationActivity extends AppCompatActivity {
                 try {
                     JSONObject responseObject = new JSONObject(response);
                     annotation = ResponseParser.parseAnnotation(responseObject);
-                    // TODO not working?
                     adapter = new AnnotationListViewAdapter(context,annotation.getBody());
-                    adapter.notifyDataSetChanged();
+                    bodyListView.setAdapter(adapter);
                     Log.d("Info","Comment is added");
                 } catch (JSONException e) {
                     e.printStackTrace();

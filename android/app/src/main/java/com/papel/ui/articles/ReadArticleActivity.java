@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -92,17 +91,17 @@ public class ReadArticleActivity extends AppCompatActivity {
 
         articleId = getIntent().getStringExtra("articleId");
 
-        title = (TextView) header.findViewById(R.id.read_article_title_textview);
-        content = (TextView) header.findViewById(R.id.read_article_content_textview);
-        author = (TextView) header.findViewById(R.id.read_article_author_textview);
-        date = (TextView) header.findViewById(R.id.read_article_date_textview);
+        title = header.findViewById(R.id.read_article_title_textview);
+        content = header.findViewById(R.id.read_article_content_textview);
+        author = header.findViewById(R.id.read_article_author_textview);
+        date = header.findViewById(R.id.read_article_date_textview);
         voteCount = header.findViewById(R.id.vote_count_textview);
-        profile_pic = (ImageView) header.findViewById(R.id.read_article_pic_image);
-        addCommentButton = (ImageButton) header.findViewById(R.id.add_comment_button);
+        profile_pic = header.findViewById(R.id.read_article_pic_image);
+        addCommentButton = header.findViewById(R.id.add_comment_button);
         likeButton = header.findViewById(R.id.like_imageButton);
         dislikeButton = header.findViewById(R.id.dislike_imageButton);
-        commentEditText = (EditText) header.findViewById(R.id.comment_edittext);
-        commentListView = (ListView) findViewById(R.id.article_comments_listview);
+        commentEditText = header.findViewById(R.id.comment_edittext);
+        commentListView = findViewById(R.id.article_comments_listview);
         commentListView.addHeaderView(header);
         cl_primary = ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary));
         cl_black = ColorStateList.valueOf(getResources().getColor(R.color.black));
@@ -294,28 +293,7 @@ public class ReadArticleActivity extends AppCompatActivity {
                                 annotations.add(annotation);
                             }
                         }
-                        SpannableString spannableContentString = new SpannableString(article.getBody());
-
-                        for (int i = 0; i < annotations.size(); i++) {
-                            final int annotationIndex = i;
-                            spannableContentString.setSpan(new ClickableSpan() {
-                                @Override
-                                public void onClick(@NonNull View view) {
-                                    Log.d("Info", "Clicked: " + annotationIndex);
-
-                                    Intent showAnnotationIntent = new Intent(context, ShowAnnotationActivity.class);
-                                    Annotation currentAnnotation = annotations.get(annotationIndex);
-                                    String annotatedText = article.getBody().substring(currentAnnotation.getStart(), currentAnnotation.getEnd());
-
-                                    showAnnotationIntent.putExtra("Annotation", currentAnnotation);
-                                    showAnnotationIntent.putExtra("AnnotatedText", annotatedText);
-                                    startActivity(showAnnotationIntent);
-                                }
-                            }, annotations.get(i).getStart(), annotations.get(i).getEnd(), 0);
-
-                        }
-
-                        content.setText(spannableContentString);
+                        setAnnotations(context);
                     }
 
 
@@ -343,11 +321,42 @@ public class ReadArticleActivity extends AppCompatActivity {
         };
 
         requestQueue.add(request);
-
     }
 
+    private void setAnnotations(final Context context) {
+        SpannableString spannableContentString = new SpannableString(article.getBody());
 
-    private void addAnnotation(Context context, String articleId, String value, int start, int end) {
+        for (int i = 0; i < annotations.size(); i++) {
+            final int annotationIndex = i;
+            final Annotation currentAnnotation = annotations.get(annotationIndex);
+            if(currentAnnotation.getStart() > 0 && currentAnnotation.getEnd() > 0) {
+                spannableContentString.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(@NonNull View view) {
+                        Log.d("Info", "Clicked: " + annotationIndex);
+
+                        Intent showAnnotationIntent = new Intent(context, ShowAnnotationActivity.class);
+                        String annotatedText = article.getBody().substring(currentAnnotation.getStart(), currentAnnotation.getEnd());
+
+                        showAnnotationIntent.putExtra("Annotation", currentAnnotation);
+                        showAnnotationIntent.putExtra("AnnotatedText", annotatedText);
+                        startActivity(showAnnotationIntent);
+                    }
+
+                    @Override
+                    public void updateDrawState(@NonNull TextPaint ds) {
+                        super.updateDrawState(ds);
+                        ds.bgColor = Color.YELLOW;
+                        ds.setUnderlineText(false);
+                    }
+                }, annotations.get(i).getStart(), annotations.get(i).getEnd(), 0);
+            }
+        }
+
+        content.setText(spannableContentString);
+    }
+
+    private void addAnnotation(final Context context, String articleId, String value, int start, int end) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url = Constants.ANNOTATION_URL + Constants.ANNOTATION;
         final JSONObject requestBody = new JSONObject();
@@ -376,8 +385,15 @@ public class ReadArticleActivity extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("Info", "Annotation is added");
-                // TODO Parse or reload
+                try {
+                    JSONObject responseJSON = new JSONObject(response);
+                    Annotation annotation = ResponseParser.parseAnnotation(responseJSON);
+                    annotations.add(annotation);
+                    setAnnotations(context);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
         }, new Response.ErrorListener() {
             @Override

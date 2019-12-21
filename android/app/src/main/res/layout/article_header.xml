@@ -54,11 +54,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/text_margin"
             android:layout_marginBottom="@dimen/text_margin"
+            android:focusable="true"
+            android:longClickable="true"
             android:text="@string/test_content"
             android:textColor="@color/black"
-            android:textIsSelectable="true"
-            android:focusable="true"
-            android:longClickable="true" />
+            android:textColorLink="@color/black"
+            android:textIsSelectable="true" />
 
 
         <LinearLayout
