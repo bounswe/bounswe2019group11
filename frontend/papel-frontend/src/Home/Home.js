@@ -1,6 +1,7 @@
 import React from 'react';
 import USD from "./USD";
 import CurencyChart from "./CurencyChart"
+import CurrencyCharts from "./CurrencyCharts"
 import StockChart1 from "./StockChart1";
 import StockChart2 from "./StockChart2";
 import {Editor, EditorState, RichUtils} from 'draft-js';
@@ -15,21 +16,23 @@ import {Row, Col, Button, Card} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus,faThumbsUp,faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 
+import { useState } from 'react';
+import {getRequest, postRequest} from '../helpers/request'
+
 class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {loading: false, redirect: false, articles: [], events: [], previewer1article:"active",previewer1event:"",previewer2USD:"active",previewer2EUR:"",previewer3stock1:"active",previewer3stock2:""};
+    this.state = {stocks:{}, stockNames:{}, stockSymbols:{}, loading: false, redirect: false, articles: [], events: [], previewer1article:"active",previewer1event:"",previewer2USD:"active",previewer2EUR:"",previewer3stock1:"active",previewer3stock2:""};
     this.handleArticleClick=this.handleArticleClick.bind(this);
     this.handleEventClick=this.handleEventClick.bind(this);
-    this.handleUSDClick=this.handleUSDClick.bind(this);
+    this.handleTRYClick=this.handleTRYClick.bind(this);
     this.handleEURClick=this.handleEURClick.bind(this);
 
     this.handleStock1Click=this.handleStock1Click.bind(this);
     this.handleStock2Click=this.handleStock2Click.bind(this);
-
-
   }
-  
+
+
   componentDidMount() {
     var emptyEvent = {
       "title": "No Title Found",
@@ -77,6 +80,26 @@ class Home extends React.Component {
         data[4]?data[4]:emptyEvent],
          loading: false});
     });
+    getRequest({
+      url: app_config.api_url + "/stock",
+      success: (data) => {
+        this.setState({stocks:[
+          data[0]._id,
+          data[1]._id]
+        })
+        this.setState({stockSymbols:[
+          data[0].stockSymbol,
+          data[1].stockSymbol
+        ]})
+        this.setState({stockNames:[
+          data[0].name,
+          data[1].name
+        ]})
+        //console.log(this.state.stocks)
+        //console.log(this.state.stockNames)
+        //console.log("here")
+      }
+    });
   }
 
   handleEventClick(event) {
@@ -97,19 +120,19 @@ class Home extends React.Component {
        });
   }
 
-  handleUSDClick(event) {
+  handleTRYClick(event) {
     this.setState({previewer2EUR:""});
-    this.setState({previewer2USD:"active"});
-    Array.from(document.getElementsByClassName("USDSection")).forEach((item) => { item.removeAttribute('hidden'); });
+    this.setState({previewer2TRY:"active"});
+    Array.from(document.getElementsByClassName("TRYSection")).forEach((item) => { item.removeAttribute('hidden'); });
     Array.from(document.getElementsByClassName("EURSection")).forEach((item) => {
       item.setAttribute('hidden', null);
        });
   }
   handleEURClick(event) {
     this.setState({previewer2EUR:"active"});
-    this.setState({previewer2USD:""});
+    this.setState({previewer2TRY:""});
     Array.from(document.getElementsByClassName("EURSection")).forEach((item) => { item.removeAttribute('hidden'); });
-    Array.from(document.getElementsByClassName("USDSection")).forEach((item) => {
+    Array.from(document.getElementsByClassName("TRYSection")).forEach((item) => {
 
       item.setAttribute('hidden', null);
       });
@@ -131,8 +154,8 @@ class Home extends React.Component {
       item.setAttribute('hidden', null);
       });
   }
-  render() {
 
+  render() {
     return (
       <Row >
 
@@ -162,7 +185,7 @@ class Home extends React.Component {
                   }
                 </p>
                 <a href={"../articles"}>See All...</a>
-              
+
               </div>
               <div  hidden className="EventSection">
                 <h5 class="card-title">The Newest {this.state.events.length} Events</h5>
@@ -190,7 +213,7 @@ class Home extends React.Component {
             <div class="card-header">
               <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item" >
-                  <a class={"nav-link "+this.state.previewer2USD} onClick={this.handleUSDClick} >USD</a>
+                  <a class={"nav-link "+this.state.previewer2TRY} onClick={this.handleTRYClick} >TRY</a>
                 </li>
                 <li class="nav-item">
                   <a class={"nav-link "+this.state.previewer2EUR}  onClick={this.handleEURClick} >EUR</a>
@@ -200,13 +223,13 @@ class Home extends React.Component {
             </div>
 
             <div  className="card-body">
-              <div  className="USDSection">
-                <USD currency={"USD"}></USD >
+              <div  className="TRYSection">
+                <CurrencyCharts currency={"TRY"}></CurrencyCharts >
               </div>
               <div  hidden className="EURSection">
                 <div className="card-text">
 
-                <CurencyChart currency={"EUR"}></CurencyChart >
+                <CurrencyCharts currency={"EUR"}></CurrencyCharts >
                 </div>
               </div>
             </div>
@@ -216,15 +239,15 @@ class Home extends React.Component {
   marginBottom: 10,
   marginRight: 0,
   marginLeft: 0}}>
-      
+
           <div name="v3" class="card text-center">
             <div class="card-header">
               <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item" >
-                  <a class={"nav-link "+this.state.previewer3stock1} onClick={this.handleStock1Click} >EMB</a>
+                  <a class={"nav-link "+this.state.previewer3stock1} onClick={this.handleStock1Click} >AAPL</a>
                 </li>
                 <li class="nav-item">
-                  <a class={"nav-link "+this.state.previewer3stock2}  onClick={this.handleStock2Click} >DIS</a>
+                  <a class={"nav-link "+this.state.previewer3stock2}  onClick={this.handleStock2Click} >AMZN</a>
                 </li>
               </ul>
             </div>
@@ -232,12 +255,12 @@ class Home extends React.Component {
             <div  class="card-body">
               <div  className="Stock1">
 
-                <StockChart1 stock={"EMB"}></StockChart1 >
+                <StockChart2 stock={[this.state.stocks[0], this.state.stockSymbols[0], this.state.stockNames[0]]}></StockChart2 >
               </div>
               <div  hidden className="Stock2">
 
                 <p class="card-text">
-                <StockChart2 stock={"DIS"}></StockChart2 >
+                <StockChart2 stock={[this.state.stocks[1], this.state.stockSymbols[1], this.state.stockNames[1]]}></StockChart2 >
                 </p>
               </div>
             </div>

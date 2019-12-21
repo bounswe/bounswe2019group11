@@ -46,9 +46,9 @@ class Article extends React.Component {
       self._article=this.state.article;
       }
     );
-    
-     
-  
+
+
+
   }
 
   handleCommentEditorChange(event) {
@@ -68,19 +68,23 @@ class Article extends React.Component {
       var url= app_config.api_url+"/article/"+this.state.id+"/comment";
       var authToken = cookies.get('userToken');
       var success;
-      
-       var a = $.ajax({
+
+      var a = $.ajax({
         type: "POST",
         url: url,
         dataType: 'json',
         async: true,
         data: data,
-        success: function() {
-          this.setState({addCommentResp:true})
-        },
+        success: function() {this.setState({addCommentResp:true});},
         beforeSend: (xhr) => xhr.setRequestHeader("Authorization", "Bearer " + authToken)
-      })
-      window.location.reload();
+      }).catch((status, err) => {
+        console.log(status.status);
+        if (status.status==200){
+          console.log("s");
+          window.location.reload();
+        }
+      });
+      //window.location.reload();
     }
   }
   handleSubmit(event) {
@@ -135,7 +139,7 @@ class Article extends React.Component {
       authorLine = <a href={"../user/" + author._id} style={{color: "gray"}}>by {author.name} {author.surname}</a> ;
     return (
       <Row className="article">
-       
+
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
           <Card>
             <Card.Body>
@@ -144,11 +148,10 @@ class Article extends React.Component {
               <hr />
               <Card.Img variant = "top" src= {article.imgUri} />
               <Card.Text>{
-              
-              article.body? article.body.split(""):"loading..."}</Card.Text>
-              
-              
-              {console.log(article.body? article.body.split(""):"henüz gelmedi")}
+
+              article.body? article.body:"loading..."}</Card.Text>
+
+
               <hr/>
             </Card.Body>
             <Row className="" >
@@ -178,7 +181,7 @@ class Article extends React.Component {
 
         </Col>
 
-        <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
+        <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 10}}>
           <label htmlFor="commentEditor"></label>
 
             <form className="span6" onSubmit={this.handleCommentEditorSubmit}>
@@ -193,9 +196,7 @@ class Article extends React.Component {
             </form>
         </Col>
 
-
-
-        <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
+        <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginTop:20, marginBottom: 20}}>
 
           <Card>
             <Card.Body>
