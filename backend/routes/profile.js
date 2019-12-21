@@ -104,12 +104,13 @@ router.get('/other/:id', async (req, res) => {
                 const articles = await articleService.getByUserId(userId);
                 const portfolios = await portfolioService.getByUserId(userId);
                 const investments = await investmentsService.getByUserId(userId);
+                const alerts = await alertService.getAlerts(userId);
                 userService.getSocialNetworkById(userId).then(user => {
                     const followingPending = user.following.filter(elm => elm.isAccepted === false).map(elm => elm.userId);
                     const following = user.following.filter(elm => elm.isAccepted === true).map(elm => elm.userId);
                     const followerPending = user.followers.filter(elm => elm.isAccepted === false).map(elm => elm.userId);
                     const follower = user.followers.filter(elm => elm.isAccepted === true).map(elm => elm.userId);
-                    res.status(200).json(myProfileDataTransferObject(user, articles, portfolios, investments, following, followingPending, follower, followerPending));
+                    res.status(200).json(myProfileDataTransferObject(user, articles, portfolios, investments, alerts, following, followingPending, follower, followerPending));
                 });
 
             } else {
