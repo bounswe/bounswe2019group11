@@ -1,5 +1,6 @@
 package com.papel.ui.articles;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,7 +11,10 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannableString;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -107,6 +111,7 @@ public class ReadArticleActivity extends AppCompatActivity {
         addAnnotationButton = findViewById(R.id.add_annotation);
         annotations = new ArrayList<>();
 
+        content.setMovementMethod(LinkMovementMethod.getInstance());
 
         getArticleFromEndpoint(getApplicationContext(), articleId);
         fetchAnnotation(getApplicationContext(),articleId);
@@ -276,8 +281,18 @@ public class ReadArticleActivity extends AppCompatActivity {
                     }
                     SpannableString spannableContentString = new SpannableString(article.getBody());
                     for (int i = 0; i<annotations.size(); i++ ) {
-                        spannableContentString.setSpan(new BackgroundColorSpan(Color.YELLOW),annotations.get(i).getStart(),annotations.get(i).getEnd(),0);
+                        final int annotationIndex = i;
+                        spannableContentString.setSpan(new ClickableSpan() {
+                            @Override
+                            public void onClick(@NonNull View view) {
+                                Log.d("Info","Clicked: " + annotationIndex);
+                            }
+                        },annotations.get(i).getStart(),annotations.get(i).getEnd(),0);
+
                     }
+                    //spannableContentString.setSpan(new BackgroundColorSpan(Color.YELLOW),0,10,0);
+                    //spannableContentString.setSpan(new BackgroundColorSpan(Color.YELLOW),20,40,0);
+
                     content.setText(spannableContentString);
 
                 } catch (JSONException e) {

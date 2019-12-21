@@ -58,7 +58,7 @@
             android:textColor="@color/black"
             android:textIsSelectable="true"
             android:focusable="true"
-            android:longClickable="true"/>
+            android:longClickable="true" />
 
 
         <LinearLayout
