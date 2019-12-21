@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "nodemon": "^2.0.2",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.1.0",
@@ -18,8 +17,8 @@
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
     "mongoose": "^5.7.1",
-    "mongoose-autopopulate": "^0.9.1",
     "morgan": "^1.9.1",
+    "nodemon": "^2.0.2",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "swagger-ui-express": "^4.1.1",

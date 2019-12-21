@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const bodySchema = new mongoose.Schema({
     type: {
         type: String,
@@ -41,7 +40,6 @@ const targetSchema = new mongoose.Schema({
             type: String,
             enum: ["DataPositionSelector","SvgSelector"],
             default: "DataPositionSelector"
-
         },
         start: {
             type: Number
@@ -49,16 +47,6 @@ const targetSchema = new mongoose.Schema({
         end: {
             type: Number
         }
-
-    },
-    creator: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    },
-    created: {
-        type: Date,
-        default: Date.now,
-        required: true,
     }
 
 });
@@ -84,7 +72,7 @@ const annotationSchema = new mongoose.Schema({
         default: Date.now,
         required: true,
     },
-    body: bodySchema,
+    body: [bodySchema],
 
     target: targetSchema
 
