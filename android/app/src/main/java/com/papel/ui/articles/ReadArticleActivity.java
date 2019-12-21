@@ -120,7 +120,7 @@ public class ReadArticleActivity extends AppCompatActivity {
         author.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profileIntent.putExtra("UserId",authorId);
+                profileIntent.putExtra("UserId", authorId);
                 startActivity(profileIntent);
             }
         });
@@ -128,7 +128,7 @@ public class ReadArticleActivity extends AppCompatActivity {
         profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profileIntent.putExtra("UserId",authorId);
+                profileIntent.putExtra("UserId", authorId);
                 startActivity(profileIntent);
             }
         });
@@ -136,8 +136,8 @@ public class ReadArticleActivity extends AppCompatActivity {
         commentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Comment clickedComment = (Comment) adapter.getItem(i-1);
-                profileIntent.putExtra("UserId",clickedComment.getAuthorId());
+                Comment clickedComment = (Comment) adapter.getItem(i - 1);
+                profileIntent.putExtra("UserId", clickedComment.getAuthorId());
                 startActivity(profileIntent);
             }
         });
@@ -156,11 +156,11 @@ public class ReadArticleActivity extends AppCompatActivity {
         likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(likeButton.getImageTintList() == cl_primary){
+                if (likeButton.getImageTintList() == cl_primary) {
                     voteArticle(getApplicationContext(), articleId, true, false);
                     likeButton.setImageTintList(cl_black);
                     dislikeButton.setImageTintList(cl_black);
-                }else{
+                } else {
                     voteArticle(getApplicationContext(), articleId, false, true);
                     likeButton.setImageTintList(cl_primary);
                     dislikeButton.setImageTintList(cl_black);
@@ -172,11 +172,11 @@ public class ReadArticleActivity extends AppCompatActivity {
         dislikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(dislikeButton.getImageTintList() == cl_primary){
+                if (dislikeButton.getImageTintList() == cl_primary) {
                     voteArticle(getApplicationContext(), articleId, true, false);
                     dislikeButton.setImageTintList(cl_black);
                     likeButton.setImageTintList(cl_black);
-                }else{
+                } else {
                     voteArticle(getApplicationContext(), articleId, false, false);
                     dislikeButton.setImageTintList(cl_primary);
                     likeButton.setImageTintList(cl_black);
@@ -191,23 +191,36 @@ public class ReadArticleActivity extends AppCompatActivity {
         content.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Log.d("Info","Long clicked");
+                Log.d("Info", "Long clicked");
                 addAnnotationButton.show();
                 return false;
             }
         });
 
+
         addAnnotationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int start = content.getSelectionStart();
-                int end = content.getSelectionEnd();
-                String selectedText = content.getText().toString().substring(start,end);
-                Log.d("Info","Selected: " + selectedText);
+                final int start = content.getSelectionStart();
+                final int end = content.getSelectionEnd();
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ReadArticleActivity.this);
+                alertDialogBuilder.setTitle("Create annotation");
+                alertDialogBuilder.setMessage("Write your annotation text");
+                final EditText annotationDialogEditText = new EditText(ReadArticleActivity.this);
+                alertDialogBuilder.setView(annotationDialogEditText);
+                alertDialogBuilder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String value = annotationDialogEditText.getText().toString();
+                        addAnnotation(getApplicationContext(), articleId, value, start, end);
+                    }
+                });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
             }
         });
     }
-
 
 
     private void getArticleFromEndpoint(final Context context, final String articleId) {
@@ -219,13 +232,13 @@ public class ReadArticleActivity extends AppCompatActivity {
                 try {
                     JSONObject object = new JSONObject(response);
                     article = ResponseParser.parseArticle(object);
-                    fetchAnnotation(context,articleId);
-                    if(!article.getImageUrl().isEmpty()){
+                    fetchAnnotation(context, articleId);
+                    if (!article.getImageUrl().isEmpty()) {
                         Glide.with(context)
                                 .load(article.getImageUrl())
                                 .fitCenter()
                                 .into(articleImage);
-                    }else{
+                    } else {
                         articleImage.setVisibility(View.GONE);
                     }
                     title.setText(article.getTitle());
@@ -234,9 +247,9 @@ public class ReadArticleActivity extends AppCompatActivity {
                     author.setText(article.getAuthorName());
                     date.setText(article.getLongDate());
                     voteCount.setText("" + article.getVoteCount());
-                    if(article.getUserVote() == 1){
+                    if (article.getUserVote() == 1) {
                         likeButton.setImageTintList(cl_primary);
-                    }else if(article.getUserVote() == -1){
+                    } else if (article.getUserVote() == -1) {
                         dislikeButton.setImageTintList(cl_primary);
                     }
                     setComments(article.getComments());
@@ -254,6 +267,7 @@ public class ReadArticleActivity extends AppCompatActivity {
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<String, String>();
@@ -274,30 +288,30 @@ public class ReadArticleActivity extends AppCompatActivity {
                 try {
                     JSONArray responseArray = new JSONArray(response);
                     if (responseArray.length() > 0) {
-                        for(int i = 0;i<responseArray.length(); i++) {
+                        for (int i = 0; i < responseArray.length(); i++) {
                             Annotation annotation = ResponseParser.parseAnnotation(responseArray.getJSONObject(i));
-                            if(annotation != null) {
+                            if (annotation != null) {
                                 annotations.add(annotation);
                             }
                         }
                         SpannableString spannableContentString = new SpannableString(article.getBody());
 
-                        for (int i = 0; i<annotations.size(); i++ ) {
+                        for (int i = 0; i < annotations.size(); i++) {
                             final int annotationIndex = i;
                             spannableContentString.setSpan(new ClickableSpan() {
                                 @Override
                                 public void onClick(@NonNull View view) {
-                                    Log.d("Info","Clicked: " + annotationIndex);
+                                    Log.d("Info", "Clicked: " + annotationIndex);
 
-                                    Intent showAnnotationIntent = new Intent(context,ShowAnnotationActivity.class);
+                                    Intent showAnnotationIntent = new Intent(context, ShowAnnotationActivity.class);
                                     Annotation currentAnnotation = annotations.get(annotationIndex);
-                                    String annotatedText = article.getBody().substring(currentAnnotation.getStart(),currentAnnotation.getEnd());
+                                    String annotatedText = article.getBody().substring(currentAnnotation.getStart(), currentAnnotation.getEnd());
 
-                                    showAnnotationIntent.putExtra("Annotation",currentAnnotation);
-                                    showAnnotationIntent.putExtra("AnnotatedText",annotatedText);
+                                    showAnnotationIntent.putExtra("Annotation", currentAnnotation);
+                                    showAnnotationIntent.putExtra("AnnotatedText", annotatedText);
                                     startActivity(showAnnotationIntent);
                                 }
-                            },annotations.get(i).getStart(),annotations.get(i).getEnd(),0);
+                            }, annotations.get(i).getStart(), annotations.get(i).getEnd(), 0);
 
                         }
 
@@ -314,11 +328,12 @@ public class ReadArticleActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
 
             }
-        }){
+        }) {
             @Override
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<String, String>();
@@ -331,20 +346,80 @@ public class ReadArticleActivity extends AppCompatActivity {
 
     }
 
-    private void setComments(ArrayList<Comment> comments_list){
+
+    private void addAnnotation(Context context, String articleId, String value, int start, int end) {
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = Constants.ANNOTATION_URL + Constants.ANNOTATION;
+        final JSONObject requestBody = new JSONObject();
+        JSONObject bodyJSON = new JSONObject();
+        JSONObject targetJSON = new JSONObject();
+        JSONObject selectorJSON = new JSONObject();
+        try {
+            requestBody.put("type", "Annotation");
+            requestBody.put("motivation", "highligthing");
+
+            bodyJSON.put("type", "TextualBody");
+            bodyJSON.put("value", value);
+            bodyJSON.put("purpose", "commenting");
+            requestBody.put("body", bodyJSON);
+
+            targetJSON.put("id", articleId);
+            selectorJSON.put("type", "DataPositionSelector");
+            selectorJSON.put("start", start);
+            selectorJSON.put("end", end);
+            targetJSON.put("selector", selectorJSON);
+            requestBody.put("target", targetJSON);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("Info", "Annotation is added");
+                // TODO Parse or reload
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return requestBody.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+
+        requestQueue.add(request);
+    }
+
+    private void setComments(ArrayList<Comment> comments_list) {
         comments = new ArrayList<>();
         comments.addAll(comments_list);
         adapter = new ListViewAdapter(getApplicationContext(), comments);
         commentListView.setAdapter(adapter);
-        if(comments_list.size() == 0){
+        if (comments_list.size() == 0) {
             noCommentTextView.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             noCommentTextView.setVisibility(View.GONE);
         }
         adapter.notifyDataSetChanged();
     }
 
-    private void refreshVoteCount(final Context context, final String articleId){
+    private void refreshVoteCount(final Context context, final String articleId) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url = Constants.LOCALHOST + Constants.ARTICLE + articleId;
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
@@ -353,7 +428,7 @@ public class ReadArticleActivity extends AppCompatActivity {
                 try {
                     JSONObject object = new JSONObject(response);
                     article = ResponseParser.parseArticle(object);
-                    voteCount.setText(""+article.getVoteCount());
+                    voteCount.setText("" + article.getVoteCount());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -368,6 +443,7 @@ public class ReadArticleActivity extends AppCompatActivity {
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<String, String>();
@@ -528,12 +604,11 @@ public class ReadArticleActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        if (v.getId() == R.id.article_comments_listview &&((Comment)comments.get(info.position)).getAuthorId().equals(User.getInstance().getId())) {
+        if (v.getId() == R.id.article_comments_listview && ((Comment) comments.get(info.position)).getAuthorId().equals(User.getInstance().getId())) {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.article_comments_menu, menu);
         }
@@ -576,15 +651,15 @@ public class ReadArticleActivity extends AppCompatActivity {
         return false;
     }
 
-    private void voteArticle(final Context context, final String articleId, boolean isClear, boolean isUp){
+    private void voteArticle(final Context context, final String articleId, boolean isClear, boolean isUp) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
-        String endpoint="";
-        if(isClear){
+        String endpoint = "";
+        if (isClear) {
             endpoint = Constants.CLEARVOTE;
-        }else if(isUp){
+        } else if (isUp) {
             endpoint = Constants.UPVOTE;
-        }else{
+        } else {
             endpoint = Constants.DOWNVOTE;
 
         }
