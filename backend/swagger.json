@@ -706,7 +706,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/User"
+                "$ref": "#/definitions/UserResponse"
               }
             }
           },
@@ -738,7 +738,7 @@
           "200": {
             "description": "OK. User with the given id is returned.",
             "schema": {
-              "$ref": "#/definitions/User"
+              "$ref": "#/definitions/UserResponse"
             }
           },
           "400": {
@@ -841,7 +841,7 @@
           "200": {
             "description": "OK. Updated user information is returned for real time frontend experience.",
             "schema": {
-              "$ref": "#/definitions/User"
+              "$ref": "#/definitions/UserResponse"
             }
           },
           "400": {
@@ -3027,6 +3027,36 @@
           "type": "string",
           "description": "Google user id.",
           "example": "117027522423426552111"
+        }
+      }
+    },
+    "UserResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/User"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "location": {
+          "type": "object",
+          "properties": {
+            "latitude": {
+              "type": "number",
+              "description": "Latitude of the location.",
+              "example": 41.085987
+            },
+            "longitude": {
+              "type": "number",
+              "description": "Longitude of the location.",
+              "example": 29.044008
+            },
+            "displayName": {
+              "type": "string",
+              "description": "Display name of the location",
+              "example": "Istanbul, Marmara Region, Turkey"
+            }
+          }
         },
         "totalPredictionCount": {
           "type": "number",
@@ -3834,6 +3864,16 @@
                 "type": "string",
                 "description": "Surname of the user",
                 "example": "Doe"
+              },
+              "location": {
+                "type": "object",
+                "properties": {
+                  "displayName": {
+                    "type": "string",
+                    "description": "Display name of the location",
+                    "example": "Istanbul, Marmara Region, Turkey"
+                  }
+                }
               }
             }
           }
