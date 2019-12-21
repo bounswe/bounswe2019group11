@@ -3,7 +3,7 @@ const router = express.Router();
 const isAuthenticated = require('../middlewares/isAuthenticated');
 const annotationService = require('../services/annotations');
 
-router.get('/:articleId',async (req,res)=>{
+router.get('/article/:articleId',async (req,res)=>{
    try{
        const articleId = req.params.articleId;
         const annotations =await annotationService.getAnnotationsByArticleId(articleId);

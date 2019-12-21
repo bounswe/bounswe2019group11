@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({
 //app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/', require('./routes/index'));
-app.use('/article',require('./routes/article'));
+app.use('/annotation',require('./routes/article'));
 
 const port = process.env.PORT;
 app.listen(port, async () => {

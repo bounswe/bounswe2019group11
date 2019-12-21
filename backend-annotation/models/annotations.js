@@ -9,6 +9,11 @@ const bodySchema = new mongoose.Schema({
         type: String,
         default: "My first Body",
     },
+    purpose:{
+        type: String,
+        enum: ["highlighting","questioning","describing","commenting"],
+        default: "commenting"
+    },
     format:{
         type: String,
         enum: ["text/plain"],
@@ -62,6 +67,11 @@ const annotationSchema = new mongoose.Schema({
     type: {
         type: String,
         default: 'Annotation',
+    },
+    motivation:{
+      type: String,
+      enum: ["highlighting","questioning","describing","commenting"],
+      default: "highlighting"
     },
     creator: {
         type: mongoose.Schema.Types.ObjectId,
