@@ -114,7 +114,6 @@ public class ReadArticleActivity extends AppCompatActivity {
         content.setMovementMethod(LinkMovementMethod.getInstance());
 
         getArticleFromEndpoint(getApplicationContext(), articleId);
-        fetchAnnotation(getApplicationContext(),articleId);
 
         final Intent profileIntent = new Intent(this, ProfileActivity.class);
         // TODO This should be inactive during the request to server
@@ -220,6 +219,7 @@ public class ReadArticleActivity extends AppCompatActivity {
                 try {
                     JSONObject object = new JSONObject(response);
                     article = ResponseParser.parseArticle(object);
+                    fetchAnnotation(context,articleId);
                     if(!article.getImageUrl().isEmpty()){
                         Glide.with(context)
                                 .load(article.getImageUrl())
@@ -273,34 +273,37 @@ public class ReadArticleActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 try {
                     JSONArray responseArray = new JSONArray(response);
-                    for(int i = 0;i<responseArray.length(); i++) {
-                        Annotation annotation = ResponseParser.parseAnnotation(responseArray.getJSONObject(i));
-                        if(annotation != null) {
-                            annotations.add(annotation);
-                        }
-                    }
-                    SpannableString spannableContentString = new SpannableString(article.getBody());
-
-                    for (int i = 0; i<annotations.size(); i++ ) {
-                        final int annotationIndex = i;
-                        spannableContentString.setSpan(new ClickableSpan() {
-                            @Override
-                            public void onClick(@NonNull View view) {
-                                Log.d("Info","Clicked: " + annotationIndex);
-
-                                Intent showAnnotationIntent = new Intent(context,ShowAnnotationActivity.class);
-                                Annotation currentAnnotation = annotations.get(annotationIndex);
-                                String annotatedText = article.getBody().substring(currentAnnotation.getStart(),currentAnnotation.getEnd());
-
-                                showAnnotationIntent.putExtra("Annotation",currentAnnotation);
-                                showAnnotationIntent.putExtra("AnnotatedText",annotatedText);
-                                startActivity(showAnnotationIntent);
+                    if (responseArray.length() > 0) {
+                        for(int i = 0;i<responseArray.length(); i++) {
+                            Annotation annotation = ResponseParser.parseAnnotation(responseArray.getJSONObject(i));
+                            if(annotation != null) {
+                                annotations.add(annotation);
                             }
-                        },annotations.get(i).getStart(),annotations.get(i).getEnd(),0);
+                        }
+                        SpannableString spannableContentString = new SpannableString(article.getBody());
 
+                        for (int i = 0; i<annotations.size(); i++ ) {
+                            final int annotationIndex = i;
+                            spannableContentString.setSpan(new ClickableSpan() {
+                                @Override
+                                public void onClick(@NonNull View view) {
+                                    Log.d("Info","Clicked: " + annotationIndex);
+
+                                    Intent showAnnotationIntent = new Intent(context,ShowAnnotationActivity.class);
+                                    Annotation currentAnnotation = annotations.get(annotationIndex);
+                                    String annotatedText = article.getBody().substring(currentAnnotation.getStart(),currentAnnotation.getEnd());
+
+                                    showAnnotationIntent.putExtra("Annotation",currentAnnotation);
+                                    showAnnotationIntent.putExtra("AnnotatedText",annotatedText);
+                                    startActivity(showAnnotationIntent);
+                                }
+                            },annotations.get(i).getStart(),annotations.get(i).getEnd(),0);
+
+                        }
+
+                        content.setText(spannableContentString);
                     }
 
-                    content.setText(spannableContentString);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
