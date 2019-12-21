@@ -242,4 +242,37 @@ router.delete('/:code/comment/:commentId', isAuthenticated, async (req, res) => 
     }
 });
 
+router.post('/:code/alert', isAuthenticated, async (req, res) => {
+    try {
+        const code = req.params.code;
+        const userId = req.token && req.token.data && req.token.data._id;
+        const direction = req.body.direction;
+        const rate = req.body.rate;
+        await currencyService.saveAlert(code, userId, direction, rate);
+        res.sendStatus(200);
+    } catch (err) {
+        if (err.name === 'InvalidCurrencyCode' || err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
+router.delete('/:code/alert/delete/:id', isAuthenticated, async (req, res) => {
+    try {
+        const code = req.params.code;
+        const userId = req.token && req.token.data && req.token.data._id;
+        const alertId = req.params.id;
+        await currencyService.deleteAlert(code, userId, alertId);
+        res.sendStatus(200);
+    } catch (err) {
+        if (err.name === 'InvalidCurrencyCode' || err.name === 'UserNotFound' || err.name === 'AlertNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
 module.exports = router;

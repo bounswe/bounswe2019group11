@@ -1,42 +1,53 @@
 import React, { useState } from 'react';
-import { Card } from 'react-bootstrap';
 import $ from 'jquery';
 import {app_config} from "../config";
-import CurencyCh from "./CurencyCh";
+import CurencyCh from "./CurrencyCh";
+
 const url = app_config.api_url + "/";
 
 function CurrencyTable({code,timeRange }) {
   const [currency, setCurrency] = useState(0);
+ 
   
   if(!currency){$.get(url+"currency/"+code+"/"+timeRange, (data) => {
     setCurrency( data)  });
   }
- 
-  var key, key1;
+  
+  var currencyLastValues = {};
+  if(timeRange=="last-month"){
+    currencyLastValues = currency.lastMonth;
+    
+    console.log("deneme" + currency.lastMonth);
+  }else if(timeRange=="last-week"){
+    currencyLastValues = currency.lastWeek;
+  }else if(timeRange=="last-100"){
+    currencyLastValues = currency.dailyRates;
+  } 
+  var key;
   var days = [], months=[],years=[];
-  var temp = [];
   var values = [];
   var closeDayValues = [];
-  for (key in currency.lastWeek) {
-    if (currency.lastWeek.hasOwnProperty(key)) {
+  for (key in currencyLastValues) {
+    if (currencyLastValues.hasOwnProperty(key)) {
       
      
       var date = key;
       var day = date.split("-")[2],
       month =  date.split("-")[1],
-      year =  date.split("-")[0]; var counter=0;
+      year =  date.split("-")[0]; 
       
       days.push(day);
       months.push(month);
       years.push(year);
-      values.push(currency.lastWeek[key]);
+      values.push(currencyLastValues[key]);
     
     }
   }
-
+  
   console.log(days)
   console.log(months)
   console.log(years)
+  console.log(currencyLastValues)
   var i;
   for (i = 0; i < values.length; i++) {
     for(key in values[i] ){
@@ -46,10 +57,9 @@ function CurrencyTable({code,timeRange }) {
   
 
  return (
- /*
- <div>       </div>
-*/<div><CurencyCh currency={code} year={years} month={months} day={days} value={closeDayValues}></CurencyCh >
-             </div>
+    <CurencyCh currency={code} year={years} month={months} day={days} value={closeDayValues}></CurencyCh >
+ 
+
   );
 }
 

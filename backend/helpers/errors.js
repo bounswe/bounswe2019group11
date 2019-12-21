@@ -108,5 +108,8 @@ module.exports = {
     },
     INSUFFICIENT_FUND: (cause) => {
         return PapelError('InsufficientFund', 'User has insufficent funds to perform the given action', cause);
+    },
+    ALERT_NOT_FOUND: (cause) => {
+        return PapelError('AlertNotFound', 'Alert with the given id not found.', cause);
     }
 };

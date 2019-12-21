@@ -1,14 +1,10 @@
-const request = require('request-promise');
 const Stock = require('../models/stock');
 const errors = require('../helpers/errors');
 const StockComment = require('../models/stockComment');
 const mongoose = require('mongoose');
-const apiUrl = process.env.ALPHAVANTAGE_URL;
-const apiKeys = process.env.ALPHAVANTAGE_API_KEY;
-const apiKeyArr = apiKeys.split(',');
-const getRandomInt = (max) => {
-    return Math.floor(Math.random() * Math.floor(max));
-};
+const Alert = require('../models/alert');
+const alertHelper = require('../helpers/alert');
+
 const STAGES = {
     GET_COMMENTS: {
         $lookup: {
@@ -83,48 +79,11 @@ const STAGES = {
 
 };
 
-const getDailyPrice = async (symbol) => {
-    const rand = getRandomInt(apiKeyArr.length);
-    const apiKey = apiKeyArr[rand];
-    console.log(apiKey + " daily");
-    const dailyParams = {function: "TIME_SERIES_INTRADAY", symbol: symbol, interval: "5min", apikey: apiKey};
-    const options = {
-        uri: apiUrl,
-        qs: dailyParams
-    };
-    let response = await request.get(options);
-    response = JSON.parse(response);
-    if (response['Meta Data']) {
-        return response['Time Series (5min)'];
-    } else {
-        console.log("Error in daily Data")
-    }
-
-};
-
-
-const getMonthlyPrice = async (symbol) => {
-    const rand = getRandomInt(apiKeyArr.length);
-    const apiKey = apiKeyArr[rand];
-    console.log(apiKey + " monthly");
-    const dailyParams = {function: "TIME_SERIES_DAILY", symbol: symbol, apikey: apiKey};
-    const options = {
-        uri: apiUrl,
-        qs: dailyParams
-    };
-    let response = await request.get(options);
-    response = JSON.parse(response);
-    if (response['Meta Data']) {
-        return response['Time Series (Daily)'];
-    } else {
-        console.log("Error in Montly Data")
-    }
-
-};
-
-
 module.exports.getAll = async () => {
-    return await Stock.find();
+    return await Stock
+        .find()
+        .select("-price -monthlyPrice -dailyPrice")
+        .exec();
 };
 
 module.exports.getById = async (_id) => {
@@ -133,26 +92,11 @@ module.exports.getById = async (_id) => {
     }
     const stock = await Stock.aggregate([
         STAGES.MATCH_ID(_id), STAGES.GET_COMMENTS
-    ]).then();
-    if (!stock) {
-        throw errors.STOCK_NOT_FOUND();
-    }
-    // Parallel API calls
-    const promises = [getDailyPrice(stock.stockSymbol), getMonthlyPrice(stock.stockSymbol)];
-    const resolves = await Promise.all(promises);
-    stock['dailyPrice'] = resolves[0];
-    stock['monthlyPrice'] = resolves[1];
-    return stock;
+    ]);
+
+    return stock[0];
 };
 
-module.exports.create = async (theStock) => {
-    const stock = {...theStock};
-    const createdStock = await Stock.create(stock);
-    return createdStock;
-};
-module.exports.delete = async (_id) => {
-    return await Stock.deleteOne({_id});
-};
 module.exports.postComment = async (stockId, authorId, body) => {
     if (!(mongoose.Types.ObjectId.isValid(stockId))) {
         throw errors.STOCK_NOT_FOUND();
@@ -213,5 +157,37 @@ module.exports.deleteComment = async (stockId, commentId, authorId) => {
     const comment = await StockComment.findOneAndDelete({_id: commentId, stockId, authorId});
     if (!comment) {
         throw errors.COMMENT_NOT_FOUND();
+    }
+};
+
+module.exports.saveAlert = async (id, userId, direction, rate) => {
+    if (!(mongoose.Types.ObjectId.isValid(id))) {
+        throw errors.STOCK_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(userId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    await Alert.create({
+        type: alertHelper.TYPE.STOCK,
+        userId,
+        direction,
+        rate,
+        stockId: id
+    });
+};
+
+module.exports.deleteAlert = async (stockId, userId, alertId) => {
+    if (!(mongoose.Types.ObjectId.isValid(stockId))) {
+        throw errors.INVALID_CURRENCY_CODE();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(userId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(alertId))) {
+        throw errors.ALERT_NOT_FOUND();
+    }
+    const alert = await Alert.findOneAndDelete({_id: alertId, type: alertHelper.TYPE.STOCK, stockId, userId});
+    if (!alert) {
+        throw errors.ALERT_NOT_FOUND();
     }
 };

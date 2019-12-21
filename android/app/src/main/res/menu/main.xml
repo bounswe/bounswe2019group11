@@ -5,4 +5,10 @@
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/app_bar_search"
+        style="@android:style/Widget.Material.SearchView"
+        android:title="@string/search"
+        app:showAsAction="ifRoom|withText"
+        app:actionViewClass="android.widget.SearchView"/>
 </menu>

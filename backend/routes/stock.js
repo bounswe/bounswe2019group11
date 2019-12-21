@@ -3,6 +3,7 @@ const router = express.Router();
 const stockService = require('../services/stock');
 const errors = require('../helpers/errors');
 const isAuthenticated = require('../middlewares/isAuthenticated');
+
 router.get('/', async (req, res) => {
     try {
         const response = await stockService.getAll();
@@ -26,15 +27,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
-    try {
-        const theStock = {...req.body};
-        const response = await stockService.create(theStock);
-        res.status(200).json(response);
-    } catch (e) {
-        res.status(503).json(e)
-    }
-});
 router.post('/:id/comment', isAuthenticated, async (req, res) => {
     try {
         const stockId = req.params.id;
@@ -124,6 +116,39 @@ router.delete('/:id/comment/:commentId', isAuthenticated, async (req, res) => {
         } else if (err.name === 'CommentNotFound') {
             res.status(400).send(err);
         } else if (err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
+router.post('/:id/alert', isAuthenticated, async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userId = req.token && req.token.data && req.token.data._id;
+        const direction = req.body.direction;
+        const rate = req.body.rate;
+        await stockService.saveAlert(id, userId, direction, rate);
+        res.sendStatus(200);
+    } catch (err) {
+        if (err.name === 'StockNotFound' || err.name === 'UserNotFound') {
+            res.status(400).send(err);
+        } else {
+            res.status(500).send(errors.INTERNAL_ERROR(err));
+        }
+    }
+});
+
+router.delete('/:id/alert/delete/:alertId', isAuthenticated, async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userId = req.token && req.token.data && req.token.data._id;
+        const alertId = req.params.alertId;
+        await stockService.deleteAlert(id, userId, alertId);
+        res.sendStatus(200);
+    } catch (err) {
+        if (err.name === 'StockNotFound' || err.name === 'UserNotFound' || err.name === 'AlertNotFound') {
             res.status(400).send(err);
         } else {
             res.status(500).send(errors.INTERNAL_ERROR(err));

@@ -123,6 +123,8 @@ const userSchema = new mongoose.Schema({
     }
 });
 
+userSchema.index({name: 'text', surname: 'text'});
+
 userSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
         const salt = await bcrypt.genSalt(10);

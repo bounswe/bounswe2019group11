@@ -69,7 +69,7 @@ router.put('/:id/privacy', async (req, res) => {
             res.status(404).send(err);
         }
         else {
-            console.log(err)
+            console.log(err);
             res.status(500).send(errors.INTERNAL_ERROR(err));
         }
     }
