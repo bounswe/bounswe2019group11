@@ -6,6 +6,7 @@ const VerificationToken = require('./verificationToken');
 const crypto = require('crypto');
 const LostPasswordToken = require('./lostPasswordToken');
 const errors = require('../helpers/errors');
+const notificationService = require('../services/notification');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -168,6 +169,7 @@ userSchema.methods.follow =async function(userToBeFollowed){
             userToBeFollowed.followers.push({userId:this._id,isAccepted:false});
             await userToBeFollowed.save();
             await this.save();
+            await notificationService.createFollowNotification(this._id, userIdToBeFollowed);
             return {msg:"Follow request has been sent to " + userToBeFollowed.name + " "+ userToBeFollowed.surname,status:"request"};
         }
 
