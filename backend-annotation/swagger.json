@@ -25,6 +25,133 @@
     "https"
   ],
   "paths": {
+
+    "/annotation/article/{articleId}": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Email verification endpoint.",
+        "produces": [
+          "application/text",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "articleId",
+            "in": "path",
+            "description": "Article ID for fetching annotations",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Annotation"
+              }
+            }
+          },
+          "503": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/annotation/": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "annotation"
+        ],
+        "summary": "Create annotation endpoint ",
+        "description": "Creates annotation and returns created annotation as response. This endpoint will be called when a user highlight a text from an article",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "annotation",
+            "description": "The annotation to be created.(In the body non of creator and created info will be sent. Only:  type, motivation, body->type,body->value,body->purpose,target->id,target->selector->type,target->selector->start,target->selector->end )",
+            "schema": {
+              "$ref": "#/definitions/Annotation"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Successfully signed up. A verification email is sent.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/Annotation"
+            }
+          },
+          "503": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/annotation/{annotationId}": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "annotation"
+        ],
+        "summary": "Create annotation endpoint ",
+        "description": "Creates annotation and returns created annotation as response. This endpoint will be called when a user highlight a text from an article",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "annotationId",
+            "in": "path",
+            "description": "Annotation ID for adding new body (comment) to the annotation",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body of annotation",
+            "description": "New annotation body for adding new body(comment) to a existing annotation. A user could add comment on a someone else's annotation. Only:  type,value and purpose will be sent)",
+            "schema": {
+              "$ref": "#/definitions/Body"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Successfully signed up. A verification email is sent.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/Annotation"
+            }
+          },
+          "503": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    }
   },
   "definitions": {
     "Annotation": {
