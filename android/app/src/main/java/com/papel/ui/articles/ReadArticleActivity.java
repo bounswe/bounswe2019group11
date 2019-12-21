@@ -265,7 +265,7 @@ public class ReadArticleActivity extends AppCompatActivity {
         requestQueue.add(request);
     }
 
-    private void fetchAnnotation(Context context, String articleId) {
+    private void fetchAnnotation(final Context context, String articleId) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url = Constants.ANNOTATION_URL + Constants.ANNOTATION + Constants.ARTICLE + articleId;
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
@@ -280,18 +280,25 @@ public class ReadArticleActivity extends AppCompatActivity {
                         }
                     }
                     SpannableString spannableContentString = new SpannableString(article.getBody());
+
                     for (int i = 0; i<annotations.size(); i++ ) {
                         final int annotationIndex = i;
                         spannableContentString.setSpan(new ClickableSpan() {
                             @Override
                             public void onClick(@NonNull View view) {
                                 Log.d("Info","Clicked: " + annotationIndex);
+
+                                Intent showAnnotationIntent = new Intent(context,ShowAnnotationActivity.class);
+                                Annotation currentAnnotation = annotations.get(annotationIndex);
+                                String annotatedText = article.getBody().substring(currentAnnotation.getStart(),currentAnnotation.getEnd());
+
+                                showAnnotationIntent.putExtra("Annotation",currentAnnotation);
+                                showAnnotationIntent.putExtra("AnnotatedText",annotatedText);
+                                startActivity(showAnnotationIntent);
                             }
                         },annotations.get(i).getStart(),annotations.get(i).getEnd(),0);
 
                     }
-                    //spannableContentString.setSpan(new BackgroundColorSpan(Color.YELLOW),0,10,0);
-                    //spannableContentString.setSpan(new BackgroundColorSpan(Color.YELLOW),20,40,0);
 
                     content.setText(spannableContentString);
 
