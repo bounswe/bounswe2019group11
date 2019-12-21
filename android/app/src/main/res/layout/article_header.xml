@@ -55,7 +55,10 @@
             android:layout_marginTop="@dimen/text_margin"
             android:layout_marginBottom="@dimen/text_margin"
             android:text="@string/test_content"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textIsSelectable="true"
+            android:focusable="true"
+            android:longClickable="true"/>
 
 
         <LinearLayout
@@ -189,6 +192,5 @@
 
 
     </LinearLayout>
-
 
 </RelativeLayout>

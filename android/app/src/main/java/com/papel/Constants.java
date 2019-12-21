@@ -2,6 +2,7 @@ package com.papel;
 
 public class Constants {
     public static final String LOCALHOST = "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/";
+    public static final String ANNOTATION_URL = "https://papel-annotation.herokuapp.com/";
 
     public static final String ARTICLE = "article/";
     public static final String COMMENT   = "comment/";
@@ -19,7 +20,6 @@ public class Constants {
     public static final String LOGIN = "auth/login";
     public static final String GOOGLE_LOGIN = "auth/login/google";
     public static final String USER = "user/";
-    public static final String TEST_USER_ID = "5da076d955d9b93a7308f3d7";
     public static final String PROFILE = "profile/other/";
     public static final String CURRENCY = "currency/";
     public static final String INTRADAY = "intraday";
@@ -30,6 +30,7 @@ public class Constants {
     public static final String ACCEPT = "accept";
     public static final String DECLINE = "decline";
     public static final String INVESTMENTS = "investments";
+    public static final String ANNOTATION = "annotation/";
 
     public static final int DAILY_CHART = 0;
     public static final int WEEKLY_CHART = 1;

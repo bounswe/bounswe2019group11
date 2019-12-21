@@ -7,7 +7,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.BackgroundColorSpan;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -30,6 +34,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.papel.Constants;
 import com.papel.ListViewAdapter;
 import com.papel.R;
@@ -40,6 +45,7 @@ import com.papel.ui.profile.ProfileActivity;
 import com.papel.ui.utils.DialogHelper;
 import com.papel.ui.utils.ResponseParser;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -68,6 +74,7 @@ public class ReadArticleActivity extends AppCompatActivity {
     private ColorStateList cl_black;
     private String articleId;
     private ImageView articleImage;
+    private FloatingActionButton addAnnotationButton;
 
 
     private String authorId;
@@ -97,6 +104,7 @@ public class ReadArticleActivity extends AppCompatActivity {
         getArticleFromEndpoint(getApplicationContext(), articleId);
         noCommentTextView = header.findViewById(R.id.article_no_comment_textview);
         articleImage = header.findViewById(R.id.read_article_image);
+        addAnnotationButton = findViewById(R.id.add_annotation);
 
 
         final Intent profileIntent = new Intent(this, ProfileActivity.class);
@@ -170,7 +178,28 @@ public class ReadArticleActivity extends AppCompatActivity {
         });
 
         registerForContextMenu(commentListView);
+
+
+        content.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Log.d("Info","Long clicked");
+                addAnnotationButton.show();
+                return false;
+            }
+        });
+
+        addAnnotationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int start = content.getSelectionStart();
+                int end = content.getSelectionEnd();
+                String selectedText = content.getText().toString().substring(start,end);
+                Log.d("Info","Selected: " + selectedText);
+            }
+        });
     }
+
 
 
     private void getArticleFromEndpoint(final Context context, final String articleId) {
@@ -191,7 +220,9 @@ public class ReadArticleActivity extends AppCompatActivity {
                         articleImage.setVisibility(View.GONE);
                     }
                     title.setText(article.getTitle());
-                    content.setText(article.getBody());
+                    SpannableString spannableContentString = new SpannableString(article.getBody());
+                    spannableContentString.setSpan(new BackgroundColorSpan(Color.YELLOW),0,10,0);
+                    content.setText(spannableContentString);
                     authorId = article.getAuthorId();
                     author.setText(article.getAuthorName());
                     date.setText(article.getLongDate());
@@ -225,6 +256,40 @@ public class ReadArticleActivity extends AppCompatActivity {
         };
 
         requestQueue.add(request);
+    }
+
+    private void fetchAnnotation(Context context, String articleId) {
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = Constants.ANNOTATION_URL + Constants.ANNOTATION + Constants.ARTICLE + articleId;
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray responseArray = new JSONArray(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+
+        requestQueue.add(request);
+
     }
 
     private void setComments(ArrayList<Comment> comments_list){
@@ -423,11 +488,13 @@ public class ReadArticleActivity extends AppCompatActivity {
         requestQueue.add(request);
     }
 
+
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        if (v.getId() == R.id.article_comments_listview && ((Comment)comments.get(info.position-1)).getAuthorId().equals(User.getInstance().getId())) {
+        if (v.getId() == R.id.article_comments_listview &&((Comment)comments.get(info.position)).getAuthorId().equals(User.getInstance().getId())) {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.article_comments_menu, menu);
         }
