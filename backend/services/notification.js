@@ -1,8 +1,9 @@
 const FollowNotification = require('../models/followNotification');
 const errors = require('../helpers/errors');
+const AlertNotification = require('../models/alertNotification');
 
 const STAGES = {
-    MATCH_ID: (userId) => {
+    MATCH_FOLLOW_ID: (userId) => {
         return {
             $match: {
                 $expr: {
@@ -44,7 +45,7 @@ const STAGES = {
     SET_TYPE: (type) => {
         return {
             $addFields: {
-                type
+                notification: type
             }
         }
     },
@@ -52,6 +53,22 @@ const STAGES = {
         $project: {
             follower: 1,
             type: 1,
+        }
+    },
+    MATCH_ALERT_ID: (userId) => {
+        return {
+            $match: {
+                $expr: {
+                    $eq: ['$userId', {
+                        $toObjectId: userId
+                    }]
+                }
+            }
+        }
+    },
+    PROJECT_ALERT: {
+        $project: {
+            userId: 0,
         }
     }
 };
@@ -65,10 +82,19 @@ module.exports.deleteFollowNotification = async (follower, following) => {
 };
 
 module.exports.getAll = async (userId) => {
-    return await FollowNotification.aggregate([
-        STAGES.MATCH_ID(userId), STAGES.GET_FOLLOWER, STAGES.UNWIND_FOLLOWER,
+    const notifications = [];
+    const followNotifications = await FollowNotification.aggregate([
+        STAGES.MATCH_FOLLOW_ID(userId), STAGES.GET_FOLLOWER, STAGES.UNWIND_FOLLOWER,
         STAGES.SET_TYPE('follow'), STAGES.PROJECT_FOLLOW
     ]).then();
+
+    const alertNotifications = await AlertNotification.aggregate([
+        STAGES.MATCH_ALERT_ID(userId), STAGES.SET_TYPE('alert'), STAGES.PROJECT_ALERT
+    ]);
+
+    notifications.push(...followNotifications);
+    notifications.push(...alertNotifications);
+    return notifications;
 };
 
 module.exports.discardNotification = async (notificationId, userId) => {
@@ -77,6 +103,14 @@ module.exports.discardNotification = async (notificationId, userId) => {
       following: userId,
   });
   if (followNotification) {
+      return;
+  }
+
+  const alertNotification = await AlertNotification.findOneAndDelete({
+      _id: notificationId,
+      userId
+  });
+  if (alertNotification) {
       return;
   }
 

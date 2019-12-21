@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Papel Backend"
   },
-  "host": "localhost:3000",
+  "host": "ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000",
   "basePath": "/",
   "tags": [
     {
@@ -3637,7 +3637,31 @@
             "name": "John",
             "surname": "Doe"
           },
-          "type": "follow"
+          "notification": "follow"
+        },
+        {
+          "_id": "5de6c3e588aff72068fe72e8",
+          "userId": "5de6c3e588aff72068fe3333",
+          "type": 0,
+          "direction": 1,
+          "rate": 5.9,
+          "currentRate": 6.5,
+          "currencyCode": "EUR",
+          "stockSymbol": "",
+          "stockId": null,
+          "notification": "alert"
+        },
+        {
+          "_id": "5de6c3e588aff72068fe72e8",
+          "userId": "5de6c3e588aff720ads7213",
+          "type": 1,
+          "direction": -1,
+          "rate": 130,
+          "currentRate": 120,
+          "currencyCode": "",
+          "stockSymbol": "TKC",
+          "stockId": "5df7b5aef29d0f356042b869",
+          "notification": "alert"
         }
       ]
     },
