@@ -51,8 +51,8 @@ const STAGES = {
     },
     PROJECT_FOLLOW: {
         $project: {
-            follower: 1,
-            type: 1,
+            following: 0,
+            __v: 0
         }
     },
     MATCH_ALERT_ID: (userId) => {
@@ -69,6 +69,7 @@ const STAGES = {
     PROJECT_ALERT: {
         $project: {
             userId: 0,
+            __v: 0,
         }
     }
 };
