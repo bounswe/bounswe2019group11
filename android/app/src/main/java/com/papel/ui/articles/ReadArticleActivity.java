@@ -38,6 +38,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.papel.Constants;
 import com.papel.ListViewAdapter;
 import com.papel.R;
+import com.papel.data.Annotation;
 import com.papel.data.Article;
 import com.papel.data.Comment;
 import com.papel.data.User;
@@ -75,7 +76,7 @@ public class ReadArticleActivity extends AppCompatActivity {
     private String articleId;
     private ImageView articleImage;
     private FloatingActionButton addAnnotationButton;
-
+    private ArrayList<Annotation> annotations;
 
     private String authorId;
 
@@ -101,11 +102,14 @@ public class ReadArticleActivity extends AppCompatActivity {
         commentListView.addHeaderView(header);
         cl_primary = ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary));
         cl_black = ColorStateList.valueOf(getResources().getColor(R.color.black));
-        getArticleFromEndpoint(getApplicationContext(), articleId);
         noCommentTextView = header.findViewById(R.id.article_no_comment_textview);
         articleImage = header.findViewById(R.id.read_article_image);
         addAnnotationButton = findViewById(R.id.add_annotation);
+        annotations = new ArrayList<>();
 
+
+        getArticleFromEndpoint(getApplicationContext(), articleId);
+        fetchAnnotation(getApplicationContext(),articleId);
 
         final Intent profileIntent = new Intent(this, ProfileActivity.class);
         // TODO This should be inactive during the request to server
@@ -220,9 +224,7 @@ public class ReadArticleActivity extends AppCompatActivity {
                         articleImage.setVisibility(View.GONE);
                     }
                     title.setText(article.getTitle());
-                    SpannableString spannableContentString = new SpannableString(article.getBody());
-                    spannableContentString.setSpan(new BackgroundColorSpan(Color.YELLOW),0,10,0);
-                    content.setText(spannableContentString);
+                    content.setText(article.getBody());
                     authorId = article.getAuthorId();
                     author.setText(article.getAuthorName());
                     date.setText(article.getLongDate());
@@ -266,6 +268,18 @@ public class ReadArticleActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 try {
                     JSONArray responseArray = new JSONArray(response);
+                    for(int i = 0;i<responseArray.length(); i++) {
+                        Annotation annotation = ResponseParser.parseAnnotation(responseArray.getJSONObject(i));
+                        if(annotation != null) {
+                            annotations.add(annotation);
+                        }
+                    }
+                    SpannableString spannableContentString = new SpannableString(article.getBody());
+                    for (int i = 0; i<annotations.size(); i++ ) {
+                        spannableContentString.setSpan(new BackgroundColorSpan(Color.YELLOW),annotations.get(i).getStart(),annotations.get(i).getEnd(),0);
+                    }
+                    content.setText(spannableContentString);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

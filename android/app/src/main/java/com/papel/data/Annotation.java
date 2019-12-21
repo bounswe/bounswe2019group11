@@ -6,20 +6,18 @@ public class Annotation {
     private String id;
     private String userID;
     private String createTime;
-    private String value;
     private int start;
     private int end;
-    private ArrayList<AnnotationBody> bodies;
+    private ArrayList<AnnotationBody> body;
 
 
-    public Annotation(String id, String userID, String createTime, String value, int start, int end,ArrayList<AnnotationBody> bodies) {
+    public Annotation(String id, String userID, String createTime, int start, int end,ArrayList<AnnotationBody> body) {
         this.id = id;
         this.userID = userID;
         this.createTime = createTime;
-        this.value = value;
         this.start = start;
         this.end = end;
-        this.bodies = bodies;
+        this.body = body;
     }
 
     public String getId() {
@@ -46,14 +44,6 @@ public class Annotation {
         this.createTime = createTime;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
     public int getStart() {
         return start;
     }
@@ -70,11 +60,11 @@ public class Annotation {
         this.end = end;
     }
 
-    public ArrayList<AnnotationBody> getBodies() {
-        return bodies;
+    public ArrayList<AnnotationBody> getBody() {
+        return body;
     }
 
-    public void setBodies(ArrayList<AnnotationBody> bodies) {
-        this.bodies = bodies;
+    public void setBodies(ArrayList<AnnotationBody> body) {
+        this.body = body;
     }
 }
