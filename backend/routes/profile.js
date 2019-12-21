@@ -179,7 +179,6 @@ router.post('/other/:id/follow', isAuthenticated, async (req, res) => {
         const user = await userService.getById(userId);
         const userToBeFollowed = await userService.getById(id);
         const response = await user.follow(userToBeFollowed);
-        await notificationService.createFollowNotification(userId, id);
         res.status(200).json(response);
     } catch (err) {
         if (err.name === 'UserNotFound') {
