@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -37,6 +38,10 @@ import com.papel.data.User;
 import com.papel.ui.articles.ReadArticleActivity;
 import com.papel.ui.portfolio.PortfolioDetailActivity;
 import com.papel.ui.portfolio.PortfolioListViewAdapter;
+import com.papel.ui.utils.DialogHelper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,6 +80,8 @@ public class ProfileSubpageFragment extends Fragment {
     private boolean isMe;
 
     private OnFragmentInteractionListener mListener;
+
+    private AlertAdapter alertAdapter;
 
     public ProfileSubpageFragment() {
         // Required empty public constructor
@@ -255,8 +262,8 @@ public class ProfileSubpageFragment extends Fragment {
                 message.setVisibility(View.VISIBLE);
                 listView.setVisibility(View.INVISIBLE);
             } else {
-                AlertAdapter adapter = new AlertAdapter(getContext(),alerts);
-                listView.setAdapter(adapter);
+                alertAdapter = new AlertAdapter(getContext(),alerts);
+                listView.setAdapter(alertAdapter);
 
                 registerForContextMenu(listView);
             }
@@ -277,12 +284,12 @@ public class ProfileSubpageFragment extends Fragment {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Log.d("Info","Position: " + info.position);
         // Only item is delete
-        Alert clickedAlert = alerts.get(info.position);
-        deleteAlert(getContext(),clickedAlert);
+        deleteAlert(getContext(),info.position);
         return true;
     }
 
-    private void deleteAlert(Context context, Alert alert) {
+    private void deleteAlert(final Context context, final int position) {
+        Alert alert = alerts.get(position);
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url;
         if (alert.getType() == 0) {
@@ -295,12 +302,23 @@ public class ProfileSubpageFragment extends Fragment {
         StringRequest request = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
+                alerts.remove(position);
+                alertAdapter.notifyDataSetChanged();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                NetworkResponse networkResponse = error.networkResponse;
+                if (networkResponse != null) {
+                    String data = new String(networkResponse.data);
+                    try {
+                        JSONObject errorObject = new JSONObject(data);
+                        String message = errorObject.getString("message");
+                        DialogHelper.showBasicDialog(context, "Error", message, null);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }){
             @Override

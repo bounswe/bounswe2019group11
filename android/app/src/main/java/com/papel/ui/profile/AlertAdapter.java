@@ -66,7 +66,7 @@ public class AlertAdapter extends BaseAdapter {
         } else {
             // Duserse haber ver
             alertName.setTextColor(Color.RED);
-            alertName.setTextColor(Color.RED);
+            alertRate.setTextColor(Color.RED);
         }
 
         return view;
