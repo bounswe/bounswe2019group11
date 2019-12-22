@@ -41,7 +41,7 @@ public class Article implements Parcelable {
             SimpleDateFormat formatter2 = new SimpleDateFormat("dd MMM yy • HH:mm a", Locale.US);
             this.date = formatter2.format(dateObj);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

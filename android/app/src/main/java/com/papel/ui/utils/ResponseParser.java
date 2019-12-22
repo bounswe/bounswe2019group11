@@ -1,5 +1,7 @@
 package com.papel.ui.utils;
 
+import com.papel.data.Annotation;
+import com.papel.data.AnnotationBody;
 import com.papel.data.Article;
 import com.papel.data.Comment;
 import com.papel.data.Currency;
@@ -263,6 +265,35 @@ public class ResponseParser {
             e.printStackTrace();
         }
         return userInv;
+    }
+
+    public static Annotation parseAnnotation(JSONObject response) {
+        Annotation annotation = null;
+        try {
+            String id = response.getString("_id");
+            String creator = response.getString("creator");
+            String created = response.getString("created");
+            JSONObject target = response.getJSONObject("target");
+            JSONObject selector = target.getJSONObject("selector");
+            int start = selector.getInt("start");
+            int end = selector.getInt("end");
+            JSONArray bodyArray = response.getJSONArray("body");
+            ArrayList<AnnotationBody> body = new ArrayList<>();
+            for(int i = 0; i<bodyArray.length(); i++) {
+                JSONObject bodyElement = bodyArray.getJSONObject(i);
+                String type = bodyElement.getString("type");
+                String value = bodyElement.getString("value");
+                String purpose = bodyElement.getString("purpose");
+                String format = bodyElement.getString("format");
+                String bodyElementCreated = bodyElement.getString("created");
+                String bodyElementCreator = bodyElement.getString("creator");
+                body.add(new AnnotationBody(type,value,purpose,format,bodyElementCreated,bodyElementCreator));
+            }
+            annotation = new Annotation(id,creator,created,start,end,body);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return annotation;
     }
 
 }
