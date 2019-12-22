@@ -114,7 +114,7 @@ module.exports = {
     },
     INSUFFICIENT_CURRENCY: (cause) => {
         return PapelError('InsufficientCurrency', 'User has insufficent currency to perform the given action', cause);
-
+    },
     ALERT_NOT_FOUND: (cause) => {
         return PapelError('AlertNotFound', 'Alert with the given id not found.', cause);
     }
