@@ -70,6 +70,7 @@
     <string name="no_pending_following_message">You don\'t have pending following request.</string>
     <string name="no_comments">There are no comments yet. Be the first one to comment!</string>
     <string name="no_predictions">There are no predictions yet</string>
+    <string name="no_alerts">You don\'t have alerts.</string>
     <string name="stock">STOCK</string>
     <string name="currency">CURRENCY</string>
     <string name="investments">Investments</string>
