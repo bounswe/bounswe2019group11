@@ -5,20 +5,33 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.papel.Constants;
 import com.papel.R;
 import com.papel.data.Alert;
 import com.papel.data.Article;
+import com.papel.data.Comment;
 import com.papel.data.Portfolio;
 import com.papel.data.User;
 import com.papel.ui.articles.ReadArticleActivity;
@@ -26,6 +39,8 @@ import com.papel.ui.portfolio.PortfolioDetailActivity;
 import com.papel.ui.portfolio.PortfolioListViewAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -242,11 +257,63 @@ public class ProfileSubpageFragment extends Fragment {
             } else {
                 AlertAdapter adapter = new AlertAdapter(getContext(),alerts);
                 listView.setAdapter(adapter);
+
+                registerForContextMenu(listView);
             }
         }
         return view;
     }
 
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, v.getId(), 0, "Delete");
+    }
+
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Log.d("Info","Position: " + info.position);
+        // Only item is delete
+        Alert clickedAlert = alerts.get(info.position);
+        deleteAlert(getContext(),clickedAlert);
+        return true;
+    }
+
+    private void deleteAlert(Context context, Alert alert) {
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url;
+        if (alert.getType() == 0) {
+            // Currency case
+            url = Constants.LOCALHOST + Constants.CURRENCY + alert.getCurrencyCode() + "/" + Constants.ALERT + "delete/" + alert.getId();
+        } else {
+            // Stock case
+            url = Constants.LOCALHOST + Constants.STOCK + alert.getStockId() + "/" + Constants.ALERT + "delete/" + alert.getId();
+        }
+        StringRequest request = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+
+        requestQueue.add(request);
+
+    }
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
