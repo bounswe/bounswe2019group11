@@ -1,5 +1,6 @@
 package com.papel.ui.utils;
 
+import com.papel.data.Alert;
 import com.papel.data.Annotation;
 import com.papel.data.AnnotationBody;
 import com.papel.data.Article;
@@ -294,6 +295,22 @@ public class ResponseParser {
             e.printStackTrace();
         }
         return annotation;
+    }
+
+    public static Alert parseAlert(JSONObject response) {
+        Alert alert = null;
+        try {
+            String stockId = response.getString("stockId");
+            String currencyCode = response.getString("currencyCode");
+            String id = response.getString("_id");
+            int type = response.getInt("type");
+            int direction = response.getInt("direction");
+            double rate = response.getDouble("rate");
+            alert = new Alert(stockId,currencyCode,id,type,direction,rate);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return alert;
     }
 
 }

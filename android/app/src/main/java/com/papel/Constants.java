@@ -48,4 +48,5 @@ public class Constants {
     public static final String FOLLOWERS_TITLE = "FOLLOWERS";
     public static final String FOLLOWER_PENDING_TITLE = "PENDING FOLLOWERS";
     public static final String FOLLOWING_PENDING_TITLE = "PENDING FOLLOWING";
+    public static final String ALERTS_TITLE = "ALERTS";
 }

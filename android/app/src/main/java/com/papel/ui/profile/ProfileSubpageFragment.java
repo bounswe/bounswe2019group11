@@ -44,6 +44,7 @@ public class ProfileSubpageFragment extends Fragment {
     public static final String ARG_FOLLOWING = "following";
     public static final String ARG_FOLLOWER_PENDING = "follower-pending";
     public static final String ARG_FOLLOWING_PENDING = "following-pending";
+    public static final String ARG_ALERTS = "alerts";
 
     public static final String ARG_ISME = "isMe";
 
