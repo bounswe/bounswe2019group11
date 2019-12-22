@@ -47,6 +47,10 @@
     {
       "name": "money",
       "description": "Money related endpoints for trader users."
+    },
+    {
+      "name": "search",
+      "description": "Search related endpoints."
     }
   ],
   "securityDefinitions": {
@@ -533,6 +537,115 @@
         }
       }
     },
+    "/stock/{_id}/alert": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "stock"
+        ],
+        "summary": "Adds an alert for the stock.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Stock id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "alertInfo",
+            "description": "Direction and rate for the alert",
+            "schema": {
+              "type": "object",
+              "required": [
+                "direction",
+                "rate"
+              ],
+              "properties": {
+                "direction": {
+                  "type": "number",
+                  "description": "Direction for the alerts. 1 means that the alerts will be generated when the current rate is equals or above the rate given by the user, -1 means that alerts will be generated when the current rate is below the given rate by the user.",
+                  "example": 1
+                },
+                "rate": {
+                  "type": "number",
+                  "description": "Rate that the alerts will be created for.",
+                  "example": 155
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Alert is saved."
+          },
+          "400": {
+            "description": "Either the stock id or the user not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/stock/{_id}/alert/delete/{alertId}": {
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "stock"
+        ],
+        "summary": "Endpoint to delete stock alert.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Stock id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "alertId",
+            "description": "Alert id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Alert is deleted."
+          },
+          "400": {
+            "description": "Alert, stock or the user not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
     "/user/lost-password": {
       "post": {
         "tags": [
@@ -593,7 +706,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/User"
+                "$ref": "#/definitions/UserResponse"
               }
             }
           },
@@ -625,7 +738,7 @@
           "200": {
             "description": "OK. User with the given id is returned.",
             "schema": {
-              "$ref": "#/definitions/User"
+              "$ref": "#/definitions/UserResponse"
             }
           },
           "400": {
@@ -728,7 +841,7 @@
           "200": {
             "description": "OK. Updated user information is returned for real time frontend experience.",
             "schema": {
-              "$ref": "#/definitions/User"
+              "$ref": "#/definitions/UserResponse"
             }
           },
           "400": {
@@ -2481,6 +2594,115 @@
         }
       }
     },
+    "/currency/{code}/alert": {
+      "post": {
+        "tags": [
+          "currency"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Adds an alert for the currency.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the currency",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "alertInfo",
+            "description": "Direction and rate for the alert",
+            "schema": {
+              "type": "object",
+              "required": [
+                "direction",
+                "rate"
+              ],
+              "properties": {
+                "direction": {
+                  "type": "number",
+                  "description": "Direction for the alerts. 1 means that the alerts will be generated when the current rate is equals or above the rate given by the user, -1 means that alerts will be generated when the current rate is below the given rate by the user.",
+                  "example": 1
+                },
+                "rate": {
+                  "type": "number",
+                  "description": "Rate that the alerts will be created for.",
+                  "example": 6.3
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Alert is saved."
+          },
+          "400": {
+            "description": "Either the currency code or the user not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/currency/{code}/alert/delete/{alertId}": {
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "currency"
+        ],
+        "summary": "Endpoint to delete currency alert.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Currency code",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "alertId",
+            "description": "Alert id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Alert is deleted."
+          },
+          "400": {
+            "description": "Alert, currency or the user not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
     "/investments": {
       "get": {
         "security": [
@@ -2983,6 +3205,37 @@
           }
         }
       }
+    },
+    "/search/{term}": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Endpoint to get all the articles, events, currencies, users and stocks semantically related to search term.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "term",
+            "description": "Search term",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Search results are returned.",
+            "schema": {
+              "$ref": "#/definitions/SearchResult"
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -3052,6 +3305,36 @@
           "type": "string",
           "description": "Google user id.",
           "example": "117027522423426552111"
+        }
+      }
+    },
+    "UserResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/User"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "location": {
+          "type": "object",
+          "properties": {
+            "latitude": {
+              "type": "number",
+              "description": "Latitude of the location.",
+              "example": 41.085987
+            },
+            "longitude": {
+              "type": "number",
+              "description": "Longitude of the location.",
+              "example": 29.044008
+            },
+            "displayName": {
+              "type": "string",
+              "description": "Display name of the location",
+              "example": "Istanbul, Marmara Region, Turkey"
+            }
+          }
         },
         "totalPredictionCount": {
           "type": "number",
@@ -3497,6 +3780,13 @@
             "$ref": "#/definitions/Portfolio"
           }
         },
+        "alerts": {
+          "type": "array",
+          "description": "Alerts of the user",
+          "items": {
+            "$ref": "#/definitions/Alert"
+          }
+        },
         "following": {
           "type": "array",
           "description": "Following users of the user (Only the profile is public)",
@@ -3722,9 +4012,183 @@
             "name": "John",
             "surname": "Doe"
           },
-          "type": "follow"
+          "notification": "follow"
+        },
+        {
+          "_id": "5de6c3e588aff72068fe72e8",
+          "userId": "5de6c3e588aff72068fe3333",
+          "type": 0,
+          "direction": 1,
+          "rate": 5.9,
+          "currentRate": 6.5,
+          "currencyCode": "EUR",
+          "stockSymbol": "",
+          "stockId": null,
+          "notification": "alert"
+        },
+        {
+          "_id": "5de6c3e588aff72068fe72e8",
+          "userId": "5de6c3e588aff720ads7213",
+          "type": 1,
+          "direction": -1,
+          "rate": 130,
+          "currentRate": 120,
+          "currencyCode": "",
+          "stockSymbol": "TKC",
+          "stockId": "5df7b5aef29d0f356042b869",
+          "notification": "alert"
         }
       ]
+    },
+    "Alert": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of the alert",
+          "example": "5da07611e407903a5d01b265"
+        },
+        "type": {
+          "type": "number",
+          "description": "1 for stock alerts, 0 for currency alerts",
+          "example": 0
+        },
+        "direction": {
+          "type": "number",
+          "description": "1 to generate alerts when the current rate is above the given rate, -1 for below",
+          "example": -1
+        },
+        "rate": {
+          "type": "number",
+          "description": "Rate to generate alerts for.",
+          "example": 5.9
+        },
+        "currencyCode": {
+          "type": "string",
+          "description": "Currency code if this is an currency alert, empty string otherwise",
+          "example": "EUR"
+        },
+        "stockId": {
+          "type": "string",
+          "description": "Stock id if this is an stock alert, null otherwise",
+          "example": null
+        }
+      }
+    },
+    "SearchResult": {
+      "type": "object",
+      "properties": {
+        "articles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Id of the article",
+                "example": "5da07611e407903a5d01b265"
+              },
+              "title": {
+                "type": "string",
+                "description": "Title of the article",
+                "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
+              }
+            }
+          }
+        },
+        "currencies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Id of the currency",
+                "example": "5da07611e407903a5d01b265"
+              },
+              "code": {
+                "type": "string",
+                "description": "Code of the currency",
+                "example": "EUR"
+              }
+            }
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Id of the event",
+                "example": "5da07611e407903a5d01b265"
+              },
+              "title": {
+                "type": "string",
+                "description": "Title of the event",
+                "example": "Spanish Trade Balance"
+              },
+              "country": {
+                "type": "string",
+                "description": "Country of the event",
+                "example": "Spain"
+              }
+            }
+          }
+        },
+        "stocks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Id of the stock",
+                "example": "5da07611e407903a5d01b265"
+              },
+              "stockSymbol": {
+                "type": "string",
+                "description": "Symbol of the stock",
+                "example": "AAPL"
+              }
+            }
+          }
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Id of the user",
+                "example": "5da07611e407903a5d01b265"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the user",
+                "example": "John"
+              },
+              "surname": {
+                "type": "string",
+                "description": "Surname of the user",
+                "example": "Doe"
+              },
+              "location": {
+                "type": "object",
+                "properties": {
+                  "displayName": {
+                    "type": "string",
+                    "description": "Display name of the location",
+                    "example": "Istanbul, Marmara Region, Turkey"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
