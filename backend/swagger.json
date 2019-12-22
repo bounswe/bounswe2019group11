@@ -2705,6 +2705,11 @@
     },
     "/investments": {
       "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "tags": [
           "investments"
         ],
@@ -2726,10 +2731,52 @@
             "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
+      },
+      "post":{
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Creates new investments instance",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "investments",
+            "description": "\"investments\" instance to be created.",
+            "required": true,
+            "ref": "#/definitions/Investments"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. All of the investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
       }
     },
     "/investments/{_id}": {
       "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "tags": [
           "investments"
         ],
@@ -2749,6 +2796,237 @@
         "responses": {
           "200": {
             "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/investments/{_id}/stock": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Adds the desired stock with the desired amount to the investments.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "stock and amount",
+            "description": "Add a stock with amount to specific investments",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/StockAmount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/investments/{_id}/currency": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Adds the desired currency with the desired amount to the investments.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "currency and amount",
+            "description": "Add a currency with amount to specific investments",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyAmount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/investments/{_id}/exchangeCC": {
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Exchanges the desired amount of currency with another currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "fromCurrency, toCurrency",
+            "description": "Exchange the given \"amount\" of fromCurrency with the toCurrency ",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/fromCurrencyToCurrency"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },    
+    "/investments/{_id}/exchangeSS": {
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Exchanges the desired amount of stock with another stock.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "fromStock, toStock",
+            "description": "Exchange the given \"amount\" of fromStock with the toStock ",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/fromStockToStock"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/investments/user/{_userId}": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Returns the investments of the given user.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_userId",
+            "description": "Object id of the \"user\".",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Investments are returned.",
             "schema": {
               "type": "array",
               "items": {
@@ -3134,6 +3412,22 @@
         }
       }
     },
+    "fromCurrencyToCurrency": {
+      "type": "object",
+      "properties": {
+        "fromCurrency": {
+          "$ref": "#/definitions/Currency"
+        },
+        "toCurrency": {
+          "$ref": "#/definitions/Currency"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount of currency",
+          "example": "32"
+        }
+      }
+    },
     "StockAmount": {
       "type": "object",
       "properties": {
@@ -3224,6 +3518,22 @@
               "5. volume": "175666"
             }
           }
+        }
+      }
+    },
+    "fromStockToStock": {
+      "type": "object",
+      "properties": {
+        "fromStock": {
+          "$ref": "#/definitions/Stock"
+        },
+        "toStock": {
+          "$ref": "#/definitions/Stock"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount of stock",
+          "example": "32"
         }
       }
     },
