@@ -34,11 +34,9 @@ import com.papel.data.Investment;
 import com.papel.data.Stock;
 import com.papel.data.User;
 import com.papel.data.UserInvestments;
-import com.papel.ui.articles.ReadArticleActivity;
 import com.papel.ui.utils.DialogHelper;
 import com.papel.ui.utils.ResponseParser;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -115,6 +113,7 @@ public class InvestmentsFragment extends Fragment {
             }
         });
 
+
         addInvestment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,6 +125,7 @@ public class InvestmentsFragment extends Fragment {
 
         return root;
     }
+
 
     private void sellCurrency(Context context, Currency currency, String amount) {
         String url = Constants.LOCALHOST + Constants.INVESTMENTS + userInvestments.getId() + "/" + Constants.CURRENCY;

@@ -10,11 +10,9 @@ import com.android.volley.toolbox.Volley;
 import com.papel.Constants;
 import com.papel.R;
 import com.papel.data.Currency;
-import com.papel.data.Portfolio;
 import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
 import com.papel.data.User;
-import com.papel.ui.portfolio.PortfolioDetailActivity;
 import com.papel.ui.portfolio.TradingEquipmentListViewAdapter;
 import com.papel.ui.utils.DialogHelper;
 import com.papel.ui.utils.ResponseParser;
@@ -92,7 +90,7 @@ public class AddInvestmentActivity extends AppCompatActivity {
 
     }
 
-    private void showListDialog(final TradingEquipment tradingEq){
+    private void showListDialog(final TradingEquipment tradingEquipment){
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         View mView = getLayoutInflater().inflate(R.layout.add_investment_dialog, null);
 
@@ -106,10 +104,10 @@ public class AddInvestmentActivity extends AppCompatActivity {
             positiveButtonTitle = "ADD";
         }
 
-        if(tradingEq instanceof Stock){
-            title += ((Stock) tradingEq).getSymbol();
-        }else if(tradingEq instanceof Currency){
-            title += ((Currency) tradingEq).getCode();
+        if(tradingEquipment instanceof Stock){
+            title += ((Stock) tradingEquipment).getSymbol();
+        }else if(tradingEquipment instanceof Currency){
+            title += ((Currency) tradingEquipment).getCode();
         }
 
         mBuilder.setTitle(title);
@@ -117,11 +115,13 @@ public class AddInvestmentActivity extends AppCompatActivity {
         mBuilder.setPositiveButton(positiveButtonTitle, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                String text = amountEditText.getText().toString();
-                double amount;
-                if(!text.equals("")){
-                    amount =  Double.parseDouble(text);
-                    //buyTradingEquipment(tradingEq, amount);
+                String amountText = amountEditText.getText().toString();
+                if(!amountText.equals("")){
+                   if (tradingEquipment instanceof Currency) {
+                       buyCurrency(AddInvestmentActivity.this,(Currency) tradingEquipment,amountText);
+                   } else if(tradingEquipment instanceof Stock) {
+                       buyStock(AddInvestmentActivity.this, (Stock) tradingEquipment,amountText);
+                   }
                 }else{
                     Toast.makeText(AddInvestmentActivity.this, "Please specify the amount", Toast.LENGTH_SHORT).show();
                 }
@@ -151,7 +151,10 @@ public class AddInvestmentActivity extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
+                Intent intent = new Intent();
+                intent.putExtra("data", "some data");
+                intent.setAction("action");
+                sendBroadcast(intent);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -179,6 +182,11 @@ public class AddInvestmentActivity extends AppCompatActivity {
         requestQueue.add(request);
     }
 
+    @Override
+    public void sendBroadcast(Intent intent) {
+        super.sendBroadcast(intent);
+    }
+
     private void buyStock(Context context, Stock stock, String amount) {
         String url = Constants.LOCALHOST + Constants.INVESTMENTS + investmentId + "/" + Constants.STOCK;
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -197,7 +205,6 @@ public class AddInvestmentActivity extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
             }
         }, new Response.ErrorListener() {
             @Override
