@@ -26,6 +26,17 @@ public class Stock extends TradingEquipment {
         this.symbol = in.readString();
     }
 
+    public Stock(String id, String symbol) {
+        this.id = id;
+        this.symbol = symbol;
+    }
+
+    public Stock(Parcel in, String id, String symbol) {
+        super(in);
+        this.id = id;
+        this.symbol = symbol;
+    }
+
     public Stock() {
         super();
     }

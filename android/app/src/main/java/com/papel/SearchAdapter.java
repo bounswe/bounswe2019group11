@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
 
+import com.papel.data.Article;
 import com.papel.data.Currency;
 import com.papel.data.Event;
 import com.papel.data.Stock;
@@ -56,22 +57,27 @@ public class SearchAdapter extends BaseAdapter {
 
         if (item instanceof Stock) {
             type.setText(R.string.stock);
-            String parity_name = ((Stock) item).getName() + " / US Dollar";
+            String parity_name = ((Stock) item).getSymbol() + " / USD";
             name.setText(parity_name);
+
         } else if (item instanceof Currency) {
             type.setText(R.string.currency);
-            String parity_name = ((Currency) item).getName() + " / US Dollar";
+            String parity_name = ((Currency) item).getCode() + " / USD";
             name.setText(parity_name);
 
         } else if (item instanceof User) {
             type.setText("USER");
             String name_surname = ((User) item).getName() + " " + ((User) item).getSurname();
             name.setText(name_surname);
+
         } else if (item instanceof Event) {
             type.setText("EVENT");
             name.setText(((Event) item).getTitle());
-        }
 
+        } else if (item instanceof Article) {
+            type.setText("ARTICLE");
+            name.setText(((Article) item).getTitle());
+        }
         return view;
     }
 
