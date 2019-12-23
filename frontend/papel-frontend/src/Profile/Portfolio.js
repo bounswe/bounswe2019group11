@@ -67,7 +67,7 @@ function Portfolio({portfolio, isMe}){
   var handleSearchbarChange = function(event) {
     var searchbarNewText = event.target.value.toLowerCase();
     setSearchbarText(searchbarNewText);
-    var list = originalStockList.filter(stock => stock.stockName.toLowerCase().includes(searchbarNewText));
+    var list = originalStockList.filter(stock => stock.name.toLowerCase().includes(searchbarNewText));
     setStockList(list);
   }
 
@@ -86,13 +86,13 @@ function Portfolio({portfolio, isMe}){
       return portfolio.stocks.map(
         stock =>
         (<li key={stock._id}>
-          <a href={"../stock/" + stock._id}>{stock.stockName.split(" - ")[0]}</a>
+          <a href={"../stock/" + stock._id}>{stock.name.split(" - ")[0]}</a>
           <a href="#" onClick={() => deleteStock(stock)}><FontAwesomeIcon style={{float:"right"}} icon={faTrash}/></a>
         </li>)
       )
     }
     else {
-      return portfolio.stocks.map(stock => (<a key={stock._id} href={"../stock/" + stock._id}><li>{stock.stockName.split(" - ")[0]}</li></a>))
+      return portfolio.stocks.map(stock => (<a key={stock._id} href={"../stock/" + stock._id}><li>{stock.name.split(" - ")[0]}</li></a>))
     }
   }
 
@@ -146,7 +146,7 @@ function Portfolio({portfolio, isMe}){
                         {stock.stockSymbol}
                       </td>
                       <td xs={{span: 10}}>
-                        {stock.stockName.split(" - ")[0]}
+                        {stock.name.split(" - ")[0]}
                       </td>
                     </tr>
                   ))
