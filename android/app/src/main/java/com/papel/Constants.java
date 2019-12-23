@@ -31,6 +31,7 @@ public class Constants {
     public static final String DECLINE = "decline";
     public static final String INVESTMENTS = "investments";
     public static final String ANNOTATION = "annotation/";
+    public static final String SEARCH = "search/";
     public static final String ALERT = "alert/";
 
     public static final int DAILY_CHART = 0;

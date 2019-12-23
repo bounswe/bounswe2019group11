@@ -50,6 +50,12 @@ public class User implements Parcelable {
         this.iban = iban;
     }
 
+    public User(String id, String name, String surname) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+    }
+
     @Override
     public int describeContents() {
         return 0;
