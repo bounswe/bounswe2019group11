@@ -5,12 +5,11 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const Country = req.query.country
-        const Rank = req.query.rank
-        const SDate = req.query.StartDate
-        const response = await eventService.getAll(Country,Rank,SDate);
+        const country = req.query.country;
+        const rank = req.query.rank;
+        const sDate = req.query.StartDate;
+        const response = await eventService.getAll(country,rank,sDate);
         res.status(200).json(response);
-
     } catch (e) {
         res.status(503)
     }
