@@ -40,10 +40,14 @@ const targetSchema = new mongoose.Schema({
     source: {
         type: String,
     },
+    format:{
+        type: String,
+        enum:["text/plain","image/jpeg"]
+    },
     selector:{
         type: {
             type: String,
-            enum: ["DataPositionSelector","SvgSelector"],
+            enum: ["DataPositionSelector","FragmentSelector"],
             default: "DataPositionSelector"
         },
         start: {
@@ -51,6 +55,13 @@ const targetSchema = new mongoose.Schema({
         },
         end: {
             type: Number
+        },
+        conformsTo:{
+            type: String,
+            default: "http://www.w3.org/TR/media-frags/"
+        },
+        value:{
+            type:String
         }
     }
 
