@@ -54,6 +54,8 @@ public class AddInvestmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_investment);
 
+        addRequestQueue = Volley.newRequestQueue(getApplicationContext());
+
         searchView = findViewById(R.id.inv_searchView);
         tradingEquipmentListView = findViewById(R.id.investment_list);
         adapter = new TradingEquipmentListViewAdapter(getApplicationContext(), tradingEquipmentArrayList,true);
@@ -202,7 +204,7 @@ public class AddInvestmentActivity extends AppCompatActivity {
             buyCurrency((Currency) tradingEq, amount);
         }*/
     }
-//
+
 //    private void buyStock(final Stock tradingEquipment, double amount) {
 //        requestNumber += 1;
 //        String url = Constants.LOCALHOST + Constants.PORTFOLIO + portfolio.getId() + "/"+ Constants.STOCK;
@@ -220,6 +222,7 @@ public class AddInvestmentActivity extends AppCompatActivity {
 //            @Override
 //            public void onResponse(String response) {
 //                try {
+
 //                    JSONObject jsonResponse = new JSONObject(response);
 //                    Portfolio parsedPortfolio = ResponseParser.parsePortfolio(jsonResponse);
 //                    if(parsedPortfolio != null) {
@@ -304,6 +307,5 @@ public class AddInvestmentActivity extends AppCompatActivity {
 //        };
 //        addRequestQueue.add(request);
 //    }
-
 
 }
