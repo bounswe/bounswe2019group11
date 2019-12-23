@@ -28,6 +28,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.material.tabs.TabLayout;
 import com.papel.Constants;
 import com.papel.R;
+import com.papel.data.Alert;
 import com.papel.data.Article;
 import com.papel.data.Portfolio;
 import com.papel.data.User;
@@ -56,6 +57,8 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
 
     private ArrayList<User> followingPending = new ArrayList<>();
     private ArrayList<User> followersPending = new ArrayList<>();
+
+    private ArrayList<Alert> alerts = new ArrayList<>();
 
     private ProfileSubpageAdapter adapter;
     private ViewPager pager;
@@ -232,7 +235,17 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                                 followers.add(user);
                             }
                         }
+                    }
 
+                    if (responseJSON.has("alerts")) {
+                        JSONArray alertArray = responseJSON.getJSONArray("alerts");
+                        for (int i = 0; i<alertArray.length(); i++) {
+                            Alert alert = ResponseParser.parseAlert(alertArray.getJSONObject(i));
+                            if (alert != null) {
+                                Log.d("Info","Alert id: " + alert.getId());
+                                alerts.add(alert);
+                            }
+                        }
                     }
 
                     Log.d("Info", "Privacy: " + privacy);
@@ -271,6 +284,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
             // We can't see the pending request of the other user
             followersPending = null;
             followingPending = null;
+            alerts = null;
 
             if (privacy.equals("private")) {
                 // Other's private profile
@@ -290,7 +304,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileSubpage
                 showPendingButton();
             }
         }
-        adapter = new ProfileSubpageAdapter(getSupportFragmentManager(), articles, portfolios, followers, following, followersPending, followingPending, isMe);
+        adapter = new ProfileSubpageAdapter(getSupportFragmentManager(), articles, portfolios, followers, following, followersPending, followingPending, alerts,isMe);
         pager.setAdapter(adapter);
         tabLayout.setupWithViewPager(pager);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
