@@ -32,6 +32,7 @@ app.use('/notification', require('./routes/notification'));
 app.use('/money', require('./routes/money'));
 app.use('/search', require('./routes/search'));
 app.use('/upload',require('./routes/upload'));
+app.use('/recommendation', require('./routes/recommendation'));
 
 const port = process.env.PORT;
 app.listen(port, async () => {

@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Papel Backend"
   },
-  "host": "ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000",
+  "host": "localhost:3000",
   "basePath": "/",
   "tags": [
     {
@@ -51,6 +51,10 @@
     {
       "name": "search",
       "description": "Search related endpoints."
+    },
+    {
+      "name": "recommendation",
+      "description": "Recommendation related endpoints."
     }
   ],
   "securityDefinitions": {
@@ -3328,6 +3332,39 @@
           }
         }
       }
+    },
+    "/recommendation/nearby-users": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "recommendation"
+        ],
+        "summary": "Gets the users which registered from the city as the user performing the request",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Nearby users are returned",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NearbyUser"
+              }
+            }
+          },
+          "400": {
+            "description": "User or the location info cannot be found"
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -4289,6 +4326,26 @@
               }
             }
           }
+        }
+      }
+    },
+    "NearbyUser": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the user",
+          "example": "John"
+        },
+        "surname": {
+          "type": "string",
+          "description": "Surname of the user",
+          "example": "Doe"
+        },
+        "_id": {
+          "type": "string",
+          "description": "Id of the user",
+          "example": "5da07611e407903a5d01b265"
         }
       }
     }
