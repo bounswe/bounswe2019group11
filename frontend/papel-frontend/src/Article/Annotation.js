@@ -6,6 +6,7 @@ import {postRequest as post, getRequest as get} from '../helpers/request'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faEdit} from '@fortawesome/free-solid-svg-icons';
 import './Annotation.css'
+import ImageAnnotation from 'react-image-annotation/lib';
 
 function Annotation({body, username}) {
   return (
@@ -59,20 +60,21 @@ class AnnotatedText extends React.Component {
 
     annotations.map(annotation => {
       const selector = annotation.target.selector
-      arr.push({
-        start: selector.start,
-        end: selector.end,
-        text: article.body.slice(selector.start, selector.end),
-        data: {
-          body: (
-            annotation.body.map(body =>  {
-              if(body.type = "TextualBody")
-                return <Annotation key={annotation._id} username={this.findUserById(users, body.creator)} body={body}/>
-              else return ""
-            })
-          )
-        }
-      })
+      const format = annotation.target.format
+      if (format === "text/plain") {
+        arr.push({
+          start: selector.start,
+          end: selector.end,
+          text: article.body.slice(selector.start, selector.end),
+          data: {
+            body: (
+              annotation.body.map(body =>
+                <Annotation key={annotation._id} username={this.findUserById(users, body.creator)} body={body}/>
+              )
+            )
+          }
+        })
+      }
     })
     this.setState({ranges: arr})
     console.log(ranges)
@@ -101,6 +103,7 @@ class AnnotatedText extends React.Component {
         },
         target: {
           id: article._id,
+          format: 'text/plain',
           selector: {
             type: "DataPositionSelector",
             start: range.start,
@@ -205,6 +208,55 @@ class AnnotatedText extends React.Component {
   }
 }
 
-function AnnotatedImage (props) {}
+class AnnotatedImage extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      annotations: [],
+      annotation: {}
+    }
+    this.onChange = this.onChange.bind(this)
+    this.onSubmit = this.onSubmit.bind(this)
+  }
+
+  componentDidMount() {
+    get({
+      url: app_config.annotation_server + "/annotation/article/" + this.props.article._id,
+      success: (resp) => this.getUsers(resp),
+      authToken: this.props.authToken
+    })
+  }
+
+  onChange(annotation) {
+    this.setState({annotation})
+  }
+  onSubmit(annotation) {
+    const { geometry, data } = annotation
+
+    this.setState({
+      annotation: {},
+      annotations: this.state.annotations.concat({
+        geometry,
+        data: {
+          ...data,
+          id: Math.random()
+        }
+      })
+    })
+  }
+
+  render(){
+    return (
+      <ImageAnnotation
+        src={this.props.src}
+        annotations={this.state.annotations}
+        type={this.state.type}
+        value={this.state.annotation}
+        onChange={this.onChange}
+        onSubmit={this.onSubmit}
+      />
+    )
+  }
+}
 
 export {AnnotatedText, AnnotatedImage}

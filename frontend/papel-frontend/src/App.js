@@ -69,10 +69,27 @@ function NavBar(props) {
     const alertNotification = (notification) => {
       if (notification.stockId === null) {
         // Alert for currency
-
+        return (
+          <div className="clickable">
+            {notification.currencyCode} went
+            {notification.direction === 1 ? " above " : " below "}
+            {notification.rate}
+            <br />
+            New rate is {notification.currentRate}
+          </div>
+        )
       }
       else {
         // Alert for stock
+        return (
+          <div className="clickable">
+            {notification.stockSymbol} went
+            {notification.direction === 1 ? " above " : " below "}
+            {notification.rate}
+            <br />
+            New rate is {notification.currentRate}
+          </div>
+        )
       }
     }
     console.log(notifications)
@@ -83,13 +100,13 @@ function NavBar(props) {
             <FontAwesomeIcon name="Bell Icon" icon={faBell} />&nbsp;<Badge >{notifications.length}</Badge>
           </Dropdown.Toggle>
 
-          <Dropdown.Menu>
+          <Dropdown.Menu className="notification">
           { notifications.map(notification => {
             switch (notification.notification) {
               case "alert":
-                return <Dropdown.Item>asdf</Dropdown.Item>
+                return <Dropdown.Item>{alertNotification(notification)}</Dropdown.Item>
               case "follow":
-                return <Dropdown.Item className="follow-notification">{followNotification(notification)}</Dropdown.Item>
+                return <Dropdown.Item>{followNotification(notification)}</Dropdown.Item>
             }
           })}
           </Dropdown.Menu>
