@@ -259,7 +259,7 @@ class Home extends React.Component {
               </div>
               <div  hidden className="Stock2">
 
-                <p class="card-text">
+                <p class="card-body">
                 <StockChart2 stock={[this.state.stocks[1], this.state.stockSymbols[1], this.state.stockNames[1]]}></StockChart2 >
                 </p>
               </div>
