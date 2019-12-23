@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Logo from './logo-green-small.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -22,7 +22,7 @@ import { useCookies, CookiesProvider } from 'react-cookie';
 import { faBell, faExclamation, faPlus, faThumbsUp, faThumbsDown, faSearch, faSignInAlt, faSignOutAlt, faUser, faNewspaper, faCalendarWeek, faHome, faMoneyBill, faCoins, faMoneyBillWave, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { postRequest as post } from './helpers/request';
+import { postRequest as post, getRequest as get } from './helpers/request';
 import { Dropdown, Badge, Row, Col, Button, FormControl, Form, InputGroup } from 'react-bootstrap';
 
 
@@ -40,45 +40,58 @@ function NavBar(props) {
     console.log(cookies);
     removeCookie('userToken');
     removeCookie('user');
-    removeCookie('pendingRequests');
     login(false);
   }
   if (!!loggedIn) {
     profileBtn = <li><Link to="/profile"> <FontAwesomeIcon name="User Icon" icon={faUser} />&nbsp;
-  Profile</Link></li>
+    Profile</Link></li>
     logoutBtn = <li><Link to="/" onClick={() => logout()}><FontAwesomeIcon name="Log Out Icon" icon={faSignOutAlt} />&nbsp;Log Out</Link></li>;
 
+    const { notifications } = props
+    const followNotification = (notification) => {
+      const user = notification.follower
+      return (
+      <>
+        {user.name} {user.surname} wants to follow you
+        <br />
+        <Row>
+          <Col xs={{ span: 4 }} onClick={() => acceptFollowRequest(user._id)}>
+            <FontAwesomeIcon icon={faCheck} className="clickable success" />
+            {" Accept"}
+          </Col>
+          <Col xs={{ span: 4, offset: 2 }} onClick={() => rejectFollowRequest(user._id)}>
+            <FontAwesomeIcon icon={faTimes} className="clickable danger" />
+            {" Reject"}
+          </Col>
+        </Row>
+      </>)
+    }
+    const alertNotification = (notification) => {
+      if (notification.stockId === null) {
+        // Alert for currency
 
-    if (!cookies.pendingRequests) setCookie('pendingRequests', []);
-
+      }
+      else {
+        // Alert for stock
+      }
+    }
+    console.log(notifications)
     notificationBtn =
       (<li>
         <Dropdown >
           <Dropdown.Toggle id="dropDown" style={{ color: "black", fontWeight: "bold" }}>
-            <FontAwesomeIcon name="Bell Icon" icon={faBell} />&nbsp;<Badge >{cookies.pendingRequests ? cookies.pendingRequests.length : 0}</Badge>
+            <FontAwesomeIcon name="Bell Icon" icon={faBell} />&nbsp;<Badge >{notifications.length}</Badge>
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            {
-              cookies.pendingRequests ? cookies.pendingRequests.map(user => (
-                <Dropdown.Item className="pending">
-                  {user.name} {user.surname} wants to follow you
-            <br />
-                  <Row>
-                    <Col xs={{ span: 4 }} onClick={() => acceptFollowRequest(user._id)}>
-                      <FontAwesomeIcon icon={faCheck} className="clickable success" />
-                      {" Accept"}
-                    </Col>
-                    <Col xs={{ span: 4, offset: 2 }} onClick={() => rejectFollowRequest(user._id)}>
-                      <FontAwesomeIcon icon={faTimes} className="clickable danger" />
-                      {" Reject"}
-                    </Col>
-                  </Row>
-                </Dropdown.Item>  
-              ))
-                :
-                ""
+          { notifications.map(notification => {
+            switch (notification.notification) {
+              case "alert":
+                return <Dropdown.Item>asdf</Dropdown.Item>
+              case "follow":
+                return <Dropdown.Item className="follow-notification">{followNotification(notification)}</Dropdown.Item>
             }
+          })}
           </Dropdown.Menu>
         </Dropdown>
       </li>)
@@ -157,6 +170,19 @@ function NavBar(props) {
 
 function App() {
   let [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken', 'pendingRequests']);
+  const [notifications, setNotifications] = useState([])
+
+  useEffect(() => {
+    getNotifications()
+  }, [])
+
+  function getNotifications() {
+    get({
+      url: app_config.api_url + "/notification",
+      success: (resp) => setNotifications(resp),
+      authToken: cookies.userToken
+    })
+  }
 
   function acceptFollow(id) {
     if (!!cookies.userToken) {
@@ -164,8 +190,8 @@ function App() {
       post({
         url: requestUrl,
         success: (data) => {
-          var pending = cookies.user.followerPending || []
-          setCookie('pendingRequests', [])
+          console.log('request accepted')
+          getNotifications()
         },
         authToken: cookies.userToken
       })
@@ -180,7 +206,8 @@ function App() {
       post({
         url: requestUrl,
         success: (data) => {
-          setCookie('pendingRequests', cookies.user.followerPending)
+          console.log('request rejected')
+          getNotifications()
         },
         authToken: cookies.userToken
       })
@@ -191,7 +218,7 @@ function App() {
   }
 
   return (
-    <NavBar acceptFollowRequest={acceptFollow} rejectFollowRequest={rejectFollow} />
+    <NavBar notifications={notifications} acceptFollowRequest={acceptFollow} rejectFollowRequest={rejectFollow} />
   );
 }
 

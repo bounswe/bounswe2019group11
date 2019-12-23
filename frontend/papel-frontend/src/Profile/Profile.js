@@ -39,7 +39,6 @@ class Profile extends React.Component {
       getRequest({
         url: requestUrl,
         success: (data) => {
-          console.log(data)
           this.setState({articles: data.articles, portfolios: data.portfolios})
           cookies.set('pendingRequests', data.followerPending)
         },

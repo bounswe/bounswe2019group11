@@ -89,11 +89,12 @@ ion-icon {
   color: black !important;
   cursor: default;
 }
-.pending .clickable:hover {
+.follow-notification .clickable:hover {
   cursor: pointer;
 }
-.pending .success:hover {
+.follow-notification .success:hover {
   color: green;
-}.pending .danger:hover {
+}
+.follow-notification .danger:hover {
   color: red;
 }
