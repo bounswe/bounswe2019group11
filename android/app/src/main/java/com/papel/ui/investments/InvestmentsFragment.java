@@ -126,6 +126,12 @@ public class InvestmentsFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("Info","on resume");
+        fetchInvestments(getContext());
+    }
 
     private void sellCurrency(Context context, Currency currency, String amount) {
         String url = Constants.LOCALHOST + Constants.INVESTMENTS + userInvestments.getId() + "/" + Constants.CURRENCY;
@@ -245,6 +251,7 @@ public class InvestmentsFragment extends Fragment {
                 try {
                     JSONObject jsonResponse = new JSONObject(response);
                     userInvestments = ResponseParser.parseInvestment(jsonResponse);
+                    investments.clear();
                     investments.addAll(userInvestments.getInvestments());
                     investmentsAdapter.notifyDataSetChanged();
                 } catch (JSONException e) {
