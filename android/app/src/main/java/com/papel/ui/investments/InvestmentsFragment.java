@@ -145,6 +145,15 @@ public class InvestmentsFragment extends Fragment {
         StringRequest request = new StringRequest(Request.Method.PUT, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    userInvestments = ResponseParser.parseInvestment(jsonResponse);
+                    investments.clear();
+                    investments.addAll(userInvestments.getInvestments());
+                    investmentsAdapter.notifyDataSetChanged();
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
             }
         }, new Response.ErrorListener() {
@@ -191,7 +200,15 @@ public class InvestmentsFragment extends Fragment {
         StringRequest request = new StringRequest(Request.Method.PUT, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    userInvestments = ResponseParser.parseInvestment(jsonResponse);
+                    investments.clear();
+                    investments.addAll(userInvestments.getInvestments());
+                    investmentsAdapter.notifyDataSetChanged();
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
