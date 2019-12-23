@@ -32,6 +32,7 @@ public class Constants {
     public static final String INVESTMENTS = "investments";
     public static final String ANNOTATION = "annotation/";
     public static final String SEARCH = "search/";
+    public static final String ALERT = "alert/";
 
     public static final int DAILY_CHART = 0;
     public static final int WEEKLY_CHART = 1;
@@ -49,4 +50,5 @@ public class Constants {
     public static final String FOLLOWERS_TITLE = "FOLLOWERS";
     public static final String FOLLOWER_PENDING_TITLE = "PENDING FOLLOWERS";
     public static final String FOLLOWING_PENDING_TITLE = "PENDING FOLLOWING";
+    public static final String ALERTS_TITLE = "ALERTS";
 }

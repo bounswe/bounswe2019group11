@@ -5,26 +5,47 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.papel.Constants;
 import com.papel.R;
+import com.papel.data.Alert;
 import com.papel.data.Article;
+import com.papel.data.Comment;
 import com.papel.data.Portfolio;
 import com.papel.data.User;
 import com.papel.ui.articles.ReadArticleActivity;
 import com.papel.ui.portfolio.PortfolioDetailActivity;
 import com.papel.ui.portfolio.PortfolioListViewAdapter;
+import com.papel.ui.utils.DialogHelper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,6 +65,7 @@ public class ProfileSubpageFragment extends Fragment {
     public static final String ARG_FOLLOWING = "following";
     public static final String ARG_FOLLOWER_PENDING = "follower-pending";
     public static final String ARG_FOLLOWING_PENDING = "following-pending";
+    public static final String ARG_ALERTS = "alerts";
 
     public static final String ARG_ISME = "isMe";
 
@@ -54,9 +76,12 @@ public class ProfileSubpageFragment extends Fragment {
     private ArrayList<User> following;
     private ArrayList<User> followersPending;
     private ArrayList<User> followingPending;
+    private ArrayList<Alert> alerts;
     private boolean isMe;
 
     private OnFragmentInteractionListener mListener;
+
+    private AlertAdapter alertAdapter;
 
     public ProfileSubpageFragment() {
         // Required empty public constructor
@@ -69,7 +94,7 @@ public class ProfileSubpageFragment extends Fragment {
      * @param subpageName Name of subpage
      * @return A new instance of fragment ProfileSubpageFragment.
      */
-    public static ProfileSubpageFragment newInstance(String subpageName, ArrayList<Article> articles, ArrayList<Portfolio> portfolios, ArrayList<User> followers, ArrayList<User> following, ArrayList<User> followersPending, ArrayList<User> followingPending, boolean isMe) {
+    public static ProfileSubpageFragment newInstance(String subpageName, ArrayList<Article> articles, ArrayList<Portfolio> portfolios, ArrayList<User> followers, ArrayList<User> following, ArrayList<User> followersPending, ArrayList<User> followingPending, ArrayList<Alert> alerts,boolean isMe) {
         ProfileSubpageFragment fragment = new ProfileSubpageFragment();
         Bundle args = new Bundle();
         args.putString(ARG_SUBPAGE_NAME, subpageName);
@@ -79,6 +104,7 @@ public class ProfileSubpageFragment extends Fragment {
         args.putParcelableArrayList(ARG_FOLLOWING,following);
         args.putParcelableArrayList(ARG_FOLLOWER_PENDING,followersPending);
         args.putParcelableArrayList(ARG_FOLLOWING_PENDING,followingPending);
+        args.putParcelableArrayList(ARG_ALERTS,alerts);
         args.putBoolean(ARG_ISME, isMe);
         fragment.setArguments(args);
         return fragment;
@@ -95,6 +121,7 @@ public class ProfileSubpageFragment extends Fragment {
             following = getArguments().getParcelableArrayList(ARG_FOLLOWING);
             followersPending = getArguments().getParcelableArrayList(ARG_FOLLOWER_PENDING);
             followingPending = getArguments().getParcelableArrayList(ARG_FOLLOWING_PENDING);
+            alerts = getArguments().getParcelableArrayList(ARG_ALERTS);
             isMe = getArguments().getBoolean(ARG_ISME);
         }
     }
@@ -229,10 +256,82 @@ public class ProfileSubpageFragment extends Fragment {
                 PendingFollowAdapter adapter = new PendingFollowAdapter(getContext(),followingPending,false);
                 listView.setAdapter(adapter);
             }
+        } else if (subpageName.equals(Constants.ALERTS_TITLE)) {
+            if (alerts.size() == 0) {
+                message.setText(getString(R.string.no_alerts));
+                message.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.INVISIBLE);
+            } else {
+                alertAdapter = new AlertAdapter(getContext(),alerts);
+                listView.setAdapter(alertAdapter);
+
+                registerForContextMenu(listView);
+            }
         }
         return view;
     }
 
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, v.getId(), 0, "Delete");
+    }
+
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Log.d("Info","Position: " + info.position);
+        // Only item is delete
+        deleteAlert(getContext(),info.position);
+        return true;
+    }
+
+    private void deleteAlert(final Context context, final int position) {
+        Alert alert = alerts.get(position);
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url;
+        if (alert.getType() == 0) {
+            // Currency case
+            url = Constants.LOCALHOST + Constants.CURRENCY + alert.getCurrencyCode() + "/" + Constants.ALERT + "delete/" + alert.getId();
+        } else {
+            // Stock case
+            url = Constants.LOCALHOST + Constants.STOCK + alert.getStockId() + "/" + Constants.ALERT + "delete/" + alert.getId();
+        }
+        StringRequest request = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                alerts.remove(position);
+                alertAdapter.notifyDataSetChanged();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                NetworkResponse networkResponse = error.networkResponse;
+                if (networkResponse != null) {
+                    String data = new String(networkResponse.data);
+                    try {
+                        JSONObject errorObject = new JSONObject(data);
+                        String message = errorObject.getString("message");
+                        DialogHelper.showBasicDialog(context, "Error", message, null);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+
+        requestQueue.add(request);
+
+    }
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

@@ -2855,6 +2855,52 @@
             "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
+      },
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Sells the desired stock with the desired amount.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "stock and amount",
+            "description": "Remove a stock with a specific amount from the investments",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/StockAmount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
       }
     },
     "/investments/{_id}/currency": {
@@ -2883,6 +2929,52 @@
             "in": "body",
             "name": "currency and amount",
             "description": "Add a currency with amount to specific investments",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyAmount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Sells the desired currency with the desired amount.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "currency and amount",
+            "description": "Remove a currency with a specific amount from the investments",
             "schema": {
               "type": "object",
               "$ref": "#/definitions/CurrencyAmount"
@@ -4068,10 +4160,20 @@
           "description": "Currency code if this is an currency alert, empty string otherwise",
           "example": "EUR"
         },
+        "currencyId": {
+          "type": "string",
+          "description": "Currency id if this is an currency alert, null otherwise",
+          "example": "5da07611e407903a5d01b233"
+        },
         "stockId": {
           "type": "string",
           "description": "Stock id if this is an stock alert, null otherwise",
           "example": null
+        },
+        "stockSymbol": {
+          "type": "string",
+          "description": "Stock symbol if this is an stock alert, empty string otherwise",
+          "example": ""
         }
       }
     },
