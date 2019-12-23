@@ -169,8 +169,9 @@ class AnnotatedText extends React.Component {
           onClick={() => this.setState({pointer: !this.state.pointer})}
           >
           <FontAwesomeIcon name="Annotate" icon={faEdit} />
-          &nbsp; Annotation {this.state.pointer ? "Enabled" : "Disabled"}
+          &nbsp;{this.state.pointer ? "Stop" : "Start"} Annotating
           </div>
+          {this.state.pointer ? <span style={{marginLeft: 10}}><i>Select some text to annotate</i></span> : ""}
         </Row>
         <Row className={this.state.pointer? "cursor-text" : "cursor-default"}>
           <Highlightable

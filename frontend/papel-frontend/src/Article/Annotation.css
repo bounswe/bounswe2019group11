@@ -1,5 +1,5 @@
 .annotation-button-active {
-  background-color: #ada;
+  background-color: #daa;
   border-radius: 2px;
   padding: 4px;
   margin-top: 8px;
@@ -9,7 +9,7 @@
   box-shadow: 2px 2px #aaa
 }
 .annotation-button-disabled {
-  background-color: #daa;
+  background-color: #ada;
   border-radius: 2px;
   padding: 4px;
   margin-top: 8px;
