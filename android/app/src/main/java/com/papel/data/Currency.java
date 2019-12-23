@@ -26,7 +26,7 @@ public class Currency extends TradingEquipment {
         this.id = id;
         this.code = code;
     }
-    
+
 
     public Currency(Parcel in, String id, String code) {
         super(in);
