@@ -4068,10 +4068,20 @@
           "description": "Currency code if this is an currency alert, empty string otherwise",
           "example": "EUR"
         },
+        "currencyId": {
+          "type": "string",
+          "description": "Currency id if this is an currency alert, null otherwise",
+          "example": "5da07611e407903a5d01b233"
+        },
         "stockId": {
           "type": "string",
           "description": "Stock id if this is an stock alert, null otherwise",
           "example": null
+        },
+        "stockSymbol": {
+          "type": "string",
+          "description": "Stock symbol if this is an stock alert, empty string otherwise",
+          "example": ""
         }
       }
     },
