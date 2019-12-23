@@ -2,4 +2,5 @@ practice-app/node_modules
 practice-app/package-lock.json
 backend/node_modules
 backend/package-lock.json
+backend-annotation/node_modules
 .idea/
