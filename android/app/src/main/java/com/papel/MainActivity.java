@@ -3,6 +3,8 @@ package com.papel;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -46,17 +48,22 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,6 +71,10 @@ public class MainActivity extends AppCompatActivity {
     ListView searchListView;
     ArrayList<Object> searchList = new ArrayList<>();
     SearchAdapter adapter;
+    ListView notificationListView;
+    ArrayList<String> notificationList = new ArrayList<>();
+    ArrayAdapter<String> itemsAdapter;
+    ToggleButton notificationToggle;
     private SearchView searchView;
     RequestQueue requestQueue;
     ProgressBar progressBar;
@@ -85,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
         final Intent profileIntent = new Intent(this, ProfileActivity.class);
         profileIntent.putExtra("UserId", user.getId());
-
 
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         final NavigationView navigationView = findViewById(R.id.nav_view);
@@ -143,24 +153,29 @@ public class MainActivity extends AppCompatActivity {
         searchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(adapter.getItem(i) instanceof TradingEquipment){
+                if (adapter.getItem(i) instanceof TradingEquipment) {
                     Intent intent = new Intent(getApplicationContext(), TradingEquipmentDetailActivity.class);
-                    intent.putExtra("FromSearchResult",true);
+                    intent.putExtra("FromSearchResult", true);
                     intent.putExtra("TradingEquipment", (TradingEquipment) adapter.getItem(i));
                     startActivity(intent);
-                } else if(searchList.get(i) instanceof User){
+                } else if (searchList.get(i) instanceof User) {
                     Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
                     intent.putExtra("UserId", ((User) adapter.getItem(i)).getId());
                     startActivity(intent);
-                } else if(searchList.get(i) instanceof Event){
+                } else if (searchList.get(i) instanceof Event) {
                     // TODO: Go to that activity
-                } else if(searchList.get(i) instanceof Article){
+                } else if (searchList.get(i) instanceof Article) {
                     Intent intent = new Intent(getApplicationContext(), ReadArticleActivity.class);
                     intent.putExtra("articleId", ((Article) adapter.getItem(i)).getId());
                     startActivity(intent);
                 }
             }
         });
+
+        notificationListView = findViewById(R.id.notification_listView);
+        itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, notificationList);
+        notificationListView.setAdapter(itemsAdapter);
+        itemsAdapter.notifyDataSetChanged();
 
     }
 
@@ -180,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem searchViewItem = menu.findItem(R.id.app_bar_search);
+        searchViewItem.setVisible(true);
         searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -202,6 +218,34 @@ public class MainActivity extends AppCompatActivity {
                 searchListView.setVisibility(View.GONE);
                 updateSearchList("");
                 return false;
+            }
+        });
+
+        MenuItem notificationItem = menu.findItem(R.id.action_notification);
+        notificationToggle = (ToggleButton) MenuItemCompat.getActionView(notificationItem);
+
+        notificationItem.setVisible(true);
+
+        notificationToggle.setLayoutParams(new LinearLayout.LayoutParams(50, 50));
+        notificationToggle.setBackgroundDrawable(getDrawable(R.drawable.ic_notification));
+
+        notificationToggle.setTextOff("");
+        notificationToggle.setTextOn("");
+
+        notificationToggle.setChecked(true);
+        notificationToggle.setChecked(false);
+
+
+        notificationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    notificationListView.setVisibility(View.VISIBLE);
+                    getNotifications();
+                } else {
+                    notificationListView.setVisibility(View.GONE);
+                    notificationList.removeAll(notificationList);
+                }
             }
         });
 
@@ -251,4 +295,77 @@ public class MainActivity extends AppCompatActivity {
             progressBar.setVisibility(View.VISIBLE);
         }
     }
+
+    private void getNotifications() {
+        String url = Constants.LOCALHOST + Constants.NOTIFICATION;
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try{
+                    JSONArray responseArray = new JSONArray(response);
+                    for(int i=0; i<responseArray.length(); i++){
+                        JSONObject object = responseArray.getJSONObject(i);
+                        String type = object.getString("notification");
+                        if(type.equals("follow")){
+                            JSONObject followerObject = object.getJSONObject("follower");
+                            String name = followerObject.getString("name") + " " + followerObject.getString("surname");
+                            String notif = name + " requested to follow you!";
+                            notificationList.add(notif);
+                        }else if(type.equals("alert")){
+                            int teType = object.getInt("type");
+                            int dir = object.getInt("direction");
+                            double rate = object.getDouble("rate");
+                            double curRate = object.getDouble("currentRate");
+                            String code;
+                            if(teType == 0){
+                                code = object.getString("currencyCode");
+                            }else{
+                                code = object.getString("stockSymbol");
+                            }
+                            String notif = code + " is ";
+                            if(dir == 1){
+                                notif += "now above " + rate + ". It is " + curRate;
+                            }else{
+                                notif += "now below " + rate + ". It is " + curRate;
+                            }
+                            notificationList.add(notif);
+                        }
+                    }
+                    itemsAdapter.notifyDataSetChanged();
+
+                }catch (JSONException e){
+
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                NetworkResponse networkResponse = error.networkResponse;
+                if (networkResponse != null) {
+                    String data = new String(networkResponse.data);
+                    try {
+                        JSONObject errorObject = new JSONObject(data);
+                        String message = errorObject.getString("message");
+                        Toast.makeText(getApplicationContext(), "There was an error when getting notifications: " + message, Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+        requestQueue.add(request);
+
+    }
+
 }
