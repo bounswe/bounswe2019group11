@@ -125,6 +125,10 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
         select: false,
+    },
+    avatar:{
+        type:String,
+        default:"https://www.diplomacy.edu/sites/all/themes/jollyany/demos/no-avatar.jpg"
     }
 });
 
