@@ -5,3 +5,5 @@ backend-annotation/node_modules
 backend/package-lock.json
 backend-annotation/node_modules
 .idea/
+.DS_Store
+android/*.log

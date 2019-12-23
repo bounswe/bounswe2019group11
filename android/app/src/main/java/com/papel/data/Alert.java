@@ -6,6 +6,7 @@ import android.os.Parcelable;
 
 public class Alert implements Parcelable {
     private String stockId;
+    private String stockSymbol;
     private String currencyCode;
     private String id;
     private int type;
@@ -20,6 +21,7 @@ public class Alert implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(this.stockId);
+        parcel.writeString(this.stockSymbol);
         parcel.writeString(this.currencyCode);
         parcel.writeString(this.id);
         parcel.writeInt(this.type);
@@ -39,6 +41,7 @@ public class Alert implements Parcelable {
 
     private Alert(Parcel in) {
         this.stockId = in.readString();
+        this.stockSymbol = in.readString();
         this.currencyCode = in.readString();
         this.id = in.readString();
         this.type = in.readInt();
@@ -46,8 +49,9 @@ public class Alert implements Parcelable {
         this.rate = in.readDouble();
     }
 
-    public Alert(String stockId, String currencyCode, String id, int type, int direction, double rate) {
+    public Alert(String stockId, String stockSymbol,String currencyCode, String id, int type, int direction, double rate) {
         this.stockId = stockId;
+        this.stockSymbol = stockSymbol;
         this.currencyCode = currencyCode;
         this.id = id;
         this.type = type;
@@ -101,5 +105,13 @@ public class Alert implements Parcelable {
 
     public void setRate(double rate) {
         this.rate = rate;
+    }
+
+    public String getStockSymbol() {
+        return stockSymbol;
+    }
+
+    public void setStockSymbol(String stockSymbol) {
+        this.stockSymbol = stockSymbol;
     }
 }

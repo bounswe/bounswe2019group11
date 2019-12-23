@@ -238,7 +238,7 @@ public class ResponseParser {
     }
 
     public static UserInvestments parseInvestment(JSONObject response) {
-        UserInvestments userInv = null;
+        UserInvestments userInvestments = null;
         try {
             String investmentId = response.getString("_id");
             ArrayList<Investment> investments = new ArrayList<>();
@@ -246,7 +246,7 @@ public class ResponseParser {
             for (int j = 0; j < stocks.length(); j++) {
                 JSONObject stockObject = stocks.getJSONObject(j);
                 Stock stock = parseStock(stockObject.getJSONObject("stock"));
-                Double amount = stockObject.getDouble("amount");
+                int amount = stockObject.getInt("amount");
                 if (stock != null) {
                     Investment inv = new Investment(stock, amount);
                     investments.add(inv);
@@ -256,17 +256,17 @@ public class ResponseParser {
             for (int j = 0; j < currencies.length(); j++) {
                 JSONObject currencyObject = currencies.getJSONObject(j);
                 Currency currency = parseCurrency(currencyObject.getJSONObject("currency"));
-                Double amount = currencyObject.getDouble("amount");
+                int amount = currencyObject.getInt("amount");
                 if (currency != null) {
                     Investment inv = new Investment(currency, amount);
                     investments.add(inv);
                 }
             }
-            userInv = new UserInvestments(investmentId, investments);
+            userInvestments = new UserInvestments(investmentId, investments);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return userInv;
+        return userInvestments;
     }
 
     public static Annotation parseAnnotation(JSONObject response) {
@@ -347,12 +347,13 @@ public class ResponseParser {
         Alert alert = null;
         try {
             String stockId = response.getString("stockId");
+            String stockSymbol = response.getString("stockSymbol");
             String currencyCode = response.getString("currencyCode");
             String id = response.getString("_id");
             int type = response.getInt("type");
             int direction = response.getInt("direction");
             double rate = response.getDouble("rate");
-            alert = new Alert(stockId,currencyCode,id,type,direction,rate);
+            alert = new Alert(stockId,stockSymbol,currencyCode,id,type,direction,rate);
         } catch (JSONException e) {
             e.printStackTrace();
         }
