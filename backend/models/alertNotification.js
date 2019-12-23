@@ -40,6 +40,12 @@ const alertNotificationSchema = mongoose.Schema({
         type: String,
         required: false,
         default: ""
+    },
+    currencyId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        default: null,
+        ref: 'Currency'
     }
 });
 
