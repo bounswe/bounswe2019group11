@@ -22,10 +22,9 @@ module.exports.getByUserId = async (userID) =>{
     })
     if(investment){
         return investment;
-    }else if (!investment == 0 && user.role == 'TRADER'){
+    }else {
         return await this.create({},userID);
     }   
-    throw errors.NOT_TRADER();
 }
 
 module.exports.create = async (myInvestments, userID) => {
