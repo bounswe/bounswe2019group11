@@ -18,6 +18,10 @@ const articleSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
         required: true,
+    },
+    tags: {
+        type: [String],
+        default: []
     }
 });
 
