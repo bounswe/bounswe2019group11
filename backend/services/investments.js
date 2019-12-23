@@ -87,9 +87,9 @@ module.exports.removeStock = async (theStock, theAmount, investmentsID) => {
     const investmentsToBeModified = await Investments.findOne({
         _id: investmentsID
     });
-    currentAmount = Number(investmentsToBeModified.stocks[index].amount);
-    const dollarAmount = theAmount * Number(stockToBeAdded.price)
+    const dollarAmount = theAmount * Number(stockToBeDeleted.price);
     const index = investmentsToBeModified.stocks.findIndex(s => s.stock._id == stockToBeDeleted._id);
+    currentAmount = Number(investmentsToBeModified.stocks[index].amount);    
     if(index == -1){
         throw errors.STOCK_NOT_FOUND();
     }else{
@@ -112,10 +112,9 @@ module.exports.removeCurrency = async (theCurrency,theAmount,investmentsID) => {
     const investmentsToBeModified = await Investments.findOne({
         _id: investmentsID
     });
-    currentAmount = Number(investmentsToBeModified.currencies[index].amount);
-    const dollarAmount = theAmount / Number(currencyToBeAdded.rate);
+    const dollarAmount = theAmount / Number(currencyToBeDeleted.rate);
     const index = investmentsToBeModified.currencies.findIndex(c => c.currency._id == currencyToBeDeleted._id);
-    await moneyService.deposit(user._id,dollarAmount);
+    currentAmount = Number(investmentsToBeModified.currencies[index].amount);    
     if(index == -1){
         throw errors.STOCK_NOT_FOUND();
     }else{
