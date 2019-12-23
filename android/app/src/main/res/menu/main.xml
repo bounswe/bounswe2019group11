@@ -6,9 +6,21 @@
         android:orderInCategory="100"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_notification"
+        android:icon="@drawable/ic_notification"
+        android:orderInCategory="300"
+        android:title="@string/notification"
+        app:showAsAction="always"
+        app:actionViewClass="android.widget.ToggleButton"
+        android:visible="false"/>
+
+    <item
         android:id="@+id/app_bar_search"
         style="@android:style/Widget.Material.SearchView"
         android:title="@string/search"
+        android:visible="false"
         app:showAsAction="ifRoom|withText"
         app:actionViewClass="android.widget.SearchView"/>
+
+
 </menu>
