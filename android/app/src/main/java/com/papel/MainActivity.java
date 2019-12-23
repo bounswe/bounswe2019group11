@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if(adapter.getItem(i) instanceof TradingEquipment){
                     Intent intent = new Intent(getApplicationContext(), TradingEquipmentDetailActivity.class);
+                    intent.putExtra("FromSearchResult",true);
                     intent.putExtra("TradingEquipment", (TradingEquipment) adapter.getItem(i));
                     startActivity(intent);
                 } else if(searchList.get(i) instanceof User){
