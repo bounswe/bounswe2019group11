@@ -9,8 +9,11 @@ function ProfileCard(props) {
   const [location, setLocation] = useState({})
 
   var user
-  if (props.isMe)
-    user = cookies.user
+
+  if (props.isMe){
+      user = cookies.user
+     // user.avatar = props.user.avatar
+  }
   else
     user = props.user
 

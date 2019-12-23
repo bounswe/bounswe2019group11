@@ -44,7 +44,9 @@ class SimpleReactFileUpload extends React.Component {
         });
 
          */
-        return  post(url, formData,config);
+        return  post(url, formData,config).then(data=>{
+
+        });
         //return  $.post(url, formData,config)
     }
 
