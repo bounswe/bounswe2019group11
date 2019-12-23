@@ -83,6 +83,10 @@
     <string name="search">Search</string>
     <string name="EUR">EUR</string>
     <string name="alert_rate"></string>
+    <string name="set_alert">Set Alert</string>
+    <string name="remove_alert">Remove Alert</string>
+    <string name="below">Below this value</string>
+    <string name="above">Above this value</string>
 </resources>
 
 
