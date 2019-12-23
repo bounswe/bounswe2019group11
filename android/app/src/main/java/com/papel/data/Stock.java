@@ -10,6 +10,7 @@ public class Stock extends TradingEquipment {
     private double price;
     private String symbol;
     private ArrayList<Comment> comments;
+    private int amount;
 
     public Stock(String id, String name, double price, String symbol) {
         this.id = id;
@@ -29,6 +30,12 @@ public class Stock extends TradingEquipment {
     public Stock(String id, String symbol) {
         this.id = id;
         this.symbol = symbol;
+    }
+
+    public Stock(String id, String symbol, int amount) {
+        this.id = id;
+        this.symbol = symbol;
+        this.amount = amount;
     }
 
     public Stock(Parcel in, String id, String symbol) {

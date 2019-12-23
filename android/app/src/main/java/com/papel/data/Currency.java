@@ -14,6 +14,7 @@ public class Currency extends TradingEquipment {
     private int decreaseCount=0;
     private ArrayList<Comment> comments;
     private int userVote=0;
+    private int amount;
 
     public Currency(String id,String code, String name, double rate) {
         this.id = id;
@@ -25,6 +26,12 @@ public class Currency extends TradingEquipment {
     public Currency(String id, String code) {
         this.id = id;
         this.code = code;
+    }
+
+    public Currency(String id, String code, int amount) {
+        this.id = id;
+        this.code = code;
+        this.amount = amount;
     }
 
     public Currency(Parcel in, String id, String code) {
