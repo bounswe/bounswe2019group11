@@ -244,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
                     getNotifications();
                 } else {
                     notificationListView.setVisibility(View.GONE);
+                    notificationList.removeAll(notificationList);
                 }
             }
         });
