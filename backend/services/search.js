@@ -15,6 +15,12 @@ module.exports.search = async (term) => {
         .find(searchCondition)
         .select({title: 1})
         .exec();
+    if (response['articles'] && response['articles'].length === 0) {
+        response['articles'] = await Article
+            .find({title: {$regex: `^${term}`, $options: 'i'}})
+            .select({title: 1})
+            .exec()
+    }
     response['currencies'] = await Currency
         .find(searchCondition)
         .select({code: 1})
@@ -31,6 +37,12 @@ module.exports.search = async (term) => {
         .find(searchCondition)
         .select({name: 1, surname: 1, 'location.displayName': 1})
         .exec();
+    if (response['users'] && response['users'].length === 0) {
+        response['users'] = await User
+            .find({name: {$regex: `^${term}`, $options: 'i'}})
+            .select({name: 1, surname: 1, 'location.displayName': 1})
+            .exec();
+    }
 
     return response;
 };
