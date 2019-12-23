@@ -1,0 +1,302 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API documentation for the Annotation Backend Service",
+    "version": "1.0.0",
+    "title": "Papel Annotation Backend"
+  },
+  "host": "ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "annotation",
+      "description": "Authentication endpoints"
+    }
+  ],
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+
+    "/annotation/article/{articleId}": {
+      "get": {
+        "tags": [
+          "annotation"
+        ],
+        "summary": "Get annotations with related to the article endpoint.",
+        "produces": [
+          "application/text",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "articleId",
+            "in": "path",
+            "description": "Article ID for fetching annotations",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Annotation"
+              }
+            }
+          },
+          "503": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/annotation/": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "annotation"
+        ],
+        "summary": "Create annotation endpoint ",
+        "description": "Creates annotation and returns created annotation as response. This endpoint will be called when a user highlight a text from an article",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "annotation",
+            "description": "The annotation to be created.(In the body non of creator and created info will be sent. Only:  type, motivation, body->type,body->value,body->purpose,target->id,target->selector->type,target->selector->start,target->selector->end need to be sent)",
+            "schema": {
+              "$ref": "#/definitions/Annotation"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Successfully signed up. A verification email is sent.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/Annotation"
+            }
+          },
+          "503": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/annotation/{annotationId}": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "annotation"
+        ],
+        "summary": "Add body to an existing annotation endpoint ",
+        "description": "Creates annotation and returns created annotation as response. This endpoint will be called when a user highlight a text from an article",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "annotationId",
+            "in": "path",
+            "description": "Annotation ID for adding new body (comment) to the annotation",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body of annotation",
+            "description": "New annotation body for adding new body(comment) to a existing annotation. A user could add comment on a someone else's annotation. Only:  type,value and purpose will be sent)",
+            "schema": {
+              "$ref": "#/definitions/Body"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Successfully signed up. A verification email is sent.",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/Annotation"
+            }
+          },
+          "503": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Annotation": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of the comment.",
+          "example": "5daedb5af05eb852753ac9c0"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of the receiving response (This is always equal to \"Annotation\")",
+          "example": "Annotation"
+        },
+        "creator": {
+          "type": "string",
+          "description": "Id of the creator of this annotation.",
+          "example": "5daedb59f05eb852753ac9be"
+        },
+        "created": {
+          "type": "string",
+          "description": "Date when the annotation is created.",
+          "example": "2019-11-14T21:52:05.381Z"
+        },
+        "motivation": {
+          "type": "string",
+          "enum": [
+            "highlighting",
+            "questioning",
+            "describing",
+            "commenting"
+          ],
+          "description": "Motivation of the annotation (In our project it is highlighting and it is default value)",
+          "example": "highligting"
+        },
+        "body": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Body"
+          },
+          "description": "Body array of the annotation."
+        },
+        "target": {
+          "type": "object",
+          "$ref": "#/definitions/Target",
+          "description": "Target information of the annotation. It declares article ID which the annotation points to and includes starts and end indexes of the article body"
+        }
+      }
+    },
+    "Body": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of the body. Important for deleting the body of the annotation (will be implemented soon)",
+          "example": "5daedb5af05eb852753ac9c0"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "TextualBody"
+          ],
+          "description": "Type of the body (For now this is always equal to \"TextualBody\"",
+          "example": "TextualBody"
+        },
+        "value": {
+          "type": "string",
+          "description": "Actual content of the body. This is like comment on the highlighted text. For example lyric explanation comment of the highlighted lyric for a music)",
+          "example": "This is comment on highlight on the first passage"
+        },
+        "format": {
+          "type": "string",
+          "description": "Format of the body. I think it is unnecessary but It may stay",
+          "example": "text/plain"
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "highlighting",
+            "questioning",
+            "describing",
+            "commenting"
+          ],
+          "description": "Purpose of the body. In our case It may only equals \"commenting\"",
+          "example": "commenting"
+        },
+        "creator": {
+          "type": "string",
+          "description": "Id of the creator of this body. (It returns only user ID now. username and surname will be added soon)",
+          "example": "5daedb59f05eb852753ac9be"
+        },
+        "created": {
+          "type": "string",
+          "description": "Date when the body(comment) is created.",
+          "example": "2019-11-14T21:52:05.381Z"
+        }
+      }
+    },
+    "Target": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Database Id of the target.will be never used Not Important",
+          "example": "5daedb5af05eb852753ac9c0"
+        },
+        "id": {
+          "type": "string",
+          "description": "Actual Id of the target.In our project it is article ID",
+          "example": "5dfcaf78ba13d95e817b63bc"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of the target. In our case it is article url which is pointed (Unnecessary)",
+          "example": "http://ec2-18-197-152-183.eu-central-1.compute.amazonaws.com:3000/article/5dfcaf78ba13d95e817b63bc"
+        },
+        "format": {
+          "type": "string",
+          "description": "Format of the body. I think it is unnecessary but It may stay",
+          "example": "text/plain"
+        },
+        "selector": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "Selector type. It is important it defines targeted element is article text or article image(For now it is only equal to DataPositionSelector)",
+              "example": "DataPositionSelector"
+            },
+            "start": {
+              "type": "integer",
+              "description": "If the selector type == DataPositionSelector then this declares start position of the highlighted text on the article text",
+              "example": 1
+            },
+            "end": {
+              "type": "integer",
+              "description": "If the selector type == DataPositionSelector then this declares end position of the highlighted text on the article text",
+              "example": 120
+            }
+
+          },
+          "description": "Defines which part of the article is annotated"
+        }
+      }
+    }
+  }
+}

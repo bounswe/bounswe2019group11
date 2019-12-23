@@ -1,5 +1,4 @@
 import React from 'react';
-import Highlightable from 'highlightable';
 import './Article.css';
 import {instanceOf} from 'prop-types'
 import {withCookies, Cookies} from 'react-cookie';
@@ -9,7 +8,7 @@ import $ from 'jquery';
 import {Row, Col, Button, Card, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus,faThumbsUp,faThumbsDown, faUserCircle, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
-
+import {AnnotatedText} from './Annotation'
 import CommentPreview from './CommentPreview';
 import {postRequest} from '../helpers/request';
 
@@ -23,11 +22,10 @@ class Article extends React.Component {
     const loggedIn = !!cookies.get('userToken');
     var userId ="";
     if(loggedIn) {
-     userId = cookies.get('user')._id?cookies.get('user')._id:"check get user id";
-
+      userId = cookies.get('user')._id?cookies.get('user')._id:"check get user id";
     }
     else {console.log("not logged");}
-    this.state = {commentsPreview:"", comments:"",loggedIn: loggedIn, userId:userId, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
+    this.state = {commentsPreview:"", comments:"", loggedIn: loggedIn, userId:userId, commentText:"", id: this.props.match.params.id, article: {}, articleLoading: true, authorLoading: true, author: {}};
     this._article={};
     this._article_vote_type=0;
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -46,9 +44,9 @@ class Article extends React.Component {
       self._article=this.state.article;
       }
     );
-    
-     
-  
+
+
+
   }
 
   handleCommentEditorChange(event) {
@@ -68,19 +66,24 @@ class Article extends React.Component {
       var url= app_config.api_url+"/article/"+this.state.id+"/comment";
       var authToken = cookies.get('userToken');
       var success;
-      
-       var a = $.ajax({
+
+
+      var a = $.ajax({
         type: "POST",
         url: url,
         dataType: 'json',
         async: true,
         data: data,
-        success: function() {
-          this.setState({addCommentResp:true})
-        },
+        success: function() {this.setState({addCommentResp:true});},
         beforeSend: (xhr) => xhr.setRequestHeader("Authorization", "Bearer " + authToken)
-      })
-      window.location.reload();
+      }).catch((status, err) => {
+        console.log(status.status);
+        if (status.status==200){
+          console.log("s");
+          window.location.reload();
+        }
+      });
+      //window.location.reload();
     }
   }
   handleSubmit(event) {
@@ -121,6 +124,7 @@ class Article extends React.Component {
   }
 }
   render() {
+    const {cookies} = this.props
     var article = this.state.article;
     var author = this.state.author;
     var authorLine;
@@ -133,9 +137,21 @@ class Article extends React.Component {
       authorLine = <p style={{color: "gray"}}>author not found</p> ;
     else
       authorLine = <a href={"../user/" + author._id} style={{color: "gray"}}>by {author.name} {author.surname}</a> ;
+
+    var articleBody = article.body?article.body:"loading..."
+    if (loggedIn) {
+      articleBody =
+      (article.body?
+      <AnnotatedText
+        article={article}
+        authToken = {cookies.get('userToken')}
+      />
+      :
+      "loading...")
+    }
     return (
       <Row className="article">
-       
+
         <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
           <Card>
             <Card.Body>
@@ -143,12 +159,7 @@ class Article extends React.Component {
               {authorLine}
               <hr />
               <Card.Img variant = "top" src= {article.imgUri} />
-              <Card.Text>{
-              
-              article.body? article.body.split(""):"loading..."}</Card.Text>
-              
-              
-              {console.log(article.body? article.body.split(""):"henüz gelmedi")}
+                {articleBody}
               <hr/>
             </Card.Body>
             <Row className="" >
@@ -178,7 +189,7 @@ class Article extends React.Component {
 
         </Col>
 
-        <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
+        <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 10}}>
           <label htmlFor="commentEditor"></label>
 
             <form className="span6" onSubmit={this.handleCommentEditorSubmit}>
@@ -193,9 +204,7 @@ class Article extends React.Component {
             </form>
         </Col>
 
-
-
-        <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginBottom: 20}}>
+        <Col sm={{span: 10, offset: 1}} xs={{span: 12}} style={{marginTop:20, marginBottom: 20}}>
 
           <Card>
             <Card.Body>

@@ -54,6 +54,8 @@ public class AddInvestmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_investment);
 
+        addRequestQueue = Volley.newRequestQueue(getApplicationContext());
+
         searchView = findViewById(R.id.inv_searchView);
         tradingEquipmentListView = findViewById(R.id.investment_list);
         adapter = new TradingEquipmentListViewAdapter(getApplicationContext(), tradingEquipmentArrayList,true);
@@ -202,5 +204,108 @@ public class AddInvestmentActivity extends AppCompatActivity {
             buyCurrency((Currency) tradingEq, amount);
         }*/
     }
+
+//    private void buyStock(final Stock tradingEquipment, double amount) {
+//        requestNumber += 1;
+//        String url = Constants.LOCALHOST + Constants.PORTFOLIO + portfolio.getId() + "/"+ Constants.STOCK;
+//        final JSONObject jsonBody = new JSONObject();
+//        try {
+//            jsonBody.put("_id", tradingEquipment.getId());
+//            jsonBody.put("name",tradingEquipment.getName());
+//            jsonBody.put("price",tradingEquipment.getPrice());
+//            jsonBody.put("stockSymbol",tradingEquipment.getSymbol());
+//            //jsonBody.put("stockName",tradingEquipment.getStockName()); TODO ? important
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//                try {
+
+//                    JSONObject jsonResponse = new JSONObject(response);
+//                    Portfolio parsedPortfolio = ResponseParser.parsePortfolio(jsonResponse);
+//                    if(parsedPortfolio != null) {
+//                        portfolio = parsedPortfolio;
+//                        tradingEquipments.clear();
+//                        tradingEquipments.addAll(portfolio.getTradingEquipments());
+//                        tradingEquipmentListViewAdapter.notifyDataSetChanged();
+//                    }
+//                    requestNumber -= 1;
+//                    if (requestNumber == 0) {
+//                        showUI();
+//                    }
+//                }catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't add trading equipment to your porfolio.Please try again.",null);
+//                requestNumber -= 1;
+//            }
+//        }){
+//            @Override
+//            public byte[] getBody() throws AuthFailureError {
+//                return jsonBody.toString().getBytes();
+//            }
+//
+//            @Override
+//            public String getBodyContentType() {
+//                return "application/json";
+//            }
+//        };
+//        addRequestQueue.add(request);
+//    }
+//
+//    private void buyCurrency(Currency currency, double amount) {
+//        requestNumber += 1;
+//        String url = Constants.LOCALHOST + Constants.PORTFOLIO + portfolio.getId() + "/"+ Constants.CURRENCY;
+//        final JSONObject jsonBody = new JSONObject();
+//        try {
+//            jsonBody.put("_id", currency.getId());
+//            jsonBody.put("code",currency.getCode());
+//            jsonBody.put("name",currency.getName());
+//            jsonBody.put("rate",currency.getRate());
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//                try {
+//                    JSONObject jsonResponse = new JSONObject(response);
+//                    Portfolio parsedPortfolio = ResponseParser.parsePortfolio(jsonResponse);
+//                    if(parsedPortfolio != null) {
+//                        portfolio = parsedPortfolio;
+//                        tradingEquipments.clear();
+//                        tradingEquipments.addAll(portfolio.getTradingEquipments());
+//                        tradingEquipmentListViewAdapter.notifyDataSetChanged();
+//                    }
+//                    requestNumber -= 1;
+//                }catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                DialogHelper.showBasicDialog(AddInvestmentActivity.this,"Error","We couldn't add trading equipment to your porfolio.Please try again.",null);
+//                requestNumber -= 1;
+//            }
+//        }){
+//            @Override
+//            public byte[] getBody() throws AuthFailureError {
+//                return jsonBody.toString().getBytes();
+//            }
+//
+//            @Override
+//            public String getBodyContentType() {
+//                return "application/json";
+//            }
+//        };
+//        addRequestQueue.add(request);
+//    }
 
 }

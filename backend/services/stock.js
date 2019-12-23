@@ -2,6 +2,8 @@ const Stock = require('../models/stock');
 const errors = require('../helpers/errors');
 const StockComment = require('../models/stockComment');
 const mongoose = require('mongoose');
+const Alert = require('../models/alert');
+const alertHelper = require('../helpers/alert');
 
 const STAGES = {
     GET_COMMENTS: {
@@ -80,7 +82,7 @@ const STAGES = {
 module.exports.getAll = async () => {
     return await Stock
         .find()
-        .select("-price -monthlyPrice -dailyPrice")
+        .select("-monthlyPrice -dailyPrice")
         .exec();
 };
 
@@ -155,5 +157,42 @@ module.exports.deleteComment = async (stockId, commentId, authorId) => {
     const comment = await StockComment.findOneAndDelete({_id: commentId, stockId, authorId});
     if (!comment) {
         throw errors.COMMENT_NOT_FOUND();
+    }
+};
+
+module.exports.saveAlert = async (id, userId, direction, rate) => {
+    if (!(mongoose.Types.ObjectId.isValid(id))) {
+        throw errors.STOCK_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(userId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    const stockSymbol = await Stock
+        .findOne({_id: id})
+        .select({stockSymbol: 1})
+        .exec();
+    await Alert.create({
+        type: alertHelper.TYPE.STOCK,
+        userId,
+        direction,
+        rate,
+        stockId: id,
+        stockSymbol: stockSymbol.stockSymbol,
+    });
+};
+
+module.exports.deleteAlert = async (stockId, userId, alertId) => {
+    if (!(mongoose.Types.ObjectId.isValid(stockId))) {
+        throw errors.INVALID_CURRENCY_CODE();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(userId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(alertId))) {
+        throw errors.ALERT_NOT_FOUND();
+    }
+    const alert = await Alert.findOneAndDelete({_id: alertId, type: alertHelper.TYPE.STOCK, stockId, userId});
+    if (!alert) {
+        throw errors.ALERT_NOT_FOUND();
     }
 };

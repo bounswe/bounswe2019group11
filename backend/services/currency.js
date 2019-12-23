@@ -4,6 +4,8 @@ const CurrencyComment = require('../models/currencyComment');
 const mongoose = require('mongoose');
 const Prediction = require('../models/prediction');
 const predictionHelper = require('../helpers/prediction');
+const Alert = require('../models/alert');
+const alertHelper = require('../helpers/alert');
 
 const STAGES = {
     GET_COMMENTS: {
@@ -369,5 +371,39 @@ module.exports.deleteComment = async (currencyCode, commentId, authorId) => {
     const comment = await CurrencyComment.findOneAndDelete({_id: commentId, currencyCode, authorId});
     if (!comment) {
         throw errors.COMMENT_NOT_FOUND();
+    }
+};
+
+module.exports.saveAlert = async (currencyCode, userId, direction, rate) => {
+    currencyCode = currencyCode.toUpperCase();
+    if (!SUPPORTED_CURRENCIES.has(currencyCode)) {
+        throw errors.INVALID_CURRENCY_CODE();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(userId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    await Alert.create({
+        type: alertHelper.TYPE.CURRENCY,
+        userId,
+        direction,
+        rate,
+        currencyCode
+    });
+};
+
+module.exports.deleteAlert = async (currencyCode, userId, alertId) => {
+    currencyCode = currencyCode.toUpperCase();
+    if (!SUPPORTED_CURRENCIES.has(currencyCode)) {
+        throw errors.INVALID_CURRENCY_CODE();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(userId))) {
+        throw errors.USER_NOT_FOUND();
+    }
+    if (!(mongoose.Types.ObjectId.isValid(alertId))) {
+        throw errors.ALERT_NOT_FOUND();
+    }
+    const alert = await Alert.findOneAndDelete({_id: alertId, type: alertHelper.TYPE.CURRENCY, currencyCode, userId});
+    if (!alert) {
+        throw errors.ALERT_NOT_FOUND();
     }
 };

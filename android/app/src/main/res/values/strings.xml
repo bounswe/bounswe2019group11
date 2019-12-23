@@ -70,6 +70,7 @@
     <string name="no_pending_following_message">You don\'t have pending following request.</string>
     <string name="no_comments">There are no comments yet. Be the first one to comment!</string>
     <string name="no_predictions">There are no predictions yet</string>
+    <string name="no_alerts">You don\'t have alerts.</string>
     <string name="stock">STOCK</string>
     <string name="currency">CURRENCY</string>
     <string name="investments">Investments</string>
@@ -78,7 +79,14 @@
     <string name="amount">Amount</string>
     <string name="sell">SELL</string>
     <string name="remove">REMOVE</string>
-
+    <string name="image_hint">Image URL</string>
+    <string name="search">Search</string>
+    <string name="EUR">EUR</string>
+    <string name="alert_rate"></string>
+    <string name="set_alert">Set Alert</string>
+    <string name="remove_alert">Remove Alert</string>
+    <string name="below">Below this value</string>
+    <string name="above">Above this value</string>
 </resources>
 
 

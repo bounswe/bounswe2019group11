@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 
 import com.abdeveloper.library.MultiSelectDialog;
 import com.abdeveloper.library.MultiSelectModel;
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -51,6 +52,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class InvestmentsFragment extends Fragment {
 
@@ -62,11 +65,12 @@ public class InvestmentsFragment extends Fragment {
     private SearchView searchView;
     private ArrayList<TradingEquipment> tradingEquipmentOptions = new ArrayList<>();
     private int numberOfTradingEquipmentRequest = 0;
-
+    private User user = User.getInstance();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_investments, container, false);
+        getInvestmentId();
 
         Stock s = new Stock("fdjkg", "ADBE - Adobe Inc. - Common Stock", 272.7, "ADBE");
         Investment i = new Investment(s, 20.0);
@@ -136,5 +140,38 @@ public class InvestmentsFragment extends Fragment {
         });
 
         requestQueue.add(request);
+    }
+
+    private void getInvestmentId(){
+        String url = Constants.LOCALHOST + Constants.INVESTMENTS + Constants.USER + user.getId();
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray responseArray = new JSONArray(response);
+                    JSONObject jsonResponse = responseArray.getJSONObject(0);
+                    user.setInvestmentId(jsonResponse.getString("_id"));
+                    Log.d("RESPONSE_ID", "onResponse: " + user.getInvestmentId());
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                DialogHelper.showBasicDialog(getContext(),"Error","We couldn't load investments.Please try again.",null);
+            }
+        }){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+        requestQueue.add(request);
+
     }
 }

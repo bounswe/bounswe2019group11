@@ -1,5 +1,6 @@
 package com.papel.ui.articles;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,7 +8,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -30,9 +37,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.papel.Constants;
 import com.papel.ListViewAdapter;
 import com.papel.R;
+import com.papel.data.Annotation;
 import com.papel.data.Article;
 import com.papel.data.Comment;
 import com.papel.data.User;
@@ -40,6 +49,7 @@ import com.papel.ui.profile.ProfileActivity;
 import com.papel.ui.utils.DialogHelper;
 import com.papel.ui.utils.ResponseParser;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -68,7 +78,8 @@ public class ReadArticleActivity extends AppCompatActivity {
     private ColorStateList cl_black;
     private String articleId;
     private ImageView articleImage;
-
+    private FloatingActionButton addAnnotationButton;
+    private ArrayList<Annotation> annotations;
 
     private String authorId;
 
@@ -80,31 +91,35 @@ public class ReadArticleActivity extends AppCompatActivity {
 
         articleId = getIntent().getStringExtra("articleId");
 
-        title = (TextView) header.findViewById(R.id.read_article_title_textview);
-        content = (TextView) header.findViewById(R.id.read_article_content_textview);
-        author = (TextView) header.findViewById(R.id.read_article_author_textview);
-        date = (TextView) header.findViewById(R.id.read_article_date_textview);
+        title = header.findViewById(R.id.read_article_title_textview);
+        content = header.findViewById(R.id.read_article_content_textview);
+        author = header.findViewById(R.id.read_article_author_textview);
+        date = header.findViewById(R.id.read_article_date_textview);
         voteCount = header.findViewById(R.id.vote_count_textview);
-        profile_pic = (ImageView) header.findViewById(R.id.read_article_pic_image);
-        addCommentButton = (ImageButton) header.findViewById(R.id.add_comment_button);
+        profile_pic = header.findViewById(R.id.read_article_pic_image);
+        addCommentButton = header.findViewById(R.id.add_comment_button);
         likeButton = header.findViewById(R.id.like_imageButton);
         dislikeButton = header.findViewById(R.id.dislike_imageButton);
-        commentEditText = (EditText) header.findViewById(R.id.comment_edittext);
-        commentListView = (ListView) findViewById(R.id.article_comments_listview);
+        commentEditText = header.findViewById(R.id.comment_edittext);
+        commentListView = findViewById(R.id.article_comments_listview);
         commentListView.addHeaderView(header);
         cl_primary = ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary));
         cl_black = ColorStateList.valueOf(getResources().getColor(R.color.black));
-        getArticleFromEndpoint(getApplicationContext(), articleId);
         noCommentTextView = header.findViewById(R.id.article_no_comment_textview);
         articleImage = header.findViewById(R.id.read_article_image);
+        addAnnotationButton = findViewById(R.id.add_annotation);
+        annotations = new ArrayList<>();
 
+        content.setMovementMethod(LinkMovementMethod.getInstance());
+
+        getArticleFromEndpoint(getApplicationContext(), articleId);
 
         final Intent profileIntent = new Intent(this, ProfileActivity.class);
         // TODO This should be inactive during the request to server
         author.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profileIntent.putExtra("UserId",authorId);
+                profileIntent.putExtra("UserId", authorId);
                 startActivity(profileIntent);
             }
         });
@@ -112,7 +127,7 @@ public class ReadArticleActivity extends AppCompatActivity {
         profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profileIntent.putExtra("UserId",authorId);
+                profileIntent.putExtra("UserId", authorId);
                 startActivity(profileIntent);
             }
         });
@@ -120,8 +135,8 @@ public class ReadArticleActivity extends AppCompatActivity {
         commentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Comment clickedComment = (Comment) adapter.getItem(i-1);
-                profileIntent.putExtra("UserId",clickedComment.getAuthorId());
+                Comment clickedComment = (Comment) adapter.getItem(i - 1);
+                profileIntent.putExtra("UserId", clickedComment.getAuthorId());
                 startActivity(profileIntent);
             }
         });
@@ -140,11 +155,11 @@ public class ReadArticleActivity extends AppCompatActivity {
         likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(likeButton.getImageTintList() == cl_primary){
+                if (likeButton.getImageTintList() == cl_primary) {
                     voteArticle(getApplicationContext(), articleId, true, false);
                     likeButton.setImageTintList(cl_black);
                     dislikeButton.setImageTintList(cl_black);
-                }else{
+                } else {
                     voteArticle(getApplicationContext(), articleId, false, true);
                     likeButton.setImageTintList(cl_primary);
                     dislikeButton.setImageTintList(cl_black);
@@ -156,11 +171,11 @@ public class ReadArticleActivity extends AppCompatActivity {
         dislikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(dislikeButton.getImageTintList() == cl_primary){
+                if (dislikeButton.getImageTintList() == cl_primary) {
                     voteArticle(getApplicationContext(), articleId, true, false);
                     dislikeButton.setImageTintList(cl_black);
                     likeButton.setImageTintList(cl_black);
-                }else{
+                } else {
                     voteArticle(getApplicationContext(), articleId, false, false);
                     dislikeButton.setImageTintList(cl_primary);
                     likeButton.setImageTintList(cl_black);
@@ -170,6 +185,40 @@ public class ReadArticleActivity extends AppCompatActivity {
         });
 
         registerForContextMenu(commentListView);
+
+
+        content.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Log.d("Info", "Long clicked");
+                addAnnotationButton.show();
+                return false;
+            }
+        });
+
+
+        addAnnotationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final int start = content.getSelectionStart();
+                final int end = content.getSelectionEnd();
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ReadArticleActivity.this);
+                alertDialogBuilder.setTitle("Create annotation");
+                alertDialogBuilder.setMessage("Write your annotation text");
+                final EditText annotationDialogEditText = new EditText(ReadArticleActivity.this);
+                alertDialogBuilder.setView(annotationDialogEditText);
+                alertDialogBuilder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String value = annotationDialogEditText.getText().toString();
+                        addAnnotation(getApplicationContext(), articleId, value, start, end);
+                    }
+                });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
+        });
     }
 
 
@@ -182,19 +231,24 @@ public class ReadArticleActivity extends AppCompatActivity {
                 try {
                     JSONObject object = new JSONObject(response);
                     article = ResponseParser.parseArticle(object);
-                    Glide.with(context)
-                            .load(article.getImageUrl())
-                            .fitCenter()
-                            .into(articleImage);
+                    fetchAnnotation(context, articleId);
+                    if (!article.getImageUrl().isEmpty()) {
+                        Glide.with(context)
+                                .load(article.getImageUrl())
+                                .fitCenter()
+                                .into(articleImage);
+                    } else {
+                        articleImage.setVisibility(View.GONE);
+                    }
                     title.setText(article.getTitle());
                     content.setText(article.getBody());
                     authorId = article.getAuthorId();
                     author.setText(article.getAuthorName());
                     date.setText(article.getLongDate());
                     voteCount.setText("" + article.getVoteCount());
-                    if(article.getUserVote() == 1){
+                    if (article.getUserVote() == 1) {
                         likeButton.setImageTintList(cl_primary);
-                    }else if(article.getUserVote() == -1){
+                    } else if (article.getUserVote() == -1) {
                         dislikeButton.setImageTintList(cl_primary);
                     }
                     setComments(article.getComments());
@@ -212,6 +266,7 @@ public class ReadArticleActivity extends AppCompatActivity {
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<String, String>();
@@ -223,20 +278,164 @@ public class ReadArticleActivity extends AppCompatActivity {
         requestQueue.add(request);
     }
 
-    private void setComments(ArrayList<Comment> comments_list){
+    private void fetchAnnotation(final Context context, String articleId) {
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = Constants.ANNOTATION_URL + Constants.ANNOTATION + Constants.ARTICLE + articleId;
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray responseArray = new JSONArray(response);
+                    if (responseArray.length() > 0) {
+                        for (int i = 0; i < responseArray.length(); i++) {
+                            Annotation annotation = ResponseParser.parseAnnotation(responseArray.getJSONObject(i));
+                            if (annotation != null) {
+                                annotations.add(annotation);
+                            }
+                        }
+                        setAnnotations(context);
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+
+        requestQueue.add(request);
+    }
+
+    private void setAnnotations(final Context context) {
+        SpannableString spannableContentString = new SpannableString(article.getBody());
+
+        for (int i = 0; i < annotations.size(); i++) {
+            final int annotationIndex = i;
+            final Annotation currentAnnotation = annotations.get(annotationIndex);
+            if(currentAnnotation.getStart() > 0 && currentAnnotation.getEnd() > 0) {
+                spannableContentString.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(@NonNull View view) {
+                        Log.d("Info", "Clicked: " + annotationIndex);
+
+                        Intent showAnnotationIntent = new Intent(context, ShowAnnotationActivity.class);
+                        String annotatedText = article.getBody().substring(currentAnnotation.getStart(), currentAnnotation.getEnd());
+
+                        showAnnotationIntent.putExtra("Annotation", currentAnnotation);
+                        showAnnotationIntent.putExtra("AnnotatedText", annotatedText);
+                        startActivity(showAnnotationIntent);
+                    }
+
+                    @Override
+                    public void updateDrawState(@NonNull TextPaint ds) {
+                        super.updateDrawState(ds);
+                        ds.bgColor = Color.YELLOW;
+                        ds.setUnderlineText(false);
+                    }
+                }, annotations.get(i).getStart(), annotations.get(i).getEnd(), 0);
+            }
+        }
+
+        content.setText(spannableContentString);
+    }
+
+    private void addAnnotation(final Context context, String articleId, String value, int start, int end) {
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = Constants.ANNOTATION_URL + Constants.ANNOTATION;
+        final JSONObject requestBody = new JSONObject();
+        JSONObject bodyJSON = new JSONObject();
+        JSONObject targetJSON = new JSONObject();
+        JSONObject selectorJSON = new JSONObject();
+        try {
+            requestBody.put("type", "Annotation");
+            requestBody.put("motivation", "highligthing");
+
+            bodyJSON.put("type", "TextualBody");
+            bodyJSON.put("value", value);
+            bodyJSON.put("purpose", "commenting");
+            requestBody.put("body", bodyJSON);
+
+            targetJSON.put("id", articleId);
+            selectorJSON.put("type", "DataPositionSelector");
+            selectorJSON.put("start", start);
+            selectorJSON.put("end", end);
+            targetJSON.put("selector", selectorJSON);
+            requestBody.put("target", targetJSON);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject responseJSON = new JSONObject(response);
+                    Annotation annotation = ResponseParser.parseAnnotation(responseJSON);
+                    annotations.add(annotation);
+                    setAnnotations(context);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return requestBody.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+
+        requestQueue.add(request);
+    }
+
+    private void setComments(ArrayList<Comment> comments_list) {
         comments = new ArrayList<>();
         comments.addAll(comments_list);
         adapter = new ListViewAdapter(getApplicationContext(), comments);
         commentListView.setAdapter(adapter);
-        if(comments_list.size() == 0){
+        if (comments_list.size() == 0) {
             noCommentTextView.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             noCommentTextView.setVisibility(View.GONE);
         }
         adapter.notifyDataSetChanged();
     }
 
-    private void refreshVoteCount(final Context context, final String articleId){
+    private void refreshVoteCount(final Context context, final String articleId) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url = Constants.LOCALHOST + Constants.ARTICLE + articleId;
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
@@ -245,7 +444,7 @@ public class ReadArticleActivity extends AppCompatActivity {
                 try {
                     JSONObject object = new JSONObject(response);
                     article = ResponseParser.parseArticle(object);
-                    voteCount.setText(""+article.getVoteCount());
+                    voteCount.setText("" + article.getVoteCount());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -260,6 +459,7 @@ public class ReadArticleActivity extends AppCompatActivity {
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<String, String>();
@@ -419,11 +619,12 @@ public class ReadArticleActivity extends AppCompatActivity {
         requestQueue.add(request);
     }
 
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        if (v.getId() == R.id.article_comments_listview && ((Comment)comments.get(info.position-1)).getAuthorId().equals(User.getInstance().getId())) {
+        if (v.getId() == R.id.article_comments_listview && ((Comment) comments.get(info.position - 1)).getAuthorId().equals(User.getInstance().getId())) {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.article_comments_menu, menu);
         }
@@ -466,15 +667,15 @@ public class ReadArticleActivity extends AppCompatActivity {
         return false;
     }
 
-    private void voteArticle(final Context context, final String articleId, boolean isClear, boolean isUp){
+    private void voteArticle(final Context context, final String articleId, boolean isClear, boolean isUp) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
-        String endpoint="";
-        if(isClear){
+        String endpoint = "";
+        if (isClear) {
             endpoint = Constants.CLEARVOTE;
-        }else if(isUp){
+        } else if (isUp) {
             endpoint = Constants.UPVOTE;
-        }else{
+        } else {
             endpoint = Constants.DOWNVOTE;
 
         }

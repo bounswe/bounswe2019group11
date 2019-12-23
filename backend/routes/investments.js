@@ -3,7 +3,7 @@ const router = express.Router();
 const investmentsService = require('../services/investments');
 const isAuthenticated = require('../middlewares/isAuthenticated');
 
-router.get('/',async (req,res)=>{
+router.get('/',isAuthenticated,async (req,res)=>{
     try{
         const response = await investmentsService.getAll();
         res.status(200).json(response);
@@ -13,7 +13,7 @@ router.get('/',async (req,res)=>{
     }
 });
 
-router.get('/:id',async (req,res)=>{
+router.get('/:id',isAuthenticated,async (req,res)=>{
     try{
         const Id = req.params.id;
         const response = await investmentsService.getById(Id);
@@ -27,8 +27,8 @@ router.post('/:id/stock',isAuthenticated, async (req,res) => {
 
     try{
         const Id = req.params.id;
-        const {theStock, amount} = req.body;
-        const response = await investmentsService.addStock(theStock,amount, Id);
+        const {stock, amount} = req.body;
+        const response = await investmentsService.addStock(stock,amount, Id);
         res.status(200).json(response);
     }catch (e) {
         res.status(503).json(e);
@@ -36,12 +36,12 @@ router.post('/:id/stock',isAuthenticated, async (req,res) => {
 
 });
 
-router.delete('/:id/stock',isAuthenticated,async (req,res) => {
+router.put('/:id/stock',isAuthenticated,async (req,res) => {
 
     try{
         const Id = req.params.id;
-        const theStock = {...req.body};
-        const response = await investmentsService.removeStock(theStock,Id);
+        const {stock, amount} = req.body;
+        const response = await investmentsService.removeStock(stock, amount,Id);
         res.status(200).json(response);
     }catch (e) {
         res.status(503).json(e);
@@ -53,8 +53,8 @@ router.post('/:id/currency',isAuthenticated,async (req,res) => {
 
     try{
         const Id = req.params.id;
-        const {theCurrency, amount} = req.body;
-        const response = await investmentsService.addCurrency(theCurrency,amount, Id);
+        const {currency, amount} = req.body;
+        const response = await investmentsService.addCurrency(currency,amount, Id);
         res.status(200).json(response);
     }catch (e) {
         res.status(503).json(e);
@@ -62,12 +62,25 @@ router.post('/:id/currency',isAuthenticated,async (req,res) => {
 
 });
 
-router.delete('/:id/currency',isAuthenticated,async (req,res) => {
+router.put('/:id/currency',isAuthenticated,async (req,res) => {
 
     try{
         const Id = req.params.id;
-        const theCurrency = {...req.body};
-        const response = await investmentsService.removeCurrency(theCurrency,Id);
+        const {currency, amount} = req.body;
+        const response = await investmentsService.removeCurrency(currency, amount,Id);
+        res.status(200).json(response);
+    }catch (e) {
+        res.status(503).json(e);
+    }
+
+});
+ 
+router.put('/:id/exchangeCC',isAuthenticated,async (req,res) => {
+
+    try{
+        const Id = req.params.id;
+        const {fromCurrency, toCurrency, amount} = req.body;
+        const response = await investmentsService.exchangeCurrency(fromCurrency, toCurrency, amount,Id);
         res.status(200).json(response);
     }catch (e) {
         res.status(503).json(e);
@@ -75,6 +88,18 @@ router.delete('/:id/currency',isAuthenticated,async (req,res) => {
 
 });
 
+router.put('/:id/exchangeSS',isAuthenticated,async (req,res) => {
+
+    try{
+        const Id = req.params.id;
+        const {fromStock, toStock, amount} = req.body;
+        const response = await investmentsService.exchangeStock(fromStock, toStock, amount,Id);
+        res.status(200).json(response);
+    }catch (e) {
+        res.status(503).json(e);
+    }
+
+});
 
 router.post('/',isAuthenticated,async (req,res) => {
 
@@ -88,7 +113,7 @@ router.post('/',isAuthenticated,async (req,res) => {
 
 });
 
-router.get('/user/:userId',async (req,res)=>{
+router.get('/user/:userId',isAuthenticated,async (req,res)=>{
     try{
         const Id = req.params.userId;
         const response = await investmentsService.getByUserId(Id);

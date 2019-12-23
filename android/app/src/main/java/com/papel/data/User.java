@@ -15,6 +15,7 @@ public class User implements Parcelable {
     private String idNumber;
     private String iban;
     private static User user;
+    private String investmentId;
 
     public static User getInstance() {
         return user;
@@ -48,6 +49,12 @@ public class User implements Parcelable {
         this.email = email;
         this.idNumber = idNumber;
         this.iban = iban;
+    }
+
+    public User(String id, String name, String surname) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
     }
 
     @Override
@@ -170,5 +177,13 @@ public class User implements Parcelable {
 
     public void setIban(String iban) {
         this.iban = iban;
+    }
+
+    public String getInvestmentId() {
+        return investmentId;
+    }
+
+    public void setInvestmentId(String investmentId) {
+        this.investmentId = investmentId;
     }
 }
