@@ -10,6 +10,7 @@ const profilePictureStorage = multer.diskStorage({
     },
     filename: (req,file, cb) => {
         const userId = req.token && req.token.data && req.token.data._id;
+
         const name = userId+".png";
         cb(null, name); //req.userData._id);
     }
