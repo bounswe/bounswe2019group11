@@ -82,7 +82,7 @@ const STAGES = {
 module.exports.getAll = async () => {
     return await Stock
         .find()
-        .select("-price -monthlyPrice -dailyPrice")
+        .select("-monthlyPrice -dailyPrice")
         .exec();
 };
 

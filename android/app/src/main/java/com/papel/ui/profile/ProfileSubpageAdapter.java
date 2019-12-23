@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.papel.Constants;
+import com.papel.data.Alert;
 import com.papel.data.Article;
 import com.papel.data.Portfolio;
 import com.papel.data.User;
@@ -22,9 +23,10 @@ public class ProfileSubpageAdapter extends FragmentPagerAdapter {
     private ArrayList<User> following;
     private ArrayList<User> followersPending;
     private ArrayList<User> followingPending;
+    private ArrayList<Alert> alerts;
     private boolean isMe;
 
-    public ProfileSubpageAdapter(FragmentManager fragmentManager, ArrayList<Article> articles, ArrayList<Portfolio> portfolios, ArrayList<User> followers,ArrayList<User> following,ArrayList<User> followersPending,ArrayList<User> followingPending,boolean isMe) {
+    public ProfileSubpageAdapter(FragmentManager fragmentManager, ArrayList<Article> articles, ArrayList<Portfolio> portfolios, ArrayList<User> followers,ArrayList<User> following,ArrayList<User> followersPending,ArrayList<User> followingPending,ArrayList<Alert> alerts, boolean isMe) {
         super(fragmentManager);
         this.articles = articles;
         this.portfolios = portfolios;
@@ -32,6 +34,7 @@ public class ProfileSubpageAdapter extends FragmentPagerAdapter {
         this.following = following;
         this.followersPending = followersPending;
         this.followingPending = followingPending;
+        this.alerts = alerts;
         this.isMe = isMe;
     }
 
@@ -57,6 +60,9 @@ public class ProfileSubpageAdapter extends FragmentPagerAdapter {
         } else if (position == 5) {
             args.putString(ProfileSubpageFragment.ARG_SUBPAGE_NAME,Constants.FOLLOWING_PENDING_TITLE);
             args.putParcelableArrayList(ProfileSubpageFragment.ARG_FOLLOWING_PENDING,followingPending);
+        } else if (position == 6) {
+            args.putString(ProfileSubpageFragment.ARG_SUBPAGE_NAME, Constants.ALERTS_TITLE);
+            args.putParcelableArrayList(ProfileSubpageFragment.ARG_ALERTS, this.alerts);
         }
         args.putBoolean(ProfileSubpageFragment.ARG_ISME, this.isMe);
         fragment.setArguments(args);
@@ -66,7 +72,7 @@ public class ProfileSubpageAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         if (this.isMe) {
-            return 6;
+            return 7;
         }
         return 4;
     }
@@ -86,6 +92,8 @@ public class ProfileSubpageAdapter extends FragmentPagerAdapter {
             return Constants.FOLLOWER_PENDING_TITLE;
         } else if (position == 5) {
             return Constants.FOLLOWING_PENDING_TITLE;
+        } else if (position == 6) {
+            return Constants.ALERTS_TITLE;
         }
         return "PAGE TITLE";
     }

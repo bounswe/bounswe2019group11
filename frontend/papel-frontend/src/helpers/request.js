@@ -19,7 +19,11 @@ function simplePost({url, data, success}) {
     dataType: 'json',
     data: data,
     success: success
-  })
+  }).done(
+    function (data) {
+      console.log("efbe");
+    }
+  )
 }
 
 function authorizedGet({url, success, authToken}) {
@@ -50,6 +54,12 @@ function authorizedDelete({url, success, data, authToken}) {
     data: data,
     success: success,
     beforeSend: (xhr) => xhr.setRequestHeader("Authorization", "Bearer " + authToken)
+  }).catch((status, err) => {
+    console.log(status.status);
+    if (status.status==200){
+      console.log("s");
+      window.location.reload();
+    }
   })
 }
 

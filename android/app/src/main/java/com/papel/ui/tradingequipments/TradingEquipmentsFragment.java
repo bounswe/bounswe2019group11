@@ -1,18 +1,29 @@
 package com.papel.ui.tradingequipments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -21,9 +32,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.papel.Constants;
 import com.papel.R;
+import com.papel.data.Comment;
 import com.papel.data.Currency;
 import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
+import com.papel.data.User;
 import com.papel.ui.portfolio.PortfolioDetailActivity;
 import com.papel.ui.portfolio.TradingEquipmentDetailActivity;
 import com.papel.ui.portfolio.TradingEquipmentListViewAdapter;
@@ -35,6 +48,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TradingEquipmentsFragment extends Fragment {
 
@@ -76,6 +91,8 @@ public class TradingEquipmentsFragment extends Fragment {
                 return false;
             }
         });
+
+        registerForContextMenu(tradingEquipmentListView);
 
         return root;
     }
@@ -147,6 +164,116 @@ public class TradingEquipmentsFragment extends Fragment {
 
         requestQueue.add(stockRequest);
         requestQueue.add(currencyRequest);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        if (v.getId() == R.id.trading_eq_listview) {
+            MenuInflater inflater = getActivity().getMenuInflater();
+            inflater.inflate(R.menu.alert_menu, menu);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final TradingEquipment c = (TradingEquipment) tradingEquipmentArrayList.get(info.position);
+        if (item.getItemId() == R.id.set_alert) {
+            LayoutInflater li = LayoutInflater.from(getContext());
+            View promptsView = li.inflate(R.layout.edit_comment_prompt, null);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+            alertDialogBuilder.setView(promptsView);
+            alertDialogBuilder.setTitle("Set Alarm");
+            final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
+            final TextView title = (TextView) promptsView.findViewById(R.id.textView1);
+            final ToggleButton directionToggle = (ToggleButton) promptsView.findViewById(R.id.direction_toggleButton);
+            directionToggle.setVisibility(View.VISIBLE);
+            title.setText("Send me an alarm when the rate is");
+            userInput.setHint("Value");
+            alertDialogBuilder
+                    .setCancelable(true)
+                    .setPositiveButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    setAlert(getContext(), Double.parseDouble(userInput.getText().toString().trim()), directionToggle.isChecked(),c);
+                                }
+                            })
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+            return true;
+        }
+        return false;
+    }
+
+    public static void setAlert(final Context context, Double value, boolean isUp, TradingEquipment te){
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String requestUrl = Constants.LOCALHOST;
+        if(te instanceof Currency){
+            requestUrl += Constants.CURRENCY + ((Currency) te).getCode() + "/" + Constants.ALERT;
+        }else if (te instanceof Stock){
+            requestUrl += Constants.STOCK + ((Stock) te).getId() + "/" + Constants.ALERT;
+        }
+        final JSONObject jsonBody = new JSONObject();
+        try {
+            if(isUp){
+                jsonBody.put("direction", 1);
+            }else{
+                jsonBody.put("direction", -1);
+            }
+            jsonBody.put("rate", value);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        StringRequest request = new StringRequest(Request.Method.POST, requestUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(context, "Alarm set", Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                NetworkResponse networkResponse = error.networkResponse;
+                if (networkResponse != null) {
+                    String data = new String(networkResponse.data);
+                    try {
+                        JSONObject errorObject = new JSONObject(data);
+                        String message = errorObject.getString("message");
+                        Toast.makeText(context, "There was an error when setting alarm: " + message, Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return jsonBody.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+        requestQueue.add(request);
+
+
     }
 
 }

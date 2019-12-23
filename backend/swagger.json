@@ -51,6 +51,10 @@
     {
       "name": "search",
       "description": "Search related endpoints."
+    },
+    {
+      "name": "recommendation",
+      "description": "Recommendation related endpoints."
     }
   ],
   "securityDefinitions": {
@@ -706,7 +710,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/User"
+                "$ref": "#/definitions/UserResponse"
               }
             }
           },
@@ -738,7 +742,7 @@
           "200": {
             "description": "OK. User with the given id is returned.",
             "schema": {
-              "$ref": "#/definitions/User"
+              "$ref": "#/definitions/UserResponse"
             }
           },
           "400": {
@@ -841,7 +845,7 @@
           "200": {
             "description": "OK. Updated user information is returned for real time frontend experience.",
             "schema": {
-              "$ref": "#/definitions/User"
+              "$ref": "#/definitions/UserResponse"
             }
           },
           "400": {
@@ -2705,6 +2709,11 @@
     },
     "/investments": {
       "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "tags": [
           "investments"
         ],
@@ -2726,10 +2735,52 @@
             "description": "Internal error occurred. Check the cause field for the diagnostics."
           }
         }
+      },
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Creates new investments instance",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "investments",
+            "description": "\"investments\" instance to be created.",
+            "required": true,
+            "ref": "#/definitions/Investments"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. All of the investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
       }
     },
     "/investments/{_id}": {
       "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "tags": [
           "investments"
         ],
@@ -2749,6 +2800,329 @@
         "responses": {
           "200": {
             "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/investments/{_id}/stock": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Adds the desired stock with the desired amount to the investments.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "stock and amount",
+            "description": "Add a stock with amount to specific investments",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/StockAmount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Sells the desired stock with the desired amount.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "stock and amount",
+            "description": "Remove a stock with a specific amount from the investments",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/StockAmount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/investments/{_id}/currency": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Adds the desired currency with the desired amount to the investments.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "currency and amount",
+            "description": "Add a currency with amount to specific investments",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyAmount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Sells the desired currency with the desired amount.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "currency and amount",
+            "description": "Remove a currency with a specific amount from the investments",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CurrencyAmount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/investments/{_id}/exchangeCC": {
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Exchanges the desired amount of currency with another currency.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "fromCurrency, toCurrency",
+            "description": "Exchange the given \"amount\" of fromCurrency with the toCurrency ",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/fromCurrencyToCurrency"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/investments/{_id}/exchangeSS": {
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Exchanges the desired amount of stock with another stock.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "Object id of the \"investments\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "fromStock, toStock",
+            "description": "Exchange the given \"amount\" of fromStock with the toStock ",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/fromStockToStock"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Given investments are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Investments"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/investments/user/{_userId}": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "investments"
+        ],
+        "summary": "Returns the investments of the given user.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_userId",
+            "description": "Object id of the \"user\".",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Investments are returned.",
             "schema": {
               "type": "array",
               "items": {
@@ -2958,6 +3332,69 @@
           }
         }
       }
+    },
+    "/recommendation/nearby-users": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "recommendation"
+        ],
+        "summary": "Gets the users which registered from the city as the user performing the request",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Nearby users are returned",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NearbyUser"
+              }
+            }
+          },
+          "400": {
+            "description": "User or the location info cannot be found"
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/recommendation/articles": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "recommendation"
+        ],
+        "summary": "Returns the array of recommended articles from the articles that the user liked before",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Recommended articles are returned.",
+            "schema": {
+              "$ref": "#/definitions/ArticleRecommendationResult"
+            }
+          },
+          "400": {
+            "description": "User not found."
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -3027,6 +3464,36 @@
           "type": "string",
           "description": "Google user id.",
           "example": "117027522423426552111"
+        }
+      }
+    },
+    "UserResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/User"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "location": {
+          "type": "object",
+          "properties": {
+            "latitude": {
+              "type": "number",
+              "description": "Latitude of the location.",
+              "example": 41.085987
+            },
+            "longitude": {
+              "type": "number",
+              "description": "Longitude of the location.",
+              "example": 29.044008
+            },
+            "displayName": {
+              "type": "string",
+              "description": "Display name of the location",
+              "example": "Istanbul, Marmara Region, Turkey"
+            }
+          }
         },
         "totalPredictionCount": {
           "type": "number",
@@ -3101,6 +3568,22 @@
           "type": "number",
           "description": "Amount of currency",
           "example": "53"
+        }
+      }
+    },
+    "fromCurrencyToCurrency": {
+      "type": "object",
+      "properties": {
+        "fromCurrency": {
+          "$ref": "#/definitions/Currency"
+        },
+        "toCurrency": {
+          "$ref": "#/definitions/Currency"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount of currency",
+          "example": "32"
         }
       }
     },
@@ -3197,6 +3680,22 @@
         }
       }
     },
+    "fromStockToStock": {
+      "type": "object",
+      "properties": {
+        "fromStock": {
+          "$ref": "#/definitions/Stock"
+        },
+        "toStock": {
+          "$ref": "#/definitions/Stock"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount of stock",
+          "example": "32"
+        }
+      }
+    },
     "Article": {
       "type": "object",
       "properties": {
@@ -3255,6 +3754,14 @@
           "type": "number",
           "description": "Vote of the user determined from the token. -1, 0 or 1.",
           "example": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Article tags",
+            "example": "S&P 500 Index"
+          }
         }
       }
     },
@@ -3728,10 +4235,20 @@
           "description": "Currency code if this is an currency alert, empty string otherwise",
           "example": "EUR"
         },
+        "currencyId": {
+          "type": "string",
+          "description": "Currency id if this is an currency alert, null otherwise",
+          "example": "5da07611e407903a5d01b233"
+        },
         "stockId": {
           "type": "string",
           "description": "Stock id if this is an stock alert, null otherwise",
           "example": null
+        },
+        "stockSymbol": {
+          "type": "string",
+          "description": "Stock symbol if this is an stock alert, empty string otherwise",
+          "example": ""
         }
       }
     },
@@ -3834,8 +4351,85 @@
                 "type": "string",
                 "description": "Surname of the user",
                 "example": "Doe"
+              },
+              "location": {
+                "type": "object",
+                "properties": {
+                  "displayName": {
+                    "type": "string",
+                    "description": "Display name of the location",
+                    "example": "Istanbul, Marmara Region, Turkey"
+                  }
+                }
               }
             }
+          }
+        }
+      }
+    },
+    "NearbyUser": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the user",
+          "example": "John"
+        },
+        "surname": {
+          "type": "string",
+          "description": "Surname of the user",
+          "example": "Doe"
+        },
+        "_id": {
+          "type": "string",
+          "description": "Id of the user",
+          "example": "5da07611e407903a5d01b265"
+        }
+      }
+    },
+    "ArticleRecommendation": {
+      "type": "object",
+      "properties": {
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Article tags",
+            "example": "S&P 500 Index"
+          }
+        },
+        "_id": {
+          "type": "string",
+          "description": "Article id",
+          "example": "5daedb5af05eb852753ac9c0"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the article",
+          "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
+        },
+        "body": {
+          "type": "string",
+          "description": "Body of the article",
+          "example": "Charles Schwab said Tuesday that it would allow customers..."
+        },
+        "imgUri": {
+          "type": "string",
+          "description": "Image of the article",
+          "example": "https://static01.nyt.com/images/2019/10/02/business/02money3/merlin_161936091_44164c95-b906-41c8-907d-d8737e7b652c-superJumbo.jpg?quality=90&auto=webp"
+        }
+      }
+    },
+    "ArticleRecommendationResult": {
+      "type": "object",
+      "properties": {
+        "because": {
+          "$ref": "#/definitions/ArticleRecommendation"
+        },
+        "articles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArticleRecommendation"
           }
         }
       }

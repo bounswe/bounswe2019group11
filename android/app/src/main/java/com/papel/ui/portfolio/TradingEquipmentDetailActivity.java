@@ -115,6 +115,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         TradingEquipment tradingEquipment = intent.getParcelableExtra("TradingEquipment");
+        boolean fromSearchResult = intent.getBooleanExtra("FromSearchResult",false);
 
         noCommentTextView = header.findViewById(R.id.no_comment_textview);
         totalPredCountTextView = header.findViewById(R.id.prediction_vote_count_textview);
@@ -125,6 +126,7 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
         decreaseRadioButton = header.findViewById(R.id.decrease_radioButton);
         cl_green = ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary));
         cl_red = ColorStateList.valueOf(getResources().getColor(android.R.color.holo_red_dark));
+        value = header.findViewById(R.id.value);
 
         if (tradingEquipment instanceof Stock) {
             stock = (Stock) tradingEquipment;
@@ -140,6 +142,15 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             String title = currency.getCode() + "/ USD";
             setTitle(title);
         }
+
+        if(fromSearchResult) {
+            if (tradingEquipment instanceof Stock) {
+                fetchStock(this,stock.getId());
+            } else if (tradingEquipment instanceof Currency) {
+                fetchCurrency(this,currency.getCode());
+            }
+        }
+
 
         predictionRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -164,7 +175,6 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             getTradingEqFromEndpoint(getApplicationContext());
         }
 
-        value = header.findViewById(R.id.value);
         String valueText = "";
         if (stock != null) {
             valueText = stock.getPrice() + "$";
@@ -255,6 +265,50 @@ public class TradingEquipmentDetailActivity extends AppCompatActivity {
             }
         });
         registerForContextMenu(commentList);
+    }
+
+    private void fetchCurrency(final Context context, String code) {
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = Constants.LOCALHOST + Constants.CURRENCY + code;
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject responseJSON = new JSONObject(response);
+                    value.setText(ResponseParser.parseCurrency(responseJSON).getRate() + "$");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueue.add(request);
+    }
+
+    private void fetchStock(Context context, String id) {
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = Constants.LOCALHOST + Constants.STOCK + id;
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject responseJSON = new JSONObject(response);
+                    value.setText(ResponseParser.parseStock(responseJSON).getPrice() + "$");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueue.add(request);
     }
 
     private void fetchCurrencyChartData(String code) {

@@ -41,6 +41,7 @@ const myProfileDataTransferObject = (user, articles, portfolios, investments, al
         privacy: 'private',
         name: user.name,
         surname: user.surname,
+        avatar: user.avatar,
         location: user.location,
         articles: articles,
         portfolios: portfolios,
@@ -59,6 +60,7 @@ const privateProfileDataTransferObject = (user, articles, inInMyNetwork) => {
         privacy: 'private',
         name: user.name,
         surname: user.surname,
+        avatar:user.avatar,
         location: user.location,
         articles: articles,
         isInMyNetwork: inInMyNetwork,
@@ -71,6 +73,7 @@ const publicProfileDataTransferObject = (user, articles, portfolios, inInMyNetwo
         privacy: 'public',
         name: user.name,
         surname: user.surname,
+        avatar:user.avatar,
         following: user.following.filter(elm => elm.isAccepted === true).map(elm => elm.userId),
         followers: user.followers.filter(elm => elm.isAccepted === true).map(elm => elm.userId),
         location: user.location,
@@ -104,12 +107,13 @@ router.get('/other/:id', async (req, res) => {
                 const articles = await articleService.getByUserId(userId);
                 const portfolios = await portfolioService.getByUserId(userId);
                 const investments = await investmentsService.getByUserId(userId);
+                const alerts = await alertService.getAlerts(userId);
                 userService.getSocialNetworkById(userId).then(user => {
                     const followingPending = user.following.filter(elm => elm.isAccepted === false).map(elm => elm.userId);
                     const following = user.following.filter(elm => elm.isAccepted === true).map(elm => elm.userId);
                     const followerPending = user.followers.filter(elm => elm.isAccepted === false).map(elm => elm.userId);
                     const follower = user.followers.filter(elm => elm.isAccepted === true).map(elm => elm.userId);
-                    res.status(200).json(myProfileDataTransferObject(user, articles, portfolios, investments, following, followingPending, follower, followerPending));
+                    res.status(200).json(myProfileDataTransferObject(user, articles, portfolios, investments, alerts, following, followingPending, follower, followerPending));
                 });
 
             } else {
@@ -179,7 +183,6 @@ router.post('/other/:id/follow', isAuthenticated, async (req, res) => {
         const user = await userService.getById(userId);
         const userToBeFollowed = await userService.getById(id);
         const response = await user.follow(userToBeFollowed);
-        await notificationService.createFollowNotification(userId, id);
         res.status(200).json(response);
     } catch (err) {
         if (err.name === 'UserNotFound') {
