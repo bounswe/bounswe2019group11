@@ -86,10 +86,10 @@ class Profile extends React.Component {
       data: portfolio,
       success: (resp, data) => {
         this.setState({portfoliosLoaded: false});
-        const request_url = app_config + "/portfolio/user/" + cookies.get('user')._id;
+        const request_url = app_config.api_url + "/portfolio/user/" + cookies.get('user')._id;
         getRequest({
           url: request_url,
-          success: portfolios => {
+          success: (portfolios) => {
             this.setState({portfolios: portfolios, portfoliosLoaded: true});
           }
         });
