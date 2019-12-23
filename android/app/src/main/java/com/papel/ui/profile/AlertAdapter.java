@@ -60,11 +60,11 @@ public class AlertAdapter extends BaseAdapter {
 
         alertRate.setText(String.valueOf(alert.getRate()));
         if (alert.getDirection() == 1) {
-            // Cıkarsa haber ver
+            // Direction is up
             alertName.setTextColor(Color.GREEN);
             alertRate.setTextColor(Color.GREEN);
         } else {
-            // Duserse haber ver
+            // Direction is down
             alertName.setTextColor(Color.RED);
             alertRate.setTextColor(Color.RED);
         }

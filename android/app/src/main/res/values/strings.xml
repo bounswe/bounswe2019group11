@@ -81,7 +81,8 @@
     <string name="remove">REMOVE</string>
     <string name="image_hint">Image URL</string>
     <string name="search">Search</string>
-
+    <string name="EUR">EUR</string>
+    <string name="alert_rate"></string>
 </resources>
 
 

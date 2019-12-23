@@ -10,7 +10,7 @@
         android:textColor="@color/black"
         android:layout_marginTop="8dp"
         android:layout_marginStart="12dp"
-        android:text="EUR"/>
+        android:text="@string/EUR"/>
 
     <TextView
         android:id="@+id/alertRate"
@@ -20,6 +20,6 @@
         android:layout_marginTop="8dp"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="12dp"
-        android:text="155"/>
+        android:text="@string/alert_rate"/>
 
 </RelativeLayout>
