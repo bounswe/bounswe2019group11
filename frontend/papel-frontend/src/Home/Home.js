@@ -1,7 +1,7 @@
 import React from 'react';
 import USD from "./USD";
 import CurencyChart from "./CurencyChart"
-import CurrencyCharts from "./CurrencyCharts"
+import CurrencyCharts from "./CurencyChart"
 import StockChart1 from "./StockChart1";
 import StockChart2 from "./StockChart2";
 import {Editor, EditorState, RichUtils} from 'draft-js';

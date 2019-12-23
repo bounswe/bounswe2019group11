@@ -20,14 +20,14 @@
 }
 
 #interactive :hover {
-  
+
   cursor: pointer;
 }
 
 
 #userLine{
   background-color: rgb(221, 221, 221);
-  
+
 }
 
 hr {
@@ -38,4 +38,8 @@ hr {
   margin-right: auto;
   border-style: inset;
   border-width: 1px;
+}
+
+.highlighted {
+  background-color: '#ffcc80'
 }

@@ -1,0 +1,19 @@
+.alert-row {
+  color: white
+}
+
+.alert-first {
+  background-color: #66bb6a;
+  border-radius: 4px;
+  box-shadow: 2px 2px #888;
+  margin: 4px;
+  padding: 8px;
+}
+.alert-first:hover { cursor: pointer; }
+.alert-second {
+  background-color: #333;
+  border-radius: 4px;
+  box-shadow: 2px 2px #888;
+  margin: 4px;
+  padding: 8px;
+}

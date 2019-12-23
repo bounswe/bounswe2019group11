@@ -51,6 +51,10 @@
     {
       "name": "search",
       "description": "Search related endpoints."
+    },
+    {
+      "name": "recommendation",
+      "description": "Recommendation related endpoints."
     }
   ],
   "securityDefinitions": {
@@ -2732,7 +2736,7 @@
           }
         }
       },
-      "post":{
+      "post": {
         "security": [
           {
             "Bearer": []
@@ -3044,7 +3048,7 @@
           }
         }
       }
-    },    
+    },
     "/investments/{_id}/exchangeSS": {
       "put": {
         "security": [
@@ -3322,6 +3326,69 @@
             "schema": {
               "$ref": "#/definitions/SearchResult"
             }
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/recommendation/nearby-users": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "recommendation"
+        ],
+        "summary": "Gets the users which registered from the city as the user performing the request",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Nearby users are returned",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NearbyUser"
+              }
+            }
+          },
+          "400": {
+            "description": "User or the location info cannot be found"
+          },
+          "500": {
+            "description": "Internal error occurred. Check the cause field for the diagnostics."
+          }
+        }
+      }
+    },
+    "/recommendation/articles": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "recommendation"
+        ],
+        "summary": "Returns the array of recommended articles from the articles that the user liked before",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Recommended articles are returned.",
+            "schema": {
+              "$ref": "#/definitions/ArticleRecommendationResult"
+            }
+          },
+          "400": {
+            "description": "User not found."
           },
           "500": {
             "description": "Internal error occurred. Check the cause field for the diagnostics."
@@ -3687,6 +3754,14 @@
           "type": "number",
           "description": "Vote of the user determined from the token. -1, 0 or 1.",
           "example": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Article tags",
+            "example": "S&P 500 Index"
+          }
         }
       }
     },
@@ -4288,6 +4363,73 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "NearbyUser": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the user",
+          "example": "John"
+        },
+        "surname": {
+          "type": "string",
+          "description": "Surname of the user",
+          "example": "Doe"
+        },
+        "_id": {
+          "type": "string",
+          "description": "Id of the user",
+          "example": "5da07611e407903a5d01b265"
+        }
+      }
+    },
+    "ArticleRecommendation": {
+      "type": "object",
+      "properties": {
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Article tags",
+            "example": "S&P 500 Index"
+          }
+        },
+        "_id": {
+          "type": "string",
+          "description": "Article id",
+          "example": "5daedb5af05eb852753ac9c0"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the article",
+          "example": "Low-Cost Investing Can’t Get Any Lower Than Free"
+        },
+        "body": {
+          "type": "string",
+          "description": "Body of the article",
+          "example": "Charles Schwab said Tuesday that it would allow customers..."
+        },
+        "imgUri": {
+          "type": "string",
+          "description": "Image of the article",
+          "example": "https://static01.nyt.com/images/2019/10/02/business/02money3/merlin_161936091_44164c95-b906-41c8-907d-d8737e7b652c-superJumbo.jpg?quality=90&auto=webp"
+        }
+      }
+    },
+    "ArticleRecommendationResult": {
+      "type": "object",
+      "properties": {
+        "because": {
+          "$ref": "#/definitions/ArticleRecommendation"
+        },
+        "articles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArticleRecommendation"
           }
         }
       }
