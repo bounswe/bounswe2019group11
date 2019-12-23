@@ -26,7 +26,7 @@ class SimpleReactFileUpload extends React.Component {
 
         const authToken = this.props.authToken;
         axios.defaults.headers.common['Authorization'] = "Bearer " + authToken;
-        const url = 'http://localhost:3000/upload/avatar';
+        const url = app_config.api_url + '/upload/avatar';
         const formData = new FormData();
         formData.append('avatar',file)
         const config = {
