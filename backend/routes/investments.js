@@ -104,8 +104,9 @@ router.put('/:id/exchangeSS',isAuthenticated,async (req,res) => {
 router.post('/',isAuthenticated,async (req,res) => {
 
     try{
+        const userId = req.token && req.token.data && req.token.data._id;
         const myInvestments = {...req.body};
-        const response = await investmentsService.create(myInvestments);
+        const response = await investmentsService.create(myInvestments,userId);
         res.status(200).json(response);
     }catch (e) {
         res.status(503).json(e);
