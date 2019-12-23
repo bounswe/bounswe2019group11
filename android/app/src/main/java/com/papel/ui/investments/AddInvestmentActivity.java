@@ -21,6 +21,7 @@ import com.papel.ui.utils.ResponseParser;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -37,6 +38,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddInvestmentActivity extends AppCompatActivity {
 
@@ -48,11 +51,15 @@ public class AddInvestmentActivity extends AppCompatActivity {
     private RequestQueue addRequestQueue;
     private int requestNumber = 0;
     private User user = User.getInstance();
+    private String investmentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_investment);
+
+        Intent intent = getIntent();
+        investmentId = intent.getStringExtra("InvestmentId");
 
         addRequestQueue = Volley.newRequestQueue(getApplicationContext());
 
@@ -106,16 +113,15 @@ public class AddInvestmentActivity extends AppCompatActivity {
         }
 
         mBuilder.setTitle(title);
-        final EditText edtText = mView.findViewById(R.id.amount_editText);
+        final EditText amountEditText = mView.findViewById(R.id.amount_editText);
         mBuilder.setPositiveButton(positiveButtonTitle, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                String text = edtText.getText().toString();
+                String text = amountEditText.getText().toString();
                 double amount;
                 if(!text.equals("")){
                     amount =  Double.parseDouble(text);
-                    buyTradingEquipment(tradingEq, amount);
-                    dialogInterface.dismiss();
+                    //buyTradingEquipment(tradingEq, amount);
                 }else{
                     Toast.makeText(AddInvestmentActivity.this, "Please specify the amount", Toast.LENGTH_SHORT).show();
                 }
@@ -125,6 +131,98 @@ public class AddInvestmentActivity extends AppCompatActivity {
         mBuilder.setView(mView);
         AlertDialog dialog = mBuilder.create();
         dialog.show();
+    }
+
+    private void buyCurrency(Context context, Currency currency, String amount) {
+        String url = Constants.LOCALHOST + Constants.INVESTMENTS + investmentId + "/" + Constants.CURRENCY;
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        final JSONObject jsonBody = new JSONObject();
+        JSONObject currencyBody = new JSONObject();
+        try {
+            currencyBody.put("_id", currency.getId());
+            currencyBody.put("code", currency.getCode());
+            currencyBody.put("name", currency.getName());
+            currencyBody.put("rate", currency.getRate());
+            jsonBody.put("currency", currencyBody);
+            jsonBody.put("amount", amount);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return jsonBody.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+        requestQueue.add(request);
+    }
+
+    private void buyStock(Context context, Stock stock, String amount) {
+        String url = Constants.LOCALHOST + Constants.INVESTMENTS + investmentId + "/" + Constants.STOCK;
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        final JSONObject jsonBody = new JSONObject();
+        JSONObject stockBody = new JSONObject();
+        try {
+            stockBody.put("_id", stock.getId());
+            stockBody.put("name", stock.getName());
+            stockBody.put("price", stock.getPrice());
+            stockBody.put("stockSymbol", stock.getSymbol());
+            jsonBody.put("stock", stockBody);
+            jsonBody.put("amount", amount);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return jsonBody.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+        requestQueue.add(request);
     }
 
     private void getTradingEquipmentsFromEndpoint(final Context context) {
@@ -196,116 +294,5 @@ public class AddInvestmentActivity extends AppCompatActivity {
         requestQueue.add(stockRequest);
         requestQueue.add(currencyRequest);
     }
-
-    private void buyTradingEquipment(final TradingEquipment tradingEq, final double amount){
-       /* if(tradingEq instanceof Stock){
-            buyStock((Stock) tradingEq, amount);
-        }else if(tradingEq instanceof Currency){
-            buyCurrency((Currency) tradingEq, amount);
-        }*/
-    }
-
-//    private void buyStock(final Stock tradingEquipment, double amount) {
-//        requestNumber += 1;
-//        String url = Constants.LOCALHOST + Constants.PORTFOLIO + portfolio.getId() + "/"+ Constants.STOCK;
-//        final JSONObject jsonBody = new JSONObject();
-//        try {
-//            jsonBody.put("_id", tradingEquipment.getId());
-//            jsonBody.put("name",tradingEquipment.getName());
-//            jsonBody.put("price",tradingEquipment.getPrice());
-//            jsonBody.put("stockSymbol",tradingEquipment.getSymbol());
-//            //jsonBody.put("stockName",tradingEquipment.getStockName()); TODO ? important
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String response) {
-//                try {
-
-//                    JSONObject jsonResponse = new JSONObject(response);
-//                    Portfolio parsedPortfolio = ResponseParser.parsePortfolio(jsonResponse);
-//                    if(parsedPortfolio != null) {
-//                        portfolio = parsedPortfolio;
-//                        tradingEquipments.clear();
-//                        tradingEquipments.addAll(portfolio.getTradingEquipments());
-//                        tradingEquipmentListViewAdapter.notifyDataSetChanged();
-//                    }
-//                    requestNumber -= 1;
-//                    if (requestNumber == 0) {
-//                        showUI();
-//                    }
-//                }catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                DialogHelper.showBasicDialog(PortfolioDetailActivity.this,"Error","We couldn't add trading equipment to your porfolio.Please try again.",null);
-//                requestNumber -= 1;
-//            }
-//        }){
-//            @Override
-//            public byte[] getBody() throws AuthFailureError {
-//                return jsonBody.toString().getBytes();
-//            }
-//
-//            @Override
-//            public String getBodyContentType() {
-//                return "application/json";
-//            }
-//        };
-//        addRequestQueue.add(request);
-//    }
-//
-//    private void buyCurrency(Currency currency, double amount) {
-//        requestNumber += 1;
-//        String url = Constants.LOCALHOST + Constants.PORTFOLIO + portfolio.getId() + "/"+ Constants.CURRENCY;
-//        final JSONObject jsonBody = new JSONObject();
-//        try {
-//            jsonBody.put("_id", currency.getId());
-//            jsonBody.put("code",currency.getCode());
-//            jsonBody.put("name",currency.getName());
-//            jsonBody.put("rate",currency.getRate());
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String response) {
-//                try {
-//                    JSONObject jsonResponse = new JSONObject(response);
-//                    Portfolio parsedPortfolio = ResponseParser.parsePortfolio(jsonResponse);
-//                    if(parsedPortfolio != null) {
-//                        portfolio = parsedPortfolio;
-//                        tradingEquipments.clear();
-//                        tradingEquipments.addAll(portfolio.getTradingEquipments());
-//                        tradingEquipmentListViewAdapter.notifyDataSetChanged();
-//                    }
-//                    requestNumber -= 1;
-//                }catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                DialogHelper.showBasicDialog(AddInvestmentActivity.this,"Error","We couldn't add trading equipment to your porfolio.Please try again.",null);
-//                requestNumber -= 1;
-//            }
-//        }){
-//            @Override
-//            public byte[] getBody() throws AuthFailureError {
-//                return jsonBody.toString().getBytes();
-//            }
-//
-//            @Override
-//            public String getBodyContentType() {
-//                return "application/json";
-//            }
-//        };
-//        addRequestQueue.add(request);
-//    }
 
 }

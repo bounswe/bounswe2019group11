@@ -119,6 +119,7 @@ public class InvestmentsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), AddInvestmentActivity.class);
+                intent.putExtra("InvestmentId",userInvestments.getId());
                 startActivity(intent);
             }
         });
