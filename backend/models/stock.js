@@ -25,4 +25,6 @@ const stockSchema = new mongoose.Schema({
     },
 });
 
+stockSchema.index({name: 'text', stockSymbol: 'text'});
+
 module.exports = mongoose.model('Stock', stockSchema);

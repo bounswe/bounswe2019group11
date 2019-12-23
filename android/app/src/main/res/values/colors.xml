@@ -10,4 +10,5 @@
     <color name="chart_green">#66ff78</color>
     <color name="accept_green">#a9e879</color>
     <color name="decline_red">#fa0025</color>
+    <color name="yellow">#ffff00</color>
 </resources>

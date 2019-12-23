@@ -24,7 +24,12 @@ public class Article implements Parcelable {
     public Article() {
     }
 
-    public Article(String id, String title, String body, String authorId, String authorName, int voteCount, String date,String imageUrl) {
+    public Article(String id, String title) {
+        this.id = id;
+        this.title = title;
+    }
+
+    public Article(String id, String title, String body, String authorId, String authorName, int voteCount, String date, String imageUrl) {
         this.id = id;
         this.title = title;
         this.body = body;
@@ -41,7 +46,7 @@ public class Article implements Parcelable {
             SimpleDateFormat formatter2 = new SimpleDateFormat("dd MMM yy • HH:mm a", Locale.US);
             this.date = formatter2.format(dateObj);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

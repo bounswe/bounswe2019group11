@@ -10,26 +10,29 @@ const Prediction = require('../models/prediction');
 const predictionHelper = require('../helpers/prediction');
 const User = require('../models/user');
 const Stock = require('../models/stock');
+const Alert = require('../models/alert');
+const AlertNotification = require('../models/alertNotification');
+const alertHelper = require('../helpers/alert');
 
 const BASE_CURRENCY = 'USD';
 
 const CURRENCIES = [
-    'EUR',
-    'JPY',
-    'GBP',
-    'CHF',
-    'TRY',
+    ['EUR', '5dd93e4301df5b4513254756'],
+    ['JPY', '5dd93e4301df5b4513254764'],
+    ['GBP', '5dd93e4301df5b451325477e'],
+    ['CHF', '5dd93e4301df5b451325478c'],
+    ['TRY', '5dd93e4301df5b451325479e'],
 ];
 
 const STOCKS = [
-    'AAPL',
-    'AMZN',
-    'BA',
-    'FB',
-    'GOOGL',
-    'MSFT',
-    'NKE',
-    'TKC',
+    ['AAPL', '5df7b5adf29d0f356042b862'],
+    ['AMZN', '5df7b5adf29d0f356042b863'],
+    ['BA', '5df7b5adf29d0f356042b864'],
+    ['FB', '5df7b5adf29d0f356042b865'],
+    ['GOOGL', '5df7b5adf29d0f356042b866'],
+    ['MSFT', '5df7b5adf29d0f356042b867'],
+    ['NKE', '5df7b5adf29d0f356042b868'],
+    ['TKC', '5df7b5aef29d0f356042b869'],
 ];
 
 const randomInt = (min, max) => {
@@ -66,7 +69,7 @@ const intradayRatesJob = new CronJob('0 */5 * * * *', async () => {
     };
 
     for (let i = 0; i < CURRENCIES.length; i++) {
-        const code = CURRENCIES[i];
+        const code = CURRENCIES[i][0];
         params.to_symbol = code;
         params.apikey = apiKeyPicker.next();
         try {
@@ -77,6 +80,23 @@ const intradayRatesJob = new CronJob('0 */5 * * * *', async () => {
                 const rate = intradayRates[Object.keys(intradayRates)[0]]['4. close'];
                 await Currency.updateOne({code}, {intradayRates, rate});
                 console.log(new Date() + ' Intraday rates and rate are updated for ' + code);
+                const alerts = await Alert.find({type: alertHelper.TYPE.CURRENCY, currencyCode: code});
+                for (let j = 0; j < alerts.length; j++) {
+                    const alert = alerts[j];
+                    if ((alert.direction === alertHelper.DIRECTION.ABOVE && alert.rate < rate)
+                        || (alert.direction === alertHelper.DIRECTION.BELOW && alert.rate >= rate)) {
+                        await AlertNotification.create({
+                            userId: alert.userId,
+                            type: alertHelper.TYPE.CURRENCY,
+                            direction: alert.direction,
+                            rate: alert.rate,
+                            currentRate: rate,
+                            currencyCode: code,
+                            currencyId: CURRENCIES[i][1]
+                        });
+                        await Alert.findOneAndDelete({_id: alert._id});
+                    }
+                }
             } else {
                 console.log(new Date() + ' Request to AlphaVantage failed.' + JSON.stringify(response));
             }
@@ -98,7 +118,7 @@ const dailyRatesJob = new CronJob('00 00 00 * * *', async () => {
     };
 
     for (let i = 0; i < CURRENCIES.length; i++) {
-        const code = CURRENCIES[i];
+        const code = CURRENCIES[i][0];
         params.to_symbol = code;
         params.apikey = apiKeyPicker.next();
         try {
@@ -129,7 +149,7 @@ const intradayPriceJob = new CronJob('0 */5 * * * *', async () => {
     };
 
     for (let i = 0; i < STOCKS.length; i++) {
-        const symbol = STOCKS[i];
+        const symbol = STOCKS[i][0];
         params.symbol = symbol;
         params.apikey = apiKeyPicker.next();
         try {
@@ -140,6 +160,23 @@ const intradayPriceJob = new CronJob('0 */5 * * * *', async () => {
                 const price = intradayPrices[Object.keys(intradayPrices)[0]]['4. close'];
                 await Stock.updateOne({stockSymbol: symbol}, {dailyPrice: intradayPrices, price});
                 console.log(new Date() + ' Intraday prices and price are updated for ' + symbol);
+                const alerts = await Alert.find({type: alertHelper.TYPE.STOCK, stockId: STOCKS[i][1]});
+                for (let j = 0; j < alerts.length; j++) {
+                    const alert = alerts[j];
+                    if ((alert.direction === alertHelper.DIRECTION.ABOVE && alert.rate < price)
+                        || (alert.direction === alertHelper.DIRECTION.BELOW && alert.rate >= price)) {
+                        await AlertNotification.create({
+                            userId: alert.userId,
+                            type: alertHelper.TYPE.STOCK,
+                            direction: alert.direction,
+                            rate: alert.rate,
+                            currentRate: price,
+                            stockSymbol: symbol,
+                            stockId: STOCKS[i][1],
+                        });
+                        await Alert.findOneAndDelete({_id: alert._id});
+                    }
+                }
             } else {
                 console.log(new Date() + ' Request to AlphaVantage failed.' + JSON.stringify(response));
             }
@@ -160,7 +197,7 @@ const dailyPricesJob = new CronJob('00 00 00 * * *', async () => {
     };
 
     for (let i = 0; i < STOCKS.length; i++) {
-        const symbol = STOCKS[i];
+        const symbol = STOCKS[i][0];
         params.symbol = symbol;
         params.apikey = apiKeyPicker.next();
         try {
