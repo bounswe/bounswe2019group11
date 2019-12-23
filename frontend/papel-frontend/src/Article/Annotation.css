@@ -1,0 +1,27 @@
+.annotation-button-active {
+  background-color: #daa;
+  border-radius: 2px;
+  padding: 4px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  float: right;
+  box-shadow: 2px 2px #aaa
+}
+.annotation-button-disabled {
+  background-color: #ada;
+  border-radius: 2px;
+  padding: 4px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  float: right;
+  box-shadow: 2px 2px #aaa
+}
+
+.cursor-text {
+  cursor: text;
+}
+.cursor-default {
+  cursor: default;
+}

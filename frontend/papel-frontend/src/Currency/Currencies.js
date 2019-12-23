@@ -7,6 +7,7 @@ import { Row, Col, Nav, Button, Card, Form, Tabs, Tab } from 'react-bootstrap';
 import CurrencyView from "./CurrencyView"
 import CurrencyTable from "./CurrencyTable"
 import Prediction from "./Prediction"
+import Alert from './Alert'
 const url = app_config.api_url + "/";
 var template =
 {
@@ -23,8 +24,10 @@ class Currencies extends React.Component {
     const { cookies } = props;
     const loggedIn = !!cookies.get('userToken');
     var userId = "";
+    var authToken = ""
     if (loggedIn) {
       userId = cookies.get('user')._id ? cookies.get('user')._id : "check get user id";
+      authToken = cookies.get('userToken')
     }
     else { console.log("not logged"); }
 
@@ -34,7 +37,7 @@ class Currencies extends React.Component {
       { _id: "0", code: "XXX", name: "namex", rate: "0.00" },
       { _id: "0", code: "XXX", name: "namex", rate: "0.00" },
       { _id: "0", code: "XXX", name: "namex", rate: "0.00" }],
-      loggedIn: loggedIn, userId: userId
+      loggedIn: loggedIn, userId: userId, authToken: authToken
     };
     this.handleClick1 = this.handleClick1.bind(this);
     this.handleClick2 = this.handleClick2.bind(this);
@@ -168,17 +171,27 @@ class Currencies extends React.Component {
 
           <Card.Body hidden id="1">
 
-            <Col md={{ span: 12 }}>
-              <CurrencyTable code={c0.code} timeRange={"last-100"}></CurrencyTable>
-            </Col>
-            <br />
-            <Col md={{ span: 12 }}>
-              <CurrencyView code={c0.code} name={c0.name} rate={c0.rate} comments={c0.comments} predictions={c0.predictions} userPredictions={c0.userPredictions}></CurrencyView>
-            </Col>
-            <br />
-            <Col md={{ span: 12 }}>
-              <Prediction code={c0.code}></Prediction>
-            </Col>
+            <Row>
+              <Col md={{ span: 12 }}>
+                <CurrencyTable code={c0.code} timeRange={"last-100"}></CurrencyTable>
+              </Col>
+            </Row>
+            <Row>
+              <Col md={{ span: 12 }}>
+                <CurrencyView code={c0.code} name={c0.name} rate={c0.rate} comments={c0.comments} predictions={c0.predictions} userPredictions={c0.userPredictions}></CurrencyView>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Alert code={c0.code} authToken={this.state.authToken}/>
+              </Col>
+            </Row>
+            <hr/>
+            <Row>
+              <Col md={{ span: 12 }}>
+                <Prediction code={c0.code}></Prediction>
+              </Col>
+            </Row>
 
 
           </Card.Body>
@@ -201,7 +214,7 @@ class Currencies extends React.Component {
           </Card.Body>
 
         <Card.Body hidden id="3">
-         
+
 
             <Col >
 
