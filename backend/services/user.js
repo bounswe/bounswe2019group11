@@ -97,3 +97,27 @@ module.exports.updatePrivacy = async (userId, privacy) => {
     userUpdate.privacy = privacy;
     return await userUpdate.save();
 };
+
+module.exports.setProfileImage = async (_id,imgUri) => {
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+        throw errors.USER_NOT_FOUND();
+    }
+    const user = await User.findOne({_id})
+        .populate({
+            path:'following.userId',
+            model:'User',
+            select: 'id name surname email'
+        })
+        .populate({
+            path:'followers.userId',
+            model:'User',
+            select: 'id name surname email'
+        })
+        .exec();
+    if (!user) {
+        throw errors.USER_NOT_FOUND();
+    }
+    user.avatar = imgUri;
+
+    return await user.save();
+};

@@ -4,6 +4,7 @@ const isAuthenticated = require('../middlewares/isAuthenticated');
 const multer = require('multer');
 const path = require('path');
 const dir = path.join(__dirname, '../uploads');
+const userService = require('../services/user');
 const profilePictureStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, './uploads/profilePictures');
@@ -27,6 +28,8 @@ router.get('/avatar/:userId',async (req,res)=>{
 router.post('/avatar',isAuthenticated, uploadPP.single('avatar'),async (req,res)=>{
     const userId = req.token && req.token.data && req.token.data._id;
     const imgUri = process.env.BACKEND_URL + "/upload/avatar/" +  userId;
-    res.status(200).json({imgUri:imgUri,msg:"File uploaded successfully"});
+    const user = await userService.setProfileImage(userId,imgUri);
+
+    res.status(200).json({user:user,imgUri:imgUri,msg:"File uploaded successfully"});
 });
 module.exports =  router;
