@@ -86,35 +86,6 @@ public class InvestmentsFragment extends Fragment {
         return root;
     }
 
-    private void getInvestmentsFromEndpoint(final Context context) {
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        String url = Constants.LOCALHOST + Constants.INVESTMENTS;
-        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject object = new JSONObject(response);
-                    UserInvestments inv = ResponseParser.parseInvestment(object);
-                    investments = inv.getInvestments();
-                    investmentsAdapter.notifyDataSetChanged();
-                    progressBar.setVisibility(View.INVISIBLE);
-                    //addInvestment.setVisibility(View.VISIBLE);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                DialogHelper.showBasicDialog(context, "Error", "We couldn't get your investments.Please try again.", null);
-                progressBar.setVisibility(View.INVISIBLE);
-                //addInvestment.setVisibility(View.VISIBLE);
-            }
-        });
-
-        requestQueue.add(request);
-    }
-
     private void fetchInvestments(Context context){
         String url = Constants.LOCALHOST + Constants.INVESTMENTS + Constants.USER + User.getInstance().getId();
         RequestQueue requestQueue = Volley.newRequestQueue(context);
