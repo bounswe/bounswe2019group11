@@ -6,6 +6,7 @@ const VerificationToken = require('./verificationToken');
 const crypto = require('crypto');
 const LostPasswordToken = require('./lostPasswordToken');
 const errors = require('../helpers/errors');
+const notificationService = require('../services/notification');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -73,6 +74,10 @@ const userSchema = new mongoose.Schema({
             type: Number,
             required: 'InvalidLongitude',
         },
+        displayName: {
+            type: String,
+            default: ''
+        }
     },
     googleUserId: {
         type: String,
@@ -120,10 +125,14 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
         select: false,
+    },
+    avatar:{
+        type:String,
+        default:"https://www.diplomacy.edu/sites/all/themes/jollyany/demos/no-avatar.jpg"
     }
 });
 
-userSchema.index({name: 'text', surname: 'text'});
+userSchema.index({name: 'text', surname: 'text', 'location.displayName': 'text'});
 
 userSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
@@ -164,6 +173,7 @@ userSchema.methods.follow =async function(userToBeFollowed){
             userToBeFollowed.followers.push({userId:this._id,isAccepted:false});
             await userToBeFollowed.save();
             await this.save();
+            await notificationService.createFollowNotification(this._id, userIdToBeFollowed);
             return {msg:"Follow request has been sent to " + userToBeFollowed.name + " "+ userToBeFollowed.surname,status:"request"};
         }
 

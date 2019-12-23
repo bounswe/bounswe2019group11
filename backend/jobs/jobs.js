@@ -17,11 +17,11 @@ const alertHelper = require('../helpers/alert');
 const BASE_CURRENCY = 'USD';
 
 const CURRENCIES = [
-    'EUR',
-    'JPY',
-    'GBP',
-    'CHF',
-    'TRY',
+    ['EUR', '5dd93e4301df5b4513254756'],
+    ['JPY', '5dd93e4301df5b4513254764'],
+    ['GBP', '5dd93e4301df5b451325477e'],
+    ['CHF', '5dd93e4301df5b451325478c'],
+    ['TRY', '5dd93e4301df5b451325479e'],
 ];
 
 const STOCKS = [
@@ -69,7 +69,7 @@ const intradayRatesJob = new CronJob('0 */5 * * * *', async () => {
     };
 
     for (let i = 0; i < CURRENCIES.length; i++) {
-        const code = CURRENCIES[i];
+        const code = CURRENCIES[i][0];
         params.to_symbol = code;
         params.apikey = apiKeyPicker.next();
         try {
@@ -92,6 +92,7 @@ const intradayRatesJob = new CronJob('0 */5 * * * *', async () => {
                             rate: alert.rate,
                             currentRate: rate,
                             currencyCode: code,
+                            currencyId: CURRENCIES[i][1]
                         });
                         await Alert.findOneAndDelete({_id: alert._id});
                     }
@@ -117,7 +118,7 @@ const dailyRatesJob = new CronJob('00 00 00 * * *', async () => {
     };
 
     for (let i = 0; i < CURRENCIES.length; i++) {
-        const code = CURRENCIES[i];
+        const code = CURRENCIES[i][0];
         params.to_symbol = code;
         params.apikey = apiKeyPicker.next();
         try {

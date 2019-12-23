@@ -22,6 +22,17 @@ public class Currency extends TradingEquipment {
         this.rate = rate;
     }
 
+    public Currency(String id, String code) {
+        this.id = id;
+        this.code = code;
+    }
+
+    public Currency(Parcel in, String id, String code) {
+        super(in);
+        this.id = id;
+        this.code = code;
+    }
+
     public Currency(Parcel in) {
         super(in);
         this.id = in.readString();

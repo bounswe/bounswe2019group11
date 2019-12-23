@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const errors = require('../helpers/errors');
 const ArticleComment = require('../models/articleComment');
 const ArticleVote = require('../models/articleVote');
+const request = require('request-promise');
 
 const STAGES = {
     GET_AUTHOR: {
@@ -242,12 +243,48 @@ module.exports.getByUserId = async (_userId) => {
     ]).then();
 };
 
+async function getTopics(body) {
+    const options = {
+        url: process.env.TEXTRAZOR_API_URL,
+        method: 'POST',
+        headers: {
+            'x-textrazor-key': process.env.TEXTRAZOR_API_KEY,
+        },
+        body: `extractors=topics&text=${body}`
+    };
+
+    try {
+        let response = await request(options);
+        response = JSON.parse(response);
+        const topics = response.response && response.response.topics;
+        if (!topics) {
+            return [];
+        }
+        const limit = Math.min(3, topics.length);
+        const tags = [];
+        for (let i = 0; i < limit; i++) {
+            tags.push(topics[i]['label']);
+        }
+        return tags;
+    } catch (err) {
+        console.log('Request to TextRazor failed: ' + err);
+    }
+}
+
 module.exports.create = async (title,imgUri, body, authorId) => {
+    let tags;
+    try {
+        tags = await getTopics(body);
+    } catch (err) {
+        tags = [];
+    }
+
     return await Article.create({
         title,
         imgUri,
         body,
         authorId,
+        tags,
     });
 };
 

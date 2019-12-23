@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Event {
+    private String id;
     private String title;
     private String body;
     private ArrayList<String> comments;
@@ -28,6 +29,12 @@ public class Event {
         } catch (Exception e) {
 
         }
+    }
+
+    public Event(String id, String title, String country) {
+        this.id = id;
+        this.title = title;
+        this.country = country;
     }
 
     public String getTitle() {

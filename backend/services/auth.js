@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const emailService = require('./email');
 const crypto = require('crypto');
 const {OAuth2Client} = require('google-auth-library');
+const request = require('request-promise');
 
 const client = new OAuth2Client(process.env.OAUTH2_CLIENT_ID);
 
@@ -22,7 +23,6 @@ module.exports.isUserExists = async (email) => {
 };
 
 module.exports.signUp = async (name, surname, email, password, idNumber, iban, location, googleUserId,privacy) => {
-
     let role;
     if (authHelper.isTrader(idNumber, iban)) {
         role = authHelper.ROLES.TRADER;
@@ -34,6 +34,8 @@ module.exports.signUp = async (name, surname, email, password, idNumber, iban, l
         isVerified = true;
         password = crypto.randomBytes(32).toString('hex');
     }
+
+    location['displayName'] = await getLocationDisplayName(location);
     const user = await User.create({
         name, surname, email, password, idNumber, iban, role, location, googleUserId,privacy, isVerified
 
@@ -43,6 +45,31 @@ module.exports.signUp = async (name, surname, email, password, idNumber, iban, l
         await sendVerificationEmail(user, verificationToken.token);
     }
 };
+
+async function getLocationDisplayName(location) {
+    let displayName = '';
+
+    const params = {
+        key: process.env.LOCATIONIQ_TOKEN,
+        lat: location.latitude,
+        lon: location.longitude,
+        format: 'json',
+        'accept-language': 'en',
+        zoom: 5,
+    };
+    const options = {
+        url: process.env.LOCATIONIQ_URL,
+        qs: params,
+    };
+    try {
+        let response = await request.get(options);
+        response = JSON.parse(response);
+        displayName = response['display_name'];
+    } catch (err) {
+        console.log('Request to LocationIQ failed: ' + err);
+    }
+    return displayName;
+}
 
 module.exports.findVerificationToken = async (verificationToken) => {
     return await VerificationToken.findOne({
