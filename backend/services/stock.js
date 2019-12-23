@@ -167,12 +167,17 @@ module.exports.saveAlert = async (id, userId, direction, rate) => {
     if (!(mongoose.Types.ObjectId.isValid(userId))) {
         throw errors.USER_NOT_FOUND();
     }
+    const stockSymbol = await Stock
+        .findOne({_id: id})
+        .select({stockSymbol: 1})
+        .exec();
     await Alert.create({
         type: alertHelper.TYPE.STOCK,
         userId,
         direction,
         rate,
-        stockId: id
+        stockId: id,
+        stockSymbol: stockSymbol.stockSymbol,
     });
 };
 

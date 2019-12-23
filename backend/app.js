@@ -20,18 +20,18 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
-app.use('/article',require('./routes/article'));
-app.use('/stock',require('./routes/stock'));
-app.use('/portfolio',require('./routes/portfolio'));
-app.use('/event',require('./routes/event'));
+app.use('/article', require('./routes/article'));
+app.use('/stock', require('./routes/stock'));
+app.use('/portfolio', require('./routes/portfolio'));
+app.use('/event', require('./routes/event'));
 app.use('/user', require('./routes/user'));
-app.use('/profile',require('./routes/profile'));
+app.use('/profile', require('./routes/profile'));
 app.use('/currency', require('./routes/currency'));
 app.use('/investments', require('./routes/investments'));
 app.use('/notification', require('./routes/notification'));
 app.use('/money', require('./routes/money'));
 app.use('/search', require('./routes/search'));
-app.use('/upload',require('./routes/upload'));
+app.use('/upload', require('./routes/upload'));
 app.use('/recommendation', require('./routes/recommendation'));
 
 const port = process.env.PORT;

@@ -27,10 +27,15 @@ const alertSchema = new mongoose.Schema({
         default: null,
         ref: 'Stock'
     },
+    stockSymbol: {
+      type: String,
+      required: false,
+      default: ''
+    },
     currencyCode: {
         type: String,
         required: false,
-        default: ""
+        default: ''
     }
 });
 
