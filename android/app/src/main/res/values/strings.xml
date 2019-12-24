@@ -91,6 +91,7 @@
     <string name="notification">Notification</string>
     <string name="noNotification">You don\'t have any notifications.</string>
     <string name="recommendations">Recommendations</string>
+    <string name="becauseTextHolder">Since you liked SP 500, Nasdaq hit new records; Boeing lifts Dow which has following tags: Dow Jones Industrial Average</string>
 </resources>
 
 

@@ -46,7 +46,10 @@ public class RecommendedArticleAdapter extends BaseAdapter {
         Article article = articles.get(i);
 
         TextView recommendedArticleTitle = view.findViewById(R.id.recommendedArticleTitle);
+        TextView recommmeddedArticleBody = view.findViewById(R.id.recommendedArticleBody);
+
         recommendedArticleTitle.setText(article.getTitle());
+        recommmeddedArticleBody.setText(article.getBody());
         return view;
     }
 }
