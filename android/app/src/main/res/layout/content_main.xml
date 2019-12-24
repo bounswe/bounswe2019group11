@@ -28,14 +28,14 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="#A8A8A8"/>
+        android:background="#DFDFDF"/>
 
 
     <ListView
         android:id="@+id/notification_listView"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:background="#A8A8A8"
+        android:background="#DFDFDF"
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

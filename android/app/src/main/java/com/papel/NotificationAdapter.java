@@ -1,6 +1,7 @@
 package com.papel;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +55,8 @@ public class NotificationAdapter extends BaseAdapter {
         TextView name = view.findViewById(R.id.trading_equipment_name);
         TextView type = view.findViewById(R.id.trading_equipment_type_name);
         type.setVisibility(View.GONE);
-
+        name.setTypeface(Typeface.DEFAULT);
+        name.setTextSize(14);
         name.setText(item.getNotifMessage());
 
         return view;
