@@ -2,29 +2,28 @@ package com.papel.data;
 
 public class Investment {
 
-    private String id;
     private TradingEquipment equipment;
-    private double amount;
+    private int amount;
 
 
-    public Investment(TradingEquipment equipment, double amount) {
+    public Investment(TradingEquipment equipment, int amount) {
         this.equipment = equipment;
         this.amount = amount;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public TradingEquipment getEquipment() {
         return equipment;
     }
 
-    public double getAmount() {
+    public void setEquipment(TradingEquipment equipment) {
+        this.equipment = equipment;
+    }
+
+    public int getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(int amount) {
         this.amount = amount;
     }
 }

@@ -14,13 +14,22 @@ module.exports.getById = async (investmentsID) => {
 }
 
 module.exports.getByUserId = async (userID) =>{
-    return await Investments.find({
+    const investment = await Investments.findOne({
         userId: userID
     })
+    const user = await User.findOne({
+        _id: userID
+    })
+    if(investment){
+        return investment;
+    }else {
+        return await this.create({},userID);
+    }   
 }
 
-module.exports.create = async (myInvestments) => {
+module.exports.create = async (myInvestments, userID) => {
     const investments = {...myInvestments};
+    investments.userId = userID;
     const createdInvestments = await Investments.create(investments);
     return createdInvestments;
 };
@@ -41,7 +50,8 @@ module.exports.addStock = async (theStock,theAmount,investmentsID) => {
         await  investmentsToAdd.save();
         return await this.getById(investmentsID);
     } else{   
-        investmentsToAdd.stocks[index].amount += theAmount;
+        const currentAmount = Number(investmentsToAdd.stocks[index].amount);
+        investmentsToAdd.stocks[index].amount = currentAmount + Number(theAmount);
         await  investmentsToAdd.save();
         return await this.getById(investmentsID);
     }
@@ -63,28 +73,31 @@ module.exports.addCurrency = async (theCurrency,theAmount,investmentsID) => {
         await investmentsToAdd.save();
         return await this.getById(investmentsID);
     } else{
-        investmentsToAdd.currencies[index].amount += theAmount;
+        const currentAmount = Number(investmentsToAdd.currencies[index].amount);
+        investmentsToAdd.currencies[index].amount = currentAmount + Number(theAmount);
         await  investmentsToAdd.save();
         return await this.getById(investmentsID);
     }
 };
 
 module.exports.removeStock = async (theStock, theAmount, investmentsID) => {
+    theAmount = Number(theAmount);
     const stockToBeDeleted= {...theStock};
     const investmentsToBeModified = await Investments.findOne({
         _id: investmentsID
     });
-    const dollarAmount = theAmount * stockToBeAdded.price
+    const dollarAmount = theAmount * Number(stockToBeDeleted.price);
     const index = investmentsToBeModified.stocks.findIndex(s => s.stock._id == stockToBeDeleted._id);
+    currentAmount = Number(investmentsToBeModified.stocks[index].amount);    
     if(index == -1){
         throw errors.STOCK_NOT_FOUND();
     }else{
-        if (investmentsToBeModified.stocks[index].amount < theAmount){
+        if (currentAmount < theAmount){
             throw errors.INSUFFICIENT_STOCK();
-        } else if(investmentsToBeModified.stocks[index].amount == theAmount){
+        } else if(currentAmount == theAmount){
             investmentsToBeModified.stocks.splice(index,1); //Deletes the given id from currency array
         } else {
-            investmentsToBeModified.stocks[index].amount -= theAmount;            
+            investmentsToBeModified.stocks[index].amount = currentAmount - theAmount;            
         }
         await moneyService.deposit(investmentsToBeModified.userId,dollarAmount);
         await  investmentsToBeModified.save();
@@ -93,22 +106,23 @@ module.exports.removeStock = async (theStock, theAmount, investmentsID) => {
 };
 
 module.exports.removeCurrency = async (theCurrency,theAmount,investmentsID) => {
+    theAmount = Number(theAmount);
     const currencyToBeDeleted= {...theCurrency};
     const investmentsToBeModified = await Investments.findOne({
         _id: investmentsID
     });
-    const dollarAmount = theAmount / currencyToBeAdded.rate
+    const dollarAmount = theAmount / Number(currencyToBeDeleted.rate);
     const index = investmentsToBeModified.currencies.findIndex(c => c.currency._id == currencyToBeDeleted._id);
-    await moneyService.deposit(user._id,dollarAmount);
+    currentAmount = Number(investmentsToBeModified.currencies[index].amount);    
     if(index == -1){
         throw errors.STOCK_NOT_FOUND();
     }else{
-        if (investmentsToBeModified.currencies[index].amount < theAmount){
+        if (currentAmount < theAmount){
             throw errors.INSUFFICIENT_CURRENCY();
-        } else if(investmentsToBeModified.currencies[index].amount == theAmount){
+        } else if(currentAmount == theAmount){
             investmentsToBeModified.currencies.splice(index,1); //Deletes the given id from currency array
         } else {
-            investmentsToBeModified.currencies[index].amount -= theAmount;            
+            investmentsToBeModified.currencies[index].amount = currentAmount - theAmount;            
         }
         await moneyService.deposit(investmentsToBeModified.userId,dollarAmount);
         await  investmentsToBeModified.save();

@@ -26,20 +26,24 @@ const randomInt = (min, max) => {
 
 
 module.exports.getRecommendedArticles = async (userId) => {
+    const response = {
+        because: null,
+        articles: [],
+    };
+
     const upvotedArticles = await ArticleVote
-        .find({userId});
+        .find({userId, value: 1});
     if (upvotedArticles.length === 0) {
-        return [];
+        return response;
     }
-    const ind = randomInt(0, upvotedArticles.length - 1);
-    const selectedArticleVote = upvotedArticles[ind];
+    const selectedArticleVote = upvotedArticles[randomInt(0, upvotedArticles.length - 1)];
     const selectCondition = {tags: 1, title: 1, body: 1, imgUri: 1};
     const article = await Article
         .findOne({_id: selectedArticleVote.articleId})
         .select(selectCondition)
         .exec();
     if (!article.tags) {
-        return [];
+        return response;
     }
     const recommendedArticles = [];
     for (let i = 0; i < article.tags.length; i++) {
@@ -55,8 +59,7 @@ module.exports.getRecommendedArticles = async (userId) => {
             .exec();
         recommendedArticles.push(...articles);
     }
-    return {
-        because: article,
-        articles: recommendedArticles
-    };
+    response.because = article;
+    response.articles = recommendedArticles;
+    return response;
 };

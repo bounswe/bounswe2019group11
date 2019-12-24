@@ -1,6 +1,17 @@
 const Annotation = require('../models/annotations');
+const axios = require('axios');
+
 module.exports.createAnnotation = async (type,creator,created,body,target) =>{
     target['source'] = process.env.API_URL + "/article/"+target['id'];
+    const response = await axios.get(process.env.API_URL+'/user/'+creator);
+    const user = response.data;
+    const bodyCreator = {
+            id: user._id,
+            name:user.name,
+            surname:user.surname
+
+    };
+    body.creator = bodyCreator;
     const annotation = await Annotation.create({type,creator,created,body,target});
     return annotation;
 };

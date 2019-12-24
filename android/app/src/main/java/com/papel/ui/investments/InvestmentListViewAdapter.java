@@ -11,6 +11,7 @@ import android.widget.Filter;
 import android.widget.TextView;
 
 import com.papel.R;
+import com.papel.SellButtonListener;
 import com.papel.data.Currency;
 import com.papel.data.Investment;
 import com.papel.data.Stock;
@@ -26,6 +27,7 @@ public class InvestmentListViewAdapter extends BaseAdapter {
     private ArrayList<Investment> filteredData;
     private User user;
     private boolean showFullname;
+    private SellButtonListener sellButtonListener;
 
     public InvestmentListViewAdapter(Context context, ArrayList<Investment> investments, boolean showFullname) {
         this.context = context;
@@ -52,13 +54,17 @@ public class InvestmentListViewAdapter extends BaseAdapter {
         return i;
     }
 
+    public void setSellButtonListener(SellButtonListener sellButtonListener) {
+        this.sellButtonListener = sellButtonListener;
+    }
+
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         if(view == null) {
             view = LayoutInflater.from(context).inflate(R.layout.investment_row,viewGroup,false);
         }
 
-        Investment item = filteredData.get(i);
+        final Investment item = filteredData.get(i);
 
         TextView name = view.findViewById(R.id.investment_name);
         TextView amount = view.findViewById(R.id.investment_amount);
@@ -71,6 +77,13 @@ public class InvestmentListViewAdapter extends BaseAdapter {
         }else{
             sell_button.setText(R.string.remove);
         }
+
+        sell_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sellButtonListener.onSellButtonListener(item);
+            }
+        });
 
 
         if (item.getEquipment() instanceof Stock) {
@@ -90,6 +103,8 @@ public class InvestmentListViewAdapter extends BaseAdapter {
 
         return view;
     }
+
+
 
     public Filter getFilter() {
         return filter;
