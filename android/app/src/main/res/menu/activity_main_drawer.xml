@@ -22,11 +22,11 @@
             android:title="@string/menu_trading_eq" />
         <item
             android:id="@+id/nav_investments"
-            android:icon="@drawable/ic_menu_send"
+            android:icon="@drawable/ic_investment"
             android:title="@string/my_investments" />
         <item
             android:id="@+id/nav_money"
-            android:icon="@drawable/ic_menu_portfolio"
+            android:icon="@drawable/ic_wallet"
             android:title="@string/menu_money" />
     </group>
 
