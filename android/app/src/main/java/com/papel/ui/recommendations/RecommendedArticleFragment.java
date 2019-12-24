@@ -1,6 +1,7 @@
 package com.papel.ui.recommendations;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.android.volley.AuthFailureError;
@@ -22,6 +24,7 @@ import com.papel.Constants;
 import com.papel.R;
 import com.papel.data.Article;
 import com.papel.data.User;
+import com.papel.ui.articles.ReadArticleActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +38,7 @@ import java.util.Map;
 public class RecommendedArticleFragment extends Fragment {
 
     private ListView listView;
-    private ArrayList<Article> articles;
+    private ArrayList<Article> articles = new ArrayList<>();
     private RecommendedArticleAdapter adapter;
 
     public RecommendedArticleFragment() {
@@ -56,6 +59,15 @@ public class RecommendedArticleFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recommended_article, container, false);
         listView = view.findViewById(R.id.listView);
         fetchRecommendedArticles(getContext());
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Article clickedArticle = articles.get(i);
+                Intent intent = new Intent(getContext(), ReadArticleActivity.class);
+                intent.putExtra("articleId",clickedArticle.getId());
+                startActivity(intent);
+            }
+        });
         return view;
     }
 
@@ -72,7 +84,7 @@ public class RecommendedArticleFragment extends Fragment {
                     // TODO use them
                     String becauseId = becauseJSON.getString("_id");
                     String becauseTitle = becauseJSON.getString("title");
-                    ArrayList<Article> recommendedArticles = new ArrayList<>();
+                    articles.clear();
                     for(int  i = 0; i<articlesJSON.length(); i++) {
                         JSONObject object = articlesJSON.getJSONObject(i);
                         String articleId = object.getString("_id");
@@ -80,12 +92,12 @@ public class RecommendedArticleFragment extends Fragment {
                         String articleBody = object.getString("body");
                         if (object.has("imgUri")) {
                             String articleImageUrl = object.getString("imgUri");
-                            recommendedArticles.add(new Article(articleId,articleTitle,articleBody,articleImageUrl));
+                            articles.add(new Article(articleId,articleTitle,articleBody,articleImageUrl));
                         } else {
-                            recommendedArticles.add(new Article(articleId,articleTitle,articleBody));
+                            articles.add(new Article(articleId,articleTitle,articleBody));
                         }
                     }
-                    adapter = new RecommendedArticleAdapter(context,recommendedArticles);
+                    adapter = new RecommendedArticleAdapter(context,articles);
                     listView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                 } catch (JSONException e) {

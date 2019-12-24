@@ -1,6 +1,7 @@
 package com.papel.ui.recommendations;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.android.volley.AuthFailureError;
@@ -23,6 +25,7 @@ import com.papel.Constants;
 import com.papel.R;
 import com.papel.data.Article;
 import com.papel.data.User;
+import com.papel.ui.profile.ProfileActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +40,7 @@ public class NearbyUserFragment extends Fragment {
 
     private ListView listView;
     private NearbyUserAdapter adapter;
+    private ArrayList<User> users = new ArrayList<>();
 
     public NearbyUserFragment() {
         // Required empty public constructor
@@ -57,6 +61,15 @@ public class NearbyUserFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_nearby_user, container, false);
         listView = view.findViewById(R.id.listView);
         fetchNearbyUsers(getContext());
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                User clickedUser = users.get(i);
+                Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
+                profileIntent.putExtra("UserId",clickedUser.getId());
+                startActivity(profileIntent);
+            }
+        });
         return view;
 
     }
@@ -70,7 +83,7 @@ public class NearbyUserFragment extends Fragment {
             public void onResponse(String response) {
                 try {
                     JSONArray responseArray = new JSONArray(response);
-                    ArrayList<User> users = new ArrayList<>();
+                    users.clear();
                     for (int i = 0; i<responseArray.length(); i++) {
                         JSONObject jsonObject = responseArray.getJSONObject(i);
                         String userId = jsonObject.getString("_id");
