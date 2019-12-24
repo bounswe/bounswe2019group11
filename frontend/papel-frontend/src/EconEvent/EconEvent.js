@@ -12,13 +12,11 @@ class EconEvent extends React.Component{
     
   }
   componentDidMount(){
-    console.log(this.state.id)
+    
     const self = this
     const url = app_config.api_url + "/event/" + this.state.id;
-    this.setState({loading: true});
     $.get(url, data => {
-      console.log(data)
-      self.setState({loading: false, econevent: data})
+      this.setState({econevent: data})
     })
   }
   createStars(){
@@ -30,28 +28,13 @@ class EconEvent extends React.Component{
   }
     render(){
         var econevent = this.state.econevent;
-        if (this.state.loading) {
-          return (
-            <Row>
-              <Col sm={{span: 10, offset: 1}} xs={{span: 12}}>
-                <Card>
-                  <Card.Body>
-                    <Card.Title>Loading...</Card.Title>
-                    <hr />
-                    <Card.Text></Card.Text>
-                  </Card.Body>
-                </Card>
-              </Col>
-            </Row>
-          )
-        }
-        else {
+        
           return (
             <div className="container">
               <div className="row">
                 <div className="col-6 offset-3">
                   <div className="row">
-                    <h3>{econevent.title}</h3>
+                    title : <h3>{econevent.title}</h3>
                   </div>
                   <div className="row">
                     <div className="econevent"> {econevent.body} </div>
@@ -65,7 +48,7 @@ class EconEvent extends React.Component{
               </div>
             </div>
         )
-      }
+      
     }
 }
 export default EconEvent;

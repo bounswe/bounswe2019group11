@@ -56,10 +56,7 @@ function Prediction({ code }) {
             (data) => { setCurrency(data) }
         );
     }
-    console.log("currency")
-    console.log(currency)
-    console.log("template")
-    console.log(template)
+   
     template = currency ? currency : template
 
 
