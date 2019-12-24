@@ -10,6 +10,8 @@ public class AnnotationBody implements Parcelable {
     private String format;
     private String createTime;
     private String userId;
+    private String userName;
+    private String userSurname;
 
     @Override
     public int describeContents() {
@@ -24,6 +26,8 @@ public class AnnotationBody implements Parcelable {
         parcel.writeString(this.format);
         parcel.writeString(this.createTime);
         parcel.writeString(this.userId);
+        parcel.writeString(this.userName);
+        parcel.writeString(this.userSurname);
 
     }
     public static final Parcelable.Creator<AnnotationBody> CREATOR = new Parcelable.Creator<AnnotationBody>() {
@@ -43,15 +47,19 @@ public class AnnotationBody implements Parcelable {
         this.format = in.readString();
         this.createTime = in.readString();
         this.userId = in.readString();
+        this.userName = in.readString();
+        this.userSurname = in.readString();
     }
 
-    public AnnotationBody(String type, String value, String purpose, String format, String createTime, String userId) {
+    public AnnotationBody(String type, String value, String purpose, String format, String createTime, String userId,String userName,String userSurname) {
         this.type = type;
         this.value = value;
         this.purpose = purpose;
         this.format = format;
         this.createTime = createTime;
         this.userId = userId;
+        this.userName = userName;
+        this.userSurname = userSurname;
     }
 
     public String getType() {
@@ -100,5 +108,21 @@ public class AnnotationBody implements Parcelable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserSurname() {
+        return userSurname;
+    }
+
+    public void setUserSurname(String userSurname) {
+        this.userSurname = userSurname;
     }
 }

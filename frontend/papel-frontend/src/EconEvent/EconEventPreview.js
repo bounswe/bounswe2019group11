@@ -10,7 +10,7 @@ function EconEventPreview({eventId, title, text, rank}) {
   }
   const path = "../event/" + eventId;
   return (
-      <a href={path}>
+     
         <Card style={{width: "100%", marginBottom: 10}}>
           <Card.Body>
             <Card.Title>{title}</Card.Title>
@@ -22,7 +22,7 @@ function EconEventPreview({eventId, title, text, rank}) {
 
           </Card.Body>
         </Card>
-      </a>
+      
     );
   }
 

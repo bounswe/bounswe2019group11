@@ -32,7 +32,7 @@ function ProfileCard(props) {
       <div className="ui card">
           <div className="image">
               <img src={user.avatar}/>
-              <SimpleReactFileUpload authToken={cookies.userToken}/>
+              {props.isMe?<SimpleReactFileUpload authToken={cookies.userToken}/>:""}
           </div>
           <div className="content">
               <div className="header">{user.name} {user.surname}</div>

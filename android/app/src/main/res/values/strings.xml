@@ -18,6 +18,7 @@
     <string name="menu_money">Money</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
+    <string name="menu_recommendation">Recommendations</string>
     <string name="profile_image_description">Profile image.</string>
     <string name="test_username">Hasan Yaman</string>
     <string name="test_usermail">hasan@gmail.com</string>
@@ -89,6 +90,8 @@
     <string name="above">Above this value</string>
     <string name="notification">Notification</string>
     <string name="noNotification">You don\'t have any notifications.</string>
+    <string name="recommendations">Recommendations</string>
+    <string name="becauseTextHolder">Since you liked SP 500, Nasdaq hit new records; Boeing lifts Dow which has following tags: Dow Jones Industrial Average</string>
 </resources>
 
 

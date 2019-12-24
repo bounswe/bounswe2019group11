@@ -29,8 +29,6 @@ class Currencies extends React.Component {
       userId = cookies.get('user')._id ? cookies.get('user')._id : "check get user id";
       authToken = cookies.get('userToken')
     }
-    else { console.log("not logged"); }
-
     this.state = {
       loading: false, redirect: false, currencies: [{ _id: "0", code: "XXX", name: "namex", rate: "0.00" }, { _id: "0", code: "XXX", name: "namex", rate: "0.00" },
       { _id: "0", code: "XXX", name: "namex", rate: "0.00" },
@@ -51,7 +49,7 @@ class Currencies extends React.Component {
     const self = this;
     this.setState({ loading: true });
     $.get(url + "currency", (data) => {
-      this.state.currencies.map(currency => (console.log(currency)))
+      
       self.setState({ currencies: data, loading: false });
       template = this.state.currencies
     });

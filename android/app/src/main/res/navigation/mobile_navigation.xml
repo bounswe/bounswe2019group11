@@ -51,4 +51,10 @@
         android:label="@string/menu_money"
         tools:layout="@layout/fragment_money" />
 
+    <fragment
+        android:id="@+id/nav_recommendations"
+        android:name="com.papel.ui.recommendations.RecommendationFragment"
+        android:label="@string/menu_recommendation"
+        tools:layout="@layout/fragment_recommendation" />
+
 </navigation>

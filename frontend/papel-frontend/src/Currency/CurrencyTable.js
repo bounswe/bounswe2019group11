@@ -17,7 +17,6 @@ function CurrencyTable({code,timeRange }) {
   if(timeRange=="last-month"){
     currencyLastValues = currency.lastMonth;
 
-    //console.log("deneme" + currency.lastMonth);
   }else if(timeRange=="last-week"){
     currencyLastValues = currency.lastWeek;
   }else if(timeRange=="last-100"){
@@ -44,10 +43,7 @@ function CurrencyTable({code,timeRange }) {
     }
   }
 
-  //console.log(days)
-  //console.log(months)
-  //console.log(years)
-  //console.log(currencyLastValues)
+
   var i;
   for (i = 0; i < values.length; i++) {
     for(key in values[i] ){

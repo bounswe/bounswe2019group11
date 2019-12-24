@@ -28,6 +28,10 @@
             android:id="@+id/nav_money"
             android:icon="@drawable/ic_wallet"
             android:title="@string/menu_money" />
+        <item
+            android:id="@+id/nav_recommendations"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/recommendations" />
     </group>
 
     <!-- <item android:title="Communicate">

@@ -377,6 +377,7 @@ public class ReadArticleActivity extends AppCompatActivity {
             selectorJSON.put("start", start);
             selectorJSON.put("end", end);
             targetJSON.put("selector", selectorJSON);
+            targetJSON.put("format",Constants.FORMAT_TEXT_PLAIN);
             requestBody.put("target", targetJSON);
 
         } catch (JSONException e) {

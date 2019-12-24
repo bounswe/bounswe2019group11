@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Home from './Home/Home';
 import Login from './Login/Login';
+import Search from './Search/Search';
+import SearchResults from './Search/SearchResults';
 import Annotation from './Annotator/Annotation';
 import Register from './Register/Register';
 import Profile from './Profile/Profile';
@@ -20,7 +22,6 @@ import { app_config } from "./config";
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { useCookies, CookiesProvider } from 'react-cookie';
 import { faBell, faExclamation, faPlus, faThumbsUp, faThumbsDown, faSearch, faSignInAlt, faSignOutAlt, faUser, faNewspaper, faCalendarWeek, faHome, faMoneyBill, faCoins, faMoneyBillWave, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { postRequest as post, getRequest as get } from './helpers/request';
 import { Dropdown, Badge, Row, Col, Button, FormControl, Form, InputGroup } from 'react-bootstrap';
@@ -112,7 +113,7 @@ function NavBar(props) {
           <Dropdown.Toggle id="dropDown" style={{ color: "black", fontWeight: "bold" }}>
             <FontAwesomeIcon name="Bell Icon" icon={faBell} />&nbsp;<Badge >{notifications.length}</Badge>
           </Dropdown.Toggle>
-
+       
           <Dropdown.Menu className="notification">
           { notifications.map(notification => {
             switch (notification.notification) {
@@ -137,26 +138,21 @@ function NavBar(props) {
     <Router>
       <ul id="menu">
 
-        <Row style={{paddingLeft:20}}>
+        <Row style={{ paddingLeft: 20 }}>
           <Col md={{ span: 2, offset: 0 }} style={{ marginTop: 4 }}>
-            <Link to="/">
+            <Link to="/home">
               <img id="logo-green-small" className="menu-logo" src={Logo} style={{ borderright: "2px solid rgba(0, 0, 0, 0.151)", width: 390 / 3, height: 135 / 3 }} />
             </Link>
           </Col>
           <Col md={{ span: 4, offset: 0 }} style={{ marginTop: 4 }}>
-            <InputGroup className="mb-3">
-              <FormControl placeholder="Search" />
-              <InputGroup.Append>
-                <Button variant="outline-secondary"><FontAwesomeIcon name="Search-Icon" icon={faSearch} onClick={() => alert("implement search")} /></Button>
-              </InputGroup.Append>
-            </InputGroup>
+            <Search />
           </Col>
         </Row>
         <Row style={{ marginTop: 0 }}>
           <Col md={{ span: 7, offset: 0 }}>
 
 
-            <li><Link to="/#"><FontAwesomeIcon name="Article Icon" icon={faHome} />&nbsp;Home</Link></li>
+            <li><Link to="/home"><FontAwesomeIcon name="Home Icon" icon={faHome} />&nbsp;Home</Link></li>
 
             {loginBtn}
             {registerBtn}
@@ -165,7 +161,7 @@ function NavBar(props) {
             <li><Link to="/events"><FontAwesomeIcon name="Events Icon" icon={faCalendarWeek} />&nbsp;Events</Link></li>
             <li><Link to="/currencies"><FontAwesomeIcon name="Money Icon" icon={faMoneyBillWave} />&nbsp;Currencies</Link></li>
 
-          </Col><Col md={{ span: 4, offset:1 }}>
+          </Col><Col md={{ span: 4, offset: 1 }}>
             {notificationBtn}
             {profileBtn}
             {logoutBtn}
@@ -179,6 +175,7 @@ function NavBar(props) {
         <div className="container">
           <Switch>
             <Route exact path="/"><Home /></Route>
+            <Route path="/home"><Home /></Route>
             <Route path="/login"><Login login={login} /></Route>
             <Route path="/register"><Register /></Route>
             <Route path="/profile"><Profile /></Route>
@@ -190,6 +187,7 @@ function NavBar(props) {
             <Route path="/currencies"><Currencies /></Route>
             <Route path="/addarticle"><AddArticle /></Route>
             <Route path="/events"><EconEvents /></Route>
+            <Route path="/search-results/:value" component={SearchResults}/>
             <Route path="/annotation"><Annotation /></Route>
             <Route path="/user/:id" component={UserProfile} />
           </Switch>
@@ -248,6 +246,7 @@ function App() {
   }
 
   return (
+
     <NavBar notifications={notifications} acceptFollowRequest={acceptFollow} rejectFollowRequest={rejectFollow} />
   );
 }

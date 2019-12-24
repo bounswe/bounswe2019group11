@@ -21,6 +21,7 @@ class SimpleReactFileUpload extends React.Component {
         let {cookies} = this.props
         e.preventDefault() // Stop form submit
         this.fileUpload(this.state.file).then((response)=>{
+
             console.log(response.data);
             cookies.set('user', response.data.user)
         })
