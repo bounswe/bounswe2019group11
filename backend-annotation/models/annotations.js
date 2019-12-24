@@ -21,8 +21,15 @@ const bodySchema = new mongoose.Schema({
         language: "en"
     },
     creator: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        id:{
+            type: mongoose.Schema.Types.ObjectId
+        },
+        name:{
+            type: String
+        },
+        surname:{
+            type: String
+        }
     },
     created: {
         type: Date,
