@@ -87,6 +87,8 @@
     <string name="remove_alert">Remove Alert</string>
     <string name="below">Below this value</string>
     <string name="above">Above this value</string>
+    <string name="notification">Notification</string>
+    <string name="noNotification">You don\'t have any notifications.</string>
 </resources>
 
 

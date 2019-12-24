@@ -16,6 +16,7 @@
     "react-bootstrap": "^1.0.0-beta.14",
     "react-cookie": "^4.0.1",
     "react-dom": "^16.10.2",
+    "react-image-annotation": "^0.9.10",
     "react-markdown-editor-lite": "^0.4.3",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.3.0",

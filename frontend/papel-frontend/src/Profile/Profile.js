@@ -39,18 +39,17 @@ class Profile extends React.Component {
       getRequest({
         url: requestUrl,
         success: (data) => {
-          console.log(data)
           this.setState({articles: data.articles, portfolios: data.portfolios})
           cookies.set('pendingRequests', data.followerPending)
         },
         authToken: userToken
       })
+      var balanceFixed
       getRequest({
         url: app_config.api_url + "/money",
         success: (data) => {
-          this.setState({balance:data})
-          console.log(data)
-          console.log(this.state.balance)
+          balanceFixed=data.money.toFixed(2)
+          this.setState({balance:balanceFixed})
         },
         authToken: userToken
         })
@@ -87,10 +86,10 @@ class Profile extends React.Component {
       data: portfolio,
       success: (resp, data) => {
         this.setState({portfoliosLoaded: false});
-        const request_url = app_config + "/portfolio/user/" + cookies.get('user')._id;
+        const request_url = app_config.api_url + "/portfolio/user/" + cookies.get('user')._id;
         getRequest({
           url: request_url,
-          success: portfolios => {
+          success: (portfolios) => {
             this.setState({portfolios: portfolios, portfoliosLoaded: true});
           }
         });
@@ -165,7 +164,7 @@ class Profile extends React.Component {
           </Row>
           <Row style={{marginTop: 10}} m={{span:5}}>
             <Col>
-              <h3>My Balance: {this.state.balance.money} &#36;
+              <h3>My Balance: {this.state.balance} &#36;
               </h3>
             </Col>
           </Row>

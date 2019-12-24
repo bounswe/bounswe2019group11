@@ -7,8 +7,18 @@ module.exports.getByID = async (_id) => {
     });
 };
 
-module.exports.getAll = async () => {
-    return await Event.find();
+module.exports.getAll = async (country, rank, sDate) => {
+    const condition = {};
+    if (country) {
+        condition['country'] = country
+    }
+    if (rank) {
+        condition['rank'] = rank
+    }
+    if (sDate) {
+        condition['StartDate'] = sDate
+    }
+    return await Event.find(condition)
 };
 
 module.exports.getByCountry = async (country) => {

@@ -9,36 +9,22 @@ import {getRequest, postRequest} from '../helpers/request'
 import {app_config} from "../config";
 
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
-
 const url = app_config.api_url + "/";
 
-function StockChart2({stock, stockName}) {
-  //console.log(stock)
-  //var stock_id = "5df7b5adf29d0356042b862"
-  const [stockInfo, setStockInfo] = useState(0);
-  const [stockInfoReceived, setStockInfoReceived] = useState(false);
-  if(!stockInfoReceived){
-    getRequest({
-      url: app_config.api_url + "/stock/" + stock[0],
-      success: (data) => {
-        setStockInfo(data);
-        setStockInfoReceived(true);
-      }
-      })
+function CurrencyCharts({currency}) {
+  const [currencyRate, setCurrencyRate] = useState(0);
+  if(!currencyRate){$.get(url+"currency/"+currency+"/last-month", (data) => {
+    setCurrencyRate( data)  });
   }
-  //console.log("here1")
-  //console.log(stockInfo);
-  //console.log("here2")
-  var stockLastValues = {};
-  stockLastValues = stockInfo.monthlyPrice;
-  //console.log(stockLastValues)
-  //console.log("here3")
+  //console.log(currencyRate);
+  var currencyLastValues = {};
+  currencyLastValues = currencyRate.lastMonth;
   var key;
   var days = [], months=[], years=[];
   var values = [];
   var closeDayValues = [];
-  for (key in stockLastValues) {
-    if (stockLastValues.hasOwnProperty(key)) {
+  for (key in currencyLastValues) {
+    if (currencyLastValues.hasOwnProperty(key)) {
       var date = key;
       var day = date.split("-")[2],
       month =  date.split("-")[1],
@@ -46,18 +32,20 @@ function StockChart2({stock, stockName}) {
       days.push(day);
       months.push(month);
       years.push(year);
-      values.push(stockLastValues[key]);
+      values.push(currencyLastValues[key]);
     }
   }
   //console.log(days)
   //console.log(months)
   //console.log(years)
-  //console.log(stockLastValues)
+  //console.log(currencyLastValues)
   var i;
   for (i = 0; i < values.length; i++) {
     for(key in values[i] ){
-      if(key.includes("4")){closeDayValues.push(parseFloat(values[i][key]) );}
-    } ;
+      if(key.includes("4")){closeDayValues.push(parseFloat(values[i][key]) );
+        //console.log(closeDayValues);
+      }
+    };
   }
   //<CurencyCh currency={code} year={years} month={months} day={days} value={closeDayValues}></CurencyCh >
   var data = [];
@@ -71,10 +59,9 @@ function StockChart2({stock, stockName}) {
     animationEnabled: true,
     zoomEnabled: true,
     title: {
-      text:stock[2]
+      text:"USD/"+currency
     },
     axisY: {
-      title: "value (in USD)",
       includeZero: false
     },
     data: [{
@@ -83,7 +70,6 @@ function StockChart2({stock, stockName}) {
       dataPoints: data
     }]
   }
-
     return (
       <Card>
         <div className="row">
@@ -93,6 +79,4 @@ function StockChart2({stock, stockName}) {
     );
 }
 
-
-
-export default StockChart2;
+export default CurrencyCharts;

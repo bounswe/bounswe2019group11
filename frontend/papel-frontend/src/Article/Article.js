@@ -8,7 +8,7 @@ import $ from 'jquery';
 import {Row, Col, Button, Card, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPlus,faThumbsUp,faThumbsDown, faUserCircle, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
-import {AnnotatedText} from './Annotation'
+import {AnnotatedText, AnnotatedImage} from './Annotation'
 import CommentPreview from './CommentPreview';
 import {postRequest} from '../helpers/request';
 
@@ -44,9 +44,6 @@ class Article extends React.Component {
       self._article=this.state.article;
       }
     );
-
-
-
   }
 
   handleCommentEditorChange(event) {
@@ -158,8 +155,12 @@ class Article extends React.Component {
               <Card.Title><h1>{article.title}</h1></Card.Title>
               {authorLine}
               <hr />
-              <Card.Img variant = "top" src= {article.imgUri} />
-                {articleBody}
+              {article._id === undefined ? "" :
+              <AnnotatedImage
+                src={article.imgUri}
+                articleId={article._id}
+                authToken={cookies.get('userToken')}/>}
+              {articleBody}
               <hr/>
             </Card.Body>
             <Row className="" >

@@ -56,7 +56,7 @@ class TradingEquipment extends React.Component {
             <h1>{this.state.stock.stockSymbol}</h1>
           </div>
           <div className="col-sm-9">
-            <h3>{this.state.stock.stockName}</h3>
+            <h3>{this.state.stock.name}</h3>
           </div>
         </div>
         <div className="row">
