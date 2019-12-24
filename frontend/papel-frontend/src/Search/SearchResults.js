@@ -58,7 +58,7 @@ class SearchResults extends React.Component {
                 ARTICLES<br /><hr />
                 
                 {articles.length>0? articles.map(article => (
-                    <a href={"../article/" + article._id}>
+                    <a href={app_config.frontend_url+"/article/" + article._id}>
 
                         <Card.Body>{article.title}
                         </Card.Body>
@@ -71,7 +71,7 @@ class SearchResults extends React.Component {
             <Card.Body>
                 CURRENCIES<br /><hr />
                 {currencies.length>0?currencies.map(currency => (
-                    <a href={"../articles/"}>
+                    <a href={app_config.frontend_url+"/currencies/"}>
 
                         <Card.Body>{currency.code}
                         </Card.Body>
@@ -85,7 +85,7 @@ class SearchResults extends React.Component {
         <Card.Body>
                     EVENTS<br /><hr />
                     {events.length>0 ? events.map(event => (
-                        <a href={"../articles/"}>
+                        <a href={app_config.frontend_url+ "/events"}>
 
                             <Card.Body>{event.title + " - " + event.country}
                             </Card.Body>
@@ -100,7 +100,7 @@ class SearchResults extends React.Component {
             userSection =    <Card.Body>
                 USERS <br /><hr />
                 {users.length>0 ? users.map(user => (
-                    <a href={"../articles"}>
+                    <a href={app_config.frontend_url+ "/user/"+user._id}>
 
                         <Card.Body>{user.name + " " + user.surname}
                         </Card.Body>
@@ -113,7 +113,7 @@ class SearchResults extends React.Component {
             stockSection = <Card.Body>
                 STOCKS <br /><hr />
                 {stocks.length>0 ? stocks.map(stock => (
-                    <a href={"../articles"}>
+                    <a href={app_config.frontend_url+ "/stock/"+stock._id}>
 
                         <Card.Body>{stock.stockSymbol}
                         </Card.Body>
