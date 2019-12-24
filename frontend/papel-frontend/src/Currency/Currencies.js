@@ -194,18 +194,7 @@ class Currencies extends React.Component {
           </Card.Body>
 
           <Card.Body hidden id="2">
-      {/*<<<<<<< master
 
-
-            <Col md={{ span: 12 }}>
-
-              <CurrencyTable code={c1.code} timeRange={"last-100"}></CurrencyTable>
-            </Col>
-            <Col md={{ span: 12 }}>
-              <CurrencyView code={c1.code} name={c1.name} rate={c1.rate} comments={c1.comments} predictions={c1.predictions} userPredictions={c1.userPredictions}></CurrencyView>
-            </Col>
-            <br/>
-=======*/}
             <Row>
               <Col md={{ span: 12 }}>
                 <CurrencyTable code={c1.code} timeRange={"last-100"}></CurrencyTable>
@@ -216,25 +205,18 @@ class Currencies extends React.Component {
                 <CurrencyView code={c1.code} name={c1.name} rate={c1.rate} comments={c1.comments} predictions={c1.predictions} userPredictions={c1.userPredictions}></CurrencyView>
               </Col>
             </Row>
-      {/*>>>>>>> master*/}
             <Row>
               <Col>
                 <Alert code={c1.code} authToken={this.state.authToken}/>
               </Col>
             </Row>
-      {/*<<<<<<< master
-            <Col md={{ span: 12 }}>
-              <Prediction code={c1.code}></Prediction>
-            </Col>
 
-=======*/}
             <hr/>
             <Row>
               <Col md={{ span: 12 }}>
                 <Prediction code={c1.code}></Prediction>
               </Col>
             </Row>
-      {/*>>>>>>> master*/}
           </Card.Body>
 
         <Card.Body hidden id="3">
