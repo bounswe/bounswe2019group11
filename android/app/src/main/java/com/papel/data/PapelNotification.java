@@ -43,6 +43,14 @@ public class PapelNotification {
         this.notifMessage = notifMessage;
     }
 
+    public String getNotifType() {
+        return notifType;
+    }
+
+    public String getId() {
+        return id;
+    }
+
     public String getNotifMessage() {
         return notifMessage;
     }

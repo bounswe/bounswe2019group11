@@ -182,6 +182,32 @@ public class MainActivity extends AppCompatActivity {
         notificationListView.setAdapter(itemsAdapter);
         itemsAdapter.notifyDataSetChanged();
 
+        notificationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                PapelNotification n =itemsAdapter.getItem(i);
+                if(n.getNotifType().equals("alert")){
+                    deleteNotification(n.getId(), i);
+                    Intent intent = new Intent(getApplicationContext(), TradingEquipmentDetailActivity.class);
+                    intent.putExtra("FromSearchResult", true);
+                    Stock s = null;
+                    Currency c = null;
+                    if(n.getTradingEqType() == 0){
+                        c = new Currency("id", n.getCurrencyCode());
+                        intent.putExtra("TradingEquipment", c);
+                    }else if(n.getTradingEqType() == 1){
+                        s = new Stock(n.getStockId(), n.getStockSymbol());
+                        intent.putExtra("TradingEquipment", s);
+                    }
+                    startActivity(intent);
+                }else if(n.getNotifType().equals("follow")){
+                    Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                    intent.putExtra("UserId", n.getFollower_id());
+                    startActivity(intent);
+                }
+            }
+        });
+
     }
 
 
@@ -340,6 +366,42 @@ public class MainActivity extends AppCompatActivity {
             }
         }) {
 
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + User.getInstance().getToken());
+                return headers;
+            }
+        };
+        requestQueue.add(request);
+
+    }
+
+    public void deleteNotification(String notificationId, final int notifId){
+        String url = Constants.LOCALHOST + Constants.NOTIFICATION + notificationId;
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                notificationList.remove(notifId);
+                itemsAdapter.notifyDataSetChanged();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                NetworkResponse networkResponse = error.networkResponse;
+                if (networkResponse != null) {
+                    String data = new String(networkResponse.data);
+                    try {
+                        JSONObject errorObject = new JSONObject(data);
+                        String message = errorObject.getString("message");
+                        Toast.makeText(getApplicationContext(), "There was an error when deleting notifications: " + message, Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<String, String>();
