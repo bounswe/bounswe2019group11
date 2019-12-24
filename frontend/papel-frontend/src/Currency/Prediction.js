@@ -47,8 +47,8 @@ function Prediction({ code }) {
     const [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken', 'pendingRequests'])
     var _url = app_config.api_url + "/";
     const [currency, setCurrency] = useState(0);
-    const [upCount, setUpCount] = useState(0);
-    const [downCount, setDownCount] = useState(0);
+    //const [upCount, setUpCount] = useState(0);
+    //const [downCount, setDownCount] = useState(0);
     if (!currency) {
         $.get(
             _url + "currency/" + code,
@@ -61,21 +61,38 @@ function Prediction({ code }) {
     console.log(template)
     template = currency ? currency : template
 
-    //var upCount
-    //var downCount
-
+    var upCount = 0
+    var downCount = 0
+    /*
     if(template.predictions){
       if(template.predictions[0]){
         if(template.predictions[0].prediction == "1"){
           setUpCount(template.predictions[0].count);
           if(template.predictions[1]){
-            setDownCount(emplate.predictions[1].count);
+            setDownCount(template.predictions[1].count);
           }
         }
         else{
           setDownCount(template.predictions[0].count);
           if(template.predictions[1]){
             setUpCount(template.predictions[1].count);
+          }
+        }
+      }
+    }
+    */
+    if(template.predictions){
+      if(template.predictions[0]){
+        if(template.predictions[0].prediction == "1"){
+          upCount = template.predictions[0].count;
+          if(template.predictions[1]){
+            downCount = template.predictions[1].count;
+          }
+        }
+        else{
+          downCount = template.predictions[0].count;
+          if(template.predictions[1]){
+            upCount = template.predictions[1].count;
           }
         }
       }

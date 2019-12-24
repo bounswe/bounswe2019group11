@@ -69,7 +69,7 @@ function StockChart2({stock, stockName}) {
   const options = {
     theme: "light1", // "light1", "dark1", "dark2"
     animationEnabled: true,
-    zoomEnabled: false,
+    zoomEnabled: true,
     title: {
       text:stock[2]
     },
