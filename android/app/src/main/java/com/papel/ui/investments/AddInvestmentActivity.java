@@ -135,7 +135,7 @@ public class AddInvestmentActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void buyCurrency(Context context, Currency currency, String amount) {
+    private void buyCurrency(Context context, final Currency currency, String amount) {
         String url = Constants.LOCALHOST + Constants.INVESTMENTS + investmentId + "/" + Constants.CURRENCY;
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         final JSONObject jsonBody = new JSONObject();
@@ -158,7 +158,7 @@ public class AddInvestmentActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Toast.makeText(AddInvestmentActivity.this, "Couldn't buy " + currency.getCode(), Toast.LENGTH_SHORT).show();
             }
         }) {
             @Override
@@ -182,7 +182,7 @@ public class AddInvestmentActivity extends AppCompatActivity {
     }
 
 
-    private void buyStock(Context context, Stock stock, String amount) {
+    private void buyStock(Context context, final Stock stock, String amount) {
         String url = Constants.LOCALHOST + Constants.INVESTMENTS + investmentId + "/" + Constants.STOCK;
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         final JSONObject jsonBody = new JSONObject();
@@ -205,7 +205,7 @@ public class AddInvestmentActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Toast.makeText(AddInvestmentActivity.this, "Couldn't buy " + stock.getSymbol(), Toast.LENGTH_SHORT).show();
             }
         }) {
             @Override
