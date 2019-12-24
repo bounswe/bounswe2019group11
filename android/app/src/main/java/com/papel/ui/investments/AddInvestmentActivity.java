@@ -30,6 +30,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -151,10 +153,7 @@ public class AddInvestmentActivity extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Intent intent = new Intent();
-                intent.putExtra("data", "some data");
-                intent.setAction("action");
-                sendBroadcast(intent);
+                onBackPressed();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -182,10 +181,6 @@ public class AddInvestmentActivity extends AppCompatActivity {
         requestQueue.add(request);
     }
 
-    @Override
-    public void sendBroadcast(Intent intent) {
-        super.sendBroadcast(intent);
-    }
 
     private void buyStock(Context context, Stock stock, String amount) {
         String url = Constants.LOCALHOST + Constants.INVESTMENTS + investmentId + "/" + Constants.STOCK;
@@ -205,6 +200,7 @@ public class AddInvestmentActivity extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+               onBackPressed();
             }
         }, new Response.ErrorListener() {
             @Override
