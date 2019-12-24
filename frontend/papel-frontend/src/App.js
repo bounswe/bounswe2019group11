@@ -97,7 +97,7 @@ function NavBar(props) {
 
         <Row style={{ paddingLeft: 20 }}>
           <Col md={{ span: 2, offset: 0 }} style={{ marginTop: 4 }}>
-            <Link to="/">
+            <Link to="/home">
               <img id="logo-green-small" className="menu-logo" src={Logo} style={{ borderright: "2px solid rgba(0, 0, 0, 0.151)", width: 390 / 3, height: 135 / 3 }} />
             </Link>
           </Col>
@@ -109,7 +109,7 @@ function NavBar(props) {
           <Col md={{ span: 7, offset: 0 }}>
 
 
-            <li><Link to="/#"><FontAwesomeIcon name="Article Icon" icon={faHome} />&nbsp;Home</Link></li>
+            <li><Link to="/home"><FontAwesomeIcon name="Home Icon" icon={faHome} />&nbsp;Home</Link></li>
 
             {loginBtn}
             {registerBtn}
@@ -132,6 +132,7 @@ function NavBar(props) {
         <div className="container">
           <Switch>
             <Route exact path="/"><Home /></Route>
+            <Route path="/home"><Home /></Route>
             <Route path="/login"><Login login={login} /></Route>
             <Route path="/register"><Register /></Route>
             <Route path="/profile"><Profile /></Route>

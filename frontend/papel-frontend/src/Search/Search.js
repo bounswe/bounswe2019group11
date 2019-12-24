@@ -25,8 +25,7 @@ function Search() {
     }
     
     let onClick = (e) => {
-        alert(app_config.frontend_url+"/search-results/"+value);
-        window.location.replace("./search-results/"+value) 
+        window.location.replace("../search-results/"+value) 
     }
     let searchBox = <div>
        
