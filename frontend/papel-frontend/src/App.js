@@ -71,7 +71,14 @@ function NavBar(props) {
       if (notification.stockId === null) {
         // Alert for currency
         return (
-          <div className="clickable">
+          <div className="clickable" onClick={() => {
+            const success_url = app_config.frontend_url + "/currencies"
+            post({
+              url: app_config.api_url + "/notification/"+notification._id,
+              success: (resp) => window.location.replace(success_url),
+              authToken: cookies.userToken
+             })
+          }}>
             {notification.currencyCode} went
             {notification.direction === 1 ? " above " : " below "}
             {notification.rate}
