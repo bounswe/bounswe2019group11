@@ -35,6 +35,7 @@ public class Constants {
     public static final String ALERT = "alert/";
     public static final String NOTIFICATION = "notification/";
     public static final String RECOMMENDATION = "recommendation/";
+    public static final String FORMAT_TEXT_PLAIN = "text/plain";
 
     public static final int DAILY_CHART = 0;
     public static final int WEEKLY_CHART = 1;
