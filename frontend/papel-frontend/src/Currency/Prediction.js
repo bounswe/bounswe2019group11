@@ -45,6 +45,7 @@ var template = {
 }
 function Prediction({ code }) {
     const [cookies, setCookie, removeCookie] = useCookies(['user', 'userToken', 'pendingRequests'])
+
     var _url = app_config.api_url + "/";
     const [currency, setCurrency] = useState(0);
     //const [upCount, setUpCount] = useState(0);
@@ -60,6 +61,7 @@ function Prediction({ code }) {
     console.log("template")
     console.log(template)
     template = currency ? currency : template
+
 
     var upCount = 0
     var downCount = 0
