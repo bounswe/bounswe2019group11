@@ -38,8 +38,8 @@ var template = {
     "userPrediction": ""
 }
 function Prediction({ code }) {
-    
-var _url = app_config.api_url + "/";
+
+    var _url = app_config.api_url + "/";
     const [currency, setCurrency] = useState(0);
     if (!currency) {
         $.get(
@@ -48,9 +48,9 @@ var _url = app_config.api_url + "/";
         );
     }
     template = currency ? currency : template
-    var upCount = template.predictions[1]?template.predictions[1].count:0;
-    var downCount = template.predictions[0]?template.predictions[0].count:0;
-    
+    var upCount = template.predictions[1] ? template.predictions[1].count : 0;
+    var downCount = template.predictions[0] ? template.predictions[0].count : 0;
+
     return (
 
         <Col>

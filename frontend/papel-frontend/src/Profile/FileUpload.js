@@ -16,7 +16,7 @@ class SimpleReactFileUpload extends React.Component {
     onFormSubmit(e){
         e.preventDefault() // Stop form submit
         this.fileUpload(this.state.file).then((response)=>{
-            console.log(response.data);
+            console.log(response);
         })
     }
     onChange(e) {
