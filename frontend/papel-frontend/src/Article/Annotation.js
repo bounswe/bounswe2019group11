@@ -10,11 +10,10 @@ import ImageAnnotation from 'react-image-annotation/lib';
 
 function Annotation({body, username}) {
   return (
-    <>
-      <span style={{backgroundColor: "#ddd"}}>{username}</span>
-      <hr />
+    <div style={{backgroundColor: "#ada", marginTop: 4, borderRadius: 2}}>
+      <div style={{backgroundColor: "#333", color: "#ddd"}}>{username}</div>
       {body.value}
-    </>
+    </div>
   )
 }
 
@@ -28,7 +27,9 @@ class AnnotatedText extends React.Component {
       annotating: false,
       annotationAddShow: false,
       annotationText: "",
-      annotationRange: {}
+      annotationRange: {},
+      newAnnotation: true,
+      annotations: []
     }
 
     this.handleAnnotationTextChange = this.handleAnnotationTextChange.bind(this)
@@ -38,7 +39,10 @@ class AnnotatedText extends React.Component {
   componentDidMount() {
     get({
       url: app_config.annotation_server + "/annotation/article/" + this.props.article._id,
-      success: (resp) => this.getUsers(resp),
+      success: (resp) => {
+        this.setState({annotations: resp})
+        this.getUsers(resp)
+      },
       authToken: this.props.authToken
     })
   }
@@ -57,6 +61,7 @@ class AnnotatedText extends React.Component {
     const ranges= this.state.ranges
     const article = this.props.article
     var arr = []
+    console.log(annotations)
 
     annotations.map(annotation => {
       const selector = annotation.target.selector
@@ -89,30 +94,46 @@ class AnnotatedText extends React.Component {
   createAnnotation(body, range) {
     const article = this.props.article
     const authToken = this.props.authToken
-
-    post({
-      url: app_config.annotation_server + "/annotation",
-      success: (resp) => window.location.reload(),
-      data: {
-        type: "Annotation",
-        motivation: "highlighting",
-        body: {
+    if (this.state.newAnnotation) {
+      post({
+        url: app_config.annotation_server + "/annotation",
+        success: (resp) => window.location.reload(),
+        data: {
+          type: "Annotation",
+          motivation: "highlighting",
+          body: {
+            type: "TextualBody",
+            value: body,
+            purpose: "commenting"
+          },
+          target: {
+            id: article._id,
+            format: 'text/plain',
+            selector: {
+              type: "DataPositionSelector",
+              start: range.start,
+              end: range.end
+            }
+          }
+        },
+        authToken: authToken
+      })
+    }
+    else {
+      const thisAnnotation = this.state.annotations.filter(annotation => annotation.target.selector.start === range.start)[0]
+      const data = {
+      }
+      post({
+        url: app_config.annotation_server + "/annotation/" + thisAnnotation._id,
+        data: {
           type: "TextualBody",
           value: body,
-          purpose: "commenting"
+          purpost: "commenting"
         },
-        target: {
-          id: article._id,
-          format: 'text/plain',
-          selector: {
-            type: "DataPositionSelector",
-            start: range.start,
-            end: range.end
-          }
-        }
-      },
-      authToken: authToken
-    })
+        success: (resp) => window.location.reload(),
+        authToken: authToken
+      })
+    }
   }
 
   popover(data) {
@@ -130,8 +151,11 @@ class AnnotatedText extends React.Component {
   }
   handleHighlight(range) {
     if (this.state.pointer){
-      this.setState({annotationAddShow: true})
-      this.setState({annotationRange: range})
+      this.setState({
+        annotationAddShow: true,
+        annotationRange: range,
+        newAnnotation: true
+      })
     }
     else console.log("not annotating")
 
@@ -174,7 +198,7 @@ class AnnotatedText extends React.Component {
           <FontAwesomeIcon name="Annotate" icon={faEdit} />
           &nbsp;{this.state.pointer ? "Stop" : "Start"} Annotating
           </div>
-          {this.state.pointer ? <span style={{marginLeft: 10}}><i>Select some text to annotate</i></span> : ""}
+          {this.state.pointer ? <span style={{marginLeft: 10}}><i>Select some text to annotate. Click on highlighted annotations to comment on them</i></span> : ""}
         </Row>
         <Row className={this.state.pointer? "cursor-text" : "cursor-default"}>
           <Highlightable
@@ -193,7 +217,7 @@ class AnnotatedText extends React.Component {
               >
                <span onClick={() => {
                  if (this.state.pointer) {
-                   this.setState({annotationRange: range, annotationAddShow: true})
+                   this.setState({annotationRange: range, annotationAddShow: true, newAnnotation: false})
                  }
                }}>{node}</span>
               </OverlayTrigger>
@@ -215,15 +239,44 @@ class AnnotatedImage extends React.Component {
       annotations: [],
       annotation: {}
     }
+    console.log(this.props.articleId)
     this.onChange = this.onChange.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
   }
 
   componentDidMount() {
     get({
-      url: app_config.annotation_server + "/annotation/article/" + this.props.article._id,
-      success: (resp) => this.getUsers(resp),
+      url: app_config.annotation_server + "/annotation/article/" + this.props.articleId,
+      success: (resp) => this.handleAnnotations(resp),
       authToken: this.props.authToken
+    })
+  }
+
+  handleAnnotations(annotations) {
+    var imageAnnotations = annotations.filter(annotation => annotation.target.format.includes("image"))
+    var stateAnnotations = imageAnnotations.map((annotation) => {
+      const xywh = annotation.target.selector.value
+        .split("=")[1]
+        .split(",")
+        .map(s => parseFloat(s))
+      const geometry = {
+        type: "RECTANGLE",
+        x: xywh[0],
+        y: xywh[1],
+        width: xywh[2],
+        height: xywh[3]
+      }
+      const data = {text: annotation.body[0].value}
+      this.setState({
+        annotation: {},
+        annotations: this.state.annotations.concat({
+          geometry,
+          data: {
+            ...data,
+            id: Math.random()
+          }
+        })
+      })
     })
   }
 
@@ -232,16 +285,42 @@ class AnnotatedImage extends React.Component {
   }
   onSubmit(annotation) {
     const { geometry, data } = annotation
+    const articleId = this.props.articleId
+    const geometryValue = "xywh=" + geometry.x + "," + geometry.y + "," + geometry.width + "," + geometry.height
 
-    this.setState({
-      annotation: {},
-      annotations: this.state.annotations.concat({
-        geometry,
-        data: {
-          ...data,
-          id: Math.random()
+    post({
+      url: app_config.annotation_server + "/annotation",
+      data: {
+        type: "Annotation",
+        motivation: "highlighting",
+        body: {
+          type: "TextualBody",
+          value: data.text,
+          purpose: "commenting"
+        },
+        target: {
+          id: articleId,
+          format: 'image/jpeg',
+          selector: {
+            type: "FragmentSelector",
+            conformsTo: "http://www.w3.org/TR/media-frags/",
+            value: geometryValue
+          }
         }
-      })
+      },
+      success: (resp) => {
+        this.setState({
+          annotation: {},
+          annotations: this.state.annotations.concat({
+            geometry,
+            data: {
+              ...data,
+              id: Math.random()
+            }
+          })
+        })
+      },
+      authToken: this.props.authToken
     })
   }
 

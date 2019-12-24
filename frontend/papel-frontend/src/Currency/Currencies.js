@@ -206,7 +206,12 @@ class Currencies extends React.Component {
             <Col md={{ span: 12 }}>
               <CurrencyView code={c1.code} name={c1.name} rate={c1.rate} comments={c1.comments} predictions={c1.predictions} userPredictions={c1.userPredictions}></CurrencyView>
             </Col>
-            <br />
+            <br/>
+            <Row>
+              <Col>
+                <Alert code={c1.code} authToken={this.state.authToken}/>
+              </Col>
+            </Row>
             <Col md={{ span: 12 }}>
               <Prediction code={c1.code}></Prediction>
             </Col>
