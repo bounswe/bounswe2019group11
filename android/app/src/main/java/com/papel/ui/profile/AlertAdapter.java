@@ -55,7 +55,7 @@ public class AlertAdapter extends BaseAdapter {
             alertName.setText(alert.getCurrencyCode());
         } else {
             // Stock case
-            alertName.setText(alert.getStockId());
+            alertName.setText(alert.getStockSymbol());
         }
 
         alertRate.setText(String.valueOf(alert.getRate()));

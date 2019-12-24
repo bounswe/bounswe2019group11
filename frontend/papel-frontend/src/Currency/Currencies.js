@@ -170,9 +170,8 @@ class Currencies extends React.Component {
           </Card.Body>
 
           <Card.Body hidden id="1">
-
             <Row>
-              <Col md={{ span: 12 }}>
+              <Col>
                 <CurrencyTable code={c0.code} timeRange={"last-100"}></CurrencyTable>
               </Col>
             </Row>
@@ -192,11 +191,10 @@ class Currencies extends React.Component {
                 <Prediction code={c0.code}></Prediction>
               </Col>
             </Row>
-
-
           </Card.Body>
 
           <Card.Body hidden id="2">
+      {/*<<<<<<< master
 
 
             <Col md={{ span: 12 }}>
@@ -207,71 +205,109 @@ class Currencies extends React.Component {
               <CurrencyView code={c1.code} name={c1.name} rate={c1.rate} comments={c1.comments} predictions={c1.predictions} userPredictions={c1.userPredictions}></CurrencyView>
             </Col>
             <br/>
+=======*/}
+            <Row>
+              <Col md={{ span: 12 }}>
+                <CurrencyTable code={c1.code} timeRange={"last-100"}></CurrencyTable>
+              </Col>
+            </Row>
+            <Row>
+              <Col md={{ span: 12 }}>
+                <CurrencyView code={c1.code} name={c1.name} rate={c1.rate} comments={c1.comments} predictions={c1.predictions} userPredictions={c1.userPredictions}></CurrencyView>
+              </Col>
+            </Row>
+      {/*>>>>>>> master*/}
             <Row>
               <Col>
                 <Alert code={c1.code} authToken={this.state.authToken}/>
               </Col>
             </Row>
+      {/*<<<<<<< master
             <Col md={{ span: 12 }}>
               <Prediction code={c1.code}></Prediction>
             </Col>
 
+=======*/}
+            <hr/>
+            <Row>
+              <Col md={{ span: 12 }}>
+                <Prediction code={c1.code}></Prediction>
+              </Col>
+            </Row>
+      {/*>>>>>>> master*/}
           </Card.Body>
 
         <Card.Body hidden id="3">
-
-
+          <Row>
             <Col >
-
               <CurrencyTable code={c2.code} timeRange={"last-100"}></CurrencyTable>
             </Col>
-            <br />
-            <Col md={{  }}>
+          </Row>
+          <Row>
+            <Col>
               <CurrencyView code={c2.code} name={c2.name} rate={c2.rate} comments={c2.comments} predictions={c2.predictions} userPredictions={c2.userPredictions}></CurrencyView>
             </Col>
-            <br />
+          </Row>
+          <Row>
+            <Col>
+              <Alert code={c0.code} authToken={this.state.authToken}/>
+            </Col>
+          </Row>
+            <hr/>
+          <Row>
             <Col md={{ span: 12 }}>
               <Prediction code={c2.code}></Prediction>
             </Col>
-
+          </Row>
         </Card.Body>
 
         <Card.Body hidden id="4">
           <Row>
-
             <Col md={{ span: 12 }}>
-
               <CurrencyTable code={c3.code} timeRange={"last-100"}></CurrencyTable>
             </Col>
+          </Row>
+          <Row>
             <Col md={{ span: 12 }}>
               <CurrencyView code={c3.code} name={c3.name} rate={c3.rate} comments={c3.comments} predictions={c3.predictions} userPredictions={c3.userPredictions}></CurrencyView>
             </Col>
-            <br />
-
+          </Row>
+          <Row>
+            <Col>
+              <Alert code={c0.code} authToken={this.state.authToken}/>
+            </Col>
+          </Row>
+          <hr/>
+          <Row>
             <Col md={{ span: 12 }}>
               <Prediction code={c3.code}></Prediction>
             </Col>
           </Row>
-
         </Card.Body>
 
         <Card.Body hidden id="5">
           <Row>
-
             <Col md={{ span: 12 }}>
-
               <CurrencyTable code={c4.code} timeRange={"last-100"}></CurrencyTable>
             </Col>
+          </Row>
+          <Row>
             <Col md={{ span: 12 }}>
               <CurrencyView code={c4.code} name={c4.name} rate={c4.rate} comments={c4.comments} predictions={c4.predictions} userPredictions={c4.userPredictions}></CurrencyView>
             </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Alert code={c0.code} authToken={this.state.authToken}/>
+            </Col>
+          </Row>
+          <hr/>
+          <Row>
             <Col md={{ span: 12 }}>
               <Prediction code={c3.code}></Prediction>
             </Col>
           </Row>
-
         </Card.Body>
-
         </Card>
       </Col >
 

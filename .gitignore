@@ -3,5 +3,7 @@ practice-app/package-lock.json
 backend/node_modules
 backend-annotation/node_modules
 backend/package-lock.json
-backend-annotation/node_modules
+backend-annotation/package-lock.json
 .idea/
+.DS_Store
+android/*.log

@@ -624,9 +624,12 @@ public class ReadArticleActivity extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        if (v.getId() == R.id.article_comments_listview && ((Comment) comments.get(info.position - 1)).getAuthorId().equals(User.getInstance().getId())) {
-            MenuInflater inflater = getMenuInflater();
-            inflater.inflate(R.menu.article_comments_menu, menu);
+        if (v.getId() == R.id.article_comments_listview) {
+            int index = info.position - 1;
+            if (index != -1 && ((Comment) comments.get(index)).getAuthorId().equals(User.getInstance().getId())) {
+                MenuInflater inflater = getMenuInflater();
+                inflater.inflate(R.menu.article_comments_menu, menu);
+            }
         }
     }
 

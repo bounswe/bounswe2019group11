@@ -1,7 +1,7 @@
 import React from 'react';
 import USD from "./USD";
 import CurencyChart from "./CurencyChart"
-import CurrencyCharts from "./CurencyChart"
+import CurrencyCharts from "./CurrencyCharts"
 import StockChart1 from "./StockChart1";
 import StockChart2 from "./StockChart2";
 import {Editor, EditorState, RichUtils} from 'draft-js';
@@ -259,7 +259,7 @@ class Home extends React.Component {
               </div>
               <div  hidden className="Stock2">
 
-                <p class="card-text">
+                <p class="card-body">
                 <StockChart2 stock={[this.state.stocks[1], this.state.stockSymbols[1], this.state.stockNames[1]]}></StockChart2 >
                 </p>
               </div>

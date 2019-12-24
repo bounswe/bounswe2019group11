@@ -276,7 +276,11 @@ module.exports.create = async (title,imgUri, body, authorId) => {
     try {
         tags = await getTopics(body);
     } catch (err) {
-        tags = [];
+        try {
+            tags = await getTopics(body.replace(/[\W_]+/g, ' '));
+        } catch (err) {
+            tags = [];
+        }
     }
 
     return await Article.create({
