@@ -275,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
                     getNotifications();
                 } else {
                     notificationListView.setVisibility(View.GONE);
+                    noNotifTextView.setVisibility(View.GONE);
                     notificationList.removeAll(notificationList);
                 }
             }
