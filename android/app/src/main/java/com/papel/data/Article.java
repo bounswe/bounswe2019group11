@@ -29,6 +29,20 @@ public class Article implements Parcelable {
         this.title = title;
     }
 
+    public Article(String id, String title,String body) {
+        this.id = id;
+        this.title = title;
+        this.body = body;
+    }
+
+
+    public Article(String id, String title,String body,String imageUrl) {
+        this.id = id;
+        this.title = title;
+        this.body = body;
+        this.imageUrl = imageUrl;
+    }
+
     public Article(String id, String title, String body, String authorId, String authorName, int voteCount, String date, String imageUrl) {
         this.id = id;
         this.title = title;
