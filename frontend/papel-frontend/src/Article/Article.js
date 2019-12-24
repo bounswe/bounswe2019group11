@@ -155,10 +155,11 @@ class Article extends React.Component {
               <Card.Title><h1>{article.title}</h1></Card.Title>
               {authorLine}
               <hr />
+              {article._id === undefined ? "" :
               <AnnotatedImage
                 src={article.imgUri}
-                article={article}
-                authToken={cookies.get('userToken')}/>
+                articleId={article._id}
+                authToken={cookies.get('userToken')}/>}
               {articleBody}
               <hr/>
             </Card.Body>

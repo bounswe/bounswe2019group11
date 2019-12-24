@@ -82,7 +82,14 @@ function NavBar(props) {
       else {
         // Alert for stock
         return (
-          <div className="clickable">
+          <div className="clickable" onClick={() => {
+            const success_url = app_config.frontend_url + "/stock/" + notification.stockId
+            post({
+              url: app_config.api_url + "/notification/"+notification._id,
+              success: () => window.location.replace(success_url),
+              authToken: cookies.userToken
+             })
+          }}>
             {notification.stockSymbol} went
             {notification.direction === 1 ? " above " : " below "}
             {notification.rate}
@@ -92,7 +99,6 @@ function NavBar(props) {
         )
       }
     }
-    console.log(notifications)
     notificationBtn =
       (<li>
         <Dropdown >
