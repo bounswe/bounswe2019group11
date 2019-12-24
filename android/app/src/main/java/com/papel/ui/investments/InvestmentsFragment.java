@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -133,7 +134,7 @@ public class InvestmentsFragment extends Fragment {
         fetchInvestments(getContext());
     }
 
-    private void sellCurrency(Context context, Currency currency, String amount) {
+    private void sellCurrency(Context context, final Currency currency, String amount) {
         String url = Constants.LOCALHOST + Constants.INVESTMENTS + userInvestments.getId() + "/" + Constants.CURRENCY;
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         final JSONObject jsonBody = new JSONObject();
@@ -165,7 +166,7 @@ public class InvestmentsFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Toast.makeText(getContext(), "Couldn't sell " + currency.getCode(), Toast.LENGTH_SHORT).show();
             }
         }) {
             @Override
@@ -188,7 +189,7 @@ public class InvestmentsFragment extends Fragment {
         requestQueue.add(request);
     }
 
-    private void sellStock(Context context, Stock stock, String amount) {
+    private void sellStock(Context context, final Stock stock, String amount) {
         String url = Constants.LOCALHOST + Constants.INVESTMENTS + userInvestments.getId() + "/" + Constants.STOCK;
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         final JSONObject jsonBody = new JSONObject();
@@ -219,7 +220,7 @@ public class InvestmentsFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Toast.makeText(getContext(), "Couldn't sell " + stock.getSymbol(), Toast.LENGTH_SHORT).show();
             }
         }) {
             @Override
