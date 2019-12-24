@@ -30,6 +30,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.papel.data.Article;
 import com.papel.data.Currency;
 import com.papel.data.Event;
+import com.papel.data.PapelNotification;
 import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
 import com.papel.data.User;
@@ -65,6 +66,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.papel.ui.utils.ResponseParser.parseNotification;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -72,9 +75,10 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Object> searchList = new ArrayList<>();
     SearchAdapter adapter;
     ListView notificationListView;
-    ArrayList<String> notificationList = new ArrayList<>();
-    ArrayAdapter<String> itemsAdapter;
+    ArrayList<PapelNotification> notificationList = new ArrayList<>();
+    NotificationAdapter itemsAdapter;
     ToggleButton notificationToggle;
+    TextView noNotifTextView;
     private SearchView searchView;
     RequestQueue requestQueue;
     ProgressBar progressBar;
@@ -172,8 +176,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        noNotifTextView = findViewById(R.id.noNotifTextView);
         notificationListView = findViewById(R.id.notification_listView);
-        itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, notificationList);
+        itemsAdapter = new NotificationAdapter(this, notificationList);
         notificationListView.setAdapter(itemsAdapter);
         itemsAdapter.notifyDataSetChanged();
 
@@ -305,40 +310,18 @@ public class MainActivity extends AppCompatActivity {
                 try{
                     JSONArray responseArray = new JSONArray(response);
                     for(int i=0; i<responseArray.length(); i++){
-                        JSONObject object = responseArray.getJSONObject(i);
-                        String type = object.getString("notification");
-                        if(type.equals("follow")){
-                            JSONObject followerObject = object.getJSONObject("follower");
-                            String name = followerObject.getString("name") + " " + followerObject.getString("surname");
-                            String notif = name + " requested to follow you!";
-                            notificationList.add(notif);
-                        }else if(type.equals("alert")){
-                            int teType = object.getInt("type");
-                            int dir = object.getInt("direction");
-                            double rate = object.getDouble("rate");
-                            double curRate = object.getDouble("currentRate");
-                            String code;
-                            if(teType == 0){
-                                code = object.getString("currencyCode");
-                            }else{
-                                code = object.getString("stockSymbol");
-                            }
-                            String notif = code + " is ";
-                            if(dir == 1){
-                                notif += "now above " + rate + ". It is " + curRate;
-                            }else{
-                                notif += "now below " + rate + ". It is " + curRate;
-                            }
-                            notificationList.add(notif);
-                        }
+                        PapelNotification notif = parseNotification(responseArray.getJSONObject(i));
+                        notificationList.add(notif);
+                    }
+                    if(notificationList.size() == 0){
+                        noNotifTextView.setVisibility(View.VISIBLE);
+                    }else{
+                        noNotifTextView.setVisibility(View.GONE);
                     }
                     itemsAdapter.notifyDataSetChanged();
-
                 }catch (JSONException e){
 
                 }
-
-
             }
         }, new Response.ErrorListener() {
             @Override

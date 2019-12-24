@@ -1,6 +1,7 @@
 package com.papel.ui.utils;
 
 import android.util.Log;
+
 import com.papel.data.Alert;
 import com.papel.data.Annotation;
 import com.papel.data.AnnotationBody;
@@ -9,6 +10,7 @@ import com.papel.data.Comment;
 import com.papel.data.Currency;
 import com.papel.data.Event;
 import com.papel.data.Investment;
+import com.papel.data.PapelNotification;
 import com.papel.data.Portfolio;
 import com.papel.data.Stock;
 import com.papel.data.TradingEquipment;
@@ -342,7 +344,7 @@ public class ResponseParser {
         }
         return array;
     }
-  
+
     public static Alert parseAlert(JSONObject response) {
         Alert alert = null;
         try {
@@ -353,11 +355,55 @@ public class ResponseParser {
             int type = response.getInt("type");
             int direction = response.getInt("direction");
             double rate = response.getDouble("rate");
-            alert = new Alert(stockId,stockSymbol,currencyCode,id,type,direction,rate);
+            alert = new Alert(stockId, stockSymbol, currencyCode, id, type, direction, rate);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return alert;
+    }
+
+    public static PapelNotification parseNotification(JSONObject object) {
+        PapelNotification notif = null;
+        try {
+            String type = object.getString("notification");
+            String id = object.getString("_id");
+            if (type.equals("follow")) {
+                JSONObject followerObject = object.getJSONObject("follower");
+                String userId = followerObject.getString("_id");
+                String name = followerObject.getString("name");
+                String surname = followerObject.getString("surname");
+                String message = name + " " + surname;
+                message = message + " requested to follow you!";
+                notif = new PapelNotification(id,type,userId,name,surname,message);
+            } else if (type.equals("alert")) {
+                int teType = object.getInt("type");
+                int dir = object.getInt("direction");
+                double rate = object.getDouble("rate");
+                double curRate = object.getDouble("currentRate");
+                String code;
+                String stock="";
+                String currency="";
+                String stockId="";
+                if (teType == 0) {
+                    code = object.getString("currencyCode");
+                    currency=code;
+                } else {
+                    code = object.getString("stockSymbol");
+                    stock=code;
+                    stockId = object.getString("stockId");
+                }
+                String message = code + " is ";
+                if (dir == 1) {
+                    message += "now above " + rate + ". It is " + curRate;
+                } else {
+                    message += "now below " + rate + ". It is " + curRate;
+                }
+                notif = new PapelNotification(id, type,teType,currency,stock,stockId,dir,rate,curRate,message);
+            }
+        } catch (JSONException e) {
+
+        }
+        return notif;
     }
 
 }
