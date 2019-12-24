@@ -290,8 +290,11 @@ public class ResponseParser {
                 String purpose = bodyElement.getString("purpose");
                 String format = bodyElement.getString("format");
                 String bodyElementCreated = bodyElement.getString("created");
-                String bodyElementCreator = bodyElement.getString("creator");
-                body.add(new AnnotationBody(type, value, purpose, format, bodyElementCreated, bodyElementCreator));
+                JSONObject bodyElementCreator = bodyElement.getJSONObject("creator");
+                String creatorId = bodyElementCreator.getString("id");
+                String creatorName = bodyElementCreator.getString("name");
+                String creatorSurname = bodyElementCreator.getString("surname");
+                body.add(new AnnotationBody(type, value, purpose, format, bodyElementCreated, creatorId,creatorName,creatorSurname));
             }
             annotation = new Annotation(id, creator, created, start, end, body);
         } catch (JSONException e) {
