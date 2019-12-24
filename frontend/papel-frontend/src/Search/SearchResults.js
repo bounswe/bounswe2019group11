@@ -140,7 +140,7 @@ class SearchResults extends React.Component {
                 {eventSection}
                 {userSection}
                 {stockSection}
-
+                
             </Card>
         )
     }
