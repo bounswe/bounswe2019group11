@@ -15,7 +15,13 @@ module.exports.getNearbyUsers = async (userId) => {
     location = location.location.displayName;
 
     return await User
-        .find({'location.displayName': location})
+        .find({
+                $and: [
+                    {_id: {$ne: userId}},
+                    {'location.displayName': location}
+                ]
+            }
+        )
         .select({name: 1, surname: 1})
         .exec();
 };
