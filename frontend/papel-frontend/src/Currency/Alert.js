@@ -37,7 +37,7 @@ class Alert extends React.Component {
   }
 
   handleValueChange(event) {
-    const direction = this.state.above === "above" ? 1 : -1
+    const direction = this.state.above ? 1 : -1
     const value = parseFloat(event.target.value)
     this.setState({alert: {direction: direction, rate: value}})
   }

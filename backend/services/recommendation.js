@@ -15,7 +15,13 @@ module.exports.getNearbyUsers = async (userId) => {
     location = location.location.displayName;
 
     return await User
-        .find({'location.displayName': location})
+        .find({
+                $and: [
+                    {_id: {$ne: userId}},
+                    {'location.displayName': location}
+                ]
+            }
+        )
         .select({name: 1, surname: 1})
         .exec();
 };
@@ -42,9 +48,10 @@ module.exports.getRecommendedArticles = async (userId) => {
         .findOne({_id: selectedArticleVote.articleId})
         .select(selectCondition)
         .exec();
-    if (!article.tags) {
+    if (!article || !article.tags) {
         return response;
     }
+    const addedArticles = new Set();
     const recommendedArticles = [];
     for (let i = 0; i < article.tags.length; i++) {
         const articles = await Article
@@ -57,7 +64,13 @@ module.exports.getRecommendedArticles = async (userId) => {
             })
             .select(selectCondition)
             .exec();
-        recommendedArticles.push(...articles);
+        for (let j = 0; j < articles.length; j++) {
+            const id = articles[j]._id;
+            if (!addedArticles.has(id)) {
+                addedArticles.add(id);
+                recommendedArticles.push(articles[j]);
+            }
+        }
     }
     response.because = article;
     response.articles = recommendedArticles;

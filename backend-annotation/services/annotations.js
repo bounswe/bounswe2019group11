@@ -26,6 +26,15 @@ module.exports.getAnnotationsById = async (annotationId) =>{
 };
 module.exports.addBody = async (annotationId,body) =>{
     const theAnnotation = await this.getAnnotationsById(annotationId);
+    const response = await axios.get(process.env.API_URL+'/user/'+body.creator);
+    const user = response.data;
+    const bodyCreator = {
+        id: user._id,
+        name:user.name,
+        surname:user.surname
+
+    };
+    body.creator = bodyCreator;
     theAnnotation.body.push(body);
     return await theAnnotation.save();
 };

@@ -2,6 +2,7 @@ package com.papel.ui.utils;
 
 import android.util.Log;
 
+import com.papel.Constants;
 import com.papel.data.Alert;
 import com.papel.data.Annotation;
 import com.papel.data.AnnotationBody;
@@ -285,13 +286,18 @@ public class ResponseParser {
             ArrayList<AnnotationBody> body = new ArrayList<>();
             for (int i = 0; i < bodyArray.length(); i++) {
                 JSONObject bodyElement = bodyArray.getJSONObject(i);
-                String type = bodyElement.getString("type");
-                String value = bodyElement.getString("value");
-                String purpose = bodyElement.getString("purpose");
                 String format = bodyElement.getString("format");
-                String bodyElementCreated = bodyElement.getString("created");
-                String bodyElementCreator = bodyElement.getString("creator");
-                body.add(new AnnotationBody(type, value, purpose, format, bodyElementCreated, bodyElementCreator));
+                if (format.equals(Constants.FORMAT_TEXT_PLAIN)) {
+                    String type = bodyElement.getString("type");
+                    String value = bodyElement.getString("value");
+                    String purpose = bodyElement.getString("purpose");
+                    String bodyElementCreated = bodyElement.getString("created");
+                    JSONObject bodyElementCreator = bodyElement.getJSONObject("creator");
+                    String creatorId = bodyElementCreator.getString("id");
+                    String creatorName = bodyElementCreator.getString("name");
+                    String creatorSurname = bodyElementCreator.getString("surname");
+                    body.add(new AnnotationBody(type, value, purpose, format, bodyElementCreated, creatorId, creatorName, creatorSurname));
+                }
             }
             annotation = new Annotation(id, creator, created, start, end, body);
         } catch (JSONException e) {
@@ -374,22 +380,22 @@ public class ResponseParser {
                 String surname = followerObject.getString("surname");
                 String message = name + " " + surname;
                 message = message + " requested to follow you!";
-                notif = new PapelNotification(id,type,userId,name,surname,message);
+                notif = new PapelNotification(id, type, userId, name, surname, message);
             } else if (type.equals("alert")) {
                 int teType = object.getInt("type");
                 int dir = object.getInt("direction");
                 double rate = object.getDouble("rate");
                 double curRate = object.getDouble("currentRate");
                 String code;
-                String stock="";
-                String currency="";
-                String stockId="";
+                String stock = "";
+                String currency = "";
+                String stockId = "";
                 if (teType == 0) {
                     code = object.getString("currencyCode");
-                    currency=code;
+                    currency = code;
                 } else {
                     code = object.getString("stockSymbol");
-                    stock=code;
+                    stock = code;
                     stockId = object.getString("stockId");
                 }
                 String message = code + " is ";
@@ -398,7 +404,7 @@ public class ResponseParser {
                 } else {
                     message += "now below " + rate + ". It is " + curRate;
                 }
-                notif = new PapelNotification(id, type,teType,currency,stock,stockId,dir,rate,curRate,message);
+                notif = new PapelNotification(id, type, teType, currency, stock, stockId, dir, rate, curRate, message);
             }
         } catch (JSONException e) {
 

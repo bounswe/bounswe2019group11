@@ -48,9 +48,13 @@ public class AnnotationListViewAdapter extends BaseAdapter {
         }
 
         TextView commentBody = view.findViewById(R.id.commentBody);
+        TextView commentUser = view.findViewById(R.id.commentUser);
         TextView commentTime = view.findViewById(R.id.commentTime);
         AnnotationBody currentAnnotationBody = this.body.get(i);
+
+        String userFullName = currentAnnotationBody.getUserName() + " " + currentAnnotationBody.getUserSurname();
         commentBody.setText(currentAnnotationBody.getValue());
+        commentUser.setText(userFullName);
 
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);

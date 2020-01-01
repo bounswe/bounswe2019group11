@@ -56,7 +56,11 @@ class RoundRobinKeyPicker {
 const apiKeyPicker = new RoundRobinKeyPicker(process.env.ALPHAVANTAGE_API_KEY.split(','));
 const apiUrl = process.env.ALPHAVANTAGE_URL;
 
-const intradayRatesJob = new CronJob('0 */5 * * * *', async () => {
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const intradayRatesJob = new CronJob('0 4-59/7 1-23 * * *', async () => {
     const params = {
         function: 'FX_INTRADAY',
         from_symbol: BASE_CURRENCY,
@@ -78,9 +82,9 @@ const intradayRatesJob = new CronJob('0 */5 * * * *', async () => {
             if (response['Meta Data']) {
                 const intradayRates = response['Time Series FX (5min)'];
                 const rate = intradayRates[Object.keys(intradayRates)[0]]['4. close'];
-                await Currency.updateOne({code}, {intradayRates, rate});
+                await Currency.updateOne({ code }, { intradayRates, rate });
                 console.log(new Date() + ' Intraday rates and rate are updated for ' + code);
-                const alerts = await Alert.find({type: alertHelper.TYPE.CURRENCY, currencyCode: code});
+                const alerts = await Alert.find({ type: alertHelper.TYPE.CURRENCY, currencyCode: code });
                 for (let j = 0; j < alerts.length; j++) {
                     const alert = alerts[j];
                     if ((alert.direction === alertHelper.DIRECTION.ABOVE && alert.rate < rate)
@@ -94,19 +98,20 @@ const intradayRatesJob = new CronJob('0 */5 * * * *', async () => {
                             currencyCode: code,
                             currencyId: CURRENCIES[i][1]
                         });
-                        await Alert.findOneAndDelete({_id: alert._id});
+                        await Alert.findOneAndDelete({ _id: alert._id });
                     }
                 }
             } else {
                 console.log(new Date() + ' Request to AlphaVantage failed.' + JSON.stringify(response));
             }
+            await sleep(30000);
         } catch (err) {
             console.log(new Date() + ' Intraday rates and rate could not be updated for ' + code + '. Err: ' + err);
         }
     }
 }, null, false, 'Europe/Istanbul', null, false);
 
-const dailyRatesJob = new CronJob('00 00 00 * * *', async () => {
+const dailyRatesJob = new CronJob('00 10 00 * * *', async () => {
     const params = {
         function: 'FX_DAILY',
         from_symbol: BASE_CURRENCY,
@@ -126,18 +131,19 @@ const dailyRatesJob = new CronJob('00 00 00 * * *', async () => {
             response = JSON.parse(response);
             if (response['Meta Data']) {
                 const dailyRates = response['Time Series FX (Daily)'];
-                await Currency.updateOne({code}, {dailyRates});
+                await Currency.updateOne({ code }, { dailyRates });
                 console.log(new Date() + ' Daily rates are updated for ' + code);
             } else {
                 console.log(new Date() + ' Request to AlphaVantage failed. ' + JSON.stringify(response));
             }
+            await sleep(30000);
         } catch (err) {
             console.log(new Date() + ' Daily rates could not be updated for ' + code + '. Err: ' + err);
         }
     }
 }, null, false, 'Europe/Istanbul', null, false);
 
-const intradayPriceJob = new CronJob('0 */5 * * * *', async () => {
+const intradayPriceJob = new CronJob('0 0-59/7 1-23 * * *', async () => {
     const params = {
         function: 'TIME_SERIES_INTRADAY',
         interval: '5min',
@@ -158,9 +164,9 @@ const intradayPriceJob = new CronJob('0 */5 * * * *', async () => {
             if (response['Meta Data']) {
                 const intradayPrices = response['Time Series (5min)'];
                 const price = intradayPrices[Object.keys(intradayPrices)[0]]['4. close'];
-                await Stock.updateOne({stockSymbol: symbol}, {dailyPrice: intradayPrices, price});
+                await Stock.updateOne({ stockSymbol: symbol }, { dailyPrice: intradayPrices, price });
                 console.log(new Date() + ' Intraday prices and price are updated for ' + symbol);
-                const alerts = await Alert.find({type: alertHelper.TYPE.STOCK, stockId: STOCKS[i][1]});
+                const alerts = await Alert.find({ type: alertHelper.TYPE.STOCK, stockId: STOCKS[i][1] });
                 for (let j = 0; j < alerts.length; j++) {
                     const alert = alerts[j];
                     if ((alert.direction === alertHelper.DIRECTION.ABOVE && alert.rate < price)
@@ -174,19 +180,20 @@ const intradayPriceJob = new CronJob('0 */5 * * * *', async () => {
                             stockSymbol: symbol,
                             stockId: STOCKS[i][1],
                         });
-                        await Alert.findOneAndDelete({_id: alert._id});
+                        await Alert.findOneAndDelete({ _id: alert._id });
                     }
                 }
             } else {
                 console.log(new Date() + ' Request to AlphaVantage failed.' + JSON.stringify(response));
             }
+            await sleep(30000);
         } catch (err) {
             console.log(new Date() + ' Intraday prices and price could not be updated for ' + symbol + '. Err: ' + err);
         }
     }
 }, null, false, 'Europe/Istanbul', null, false);
 
-const dailyPricesJob = new CronJob('00 00 00 * * *', async () => {
+const dailyPricesJob = new CronJob('00 20 00 * * *', async () => {
     const params = {
         function: 'TIME_SERIES_DAILY',
     };
@@ -205,11 +212,12 @@ const dailyPricesJob = new CronJob('00 00 00 * * *', async () => {
             response = JSON.parse(response);
             if (response['Meta Data']) {
                 const dailyPrices = response['Time Series (Daily)'];
-                await Stock.updateOne({stockSymbol: symbol}, {monthlyPrice: dailyPrices});
+                await Stock.updateOne({ stockSymbol: symbol }, { monthlyPrice: dailyPrices });
                 console.log(new Date() + ' Daily prices are updated for ' + symbol);
             } else {
                 console.log(new Date() + ' Request to AlphaVantage failed. ' + JSON.stringify(response));
             }
+            await sleep(30000);
         } catch (err) {
             console.log(new Date() + ' Daily prices could not be updated for ' + symbol + '. Err: ' + err);
         }
@@ -230,7 +238,7 @@ const predictionJob = new CronJob('00 00 00 * * *', async () => {
                     currentRate = currencyCache.get(currencyCode);
                 } else {
                     currentRate = await Currency
-                        .findOne({code: currencyCode})
+                        .findOne({ code: currencyCode })
                         .select('rate -_id')
                         .exec();
                     currentRate = currentRate.rate;
@@ -247,9 +255,9 @@ const predictionJob = new CronJob('00 00 00 * * *', async () => {
                         && prediction.prediction === predictionHelper.PREDICTION.DECREASE)) {
                     obj['$inc'].successfulPredictionCount = 1;
                 }
-                await User.updateOne({_id: prediction.userId}, obj);
+                await User.updateOne({ _id: prediction.userId }, obj);
             }
-            await Prediction.deleteOne({_id: prediction._id});
+            await Prediction.deleteOne({ _id: prediction._id });
             console.log('Prediction successfully made for ' + prediction.userId);
         }
     } catch (err) {

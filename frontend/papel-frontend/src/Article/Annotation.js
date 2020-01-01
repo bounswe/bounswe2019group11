@@ -74,7 +74,7 @@ class AnnotatedText extends React.Component {
           data: {
             body: (
               annotation.body.map(body =>
-                <Annotation key={annotation._id} username={this.findUserById(users, body.creator)} body={body}/>
+                <Annotation key={annotation._id} username={body.creator.name + " " + body.creator.surname} body={body}/>
               )
             )
           }
@@ -267,12 +267,14 @@ class AnnotatedImage extends React.Component {
         height: xywh[3]
       }
       const data = {text: annotation.body[0].value}
+      const username = annotation.creator.name + " " + annotation.creator.surname
       this.setState({
         annotation: {},
         annotations: this.state.annotations.concat({
           geometry,
           data: {
             ...data,
+            username: username,
             id: Math.random()
           }
         })
@@ -309,12 +311,14 @@ class AnnotatedImage extends React.Component {
         }
       },
       success: (resp) => {
+        console.log(resp)
         this.setState({
           annotation: {},
           annotations: this.state.annotations.concat({
             geometry,
             data: {
               ...data,
+              username: resp.body[0].creator.name + " " + resp.body[0].creator.surname,
               id: Math.random()
             }
           })
@@ -333,6 +337,16 @@ class AnnotatedImage extends React.Component {
         value={this.state.annotation}
         onChange={this.onChange}
         onSubmit={this.onSubmit}
+        renderContent={({key, annotation}) => (
+          <div style={{
+            position: 'absolute',
+            left: `${annotation.geometry.x}%`,
+            top: `${annotation.geometry.y + annotation.geometry.height}%`
+          }}>
+            <div style={{backgroundColor: "#333", color: "white"}}>{annotation.data.username}</div>
+            <div style={{backgroundColor: "#ada", color: "black"}}>{annotation.data.text}</div>
+          </div>
+        )}
       />
     )
   }
